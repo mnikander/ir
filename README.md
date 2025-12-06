@@ -7,10 +7,11 @@ Like all IRs, it sits between high-level languages such as C or TypeScript on on
 ## Getting started
 
 This project is implemented in TypeScript, using [Deno](https://deno.com/).
-Unit testing is done using the behavior driven development package which can be installed with:
+Unit testing is done using the 'behavior driven development' and 'expect' packages which can be installed with:
 
 ```
 deno add jsr:@std/testing/bdd
+deno add jsr:@std/expect
 ```
 
 Build and run the tests with:
