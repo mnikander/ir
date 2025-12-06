@@ -1,20 +1,19 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { assert_boolean, assert_number, assert_defined } from './type_assertions.ts'
-import { Get, Instruction, Register, RawValue, Value, Call, Label, Function, Return } from './instructions.ts'
+import { Get, Instruction, RawValue, Value, Call, Label, Function } from './instructions.ts'
 
 type Frame = { registers: (undefined | Value)[], return_pc: undefined | number, return_block: undefined | string };
 
 export function evaluate(instructions: readonly Instruction[]): RawValue {
 
     let stack: Frame[] = [ {registers: [], return_pc: undefined, return_block: undefined } ];
-    let pc: number = -1;
+    let pc: number                         = 0;
     let current_block: string              = 'Entry';
     let previous_block: undefined | string = undefined;
 
     while (pc < instructions.length) {
         if (top(stack) === undefined) throw Error('Bug: no valid stack frame');
-        pc++;
         const instruc: Instruction       = instructions[pc];
         const reg: (undefined | Value)[] = top(stack).registers;
 
@@ -69,6 +68,7 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
             default:
                 throw Error(`Unhandled instruction type '${(instruc as Instruction)[Get.Tag]}'`);
         }
+        pc++;
     }
     throw Error(`Reached end of instructions without an 'Exit' command`);
 }
