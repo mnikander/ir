@@ -3,11 +3,11 @@
 import { assert_boolean, assert_number, assert_defined } from './type_assertions.ts'
 import { Instruction, Register, RawValue, Value } from './instructions.ts'
 
-type Frame = { registers: (undefined | Value)[], destination: undefined | Register, return_pc: undefined | number };
+type Frame = { registers: (undefined | Value)[], return_register: undefined | Register, return_pc: undefined | number };
 
 export function evaluate(instructions: readonly Instruction[]): RawValue {
 
-    let stack: Frame[] = [ {registers: [], destination: undefined, return_pc: undefined} ];
+    let stack: Frame[] = [ {registers: [], return_register: undefined, return_pc: undefined} ];
     let pc: number = 0;
 
     while (pc < instructions.length) {
@@ -47,13 +47,13 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 // TODO: add arity check when calling a function
                 stack.push(
                     { registers: instruc[3].map((reg) => {return top(stack).registers[reg];}),
-                      destination: instruc[0],
+                      return_register: instruc[0],
                       return_pc: pc + 1 }
                     );
                 pc = find_label(instructions, instruc[2]) + 1;
                 break;
             case 'Return':
-                peek(stack).registers[assert_defined(top(stack).destination)] = top(stack).registers[instruc[2]];
+                peek(stack).registers[assert_defined(top(stack).return_register)] = top(stack).registers[instruc[2]];
                 pc = assert_defined(top(stack).return_pc);
                 stack.pop();
                 break;
