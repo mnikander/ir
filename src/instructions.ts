@@ -4,6 +4,13 @@ export type Register    = number;
 export type RawValue    = boolean | number;
 export type Value       = { tag: 'Value', value: RawValue };
 
+export enum Get {
+    Dest  = 0,
+    Tag   = 1,
+    Left  = 2,
+    Right = 3,
+}
+
 export type Instruction = Add | Const | Copy | Label | Jump | Branch | Function | Call | Return | Exit;
 export type Const       = [ destination: Register, tag: 'Const', constant: RawValue ];
 export type Copy        = [ destination: Register, tag: 'Copy', source: Register ];

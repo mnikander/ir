@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { assert_boolean, assert_number, assert_defined } from './type_assertions.ts'
-import { Instruction, Register, RawValue, Value, Call, Return } from './instructions.ts'
+import { Get, Instruction, Register, RawValue, Value, Call, Return } from './instructions.ts'
 
 type Frame = { registers: (undefined | Value)[], return_pc: undefined | number };
 
@@ -70,11 +70,4 @@ function top(stack: Frame[]): Frame {
 
 function peek(stack: Frame[]): Frame {
     return assert_defined(stack[stack.length - 2]);
-}
-
-enum Get {
-    Dest  = 0,
-    Tag   = 1,
-    Left  = 2,
-    Right = 3,
 }
