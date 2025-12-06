@@ -11,8 +11,8 @@ describe('constants and exit', () => {
 
     it('must evaluate a constant', () => {
         const input: Instruction[] = [
-            { tag: 'Const', destination: 0, constant: 42 },
-            { tag: 'Exit',  result: 0 },
+            [    0, 'Const', 42 ],
+            [ null, 'Exit',  0 ],
         ];
         expect(evaluate(input)).toBe(42);
     });
@@ -21,9 +21,9 @@ describe('constants and exit', () => {
 describe('copying of registers', () => {
     it('must copy a constant', () => {
         const input: Instruction[] = [
-            { tag: 'Const', destination: 0, constant: 42 },
-            { tag: 'Copy',  destination: 1, source: 0 },
-            { tag: 'Exit',  result: 1 },
+            [    0, 'Const', 42 ],
+            [    1, 'Copy',  0 ],
+            [ null, 'Exit',  1 ],
         ];
         expect(evaluate(input)).toBe(42);
     });
@@ -32,10 +32,10 @@ describe('copying of registers', () => {
 describe('arithmetic operations', () => {
     it('must evaluate integer addition', () => {
         const input: Instruction[] = [
-            { tag: 'Const', destination: 0, constant: 1 },
-            { tag: 'Const', destination: 1, constant: 2 },
-            { tag: 'Add',   destination: 2, left: 0, right: 1 },
-            { tag: 'Exit',  result: 2 },
+            [    0, 'Const', 1 ],
+            [    1, 'Const', 2 ],
+            [    2, 'Add',   0, 1 ],
+            [ null, 'Exit',  2 ],
         ];
         expect(evaluate(input)).toBe(3);
     });
@@ -44,59 +44,59 @@ describe('arithmetic operations', () => {
 describe('labels, jump, and branch', () => {
     it('must skip over labels as if they are a "no-op"', () => {
         const input: Instruction[] = [
-            { tag: 'Const', destination: 0, constant: 1 },
-            { tag: 'Label', label: 'First'},
-            { tag: 'Const', destination: 1, constant: 2 },
-            { tag: 'Label', label: 'Second'},
-            { tag: 'Add',   destination: 2, left: 0, right: 1 },
-            { tag: 'Label', label: 'Third'},
-            { tag: 'Exit',  result: 2 },
+            [    0, 'Const', 1 ],
+            [ null, 'Label', 'First'],
+            [    1, 'Const', 2 ],
+            [ null, 'Label', 'Second'],
+            [    2, 'Add',   0, 1 ],
+            [ null, 'Label', 'Third'],
+            [ null, 'Exit',  2 ],
         ];
         expect(evaluate(input)).toBe(3);
     });
 
     it('must execute the correct line of code after an unconditional jump ', () => {
         const input: Instruction[] = [
-            { tag: 'Jump',  label: 'Second'},
-            { tag: 'Label', label: 'First'},
-            { tag: 'Const', destination: 1, constant: 1 },
-            { tag: 'Label', label: 'Second'},
-            { tag: 'Const', destination: 1, constant: 2 },
-            { tag: 'Exit',  result: 1 },
+            [ null, 'Jump',  'Second'],
+            [ null, 'Label', 'First'],
+            [    1, 'Const', 1 ],
+            [ null, 'Label', 'Second'],
+            [    1, 'Const', 2 ],
+            [ null, 'Exit',  1 ],
         ];
         expect(evaluate(input)).toBe(2);
     });
 
     it('must not branch when condition is false', () => {
         const input: Instruction[] = [
-            { tag: 'Const',  destination: 0, constant: false },
-            { tag: 'Const',  destination: 1, constant: 1 },
-            { tag: 'Const',  destination: 2, constant: 2 },
-            { tag: 'Const',  destination: 3, constant: 4 },
-            { tag: 'Branch', condition: 0, label: 'Else' },
-            { tag: 'Add',    destination: 4, left: 1, right: 2 },
-            { tag: 'Jump',   label: 'End' },
-            { tag: 'Label',  label: 'Else' },
-            { tag: 'Add',    destination: 4, left: 2, right: 3 },
-            { tag: 'Label',  label: 'End'},
-            { tag: 'Exit',   result: 4 },
+            [    0, 'Const',  false ],
+            [    1, 'Const',  1 ],
+            [    2, 'Const',  2 ],
+            [    3, 'Const',  4 ],
+            [ null, 'Branch', 0, 'Else' ],
+            [    4, 'Add',    1, 2 ],
+            [ null, 'Jump',  'End' ],
+            [ null, 'Label', 'Else' ],
+            [    4, 'Add',    2, 3 ],
+            [ null, 'Label', 'End'],
+            [ null, 'Exit',   4 ],
         ];
         expect(evaluate(input)).toBe(3);
     });
 
     it('must branch when condition is true', () => {
         const input: Instruction[] = [
-            { tag: 'Const',  destination: 0, constant: true },
-            { tag: 'Const',  destination: 1, constant: 1 },
-            { tag: 'Const',  destination: 2, constant: 2 },
-            { tag: 'Const',  destination: 3, constant: 4 },
-            { tag: 'Branch', condition: 0, label: 'Else' },
-            { tag: 'Add',    destination: 4, left: 1, right: 2 },
-            { tag: 'Jump',   label: 'End' },
-            { tag: 'Label',  label: 'Else' },
-            { tag: 'Add',    destination: 4, left: 2, right: 3 },
-            { tag: 'Label',  label: 'End'},
-            { tag: 'Exit',   result: 4 },
+            [    0, 'Const',  true ],
+            [    1, 'Const',  1 ],
+            [    2, 'Const',  2 ],
+            [    3, 'Const',  4 ],
+            [ null, 'Branch', 0, 'Else' ],
+            [    4, 'Add',    1, 2 ],
+            [ null, 'Jump',   'End' ],
+            [ null, 'Label',  'Else' ],
+            [    4, 'Add',    2, 3 ],
+            [ null, 'Label',  'End'],
+            [ null, 'Exit',   4 ],
         ];
         expect(evaluate(input)).toBe(6);
     });
@@ -105,24 +105,24 @@ describe('labels, jump, and branch', () => {
 describe('function call', () => {
     it('must support calling the identity function', () => {
         const input: Instruction[] = [
-            { tag: 'Const',    destination: 0, constant: 0 },
-            { tag: 'Const',    destination: 1, constant: 42 },
-            { tag: 'Call',     label: 'identity', destination: 2, arguments: [1] },
-            { tag: 'Exit',     result: 2 },
-            { tag: 'Function', label: 'identity', parameters: ['a'] },
-            { tag: 'Return',   result: 0 }, // return register (i.e. argument) 0
+            [    0, 'Const', 0 ],
+            [    1, 'Const', 42 ],
+            [    2, 'Call',  'identity', [1] ],
+            [ null, 'Exit',  2 ],
+            [ null, 'Function', 'identity', ['a'] ],
+            [ null, 'Return', 0 ], // return register (i.e. argument) 0
         ];
         expect(evaluate(input)).toBe(42);
     });
 
     it('must support calling a binary function', () => {
         const input: Instruction[] = [
-            { tag: 'Const',    destination: 0, constant: 10 },
-            { tag: 'Const',    destination: 1, constant: 20 },
-            { tag: 'Call',     label: 'first', destination: 2, arguments: [0, 1] },
-            { tag: 'Exit',     result: 2 },
-            { tag: 'Function', label: 'first', parameters: ['a', 'b'] },
-            { tag: 'Return',   result: 0 }, // return register (i.e. argument) 0
+            [    0, 'Const', 10 ],
+            [    1, 'Const', 20 ],
+            [    2, 'Call',  'first', [0, 1] ],
+            [ null, 'Exit',  2 ],
+            [ null, 'Function', 'first', ['a', 'b'] ],
+            [ null, 'Return', 0 ], // return register (i.e. argument) 0
         ];
         expect(evaluate(input)).toBe(10);
     });

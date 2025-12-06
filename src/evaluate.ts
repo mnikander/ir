@@ -14,60 +14,60 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
         if (top(stack) === undefined) throw Error('Bug: no valid stack frame');
         const instruc: Instruction = instructions[pc];
 
-        switch (instruc.tag) {
+        switch (instruc[1]) {
             case 'Const':
-                top(stack).registers[instruc.destination] = { tag: 'Value', value: instruc.constant };
+                top(stack).registers[instruc[0]] = { tag: 'Value', value: instruc[2] };
                 pc++;
                 break;
             case 'Copy':
-                top(stack).registers[instruc.destination] = top(stack).registers[instruc.source];
+                top(stack).registers[instruc[0]] = top(stack).registers[instruc[2]];
                 pc++;
                 break;
             case 'Add':
-                top(stack).registers[instruc.destination] = { tag: 'Value', value: assert_number(top(stack).registers[instruc.left]) + assert_number(top(stack).registers[instruc.right]) };
+                top(stack).registers[instruc[0]] = { tag: 'Value', value: assert_number(top(stack).registers[instruc[2]]) + assert_number(top(stack).registers[instruc[3]]) };
                 pc++;
                 break;
             case 'Label':
                 pc++;
                 break;
             case 'Jump':
-                pc = find_label(instructions, instruc.label);
+                pc = find_label(instructions, instruc[2]);
                 break;
             case 'Branch':
-                if (assert_boolean(top(stack).registers[instruc.condition])) {
-                    pc = find_label(instructions, instruc.label);
+                if (assert_boolean(top(stack).registers[instruc[2]])) {
+                    pc = find_label(instructions, instruc[3]);
                 }
                 else {
                     pc++;
                 }
                 break;
             case 'Function':
-                throw Error(`Encountered unexpected function body of '${instruc.label}'.`)
+                throw Error(`Encountered unexpected function body of '${instruc[2]}'.`)
             case 'Call':
                 // TODO: add arity check when calling a function
                 stack.push(
-                    { registers: instruc.arguments.map((reg) => {return top(stack).registers[reg];}),
-                      destination: instruc.destination,
+                    { registers: instruc[3].map((reg) => {return top(stack).registers[reg];}),
+                      destination: instruc[0],
                       return_pc: pc + 1 }
                     );
-                pc = find_label(instructions, instruc.label) + 1;
+                pc = find_label(instructions, instruc[2]) + 1;
                 break;
             case 'Return':
-                peek(stack).registers[assert_defined(top(stack).destination)] = top(stack).registers[instruc.result];
+                peek(stack).registers[assert_defined(top(stack).destination)] = top(stack).registers[instruc[2]];
                 pc = assert_defined(top(stack).return_pc);
                 stack.pop();
                 break;
             case 'Exit':
-                return assert_defined(top(stack).registers[instruc.result]).value;
+                return assert_defined(top(stack).registers[instruc[2]]).value;
             default:
-                throw Error(`Unhandled instruction type '${(instruc as Instruction).tag}'`);
+                throw Error(`Unhandled instruction type '${(instruc as Instruction)[1]}'`);
         }
     }
     throw Error(`Reached end of instructions without an 'Exit' command`);
 }
 
 function find_label(instructions: readonly Instruction[], label: string): number {
-    return instructions.findIndex((i: Instruction) => { return (i.tag === 'Label' || i.tag === 'Function') && i.label === label; });
+    return instructions.findIndex((i: Instruction) => { return (i[1] === 'Label' || i[1] === 'Function') && i[2] === label; });
 }
 
 function top(stack: Frame[]): Frame {
