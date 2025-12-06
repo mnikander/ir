@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { Value } from './three_address_code.ts'
+import { Value } from './instructions.ts'
 
 export function assert_boolean(value: undefined | Value): boolean {
     if (value === undefined || typeof value.value !== 'boolean') {

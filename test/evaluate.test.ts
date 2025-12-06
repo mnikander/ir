@@ -1,6 +1,7 @@
 import { describe, it } from "jsr:@std/testing/bdd";
 import { expect } from "jsr:@std/expect";
-import { evaluate, Instruction } from "./three_address_code.ts";
+import { evaluate } from "../src/evaluate.ts";
+import { Instruction } from "../src/instructions.ts";
 
 describe('constants and exit', () => {
     it('must throw error on empty input', () => {

@@ -1,22 +1,9 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { assert_boolean, assert_number, assert_defined } from './type_assertions.ts'
+import { Instruction, Register, RawValue, Value } from './instructions.ts'
 
-export type Instruction = Add | Const | Copy | Label | Jump | Branch | Function | Call | Return | Exit;
-export type Register    = number;
-export type RawValue    = boolean | number;
-export type Value       = { tag: 'Value', value: RawValue };
-export type Const       = { tag: 'Const', destination: Register, constant: RawValue };
-export type Copy        = { tag: 'Copy', destination: Register, source: Register };
-export type Add         = { tag: 'Add', destination: Register, left: Register, right: Register };
-export type Jump        = { tag: 'Jump', label: string };
-export type Label       = { tag: 'Label', label: string };
-export type Branch      = { tag: 'Branch', condition: Register, label: string };
-export type Function    = { tag: 'Function', label: string, parameters: string[] };
-export type Call        = { tag: 'Call', label: string, destination: Register, arguments: Register[] };
-export type Return      = { tag: 'Return', result: Register };
-export type Exit        = { tag: 'Exit', result: Register };
-type Frame              = { registers: (undefined | Value)[], destination: undefined | Register, return_pc: undefined | number };
+type Frame = { registers: (undefined | Value)[], destination: undefined | Register, return_pc: undefined | number };
 
 export function evaluate(instructions: readonly Instruction[]): RawValue {
 
