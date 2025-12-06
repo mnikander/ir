@@ -61,7 +61,7 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
 }
 
 function find_label(instructions: readonly Instruction[], label: string): number {
-    return instructions.findIndex((i: Instruction) => { return (i[Get.Tag] === 'Label' || i[Get.Tag] === 'Function') && i[Get.Left] === label; });
+    return instructions.findIndex((inst: Instruction) => { return (inst[Get.Tag] === 'Label' || inst[Get.Tag] === 'Function') && inst[Get.Left] === label; });
 }
 
 function top(stack: Frame[]): Frame {
