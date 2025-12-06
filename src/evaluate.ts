@@ -38,8 +38,8 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 current_block  = (instructions[pc] as Label)[Get.Left];
                 break;
             case 'Branch':
-                if (assert_boolean(reg[instruc[Get.Left]])) {
-                    pc = find_label(instructions, instruc[Get.Right]);
+                if (assert_boolean(reg[instruc[Get.Right]])) {
+                    pc = find_label(instructions, instruc[Get.Left]);
                     previous_block = current_block;
                     current_block  = (instructions[pc] as Label)[Get.Left];
                 }
