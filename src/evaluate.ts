@@ -8,28 +8,25 @@ type Frame = { registers: (undefined | Value)[], return_pc: undefined | number }
 export function evaluate(instructions: readonly Instruction[]): RawValue {
 
     let stack: Frame[] = [ {registers: [], return_pc: undefined} ];
-    let pc: number = 0;
+    let pc: number = -1;
 
     while (pc < instructions.length) {
         if (top(stack) === undefined) throw Error('Bug: no valid stack frame');
+        pc++;
         const instruc: Instruction       = instructions[pc];
         const reg: (undefined | Value)[] = top(stack).registers;
 
         switch (instruc[1]) {
             case 'Const':
                 reg[instruc[0]] = { tag: 'Value', value: instruc[2] };
-                pc++;
                 break;
             case 'Copy':
                 reg[instruc[0]] = reg[instruc[2]];
-                pc++;
                 break;
             case 'Add':
                 reg[instruc[0]] = { tag: 'Value', value: assert_number(reg[instruc[2]]) + assert_number(reg[instruc[3]]) };
-                pc++;
                 break;
             case 'Label':
-                pc++;
                 break;
             case 'Jump':
                 pc = find_label(instructions, instruc[2]);
@@ -37,9 +34,6 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
             case 'Branch':
                 if (assert_boolean(reg[instruc[2]])) {
                     pc = find_label(instructions, instruc[3]);
-                }
-                else {
-                    pc++;
                 }
                 break;
             case 'Function':
@@ -50,13 +44,12 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                     { registers: instruc[3].map((r) => {return reg[r];}),
                       return_pc: pc }
                     );
-                pc = find_label(instructions, instruc[2]) + 1;
+                pc = find_label(instructions, instruc[2]);
                 break;
             case 'Return':
                 pc = assert_defined(top(stack).return_pc);
                 peek(stack).registers[(instructions[pc] as Call)[0]] = reg[instruc[2]];;
                 stack.pop();
-                pc++;
                 break;
             case 'Exit':
                 return assert_defined(reg[instruc[2]]).value;
