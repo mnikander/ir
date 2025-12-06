@@ -1,14 +1,16 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { assert_boolean, assert_number, assert_defined } from './type_assertions.ts'
-import { Get, Instruction, Register, RawValue, Value, Call, Return } from './instructions.ts'
+import { Get, Instruction, Register, RawValue, Value, Call, Label, Function, Return } from './instructions.ts'
 
-type Frame = { registers: (undefined | Value)[], return_pc: undefined | number };
+type Frame = { registers: (undefined | Value)[], return_pc: undefined | number, return_block: undefined | string };
 
 export function evaluate(instructions: readonly Instruction[]): RawValue {
 
-    let stack: Frame[] = [ {registers: [], return_pc: undefined} ];
+    let stack: Frame[] = [ {registers: [], return_pc: undefined, return_block: undefined } ];
     let pc: number = -1;
+    let current_block: string              = 'Entry';
+    let previous_block: undefined | string = undefined;
 
     while (pc < instructions.length) {
         if (top(stack) === undefined) throw Error('Bug: no valid stack frame');
@@ -27,13 +29,19 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 reg[instruc[Get.Dest]] = { tag: 'Value', value: assert_number(reg[instruc[Get.Left]]) + assert_number(reg[instruc[Get.Right]]) };
                 break;
             case 'Label':
+                previous_block = current_block;
+                current_block  = (instructions[pc] as Label)[Get.Left];
                 break;
             case 'Jump':
                 pc = find_label(instructions, instruc[Get.Left]);
+                previous_block = current_block;
+                current_block  = (instructions[pc] as Label)[Get.Left];
                 break;
             case 'Branch':
                 if (assert_boolean(reg[instruc[Get.Left]])) {
                     pc = find_label(instructions, instruc[Get.Right]);
+                    previous_block = current_block;
+                    current_block  = (instructions[pc] as Label)[Get.Left];
                 }
                 break;
             case 'Function':
@@ -42,12 +50,17 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 // TODO: add arity check when calling a function
                 stack.push(
                     { registers: instruc[Get.Right].map((r) => {return reg[r];}),
-                      return_pc: pc }
+                      return_pc: pc,
+                      return_block: current_block }
                     );
                 pc = find_label(instructions, instruc[Get.Left]);
+                previous_block = current_block;
+                current_block  = (instructions[pc] as Function)[Get.Left];
                 break;
             case 'Return':
                 pc = assert_defined(top(stack).return_pc);
+                previous_block = current_block;
+                current_block  = assert_defined(top(stack).return_block);
                 peek(stack).registers[(instructions[pc] as Call)[Get.Dest]] = reg[instruc[Get.Left]];;
                 stack.pop();
                 break;
