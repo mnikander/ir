@@ -12,19 +12,20 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
 
     while (pc < instructions.length) {
         if (top(stack) === undefined) throw Error('Bug: no valid stack frame');
-        const instruc: Instruction = instructions[pc];
+        const instruc: Instruction       = instructions[pc];
+        const reg: (undefined | Value)[] = top(stack).registers;
 
         switch (instruc[1]) {
             case 'Const':
-                top(stack).registers[instruc[0]] = { tag: 'Value', value: instruc[2] };
+                reg[instruc[0]] = { tag: 'Value', value: instruc[2] };
                 pc++;
                 break;
             case 'Copy':
-                top(stack).registers[instruc[0]] = top(stack).registers[instruc[2]];
+                reg[instruc[0]] = reg[instruc[2]];
                 pc++;
                 break;
             case 'Add':
-                top(stack).registers[instruc[0]] = { tag: 'Value', value: assert_number(top(stack).registers[instruc[2]]) + assert_number(top(stack).registers[instruc[3]]) };
+                reg[instruc[0]] = { tag: 'Value', value: assert_number(reg[instruc[2]]) + assert_number(reg[instruc[3]]) };
                 pc++;
                 break;
             case 'Label':
@@ -34,7 +35,7 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 pc = find_label(instructions, instruc[2]);
                 break;
             case 'Branch':
-                if (assert_boolean(top(stack).registers[instruc[2]])) {
+                if (assert_boolean(reg[instruc[2]])) {
                     pc = find_label(instructions, instruc[3]);
                 }
                 else {
@@ -46,19 +47,19 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
             case 'Call':
                 // TODO: add arity check when calling a function
                 stack.push(
-                    { registers: instruc[3].map((reg) => {return top(stack).registers[reg];}),
+                    { registers: instruc[3].map((r) => {return reg[r];}),
                       return_register: instruc[0],
                       return_pc: pc + 1 }
                     );
                 pc = find_label(instructions, instruc[2]) + 1;
                 break;
             case 'Return':
-                peek(stack).registers[assert_defined(top(stack).return_register)] = top(stack).registers[instruc[2]];
+                peek(stack).registers[assert_defined(top(stack).return_register)] = reg[instruc[2]];
                 pc = assert_defined(top(stack).return_pc);
                 stack.pop();
                 break;
             case 'Exit':
-                return assert_defined(top(stack).registers[instruc[2]]).value;
+                return assert_defined(reg[instruc[2]]).value;
             default:
                 throw Error(`Unhandled instruction type '${(instruc as Instruction)[1]}'`);
         }
