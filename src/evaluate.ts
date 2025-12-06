@@ -1,13 +1,13 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { assert_boolean, assert_number, assert_defined } from './type_assertions.ts'
-import { Instruction, Register, RawValue, Value } from './instructions.ts'
+import { Instruction, Register, RawValue, Value, Call, Return } from './instructions.ts'
 
-type Frame = { registers: (undefined | Value)[], return_register: undefined | Register, return_pc: undefined | number };
+type Frame = { registers: (undefined | Value)[], return_pc: undefined | number };
 
 export function evaluate(instructions: readonly Instruction[]): RawValue {
 
-    let stack: Frame[] = [ {registers: [], return_register: undefined, return_pc: undefined} ];
+    let stack: Frame[] = [ {registers: [], return_pc: undefined} ];
     let pc: number = 0;
 
     while (pc < instructions.length) {
@@ -48,15 +48,15 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 // TODO: add arity check when calling a function
                 stack.push(
                     { registers: instruc[3].map((r) => {return reg[r];}),
-                      return_register: instruc[0],
-                      return_pc: pc + 1 }
+                      return_pc: pc }
                     );
                 pc = find_label(instructions, instruc[2]) + 1;
                 break;
             case 'Return':
-                peek(stack).registers[assert_defined(top(stack).return_register)] = reg[instruc[2]];
                 pc = assert_defined(top(stack).return_pc);
+                peek(stack).registers[(instructions[pc] as Call)[0]] = reg[instruc[2]];;
                 stack.pop();
+                pc++;
                 break;
             case 'Exit':
                 return assert_defined(reg[instruc[2]]).value;
