@@ -2,11 +2,12 @@
 
 import { assert_boolean, assert_number, assert_defined } from './type_assertions.ts'
 import { Get, Instruction, RawValue, Value, Call, Label, Function } from './instructions.ts'
+import { verify_single_assignment } from './analysis.ts';
 
 type Frame = { registers: (undefined | Value)[], return_pc: undefined | number, return_block: undefined | string };
 
 export function evaluate(instructions: readonly Instruction[]): RawValue {
-
+    instructions = verify_single_assignment(instructions);
     let stack: Frame[] = [ {registers: [], return_pc: undefined, return_block: undefined } ];
     let pc: number                         = 0;
     let current_block: string              = 'Entry';

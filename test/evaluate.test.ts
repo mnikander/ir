@@ -68,8 +68,8 @@ describe('labels, jump, and branch', () => {
             [ null, 'Label', 'First'],
             [    1, 'Const', 1 ],
             [ null, 'Label', 'Second'],
-            [    1, 'Const', 2 ],
-            [ null, 'Exit',  1 ],
+            [    2, 'Const', 2 ],
+            [ null, 'Exit',  2 ],
         ];
         expect(evaluate(input)).toBe(2);
     });
@@ -84,7 +84,7 @@ describe('labels, jump, and branch', () => {
             [    4, 'Add',    1, 2 ],
             [ null, 'Jump',  'End' ],
             [ null, 'Label', 'Else' ],
-            [    4, 'Add',    2, 3 ],
+            [    5, 'Add',    2, 3 ],
             [ null, 'Label', 'End'],
             [ null, 'Exit',   4 ],
         ];
@@ -101,9 +101,9 @@ describe('labels, jump, and branch', () => {
             [    4, 'Add',    1, 2 ],
             [ null, 'Jump',   'End' ],
             [ null, 'Label',  'Else' ],
-            [    4, 'Add',    2, 3 ],
+            [    5, 'Add',    2, 3 ],
             [ null, 'Label',  'End'],
-            [ null, 'Exit',   4 ],
+            [ null, 'Exit',   5 ],
         ];
         expect(evaluate(input)).toBe(6);
     });
@@ -132,5 +132,16 @@ describe('function call', () => {
             [ null, 'Return', 0 ], // return register (i.e. argument) 0
         ];
         expect(evaluate(input)).toBe(10);
+    });
+});
+
+describe('static single assignment', () => {
+    it('must throw an error when re-assigning to a register', () => {
+        const input: Instruction[] = [
+            [    0, 'Const', 10 ],
+            [    0, 'Const', 20 ], // attempt to reassign register 0
+            [ null, 'Exit',  1 ],
+        ];
+        expect(() => {evaluate(input)}).toThrow();
     });
 });
