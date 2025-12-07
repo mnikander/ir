@@ -4,11 +4,11 @@ import { assert_defined, get_boolean, get_number } from './type_assertions.ts'
 import { Call, Function, Get, Instruction, Label, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
 
-type Frame = { registers: (undefined | Value)[], return_pc: undefined | number, return_block: undefined | string };
+type Frame = { registers: Map<Register, Value>, return_pc: undefined | number, return_block: undefined | string };
 
 export function evaluate(instructions: readonly Instruction[]): RawValue {
     instructions = verify_single_assignment(instructions);
-    let stack: Frame[] = [ {registers: [], return_pc: undefined, return_block: undefined } ];
+    let stack: Frame[] = [ {registers: new Map<Register, Value>(), return_pc: undefined, return_block: undefined } ];
     let pc: number                         = 0;
     let current_block: string              = 'Entry';
     let previous_block: undefined | string = undefined;
@@ -16,23 +16,23 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
     while (pc < instructions.length) {
         if (top(stack) === undefined) throw Error(`Line ${pc}: Bug -- no valid stack frame`);
         const instruc: Instruction       = instructions[pc];
-        const reg: (undefined | Value)[] = top(stack).registers;
+        const reg: Map<Register, Value>  = top(stack).registers;
 
         switch (instruc[Get.Tag]) {
             case 'Const':
-                reg[instruc[Get.Dest]] = { tag: 'Value', value: instruc[Get.Left] };
+                reg.set(instruc[Get.Dest], { tag: 'Value', value: instruc[Get.Left] });
                 break;
             case 'Copy':
-                reg[instruc[Get.Dest]] = reg[instruc[Get.Left]];
+                reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
                 break;
             case 'Add':
-                reg[instruc[Get.Dest]] = { tag: 'Value', value: get_number(reg[instruc[Get.Left]]) + get_number(reg[instruc[Get.Right]]) };
+                reg.set(instruc[Get.Dest],  { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) + get_number(reg.get(instruc[Get.Right])) });
                 break;
             case 'Equal':
-                reg[instruc[Get.Dest]] = { tag: 'Value', value: reg[instruc[Get.Left]]?.value === reg[instruc[Get.Right]]?.value };
+                reg.set(instruc[Get.Dest],  { tag: 'Value', value: reg.get(instruc[Get.Left])?.value === reg.get(instruc[Get.Right])?.value });
                 break;
             case 'Unequal':
-                reg[instruc[Get.Dest]] = { tag: 'Value', value: reg[instruc[Get.Left]]?.value !== reg[instruc[Get.Right]]?.value };
+                reg.set(instruc[Get.Dest],  { tag: 'Value', value: reg.get(instruc[Get.Left])?.value !== reg.get(instruc[Get.Right])?.value });
                 break;
             case 'Label':
                 previous_block = current_block;
@@ -44,7 +44,7 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 current_block  = (instructions[pc] as Label)[Get.Left];
                 break;
             case 'Branch':
-                if (get_boolean(reg[instruc[Get.Right]])) {
+                if (get_boolean(reg.get(instruc[Get.Right]))) {
                     pc = find_label(instructions, instruc[Get.Left]);
                     previous_block = current_block;
                     current_block  = (instructions[pc] as Label)[Get.Left];
@@ -53,13 +53,17 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
             case 'Function':
                 throw Error(`Line ${pc}: Encountered unexpected function body of '${instruc[Get.Left]}'.`)
             case 'Call':
-                // TODO: add arity check when calling a function
-                stack.push(
-                    { registers: instruc[Get.Right].map((r) => {return reg[r];}),
-                      return_pc: pc,
-                      return_block: current_block }
-                    );
+                stack.push({ registers: new Map<Register, Value>(),
+                             return_pc: pc,
+                             return_block: current_block });
                 pc = find_label(instructions, instruc[Get.Left]);
+                if (instruc[Get.Right]?.length !== instructions[pc][Get.Right]?.length) {
+                    throw Error(`Line ${top(stack).return_pc}: function '${instructions[pc][Get.Left]}' expects ${instructions[pc][Get.Right]?.length} arguments, got ${instruc[Get.Right]?.length}`);
+                }
+                // copy register contents into new frame as function arguments, with the parameter names as their register names
+                for (let i: number = 0; i < instruc[Get.Right]?.length; i++) {
+                    top(stack).registers.set((instructions[pc] as Function)[Get.Right][i], assert_defined(reg.get(instruc[Get.Right][i])));
+                }
                 previous_block = current_block;
                 current_block  = (instructions[pc] as Function)[Get.Left];
                 break;
@@ -67,22 +71,22 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 pc = assert_defined(top(stack).return_pc);
                 previous_block = current_block;
                 current_block  = assert_defined(top(stack).return_block);
-                previous(stack).registers[(instructions[pc] as Call)[Get.Dest]] = reg[instruc[Get.Left]];
+                previous(stack).registers.set((instructions[pc] as Call)[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
                 stack.pop();
                 break;
             case 'Phi':
                 if (previous_block === find_label_for_register(instructions, instruc[Get.Left])) {
-                    reg[instruc[Get.Dest]] = reg[instruc[Get.Left]];
+                    reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
                 }
                 else if (previous_block === find_label_for_register(instructions, instruc[Get.Right])) {
-                    reg[instruc[Get.Dest]] = reg[instruc[Get.Right]];
+                    reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Right])));
                 }
                 else {
                     throw Error(`Line ${pc}: cannot compute Phi(${instruc[Get.Left]}, ${instruc[Get.Right]}) when previous block is '${previous_block}'.`)
                 }
                 break;
             case 'Exit':
-                return assert_defined(reg[instruc[Get.Left]]).value;
+                return assert_defined(reg.get(instruc[Get.Left])).value;
             default:
                 throw Error(`Line ${pc}: Unhandled instruction type '${(instruc as Instruction)[Get.Tag]}'`);
         }

@@ -2,6 +2,8 @@
 
 import { Instruction, Get, Register } from "./instructions.ts";
 
+// TODO: check function arguments as well, to make sure those register names are unique as well!!!
+
 export function verify_single_assignment(instructions: readonly Instruction[]): readonly Instruction[] {
     const registers = new Set();
 
