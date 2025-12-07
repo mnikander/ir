@@ -67,7 +67,7 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 pc = assert_defined(top(stack).return_pc);
                 previous_block = current_block;
                 current_block  = assert_defined(top(stack).return_block);
-                peek(stack).registers[(instructions[pc] as Call)[Get.Dest]] = reg[instruc[Get.Left]];;
+                predecessor(stack).registers[(instructions[pc] as Call)[Get.Dest]] = reg[instruc[Get.Left]];
                 stack.pop();
                 break;
             case 'Phi':
@@ -91,16 +91,16 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
     throw Error(`Line ${pc}: Reached end of instructions without an 'Exit' command`);
 }
 
-function find_label(instructions: readonly Instruction[], label: string): number {
-    return instructions.findIndex((inst: Instruction) => { return (inst[Get.Tag] === 'Label' || inst[Get.Tag] === 'Function') && inst[Get.Left] === label; });
-}
-
 function top(stack: Frame[]): Frame {
     return assert_defined(stack[stack.length - 1]);
 }
 
-function peek(stack: Frame[]): Frame {
+function predecessor(stack: Frame[]): Frame {
     return assert_defined(stack[stack.length - 2]);
+}
+
+function find_label(instructions: readonly Instruction[], label: string): number {
+    return instructions.findIndex((inst: Instruction) => { return (inst[Get.Tag] === 'Label' || inst[Get.Tag] === 'Function') && inst[Get.Left] === label; });
 }
 
 function find_label_for_register(instructions: readonly  Instruction[], register: Register): string {
