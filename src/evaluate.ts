@@ -126,7 +126,7 @@ function find_label(instructions: readonly Instruction[], label: string): number
     return instructions.findIndex((inst: Instruction) => { return (inst[Get.Tag] === 'Label' || inst[Get.Tag] === 'Function') && inst[Get.Left] === label; });
 }
 
-function find_label_for_register(instructions: readonly  Instruction[], register: Register): string {
+function find_label_for_register(instructions: readonly Instruction[], register: Register): string {
     let label: string = 'Entry';
     for (let line: number = 0; line < instructions.length; line++) {
         const instruc: Instruction = instructions[line];
@@ -135,6 +135,13 @@ function find_label_for_register(instructions: readonly  Instruction[], register
         }
         if (instruc[Get.Dest] !== null && instruc[Get.Dest] === register) {
             return label;
+        }
+        else if (instruc[Get.Tag] === 'Function') {
+            for (const arg of instruc[Get.Right]) {
+                if (arg === register) {
+                    return label;
+                }
+            }
         }
     }
     return label;

@@ -133,6 +133,30 @@ describe('function call', () => {
         ];
         expect(evaluate(input)).toBe(11);
     });
+
+    it('must evaluate tail-recursive functions', () => {
+        // return factorial(5)
+        // function factorial(n, acc = 1):
+        //     return n == 1 ? acc : factorial(n-1, n*acc);
+        const input: Instruction[] = [
+            [ '%0', 'Const', 5 ],
+            [ '%1', 'Const', 1 ],
+            [ '%2', 'Call',  'factorial', ['%0', '%1'] ],
+            [ null, 'Exit',  '%2' ],
+            [ null, 'Function', 'factorial', ['%n', '%acc'] ],
+            [ '%3', 'Const', 1 ],
+            [ '%6', 'Equal', '%n', '%3' ],
+            [ null, 'Branch', 'Termination', '%6' ],
+            [ null, 'Label', 'Body' ],
+            [ '%7', 'Subtract', '%n', '%3'],
+            [ '%8', 'Multiply', '%n', '%acc'],
+            [ '%9', 'Call', 'factorial', ['%7', '%8'] ],
+            [ null, 'Label', 'Termination' ],
+            [ '%10', 'Phi', '%9', '%acc'],
+            [ null, 'Return', '%10' ],
+        ];
+        expect(evaluate(input)).toBe(120);
+    });
 });
 
 describe('static single assignment', () => {
