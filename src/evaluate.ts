@@ -27,25 +27,25 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                     reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
                     break;
                 case 'Add':
-                    reg.set(instruc[Get.Dest],  { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) + get_number(reg.get(instruc[Get.Right])) });
+                    reg.set(instruc[Get.Dest], { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) + get_number(reg.get(instruc[Get.Right])) });
                     break;
                 case 'Subtract':
-                    reg.set(instruc[Get.Dest],  { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) - get_number(reg.get(instruc[Get.Right])) });
+                    reg.set(instruc[Get.Dest], { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) - get_number(reg.get(instruc[Get.Right])) });
                     break;
                 case 'Multiply':
-                    reg.set(instruc[Get.Dest],  { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) * get_number(reg.get(instruc[Get.Right])) });
+                    reg.set(instruc[Get.Dest], { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) * get_number(reg.get(instruc[Get.Right])) });
                     break;
                 case 'Divide':
-                    reg.set(instruc[Get.Dest],  { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) / get_number(reg.get(instruc[Get.Right])) });
+                    reg.set(instruc[Get.Dest], { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) / get_number(reg.get(instruc[Get.Right])) });
                     break;
                 case 'Remainder':
-                    reg.set(instruc[Get.Dest],  { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) % get_number(reg.get(instruc[Get.Right])) });
+                    reg.set(instruc[Get.Dest], { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) % get_number(reg.get(instruc[Get.Right])) });
                     break;
                 case 'Equal':
-                    reg.set(instruc[Get.Dest],  { tag: 'Value', value: reg.get(instruc[Get.Left])?.value === reg.get(instruc[Get.Right])?.value });
+                    reg.set(instruc[Get.Dest], { tag: 'Value', value: reg.get(instruc[Get.Left])?.value === reg.get(instruc[Get.Right])?.value });
                     break;
                 case 'Unequal':
-                    reg.set(instruc[Get.Dest],  { tag: 'Value', value: reg.get(instruc[Get.Left])?.value !== reg.get(instruc[Get.Right])?.value });
+                    reg.set(instruc[Get.Dest], { tag: 'Value', value: reg.get(instruc[Get.Left])?.value !== reg.get(instruc[Get.Right])?.value });
                     break;
                 case 'Label':
                     previous_block = current_block;
