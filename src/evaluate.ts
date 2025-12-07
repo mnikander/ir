@@ -28,6 +28,12 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
             case 'Add':
                 reg[instruc[Get.Dest]] = { tag: 'Value', value: assert_number(reg[instruc[Get.Left]]) + assert_number(reg[instruc[Get.Right]]) };
                 break;
+            case 'Equal':
+                reg[instruc[Get.Dest]] = { tag: 'Value', value: reg[instruc[Get.Left]]?.value === reg[instruc[Get.Right]]?.value };
+                break;
+            case 'Unequal':
+                reg[instruc[Get.Dest]] = { tag: 'Value', value: reg[instruc[Get.Left]]?.value !== reg[instruc[Get.Right]]?.value };
+                break;
             case 'Label':
                 previous_block = current_block;
                 current_block  = (instructions[pc] as Label)[Get.Left];
@@ -101,12 +107,11 @@ function find_label_for_register(instructions: readonly  Instruction[], register
     let label: string = 'Entry';
     for (let line: number = 0; line < instructions.length; line++) {
         const instruc: Instruction = instructions[line];
-
-        if (instruc[Get.Dest] !== null && instruc[Get.Dest] === register) {
-            return label;
-        }
         if (instruc[Get.Tag] === 'Label' || instruc[Get.Tag] === 'Function') {
             label = instruc[Get.Left];
+        }
+        if (instruc[Get.Dest] !== null && instruc[Get.Dest] === register) {
+            return label;
         }
     }
     return label;

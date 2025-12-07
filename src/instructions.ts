@@ -11,10 +11,12 @@ export enum Get {
     Right = 3,
 }
 
-export type Instruction = Add | Const | Copy | Label | Jump | Branch | Function | Call | Return | Phi | Exit;
+export type Instruction = Add | Const | Copy | Equal | Unequal | Label | Jump | Branch | Function | Call | Return | Phi | Exit;
 export type Const       = [ destination: Register, tag: 'Const', constant: RawValue ];
 export type Copy        = [ destination: Register, tag: 'Copy', source: Register ];
 export type Add         = [ destination: Register, tag: 'Add', left: Register, right: Register ];
+export type Equal       = [ destination: Register, tag: 'Equal', left: Register, right: Register ];
+export type Unequal     = [ destination: Register, tag: 'Unequal', left: Register, right: Register ];
 export type Label       = [ destination: null,     tag: 'Label', label: string ];
 export type Jump        = [ destination: null,     tag: 'Jump', label: string ];
 export type Branch      = [ destination: null,     tag: 'Branch', label: string, condition: Register];

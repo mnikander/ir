@@ -158,4 +158,20 @@ describe('static single assignment', () => {
         ];
         expect(evaluate(input)).toBe(22);
     });
+
+    it('phi node must assign from the correct register when executing a loop ', () => {
+        const input: Instruction[] = [
+            [    0, 'Const', 0 ],
+            [    1, 'Const', 1 ],
+            [    2, 'Const', 3 ],
+            [ null, 'Label', 'Loop'],
+            [    3, 'Phi',   0, 4 ],
+            [    4, 'Add',   1, 3 ],
+            [    5, 'Unequal', 3, 2 ],
+            [ null, 'Branch', 'Loop', 5],
+            [ null, 'Label', 'End'],
+            [ null, 'Exit',  3 ],
+        ];
+        expect(evaluate(input)).toBe(3);
+    });
 });
