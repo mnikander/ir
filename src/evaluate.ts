@@ -14,7 +14,7 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
     let previous_block: undefined | string = undefined;
 
     while (pc < instructions.length) {
-        if (top(stack) === undefined) throw Error('Bug: no valid stack frame');
+        if (top(stack) === undefined) throw Error(`Line ${pc}: Bug -- no valid stack frame`);
         const instruc: Instruction       = instructions[pc];
         const reg: (undefined | Value)[] = top(stack).registers;
 
@@ -45,7 +45,7 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 }
                 break;
             case 'Function':
-                throw Error(`Encountered unexpected function body of '${instruc[Get.Left]}'.`)
+                throw Error(`Line ${pc}: Encountered unexpected function body of '${instruc[Get.Left]}'.`)
             case 'Call':
                 // TODO: add arity check when calling a function
                 stack.push(
@@ -67,11 +67,11 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
             case 'Exit':
                 return assert_defined(reg[instruc[Get.Left]]).value;
             default:
-                throw Error(`Unhandled instruction type '${(instruc as Instruction)[Get.Tag]}'`);
+                throw Error(`Line ${pc}: Unhandled instruction type '${(instruc as Instruction)[Get.Tag]}'`);
         }
         pc++;
     }
-    throw Error(`Reached end of instructions without an 'Exit' command`);
+    throw Error(`Line ${pc}: Reached end of instructions without an 'Exit' command`);
 }
 
 function find_label(instructions: readonly Instruction[], label: string): number {
