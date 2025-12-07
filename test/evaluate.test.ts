@@ -145,6 +145,32 @@ describe('static single assignment', () => {
         expect(() => {evaluate(input)}).toThrow();
     });
 
+    it('must throw an error when function parameters have the same name', () => {
+        const input: Instruction[] = [
+            [ '%0', 'Const', 11 ],
+            [ '%1', 'Const', 22 ],
+            [ '%2', 'Call',  'first', ['%0', '%1'] ],
+            [ null, 'Exit',  '%2' ],
+            [ null, 'Function', 'first', ['%a', '%a'] ],
+            [ null, 'Return', '%a' ],
+        ];
+        expect(() => {evaluate(input)}).toThrow();
+    });
+
+    it('must throw an error when function parameter registers are not unique', () => {
+        const input: Instruction[] = [
+            [ '%0', 'Const', 11 ],
+            [ '%1', 'Const', 22 ],
+            [ '%2', 'Call',  'identity', ['%1'] ],
+            [ null, 'Exit',  '%2' ],
+            [ null, 'Function', 'identity', ['%a'] ],
+            [ null, 'Return', '%a' ],
+            [ null, 'Function', 'identity2', ['%a'] ],
+            [ null, 'Return', '%a' ],
+        ];
+        expect(() => {evaluate(input)}).toThrow();
+    });
+
     it('phi node must assign from the correct register after an unconditional jump ', () => {
         const input: Instruction[] = [
             [ null, 'Jump',  'Second'],
