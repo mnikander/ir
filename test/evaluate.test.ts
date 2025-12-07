@@ -9,6 +9,13 @@ describe('constants and exit', () => {
         expect(() => evaluate(input)).toThrow();
     });
 
+    it('must throw error if there is no Exit instruction', () => {
+        const input: Instruction[] = [
+            [    0, 'Const', 42 ],
+        ];
+        expect(() => evaluate(input)).toThrow();
+    });
+
     it('must evaluate a constant', () => {
         const input: Instruction[] = [
             [    0, 'Const', 42 ],
