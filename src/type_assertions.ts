@@ -2,7 +2,7 @@
 
 import { Value } from './instructions.ts'
 
-export function assert_boolean(value: undefined | Value): boolean {
+export function boolean_at(value: undefined | Value): boolean {
     if (value === undefined || typeof value.value !== 'boolean') {
         throw Error('Expected value to contain a boolean');
     }
@@ -11,7 +11,7 @@ export function assert_boolean(value: undefined | Value): boolean {
     }
 }
 
-export function assert_number(value: undefined | Value): number {
+export function number_at(value: undefined | Value): number {
     if (value === undefined || typeof value.value !== 'number') {
         throw Error('Expected value to contain a number');
     }

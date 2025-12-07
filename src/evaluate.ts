@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { assert_boolean, assert_defined, assert_number } from './type_assertions.ts'
+import { assert_defined, boolean_at, number_at } from './type_assertions.ts'
 import { Call, Function, Get, Instruction, Label, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
 
@@ -26,7 +26,7 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 reg[instruc[Get.Dest]] = reg[instruc[Get.Left]];
                 break;
             case 'Add':
-                reg[instruc[Get.Dest]] = { tag: 'Value', value: assert_number(reg[instruc[Get.Left]]) + assert_number(reg[instruc[Get.Right]]) };
+                reg[instruc[Get.Dest]] = { tag: 'Value', value: number_at(reg[instruc[Get.Left]]) + number_at(reg[instruc[Get.Right]]) };
                 break;
             case 'Equal':
                 reg[instruc[Get.Dest]] = { tag: 'Value', value: reg[instruc[Get.Left]]?.value === reg[instruc[Get.Right]]?.value };
@@ -44,7 +44,7 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 current_block  = (instructions[pc] as Label)[Get.Left];
                 break;
             case 'Branch':
-                if (assert_boolean(reg[instruc[Get.Right]])) {
+                if (boolean_at(reg[instruc[Get.Right]])) {
                     pc = find_label(instructions, instruc[Get.Left]);
                     previous_block = current_block;
                     current_block  = (instructions[pc] as Label)[Get.Left];
@@ -67,7 +67,7 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 pc = assert_defined(top(stack).return_pc);
                 previous_block = current_block;
                 current_block  = assert_defined(top(stack).return_block);
-                predecessor(stack).registers[(instructions[pc] as Call)[Get.Dest]] = reg[instruc[Get.Left]];
+                previous(stack).registers[(instructions[pc] as Call)[Get.Dest]] = reg[instruc[Get.Left]];
                 stack.pop();
                 break;
             case 'Phi':
@@ -95,7 +95,7 @@ function top(stack: Frame[]): Frame {
     return assert_defined(stack[stack.length - 1]);
 }
 
-function predecessor(stack: Frame[]): Frame {
+function previous(stack: Frame[]): Frame {
     return assert_defined(stack[stack.length - 2]);
 }
 
