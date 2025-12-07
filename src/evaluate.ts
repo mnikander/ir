@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { assert_boolean, assert_number, assert_defined } from './type_assertions.ts'
-import { Get, Instruction, RawValue, Value, Call, Label, Function } from './instructions.ts'
+import { assert_boolean, assert_defined, assert_number } from './type_assertions.ts'
+import { Call, Function, Get, Instruction, Label, RawValue, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
 
 type Frame = { registers: (undefined | Value)[], return_pc: undefined | number, return_block: undefined | string };
