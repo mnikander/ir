@@ -160,6 +160,11 @@ describe('static single assignment', () => {
     });
 
     it('phi node must assign from the correct register when executing a loop ', () => {
+        // int i = 0;
+        // while (i != 3) {
+        //     i++;
+        // }
+        // return i;
         const input: Instruction[] = [
             [    0, 'Const', 0 ],
             [    1, 'Const', 1 ],
