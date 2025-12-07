@@ -13,98 +13,105 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
     let current_block: string              = 'Entry';
     let previous_block: undefined | string = undefined;
 
-    while (pc < instructions.length) {
-        if (top(stack) === undefined) throw Error(`Line ${pc}: Bug -- no valid stack frame`);
-        const instruc: Instruction       = instructions[pc];
-        const reg: Map<Register, Value>  = top(stack).registers;
-
-        switch (instruc[Get.Tag]) {
-            case 'Const':
-                reg.set(instruc[Get.Dest], { tag: 'Value', value: instruc[Get.Left] });
-                break;
-            case 'Copy':
-                reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
-                break;
-            case 'Add':
-                reg.set(instruc[Get.Dest],  { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) + get_number(reg.get(instruc[Get.Right])) });
-                break;
-            case 'Subtract':
-                reg.set(instruc[Get.Dest],  { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) - get_number(reg.get(instruc[Get.Right])) });
-                break;
-            case 'Multiply':
-                reg.set(instruc[Get.Dest],  { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) * get_number(reg.get(instruc[Get.Right])) });
-                break;
-            case 'Divide':
-                reg.set(instruc[Get.Dest],  { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) / get_number(reg.get(instruc[Get.Right])) });
-                break;
-            case 'Remainder':
-                reg.set(instruc[Get.Dest],  { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) % get_number(reg.get(instruc[Get.Right])) });
-                break;
-            case 'Equal':
-                reg.set(instruc[Get.Dest],  { tag: 'Value', value: reg.get(instruc[Get.Left])?.value === reg.get(instruc[Get.Right])?.value });
-                break;
-            case 'Unequal':
-                reg.set(instruc[Get.Dest],  { tag: 'Value', value: reg.get(instruc[Get.Left])?.value !== reg.get(instruc[Get.Right])?.value });
-                break;
-            case 'Label':
-                previous_block = current_block;
-                current_block  = (instructions[pc] as Label)[Get.Left];
-                break;
-            case 'Jump':
-                pc = find_label(instructions, instruc[Get.Left]);
-                previous_block = current_block;
-                current_block  = (instructions[pc] as Label)[Get.Left];
-                break;
-            case 'Branch':
-                if (get_boolean(reg.get(instruc[Get.Right]))) {
+    try {
+        while (pc < instructions.length) {
+            if (top(stack) === undefined) throw Error(`Bug -- no valid stack frame`);
+            const instruc: Instruction       = instructions[pc];
+            const reg: Map<Register, Value>  = top(stack).registers;
+    
+            switch (instruc[Get.Tag]) {
+                case 'Const':
+                    reg.set(instruc[Get.Dest], { tag: 'Value', value: instruc[Get.Left] });
+                    break;
+                case 'Copy':
+                    reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
+                    break;
+                case 'Add':
+                    reg.set(instruc[Get.Dest],  { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) + get_number(reg.get(instruc[Get.Right])) });
+                    break;
+                case 'Subtract':
+                    reg.set(instruc[Get.Dest],  { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) - get_number(reg.get(instruc[Get.Right])) });
+                    break;
+                case 'Multiply':
+                    reg.set(instruc[Get.Dest],  { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) * get_number(reg.get(instruc[Get.Right])) });
+                    break;
+                case 'Divide':
+                    reg.set(instruc[Get.Dest],  { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) / get_number(reg.get(instruc[Get.Right])) });
+                    break;
+                case 'Remainder':
+                    reg.set(instruc[Get.Dest],  { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) % get_number(reg.get(instruc[Get.Right])) });
+                    break;
+                case 'Equal':
+                    reg.set(instruc[Get.Dest],  { tag: 'Value', value: reg.get(instruc[Get.Left])?.value === reg.get(instruc[Get.Right])?.value });
+                    break;
+                case 'Unequal':
+                    reg.set(instruc[Get.Dest],  { tag: 'Value', value: reg.get(instruc[Get.Left])?.value !== reg.get(instruc[Get.Right])?.value });
+                    break;
+                case 'Label':
+                    previous_block = current_block;
+                    current_block  = (instructions[pc] as Label)[Get.Left];
+                    break;
+                case 'Jump':
                     pc = find_label(instructions, instruc[Get.Left]);
                     previous_block = current_block;
                     current_block  = (instructions[pc] as Label)[Get.Left];
-                }
-                break;
-            case 'Function':
-                throw Error(`Line ${pc}: Encountered unexpected function body of '${instruc[Get.Left]}'.`)
-            case 'Call':
-                stack.push({ registers: new Map<Register, Value>(),
-                             return_pc: pc,
-                             return_block: current_block });
-                pc = find_label(instructions, instruc[Get.Left]);
-                if (instruc[Get.Right]?.length !== instructions[pc][Get.Right]?.length) {
-                    throw Error(`Line ${top(stack).return_pc}: function '${instructions[pc][Get.Left]}' expects ${instructions[pc][Get.Right]?.length} arguments, got ${instruc[Get.Right]?.length}`);
-                }
-                // copy register contents into new frame as function arguments, with the parameter names as their register names
-                for (let i: number = 0; i < instruc[Get.Right]?.length; i++) {
-                    top(stack).registers.set((instructions[pc] as Function)[Get.Right][i], assert_defined(reg.get(instruc[Get.Right][i])));
-                }
-                previous_block = current_block;
-                current_block  = (instructions[pc] as Function)[Get.Left];
-                break;
-            case 'Return':
-                pc = assert_defined(top(stack).return_pc);
-                previous_block = current_block;
-                current_block  = assert_defined(top(stack).return_block);
-                previous(stack).registers.set((instructions[pc] as Call)[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
-                stack.pop();
-                break;
-            case 'Phi':
-                if (previous_block === find_label_for_register(instructions, instruc[Get.Left])) {
-                    reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
-                }
-                else if (previous_block === find_label_for_register(instructions, instruc[Get.Right])) {
-                    reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Right])));
-                }
-                else {
-                    throw Error(`Line ${pc}: cannot compute Phi(${instruc[Get.Left]}, ${instruc[Get.Right]}) when previous block is '${previous_block}'.`)
-                }
-                break;
-            case 'Exit':
-                return assert_defined(reg.get(instruc[Get.Left])).value;
-            default:
-                throw Error(`Line ${pc}: Unhandled instruction type '${(instruc as Instruction)[Get.Tag]}'`);
+                    break;
+                case 'Branch':
+                    if (get_boolean(reg.get(instruc[Get.Right]))) {
+                        pc = find_label(instructions, instruc[Get.Left]);
+                        previous_block = current_block;
+                        current_block  = (instructions[pc] as Label)[Get.Left];
+                    }
+                    break;
+                case 'Function':
+                    throw Error(`encountered unexpected function body of '${instruc[Get.Left]}'.`)
+                case 'Call':
+                    stack.push({ registers: new Map<Register, Value>(),
+                                 return_pc: pc,
+                                 return_block: current_block });
+                    pc = find_label(instructions, instruc[Get.Left]);
+                    if (instruc[Get.Right]?.length !== instructions[pc][Get.Right]?.length) {
+                        throw Error(`Line ${top(stack).return_pc}: function '${instructions[pc][Get.Left]}' expects ${instructions[pc][Get.Right]?.length} arguments, got ${instruc[Get.Right]?.length}`);
+                    }
+                    // copy register contents into new frame as function arguments, with the parameter names as their register names
+                    for (let i: number = 0; i < instruc[Get.Right]?.length; i++) {
+                        top(stack).registers.set((instructions[pc] as Function)[Get.Right][i], assert_defined(reg.get(instruc[Get.Right][i])));
+                    }
+                    previous_block = current_block;
+                    current_block  = (instructions[pc] as Function)[Get.Left];
+                    break;
+                case 'Return':
+                    pc = assert_defined(top(stack).return_pc);
+                    previous_block = current_block;
+                    current_block  = assert_defined(top(stack).return_block);
+                    previous(stack).registers.set((instructions[pc] as Call)[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
+                    stack.pop();
+                    break;
+                case 'Phi':
+                    if (previous_block === find_label_for_register(instructions, instruc[Get.Left])) {
+                        reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
+                    }
+                    else if (previous_block === find_label_for_register(instructions, instruc[Get.Right])) {
+                        reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Right])));
+                    }
+                    else {
+                        throw Error(`cannot compute Phi(${instruc[Get.Left]}, ${instruc[Get.Right]}) when previous block is '${previous_block}'.`)
+                    }
+                    break;
+                case 'Exit':
+                    return assert_defined(reg.get(instruc[Get.Left])).value;
+                default:
+                    throw Error(`unhandled instruction type '${(instruc as Instruction)[Get.Tag]}'`);
+            }
+            pc++;
         }
-        pc++;
+        throw Error(`reached end of instructions without an 'Exit' command`);
     }
-    throw Error(`Line ${pc}: Reached end of instructions without an 'Exit' command`);
+    catch (error) {
+        // catch and then re-throw all errors, with the line-number prepended, for easier debugging
+        throw Error(`Line ${pc}: ` + (error as Error).message);
+    }
+
 }
 
 function top(stack: Frame[]): Frame {
