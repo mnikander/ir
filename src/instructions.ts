@@ -11,7 +11,7 @@ export enum Get {
     Right = 3,
 }
 
-export type Instruction = Add | Const | Copy | Label | Jump | Branch | Function | Call | Return | Exit;
+export type Instruction = Add | Const | Copy | Label | Jump | Branch | Function | Call | Return | Phi | Exit;
 export type Const       = [ destination: Register, tag: 'Const', constant: RawValue ];
 export type Copy        = [ destination: Register, tag: 'Copy', source: Register ];
 export type Add         = [ destination: Register, tag: 'Add', left: Register, right: Register ];
@@ -22,3 +22,4 @@ export type Function    = [ destination: null,     tag: 'Function', label: strin
 export type Call        = [ destination: Register, tag: 'Call', label: string, arguments: Register[] ];
 export type Return      = [ destination: null,     tag: 'Return', result: Register ];
 export type Exit        = [ destination: null,     tag: 'Exit', result: Register ];
+export type Phi         = [ destination: Register, tag: 'Phi', left: Register, right: Register ];

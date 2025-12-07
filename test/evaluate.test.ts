@@ -144,4 +144,18 @@ describe('static single assignment', () => {
         ];
         expect(() => {evaluate(input)}).toThrow();
     });
+
+    it('phi node must assign from the correct register after an unconditional jump ', () => {
+        const input: Instruction[] = [
+            [ null, 'Jump',  'Second'],
+            [ null, 'Label', 'First'],
+            [    1, 'Const', 11 ],
+            [ null, 'Label', 'Second'],
+            [    2, 'Const', 22 ],
+            [ null, 'Label', 'End'],
+            [    3, 'Phi',   1, 2 ],
+            [ null, 'Exit',  3 ],
+        ];
+        expect(evaluate(input)).toBe(22);
+    });
 });

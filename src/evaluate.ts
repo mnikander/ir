@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { assert_boolean, assert_defined, assert_number } from './type_assertions.ts'
-import { Call, Function, Get, Instruction, Label, RawValue, Value } from './instructions.ts'
+import { Call, Function, Get, Instruction, Label, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
 
 type Frame = { registers: (undefined | Value)[], return_pc: undefined | number, return_block: undefined | string };
@@ -64,6 +64,17 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 peek(stack).registers[(instructions[pc] as Call)[Get.Dest]] = reg[instruc[Get.Left]];;
                 stack.pop();
                 break;
+            case 'Phi':
+                if (previous_block === find_label_for_register(instructions, instruc[Get.Left])) {
+                    reg[instruc[Get.Dest]] = reg[instruc[Get.Left]];
+                }
+                else if (previous_block === find_label_for_register(instructions, instruc[Get.Right])) {
+                    reg[instruc[Get.Dest]] = reg[instruc[Get.Right]];
+                }
+                else {
+                    throw Error(`Line ${pc}: cannot compute Phi(${instruc[Get.Left]}, ${instruc[Get.Right]}) when previous block is '${previous_block}'.`)
+                }
+                break;
             case 'Exit':
                 return assert_defined(reg[instruc[Get.Left]]).value;
             default:
@@ -84,4 +95,19 @@ function top(stack: Frame[]): Frame {
 
 function peek(stack: Frame[]): Frame {
     return assert_defined(stack[stack.length - 2]);
+}
+
+function find_label_for_register(instructions: readonly  Instruction[], register: Register): string {
+    let label: string = 'Entry';
+    for (let line: number = 0; line < instructions.length; line++) {
+        const instruc: Instruction = instructions[line];
+
+        if (instruc[Get.Dest] !== null && instruc[Get.Dest] === register) {
+            return label;
+        }
+        if (instruc[Get.Tag] === 'Label' || instruc[Get.Tag] === 'Function') {
+            label = instruc[Get.Left];
+        }
+    }
+    return label;
 }
