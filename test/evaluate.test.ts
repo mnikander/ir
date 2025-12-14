@@ -52,10 +52,13 @@ describe('labels, jump, and branch', () => {
     it('must skip over labels as if they are a "no-op"', () => {
         const input: Instruction[] = [
             [ '%0', 'Const', 11 ],
+
             [ null, 'Label', 'First'],
             [ '%1', 'Const', 22 ],
+
             [ null, 'Label', 'Second'],
             [ '%2', 'Add',   '%0', '%1' ],
+
             [ null, 'Label', 'Third'],
             [ null, 'Exit',  '%2' ],
         ];
@@ -65,8 +68,10 @@ describe('labels, jump, and branch', () => {
     it('must execute the correct line of code after an unconditional jump ', () => {
         const input: Instruction[] = [
             [ null, 'Jump',  'Second'],
+
             [ null, 'Label', 'First'],
             [ '%1', 'Const', 11 ],
+            
             [ null, 'Label', 'Second'],
             [ '%2', 'Const', 22 ],
             [ null, 'Exit',  '%2' ],
@@ -208,10 +213,13 @@ describe('static single assignment', () => {
     it('phi node must assign from the correct register after an unconditional jump ', () => {
         const input: Instruction[] = [
             [ null, 'Jump',  'Second'],
+
             [ null, 'Label', 'First'],
             [ '%1', 'Const', 11 ],
+
             [ null, 'Label', 'Second'],
             [ '%2', 'Const', 22 ],
+
             [ null, 'Label', 'End'],
             [ '%3', 'Phi', '%1', '%2' ],
             [ null, 'Exit',  '%3' ],
