@@ -19,7 +19,7 @@ describe('constants and exit', () => {
     it('must evaluate a constant', () => {
         const input: Instruction[] = [
             [ '%0', 'Const', 11 ],
-            [ null, 'Exit',  '%0' ],
+            [ null, 'Exit', '%0' ],
         ];
         expect(evaluate(input)).toBe(11);
     });
@@ -29,8 +29,8 @@ describe('copying of registers', () => {
     it('must copy a constant', () => {
         const input: Instruction[] = [
             [ '%0', 'Const', 11 ],
-            [ '%1', 'Copy',  '%0' ],
-            [ null, 'Exit',  '%1' ],
+            [ '%1', 'Copy', '%0' ],
+            [ null, 'Exit', '%1' ],
         ];
         expect(evaluate(input)).toBe(11);
     });
@@ -41,8 +41,8 @@ describe('arithmetic operations', () => {
         const input: Instruction[] = [
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
-            [ '%2', 'Add',   '%0', '%1' ],
-            [ null, 'Exit',  '%2' ],
+            [ '%2', 'Add',  '%0', '%1' ],
+            [ null, 'Exit', '%2' ],
         ];
         expect(evaluate(input)).toBe(33);
     });
@@ -81,18 +81,18 @@ describe('labels, jump, and branch', () => {
 
     it('must execute first branch if the condition is true', () => {
         const input: Instruction[] = [
-            [ '%0', 'Const',  true ],
-            [ '%1', 'Const',  11 ],
-            [ '%2', 'Const',  22 ],
-            [ '%3', 'Const',  44 ],
+            [ '%0', 'Const', true ],
+            [ '%1', 'Const', 11 ],
+            [ '%2', 'Const', 22 ],
+            [ '%3', 'Const', 44 ],
             [ null, 'Branch', 'Then', 'Else', '%0' ],
 
             [ null, 'Label', 'Then' ],
-            [ '%4', 'Add',    '%1', '%2' ],
+            [ '%4', 'Add',   '%1', '%2' ],
             [ null, 'Jump',  'End' ],
 
             [ null, 'Label', 'Else' ],
-            [ '%5', 'Add',    '%2', '%3' ],
+            [ '%5', 'Add',   '%2', '%3' ],
 
             [ null, 'Label', 'End'],
             [ null, 'Exit',  '%4' ],
@@ -102,20 +102,20 @@ describe('labels, jump, and branch', () => {
 
     it('must execute the second branch when condition is false', () => {
         const input: Instruction[] = [
-            [ '%0', 'Const',  false ],
-            [ '%1', 'Const',  11 ],
-            [ '%2', 'Const',  22 ],
-            [ '%3', 'Const',  44 ],
+            [ '%0', 'Const', false ],
+            [ '%1', 'Const', 11 ],
+            [ '%2', 'Const', 22 ],
+            [ '%3', 'Const', 44 ],
             [ null, 'Branch', 'Then', 'Else' , '%0'],
             
-            [ null, 'Label',  'Then' ],
-            [ '%4', 'Add',    '%1', '%2' ],
-            [ null, 'Jump',   'End' ],
+            [ null, 'Label', 'Then' ],
+            [ '%4', 'Add',   '%1', '%2' ],
+            [ null, 'Jump',  'End' ],
             
-            [ null, 'Label',  'Else' ],
-            [ '%5', 'Add',    '%2', '%3' ],
+            [ null, 'Label', 'Else' ],
+            [ '%5', 'Add',   '%2', '%3' ],
             
-            [ null, 'Label',  'End'],
+            [ null, 'Label', 'End'],
             [ null, 'Exit',  '%5' ],
         ];
         expect(evaluate(input)).toBe(66);
@@ -127,8 +127,9 @@ describe('function call', () => {
         const input: Instruction[] = [
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
-            [ '%2', 'Call',  'identity', ['%1'] ],
-            [ null, 'Exit',  '%2' ],
+            [ '%2', 'Call', 'identity', ['%1'] ],
+            [ null, 'Exit', '%2' ],
+
             [ null, 'Function', 'identity', ['%a'] ],
             [ null, 'Return', '%a' ],
         ];
@@ -139,8 +140,9 @@ describe('function call', () => {
         const input: Instruction[] = [
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
-            [ '%2', 'Call',  'first', ['%0', '%1'] ],
-            [ null, 'Exit',  '%2' ],
+            [ '%2', 'Call', 'first', ['%0', '%1'] ],
+            [ null, 'Exit', '%2' ],
+
             [ null, 'Function', 'first', ['%a', '%b'] ],
             [ null, 'Return', '%a' ],
         ];
@@ -154,8 +156,9 @@ describe('function call', () => {
         const input: Instruction[] = [
             [ '%0', 'Const', 5 ],
             [ '%1', 'Const', 1 ],
-            [ '%2', 'Call',  'factorial', ['%0', '%1'] ],
-            [ null, 'Exit',  '%2' ],
+            [ '%2', 'Call', 'factorial', ['%0', '%1'] ],
+            [ null, 'Exit', '%2' ],
+
             [ null, 'Function', 'factorial', ['%n', '%acc'] ],
             [ '%3', 'Const', 1 ],
             [ '%6', 'Equal', '%n', '%3' ],
@@ -179,7 +182,7 @@ describe('static single assignment', () => {
         const input: Instruction[] = [
             [ '%0', 'Const', 11 ],
             [ '%0', 'Const', 22 ], // attempt to reassign register 0
-            [ null, 'Exit',  '%1' ],
+            [ null, 'Exit', '%1' ],
         ];
         expect(() => {evaluate(input)}).toThrow();
     });
@@ -188,8 +191,9 @@ describe('static single assignment', () => {
         const input: Instruction[] = [
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
-            [ '%2', 'Call',  'first', ['%0', '%1'] ],
-            [ null, 'Exit',  '%2' ],
+            [ '%2', 'Call', 'first', ['%0', '%1'] ],
+            [ null, 'Exit', '%2' ],
+
             [ null, 'Function', 'first', ['%a', '%a'] ],
             [ null, 'Return', '%a' ],
         ];
@@ -200,10 +204,12 @@ describe('static single assignment', () => {
         const input: Instruction[] = [
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
-            [ '%2', 'Call',  'identity', ['%1'] ],
-            [ null, 'Exit',  '%2' ],
+            [ '%2', 'Call', 'identity', ['%1'] ],
+            [ null, 'Exit', '%2' ],
+
             [ null, 'Function', 'identity', ['%a'] ],
             [ null, 'Return', '%a' ],
+
             [ null, 'Function', 'identity2', ['%a'] ],
             [ null, 'Return', '%a' ],
         ];
@@ -221,8 +227,8 @@ describe('static single assignment', () => {
             [ '%2', 'Const', 22 ],
 
             [ null, 'Label', 'End'],
-            [ '%3', 'Phi', '%1', '%2' ],
-            [ null, 'Exit',  '%3' ],
+            [ '%3', 'Phi',  '%1', '%2' ],
+            [ null, 'Exit', '%3' ],
         ];
         expect(evaluate(input)).toBe(22);
     });
