@@ -9,6 +9,7 @@ export enum Get {
     Tag   = 1,
     Left  = 2,
     Right = 3,
+    Last  = 4,
 }
 
 export type Instruction = Add | Subtract | Multiply | Divide | Remainder | Const | Copy | Equal | Unequal | Label | Jump | Branch | Function | Call | Return | Phi | Exit;
@@ -23,7 +24,7 @@ export type Equal       = [ destination: Register, tag: 'Equal',     left: Regis
 export type Unequal     = [ destination: Register, tag: 'Unequal',   left: Register, right: Register ];
 export type Label       = [ destination: null,     tag: 'Label',     label: string ];
 export type Jump        = [ destination: null,     tag: 'Jump',      label: string ];
-export type Branch      = [ destination: null,     tag: 'Branch',    label: string, condition: Register ];
+export type Branch      = [ destination: null,     tag: 'Branch',    thenLabel: string, elseLabel: string, condition: Register ];
 export type Function    = [ destination: null,     tag: 'Function',  label: string, parameters: Register[] ];
 export type Call        = [ destination: Register, tag: 'Call',      label: string, arguments: Register[] ];
 export type Return      = [ destination: null,     tag: 'Return',    left: Register ];

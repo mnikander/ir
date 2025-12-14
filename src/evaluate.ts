@@ -57,11 +57,14 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                     current_block  = (instructions[pc] as Label)[Get.Left];
                     break;
                 case 'Branch':
-                    if (get_boolean(reg.get(instruc[Get.Right]))) {
+                    if (get_boolean(reg.get(instruc[Get.Last]))) {
                         pc = find_label(instructions, instruc[Get.Left]);
-                        previous_block = current_block;
-                        current_block  = (instructions[pc] as Label)[Get.Left];
                     }
+                    else {
+                        pc = find_label(instructions, instruc[Get.Right]);
+                    }
+                    previous_block = current_block;
+                    current_block  = (instructions[pc] as Label)[Get.Left];
                     break;
                 case 'Function':
                     throw Error(`encountered unexpected function body of '${instruc[Get.Left]}'.`)
