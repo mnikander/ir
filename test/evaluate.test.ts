@@ -268,6 +268,7 @@ describe('static single assignment', () => {
         //         D
         //
         const input: Instruction[] = [
+            // hard-code that we take the else-branch to block B
             [ '%condition', 'Const', false ],
             [ null, 'Branch', '@A', '@B', '%condition' ],
 
@@ -281,8 +282,9 @@ describe('static single assignment', () => {
             [ '%charlie', 'Const', 21 ],
             
             [ null, 'Label', '@D' ],
-            [ '%grandparent', 'Phi',   '%alpha', '%bravo' ],
-            [ '%parent', 'Phi',   '%alpha', '%charlie' ],
+            // join the register from block A with those of block B and C respectively
+            [ '%grandparent', 'Phi', '%alpha', '%bravo' ],
+            [ '%parent',      'Phi', '%alpha', '%charlie' ],
             [ '%total', 'Add', '%grandparent', '%parent'],
             [ null, 'Exit',  '%total' ],
         ];
