@@ -106,7 +106,9 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                     }
                     // copy register contents into new frame as function arguments, with the parameter names as their register names
                     for (let i: number = 0; i < instruc[Get.Right]?.length; i++) {
-                        top(stack).registers.set((instructions[pc] as Function)[Get.Right][i], assert_defined(reg.get(instruc[Get.Right][i])));
+                        const parameter: Register = (instructions[pc] as Function)[Get.Right][i];
+                        const value: Value        = assert_defined(reg.get(instruc[Get.Right][i]));
+                        top(stack).registers.set(parameter, value);
                     }
                     previous_block = current_block;
                     current_block  = (instructions[pc] as Function)[Get.Left];
@@ -116,9 +118,9 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                     pc = assert_defined(top(stack).return_pc);
                     previous_block      = current_block;
                     current_block       = assert_defined(top(stack).return_block);
-                    const fn: Call      = instructions[pc] as Call;
+                    const call: Call    = instructions[pc] as Call;
                     const result: Value = assert_defined(reg.get(instruc[Get.Left]));
-                    previous(stack).registers.set(fn[Get.Dest], result);
+                    previous(stack).registers.set(call[Get.Dest], result);
                     stack.pop();
                     break;
                 }
@@ -147,7 +149,6 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
         // catch and then re-throw all errors, with the line-number prepended, for easier debugging
         throw Error(`Line ${pc}: ` + (error as Error).message);
     }
-
 }
 
 function top(stack: Frame[]): Frame {
