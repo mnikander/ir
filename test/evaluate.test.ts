@@ -65,7 +65,7 @@ describe('labels, jump, and branch', () => {
         expect(evaluate(input)).toBe(33);
     });
 
-    it('must execute the correct line of code after an unconditional jump ', () => {
+    it('must execute the correct line of code after an unconditional jump', () => {
         const input: Instruction[] = [
             [ null, 'Jump',  '@Second' ],
 
@@ -216,7 +216,7 @@ describe('static single assignment', () => {
         expect(() => {evaluate(input)}).toThrow();
     });
 
-    it('phi node must assign from the correct register after an unconditional jump ', () => {
+    it('phi node must assign from the correct register after an unconditional jump', () => {
         const input: Instruction[] = [
             [ null, 'Jump',  '@Second' ],
 
@@ -233,7 +233,7 @@ describe('static single assignment', () => {
         expect(evaluate(input)).toBe(22);
     });
 
-    it('phi node must assign from the correct register when executing a loop ', () => {
+    it('phi node must assign from the correct register when executing a loop', () => {
         // int i = 0;
         // while (i != 3) {
         //     i++;
