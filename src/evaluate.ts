@@ -20,44 +20,70 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
             const reg: Map<Register, Value>  = top(stack).registers;
     
             switch (instruc[Get.Tag]) {
-                case 'Const':
+                case 'Const': {
                     reg.set(instruc[Get.Dest], { tag: 'Value', value: instruc[Get.Left] });
                     break;
-                case 'Copy':
+                }
+                case 'Copy': {
                     reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
                     break;
-                case 'Add':
-                    reg.set(instruc[Get.Dest], { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) + get_number(reg.get(instruc[Get.Right])) });
+                }
+                case 'Add': {
+                    const left: number = get_number(reg.get(instruc[Get.Left]));
+                    const right: number = get_number(reg.get(instruc[Get.Right]));
+                    reg.set(instruc[Get.Dest], { tag: 'Value', value: left + right });
                     break;
-                case 'Subtract':
-                    reg.set(instruc[Get.Dest], { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) - get_number(reg.get(instruc[Get.Right])) });
+                }
+                case 'Subtract': {
+                    const left: number = get_number(reg.get(instruc[Get.Left]));
+                    const right: number = get_number(reg.get(instruc[Get.Right]));
+                    reg.set(instruc[Get.Dest], { tag: 'Value', value: left - right });
                     break;
-                case 'Multiply':
-                    reg.set(instruc[Get.Dest], { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) * get_number(reg.get(instruc[Get.Right])) });
+                }
+                case 'Multiply': {
+                    const left: number = get_number(reg.get(instruc[Get.Left]));
+                    const right: number = get_number(reg.get(instruc[Get.Right]));
+                    reg.set(instruc[Get.Dest], { tag: 'Value', value: left * right });
                     break;
-                case 'Divide':
-                    reg.set(instruc[Get.Dest], { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) / get_number(reg.get(instruc[Get.Right])) });
+                }
+                case 'Divide': {
+                    const left: number = get_number(reg.get(instruc[Get.Left]));
+                    const right: number = get_number(reg.get(instruc[Get.Right]));
+                    reg.set(instruc[Get.Dest], { tag: 'Value', value: left / right });
                     break;
-                case 'Remainder':
-                    reg.set(instruc[Get.Dest], { tag: 'Value', value: get_number(reg.get(instruc[Get.Left])) % get_number(reg.get(instruc[Get.Right])) });
+                }
+                case 'Remainder': {
+                    const left: number = get_number(reg.get(instruc[Get.Left]));
+                    const right: number = get_number(reg.get(instruc[Get.Right]));
+                    reg.set(instruc[Get.Dest], { tag: 'Value', value: left % right });
                     break;
-                case 'Equal':
-                    reg.set(instruc[Get.Dest], { tag: 'Value', value: reg.get(instruc[Get.Left])?.value === reg.get(instruc[Get.Right])?.value });
+                }
+                case 'Equal': {
+                    const left = reg.get(instruc[Get.Left])?.value;
+                    const right = reg.get(instruc[Get.Right])?.value;
+                    reg.set(instruc[Get.Dest], { tag: 'Value', value: left === right });
                     break;
-                case 'Unequal':
-                    reg.set(instruc[Get.Dest], { tag: 'Value', value: reg.get(instruc[Get.Left])?.value !== reg.get(instruc[Get.Right])?.value });
+                }
+                case 'Unequal': {
+                    const left = reg.get(instruc[Get.Left])?.value;
+                    const right = reg.get(instruc[Get.Right])?.value;
+                    reg.set(instruc[Get.Dest], { tag: 'Value', value: left !== right });
                     break;
-                case 'Label':
+                }
+                case 'Label': {
                     previous_block = current_block;
                     current_block  = (instructions[pc] as Label)[Get.Left];
                     break;
-                case 'Jump':
+                }
+                case 'Jump': {
                     pc = find_label(instructions, instruc[Get.Left]);
                     previous_block = current_block;
                     current_block  = (instructions[pc] as Label)[Get.Left];
                     break;
-                case 'Branch':
-                    if (get_boolean(reg.get(instruc[Get.Last]))) {
+                }
+                case 'Branch': {
+                    const condition = get_boolean(reg.get(instruc[Get.Last]));
+                    if (condition) {
                         pc = find_label(instructions, instruc[Get.Left]);
                     }
                     else {
@@ -66,9 +92,11 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                     previous_block = current_block;
                     current_block  = (instructions[pc] as Label)[Get.Left];
                     break;
-                case 'Function':
+                }
+                case 'Function': {
                     throw Error(`encountered unexpected function body of '${instruc[Get.Left]}'.`)
-                case 'Call':
+                }
+                case 'Call': {
                     stack.push({ registers: new Map<Register, Value>(),
                                  return_pc: pc,
                                  return_block: current_block });
@@ -83,14 +111,18 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                     previous_block = current_block;
                     current_block  = (instructions[pc] as Function)[Get.Left];
                     break;
-                case 'Return':
+                }
+                case 'Return': {
                     pc = assert_defined(top(stack).return_pc);
-                    previous_block = current_block;
-                    current_block  = assert_defined(top(stack).return_block);
-                    previous(stack).registers.set((instructions[pc] as Call)[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
+                    previous_block      = current_block;
+                    current_block       = assert_defined(top(stack).return_block);
+                    const fn: Call      = instructions[pc] as Call;
+                    const result: Value = assert_defined(reg.get(instruc[Get.Left]));
+                    previous(stack).registers.set(fn[Get.Dest], result);
                     stack.pop();
                     break;
-                case 'Phi':
+                }
+                case 'Phi': {
                     if (previous_block === find_label_for_register(instructions, instruc[Get.Left])) {
                         reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
                     }
@@ -101,6 +133,7 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                         throw Error(`cannot compute Phi(${instruc[Get.Left]}, ${instruc[Get.Right]}) when previous block is '${previous_block}'.`)
                     }
                     break;
+                }
                 case 'Exit':
                     return assert_defined(reg.get(instruc[Get.Left])).value;
                 default:
