@@ -255,4 +255,37 @@ describe('static single assignment', () => {
         ];
         expect(evaluate(input)).toBe(3);
     });
+
+    it.skip('phi node must allow assignment from dominator blocks which are not the immediate dominator', () => {
+        // Control flow graph with a split in the Entry node and a Join in node D
+        //
+        //      Entry
+        //      /   \
+        //     A     B
+        //      \    |
+        //       \   C
+        //        \ /
+        //         D
+        //
+        const input: Instruction[] = [
+            [ '%condition', 'Const', false ],
+            [ null, 'Branch', '@A', '@B', '%condition' ],
+
+            [ null, 'Label', '@A' ],
+            [ '%alpha', 'Const', 10 ],
+            
+            [ null, 'Label', '@B' ],
+            [ '%bravo', 'Const', 20 ],
+            
+            [ null, 'Label', '@C' ],
+            [ '%charlie', 'Const', 21 ],
+            
+            [ null, 'Label', '@D' ],
+            [ '%grandparent', 'Phi',   '%alpha', '%bravo' ],
+            [ '%parent', 'Phi',   '%alpha', '%charlie' ],
+            [ '%total', 'Add', '%grandparent', '%parent'],
+            [ null, 'Exit',  '%total' ],
+        ];
+        expect(evaluate(input)).toBe(41);
+    });
 });
