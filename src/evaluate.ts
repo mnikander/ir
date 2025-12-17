@@ -158,7 +158,8 @@ function previous(stack: Frame[]): Frame {
 }
 
 function find_label(instructions: readonly Instruction[], label: string): number {
-    return instructions.findIndex((inst: Instruction) => { return (inst[Get.Tag] === 'Label' || inst[Get.Tag] === 'Function') && inst[Get.Left] === label; });
+    const isCorrectLabelOrFunction = (inst: Instruction) => { return (inst[Get.Tag] === 'Label' || inst[Get.Tag] === 'Function') && inst[Get.Left] === label; };
+    return instructions.findIndex(isCorrectLabelOrFunction);
 }
 
 function find_label_for_register(instructions: readonly Instruction[], register: Register): string {
