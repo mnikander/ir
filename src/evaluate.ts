@@ -1,8 +1,9 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { assert_defined, get_boolean, get_number } from './type_assertions.ts'
-import { Call, Function, Get, Instruction, Label, RawValue, Register, Value, Add, Subtract, Multiply, Divide, Remainder, Equal, Unequal } from './instructions.ts'
+import { assert_defined, get_boolean } from './type_assertions.ts'
+import { Call, Function, Get, Instruction, Label, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
+import { arithmetic, comparison } from "./basic_operations.ts";
 
 type Frame = { registers: Map<Register, Value>, return_pc: undefined | number, return_block: undefined | string };
 
@@ -156,16 +157,4 @@ function find_label_for_register(instructions: readonly Instruction[], register:
         }
     }
     return label;
-}
-
-function arithmetic(instruction: Add | Subtract | Multiply | Divide | Remainder, registers: Map<Register, Value>, op: (left: number, right: number)=>number): Value {
-    const left: number = get_number(registers.get(instruction[Get.Left]));
-    const right: number = get_number(registers.get(instruction[Get.Right]));
-    return { tag: 'Value', value: op(left, right) };
-}
-
-function comparison(instruction: Equal | Unequal, registers: Map<Register, Value>, op: (left: RawValue, right: RawValue)=>boolean): Value {
-    const left = assert_defined(registers.get(instruction[Get.Left])).value;
-    const right = assert_defined(registers.get(instruction[Get.Right])).value;
-    return { tag: 'Value', value: op(left, right) };
 }
