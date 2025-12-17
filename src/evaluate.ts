@@ -20,14 +20,12 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
             const reg: Map<Register, Value>  = top(stack).registers;
     
             switch (instruc[Get.Tag]) {
-                case 'Const': {
+                case 'Const':
                     reg.set(instruc[Get.Dest], { tag: 'Value', value: instruc[Get.Left] });
                     break;
-                }
-                case 'Copy': {
+                case 'Copy':
                     reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
                     break;
-                }
                 case 'Add':
                     reg.set(instruc[Get.Dest], arithmetic(instruc, reg, (l: number, r: number) => {return l + r;}));
                     break;
