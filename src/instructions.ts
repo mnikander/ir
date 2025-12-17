@@ -13,7 +13,8 @@ export enum Get {
     Last  = 4,
 }
 
-export type Instruction = Add | Subtract | Multiply | Divide | Remainder | Const | Copy | Equal | Unequal | Label | Jump | Branch | Function | Call | Return | Phi | Exit;
+export type Instruction = Const | Copy | Add | Subtract | Multiply | Divide | Remainder | Equal | Unequal | Label | Function | Call | Jump | Branch | Return | Exit | Phi;
+export type Terminator  = Jump | Branch | Return | Exit;
 export type Const       = [ destination: Register, tag: 'Const',     constant: RawValue ];
 export type Copy        = [ destination: Register, tag: 'Copy',      source: Register ];
 export type Add         = [ destination: Register, tag: 'Add',       left: Register, right: Register ];
@@ -24,10 +25,10 @@ export type Remainder   = [ destination: Register, tag: 'Remainder', left: Regis
 export type Equal       = [ destination: Register, tag: 'Equal',     left: Register, right: Register ];
 export type Unequal     = [ destination: Register, tag: 'Unequal',   left: Register, right: Register ];
 export type Label       = [ destination: null,     tag: 'Label',     label: LabelName ];
-export type Jump        = [ destination: null,     tag: 'Jump',      label: LabelName ];
-export type Branch      = [ destination: null,     tag: 'Branch',    thenLabel: LabelName, elseLabel: LabelName, condition: Register ];
 export type Function    = [ destination: null,     tag: 'Function',  label: LabelName, parameters: Register[] ];
 export type Call        = [ destination: Register, tag: 'Call',      label: LabelName, arguments: Register[] ];
+export type Jump        = [ destination: null,     tag: 'Jump',      label: LabelName ];
+export type Branch      = [ destination: null,     tag: 'Branch',    thenLabel: LabelName, elseLabel: LabelName, condition: Register ];
 export type Return      = [ destination: null,     tag: 'Return',    left: Register ];
 export type Exit        = [ destination: null,     tag: 'Exit',      left: Register ];
 export type Phi         = [ destination: Register, tag: 'Phi',       left: Register, right: Register ];
