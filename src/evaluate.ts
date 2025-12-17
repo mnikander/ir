@@ -124,18 +124,6 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
     }
 }
 
-function arithmetic(instruction: Add | Subtract | Multiply | Divide | Remainder, registers: Map<Register, Value>, op: (left: number, right: number)=>(number)): Value {
-    const left: number = get_number(registers.get(instruction[Get.Left]));
-    const right: number = get_number(registers.get(instruction[Get.Right]));
-    return { tag: 'Value', value: op(left, right) };
-}
-
-function comparison(instruction: Equal | Unequal, registers: Map<Register, Value>, op: (left: RawValue, right: RawValue)=>boolean): Value {
-    const left = assert_defined(registers.get(instruction[Get.Left])).value;
-    const right = assert_defined(registers.get(instruction[Get.Right])).value;
-    return { tag: 'Value', value: op(left, right) };
-}
-
 function top(stack: Frame[]): Frame {
     return assert_defined(stack[stack.length - 1]);
 }
@@ -168,4 +156,16 @@ function find_label_for_register(instructions: readonly Instruction[], register:
         }
     }
     return label;
+}
+
+function arithmetic(instruction: Add | Subtract | Multiply | Divide | Remainder, registers: Map<Register, Value>, op: (left: number, right: number)=>number): Value {
+    const left: number = get_number(registers.get(instruction[Get.Left]));
+    const right: number = get_number(registers.get(instruction[Get.Right]));
+    return { tag: 'Value', value: op(left, right) };
+}
+
+function comparison(instruction: Equal | Unequal, registers: Map<Register, Value>, op: (left: RawValue, right: RawValue)=>boolean): Value {
+    const left = assert_defined(registers.get(instruction[Get.Left])).value;
+    const right = assert_defined(registers.get(instruction[Get.Right])).value;
+    return { tag: 'Value', value: op(left, right) };
 }
