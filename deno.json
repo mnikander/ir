@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "@std/testing/bdd": "jsr:@std/testing/bdd",
+    "@std/expect": "jsr:@std/expect"
+  }
+}
