@@ -1,8 +1,8 @@
 # Intermediate Representation
 
 An interpreter for an intermediate representation (IR).
-The intermediate representation is based on three-address code.
-Like all IRs, it sits between high-level languages such as C or TypeScript on one end and Assembly on the other end.
+This IR is based on three-address code (3AC aka TAC) and static single-assignment (SSA) form.
+Like all IRs, it sits between high-level languages such as C or TypeScript on one end, and Assembly on the other end.
 
 ## Getting started
 
