@@ -55,9 +55,6 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                     reg.set(instruc[Get.Dest], { tag: 'Value', value: left !== right });
                     break;
                 }
-                case 'Label': {
-                    throw Error(`encountered unexpected Label '${instruc[Get.Left]}'.`)
-                }
                 case 'Jump': {
                     pc = find_label(instructions, instruc[Get.Left]);
                     previous_block = current_block;
@@ -75,9 +72,6 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                     previous_block = current_block;
                     current_block  = (instructions[pc] as Label)[Get.Left];
                     break;
-                }
-                case 'Function': {
-                    throw Error(`encountered unexpected Function '${instruc[Get.Left]}'.`)
                 }
                 case 'Call': {
                     stack.push({ registers: new Map<Register, Value>(),
@@ -121,6 +115,10 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 }
                 case 'Exit':
                     return assert_defined(reg.get(instruc[Get.Left])).value;
+                case 'Label':
+                    throw Error(`encountered unexpected Label '${instruc[Get.Left]}'.`)
+                case 'Function':
+                    throw Error(`encountered unexpected Function '${instruc[Get.Left]}'.`)
                 default:
                     throw Error(`unhandled instruction type '${(instruc as Instruction)[Get.Tag]}'`);
             }
