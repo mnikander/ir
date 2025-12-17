@@ -18,4 +18,5 @@
 |016|2025-12-14|           | IR         | register names as strings instead of numbers        | Makes the input code easier to read. Makes it easier to differentiate arguments and temporary registers and allows giving similar names to different versions of a variable.|
 |017|2025-12-14|           | IR         | register and argument names always start with `%`   | Makes it easy to identify what is a register and what isn't. This notation is consistent with LLVM IR.|
 |018|2025-12-14|           | interface  | do not support immediate values (yet)               | Simplifies interpreter. Allowing instructions such as `Add` to take Registers or Immediate Values as arguments is immensely practical. The code would always have to check if an argument is a Register or a Constant though.|
+|019|2025-12-17|           | project    | create deno.json file instead of direct imports     | Needed for CI pipeline via Github Actions. Deno automatically checks for a deno.json or package.json and installs the necessary dependencies on the system.|
 |   |          |           |            |                                                     | |
