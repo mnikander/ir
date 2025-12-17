@@ -8,7 +8,7 @@ type Frame = { registers: Map<Register, Value>, return_pc: undefined | number, r
 
 export function evaluate(instructions: readonly Instruction[]): RawValue {
     instructions = verify_single_assignment(instructions);
-    let stack: Frame[] = [ {registers: new Map<Register, Value>(), return_pc: undefined, return_block: undefined } ];
+    const stack: Frame[] = [ {registers: new Map<Register, Value>(), return_pc: undefined, return_block: undefined } ];
     let pc: number                         = 0;
     let current_block: string              = 'Entry';
     let previous_block: undefined | string = undefined;
