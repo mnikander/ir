@@ -71,9 +71,7 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                     break;
                 }
                 case 'Label': {
-                    previous_block = current_block;
-                    current_block  = (instructions[pc] as Label)[Get.Left];
-                    break;
+                    throw Error(`encountered unexpected Label '${instruc[Get.Left]}'.`)
                 }
                 case 'Jump': {
                     pc = find_label(instructions, instruc[Get.Left]);
@@ -94,7 +92,7 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                     break;
                 }
                 case 'Function': {
-                    throw Error(`encountered unexpected function body of '${instruc[Get.Left]}'.`)
+                    throw Error(`encountered unexpected Function '${instruc[Get.Left]}'.`)
                 }
                 case 'Call': {
                     stack.push({ registers: new Map<Register, Value>(),

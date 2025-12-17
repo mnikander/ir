@@ -49,20 +49,16 @@ describe('arithmetic operations', () => {
 });
 
 describe('labels, jump, and branch', () => {
-    it('must skip over labels as if they are a "no-op"', () => {
+    it('must report an error if a block falls through into the next label', () => {
         const input: Instruction[] = [
             [ '%0', 'Const', 11 ],
+            // the missing Terminator statement here, should cause an error
 
             [ null, 'Label', '@First' ],
             [ '%1', 'Const', 22 ],
-
-            [ null, 'Label', '@Second' ],
-            [ '%2', 'Add',   '%0', '%1' ],
-
-            [ null, 'Label', '@Third' ],
             [ null, 'Exit',  '%2' ],
         ];
-        expect(evaluate(input)).toBe(33);
+        expect(() => {evaluate(input)}).toThrow();
     });
 
     it('must execute the correct line of code after an unconditional jump', () => {
@@ -71,6 +67,7 @@ describe('labels, jump, and branch', () => {
 
             [ null, 'Label', '@First' ],
             [ '%1', 'Const', 11 ],
+            [ null, 'Exit',  '%1' ],
             
             [ null, 'Label', '@Second' ],
             [ '%2', 'Const', 22 ],
@@ -93,6 +90,7 @@ describe('labels, jump, and branch', () => {
 
             [ null, 'Label', '@Else' ],
             [ '%5', 'Add',   '%2', '%3' ],
+            [ null, 'Jump',  '@End' ],
 
             [ null, 'Label', '@End' ],
             [ null, 'Exit',  '%4' ],
@@ -114,6 +112,7 @@ describe('labels, jump, and branch', () => {
             
             [ null, 'Label', '@Else' ],
             [ '%5', 'Add',   '%2', '%3' ],
+            [ null, 'Jump',  '@End' ],
             
             [ null, 'Label', '@End' ],
             [ null, 'Exit',  '%5' ],
@@ -168,6 +167,7 @@ describe('function call', () => {
             [ '%7', 'Subtract', '%n', '%3' ],
             [ '%8', 'Multiply', '%n', '%acc' ],
             [ '%9', 'Call', '@factorial', ['%7', '%8'] ],
+            [ null, 'Jump', '@Termination' ],
             
             [ null, 'Label', '@Termination' ],
             [ '%10', 'Phi', '%9', '%acc' ],
@@ -222,9 +222,11 @@ describe('static single assignment', () => {
 
             [ null, 'Label', '@First' ],
             [ '%1', 'Const', 11 ],
+            [ null, 'Jump',  '@End' ],
 
             [ null, 'Label', '@Second' ],
             [ '%2', 'Const', 22 ],
+            [ null, 'Jump',  '@End' ],
 
             [ null, 'Label', '@End' ],
             [ '%3', 'Phi',  '%1', '%2' ],
@@ -243,6 +245,7 @@ describe('static single assignment', () => {
             [ '%0', 'Const', 0 ],
             [ '%1', 'Const', 1 ],
             [ '%2', 'Const', 3 ],
+            [ null, 'Jump',  '@Loop' ],
             
             [ null, 'Label', '@Loop' ],
             [ '%3', 'Phi',   '%0', '%4' ],
@@ -274,12 +277,15 @@ describe('static single assignment', () => {
 
             [ null, 'Label', '@A' ],
             [ '%alpha', 'Const', 10 ],
+            [ null, 'Jump', '@D' ],
             
             [ null, 'Label', '@B' ],
             [ '%bravo', 'Const', 20 ],
+            [ null, 'Jump', '@C' ],
             
             [ null, 'Label', '@C' ],
             [ '%charlie', 'Const', 21 ],
+            [ null, 'Jump', '@D' ],
             
             [ null, 'Label', '@D' ],
             // join the register from block A with those of block B and C respectively
