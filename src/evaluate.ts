@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { assert_defined, get_boolean, get_number } from './type_assertions.ts'
-import { Call, Function, Get, Instruction, Label, RawValue, Register, Value } from './instructions.ts'
+import { Call, Function, Get, Instruction, Label, RawValue, Register, Value, Add, Subtract, Multiply, Divide, Remainder } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
 
 type Frame = { registers: Map<Register, Value>, return_pc: undefined | number, return_block: undefined | string };
@@ -28,36 +28,21 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                     reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
                     break;
                 }
-                case 'Add': {
-                    const left: number = get_number(reg.get(instruc[Get.Left]));
-                    const right: number = get_number(reg.get(instruc[Get.Right]));
-                    reg.set(instruc[Get.Dest], { tag: 'Value', value: left + right });
+                case 'Add':
+                    reg.set(instruc[Get.Dest], arithmetic(instruc, reg, (l: number, r: number) => {return l + r;}));
                     break;
-                }
-                case 'Subtract': {
-                    const left: number = get_number(reg.get(instruc[Get.Left]));
-                    const right: number = get_number(reg.get(instruc[Get.Right]));
-                    reg.set(instruc[Get.Dest], { tag: 'Value', value: left - right });
+                case 'Subtract':
+                    reg.set(instruc[Get.Dest], arithmetic(instruc, reg, (l: number, r: number) => {return l - r;}));
                     break;
-                }
-                case 'Multiply': {
-                    const left: number = get_number(reg.get(instruc[Get.Left]));
-                    const right: number = get_number(reg.get(instruc[Get.Right]));
-                    reg.set(instruc[Get.Dest], { tag: 'Value', value: left * right });
+                case 'Multiply':
+                    reg.set(instruc[Get.Dest], arithmetic(instruc, reg, (l: number, r: number) => {return l * r;}));
                     break;
-                }
-                case 'Divide': {
-                    const left: number = get_number(reg.get(instruc[Get.Left]));
-                    const right: number = get_number(reg.get(instruc[Get.Right]));
-                    reg.set(instruc[Get.Dest], { tag: 'Value', value: left / right });
+                case 'Divide':
+                    reg.set(instruc[Get.Dest], arithmetic(instruc, reg, (l: number, r: number) => {return l / r;}));
                     break;
-                }
-                case 'Remainder': {
-                    const left: number = get_number(reg.get(instruc[Get.Left]));
-                    const right: number = get_number(reg.get(instruc[Get.Right]));
-                    reg.set(instruc[Get.Dest], { tag: 'Value', value: left % right });
+                case 'Remainder':
+                    reg.set(instruc[Get.Dest], arithmetic(instruc, reg, (l: number, r: number) => {return l % r;}));
                     break;
-                }
                 case 'Equal': {
                     const left = reg.get(instruc[Get.Left])?.value;
                     const right = reg.get(instruc[Get.Right])?.value;
@@ -147,6 +132,12 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
         // catch and then re-throw all errors, with the line-number prepended, for easier debugging
         throw Error(`Line ${pc}: ` + (error as Error).message);
     }
+}
+
+function arithmetic(instruction: Add | Subtract | Multiply | Divide | Remainder, registers: Map<Register, Value>, op: (left: number, right: number)=>(number)): Value {
+    const left: number = get_number(registers.get(instruction[Get.Left]));
+    const right: number = get_number(registers.get(instruction[Get.Right]));
+    return { tag: 'Value', value: op(left, right) };
 }
 
 function top(stack: Frame[]): Frame {
