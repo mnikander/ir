@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { assert_defined, get_boolean, get_number } from './type_assertions.ts'
-import { Call, Function, Get, Instruction, Label, RawValue, Register, Value, Add, Subtract, Multiply, Divide, Remainder } from './instructions.ts'
+import { Call, Function, Get, Instruction, Label, RawValue, Register, Value, Add, Subtract, Multiply, Divide, Remainder, Equal, Unequal } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
 
 type Frame = { registers: Map<Register, Value>, return_pc: undefined | number, return_block: undefined | string };
@@ -41,18 +41,12 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 case 'Remainder':
                     reg.set(instruc[Get.Dest], arithmetic(instruc, reg, (l: number, r: number) => {return l % r;}));
                     break;
-                case 'Equal': {
-                    const left = reg.get(instruc[Get.Left])?.value;
-                    const right = reg.get(instruc[Get.Right])?.value;
-                    reg.set(instruc[Get.Dest], { tag: 'Value', value: left === right });
+                case 'Equal':
+                    reg.set(instruc[Get.Dest], comparison(instruc, reg, (l, r) => { return l === r; }));
                     break;
-                }
-                case 'Unequal': {
-                    const left = reg.get(instruc[Get.Left])?.value;
-                    const right = reg.get(instruc[Get.Right])?.value;
-                    reg.set(instruc[Get.Dest], { tag: 'Value', value: left !== right });
+                case 'Unequal':
+                    reg.set(instruc[Get.Dest], comparison(instruc, reg, (l, r) => { return l !== r; }));
                     break;
-                }
                 case 'Jump': {
                     pc = find_label(instructions, instruc[Get.Left]);
                     previous_block = current_block;
@@ -133,6 +127,12 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
 function arithmetic(instruction: Add | Subtract | Multiply | Divide | Remainder, registers: Map<Register, Value>, op: (left: number, right: number)=>(number)): Value {
     const left: number = get_number(registers.get(instruction[Get.Left]));
     const right: number = get_number(registers.get(instruction[Get.Right]));
+    return { tag: 'Value', value: op(left, right) };
+}
+
+function comparison(instruction: Equal | Unequal, registers: Map<Register, Value>, op: (left: RawValue, right: RawValue)=>boolean): Value {
+    const left = assert_defined(registers.get(instruction[Get.Left])).value;
+    const right = assert_defined(registers.get(instruction[Get.Right])).value;
     return { tag: 'Value', value: op(left, right) };
 }
 
