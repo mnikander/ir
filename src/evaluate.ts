@@ -145,23 +145,24 @@ function find_label(program: readonly Instruction[], label: string): number {
 }
 
 function find_label_for_register(program: readonly Instruction[], register: Register): string {
-    let label: string = 'Entry';
+    let label: string = '@Entry';
     for (let index: number = 0; index < program.length; index++) {
-        const line: Instruction  = program[index];
+        const line: Instruction     = program[index];
         const dest: null | Register = line[Get.Dest];
 
-        if (line[Get.Tag] === 'Label' || line[Get.Tag] === 'Function') {
+        if (line[Get.Tag] === 'Label') {
             label = line[Get.Left];
         }
-        if (dest !== null && dest === register) {
-            return label;
-        }
         else if (line[Get.Tag] === 'Function') {
+            label = line[Get.Left];
             for (const arg of line[Get.Right]) {
                 if (arg === register) {
                     return label;
                 }
             }
+        }
+        else if (dest !== null && dest === register) {
+            return label;
         }
     }
     return label;
