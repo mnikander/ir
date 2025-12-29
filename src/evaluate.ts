@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { assert_defined, get_boolean } from './type_assertions.ts'
+import { assert_defined, get_boolean, valid } from './type_assertions.ts'
 import { Call, Function, Get, Instruction, Label, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
 import { arithmetic, comparison } from "./basic_operations.ts";
@@ -19,34 +19,35 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
             if (top(stack) === undefined) throw Error(`Bug -- no valid stack frame`);
             const instruc: Instruction       = instructions[pc];
             const reg: Map<Register, Value>  = top(stack).registers;
+            const dest: null | Register      = instruc[Get.Dest];
     
             switch (instruc[Get.Tag]) {
                 case 'Const':
-                    reg.set(instruc[Get.Dest], { tag: 'Value', value: instruc[Get.Left] });
+                    reg.set(valid(dest), { tag: 'Value', value: instruc[Get.Left] });
                     break;
                 case 'Copy':
-                    reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
+                    reg.set(valid(dest), assert_defined(reg.get(instruc[Get.Left])));
                     break;
                 case 'Add':
-                    reg.set(instruc[Get.Dest], arithmetic(instruc, reg, (l: number, r: number) => {return l + r;}));
+                    reg.set(valid(dest), arithmetic(instruc, reg, (l: number, r: number) => {return l + r;}));
                     break;
                 case 'Subtract':
-                    reg.set(instruc[Get.Dest], arithmetic(instruc, reg, (l: number, r: number) => {return l - r;}));
+                    reg.set(valid(dest), arithmetic(instruc, reg, (l: number, r: number) => {return l - r;}));
                     break;
                 case 'Multiply':
-                    reg.set(instruc[Get.Dest], arithmetic(instruc, reg, (l: number, r: number) => {return l * r;}));
+                    reg.set(valid(dest), arithmetic(instruc, reg, (l: number, r: number) => {return l * r;}));
                     break;
                 case 'Divide':
-                    reg.set(instruc[Get.Dest], arithmetic(instruc, reg, (l: number, r: number) => {return l / r;}));
+                    reg.set(valid(dest), arithmetic(instruc, reg, (l: number, r: number) => {return l / r;}));
                     break;
                 case 'Remainder':
-                    reg.set(instruc[Get.Dest], arithmetic(instruc, reg, (l: number, r: number) => {return l % r;}));
+                    reg.set(valid(dest), arithmetic(instruc, reg, (l: number, r: number) => {return l % r;}));
                     break;
                 case 'Equal':
-                    reg.set(instruc[Get.Dest], comparison(instruc, reg, (l, r) => { return l === r; }));
+                    reg.set(valid(dest), comparison(instruc, reg, (l, r) => { return l === r; }));
                     break;
                 case 'Unequal':
-                    reg.set(instruc[Get.Dest], comparison(instruc, reg, (l, r) => { return l !== r; }));
+                    reg.set(valid(dest), comparison(instruc, reg, (l, r) => { return l !== r; }));
                     break;
                 case 'Jump': {
                     pc = find_label(instructions, instruc[Get.Left]);
@@ -96,10 +97,10 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                 }
                 case 'Phi': {
                     if (previous_block === find_label_for_register(instructions, instruc[Get.Left])) {
-                        reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Left])));
+                        reg.set(valid(dest), assert_defined(reg.get(instruc[Get.Left])));
                     }
                     else if (previous_block === find_label_for_register(instructions, instruc[Get.Right])) {
-                        reg.set(instruc[Get.Dest], assert_defined(reg.get(instruc[Get.Right])));
+                        reg.set(valid(dest), assert_defined(reg.get(instruc[Get.Right])));
                     }
                     else {
                         throw Error(`cannot compute Phi(${instruc[Get.Left]}, ${instruc[Get.Right]}) when previous block is '${previous_block}'.`)
@@ -141,11 +142,13 @@ function find_label(instructions: readonly Instruction[], label: string): number
 function find_label_for_register(instructions: readonly Instruction[], register: Register): string {
     let label: string = 'Entry';
     for (let line: number = 0; line < instructions.length; line++) {
-        const instruc: Instruction = instructions[line];
+        const instruc: Instruction  = instructions[line];
+        const dest: null | Register = instruc[Get.Dest];
+
         if (instruc[Get.Tag] === 'Label' || instruc[Get.Tag] === 'Function') {
             label = instruc[Get.Left];
         }
-        if (instruc[Get.Dest] !== null && instruc[Get.Dest] === register) {
+        if (dest !== null && dest === register) {
             return label;
         }
         else if (instruc[Get.Tag] === 'Function') {
