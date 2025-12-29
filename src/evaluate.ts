@@ -11,7 +11,7 @@ export function evaluate(program: readonly Instruction[]): RawValue {
     program = verify_single_assignment(program);
     const stack: Frame[] = [ {registers: new Map<Register, Value>(), return_pc: undefined, return_block: undefined } ];
     let pc: number                         = 0;
-    let current_block: string              = 'Entry';
+    let current_block: string              = '@Entry';
     let previous_block: undefined | string = undefined;
 
     try {
