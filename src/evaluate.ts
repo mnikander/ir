@@ -68,14 +68,17 @@ export function evaluate(program: readonly Instruction[]): RawValue {
                     break;
                 }
                 case 'Call': {
+                    const new_pc: number = find_label(program, instruc[Get.Left]);
+                    const provided: number = valid(instruc[Get.Right]).length;
+                    const expected: number = valid(program[new_pc][Get.Right]).length;
+                    if (provided !== expected) {
+                        throw Error(`function '${program[new_pc][Get.Left]}' expects ${expected} arguments, got ${provided}`);
+                    }
                     stack.push({ registers: new Map<Register, Value>(),
                                  return_pc: pc,
                                  return_block: current_block });
-                    pc = find_label(program, instruc[Get.Left]);
-                    if (instruc[Get.Right]?.length !== program[pc][Get.Right]?.length) {
-                        throw Error(`Line ${top(stack).return_pc}: function '${program[pc][Get.Left]}' expects ${program[pc][Get.Right]?.length} arguments, got ${instruc[Get.Right]?.length}`);
-                    }
-                    // copy register contents into new frame as function arguments, with the parameter names as their register names
+                    pc = new_pc;
+                    // copy register contents into new frame, as function arguments
                     for (let i: number = 0; i < instruc[Get.Right]?.length; i++) {
                         const parameter: Register = (program[pc] as Function)[Get.Right][i];
                         const value: Value        = valid(reg.get(instruc[Get.Right][i]));
@@ -96,14 +99,16 @@ export function evaluate(program: readonly Instruction[]): RawValue {
                     break;
                 }
                 case 'Phi': {
-                    if (previous_block === find_label_for_register(program, instruc[Get.Left])) {
-                        reg.set(valid(dest), valid(reg.get(instruc[Get.Left])));
+                    const left:  Register = instruc[Get.Left];
+                    const right: Register = instruc[Get.Right];
+                    if (previous_block === find_label_for_register(program, left)) {
+                        reg.set(valid(dest), valid(reg.get(left)));
                     }
-                    else if (previous_block === find_label_for_register(program, instruc[Get.Right])) {
-                        reg.set(valid(dest), valid(reg.get(instruc[Get.Right])));
+                    else if (previous_block === find_label_for_register(program, right)) {
+                        reg.set(valid(dest), valid(reg.get(right)));
                     }
                     else {
-                        throw Error(`cannot compute Phi(${instruc[Get.Left]}, ${instruc[Get.Right]}) when previous block is '${previous_block}'.`)
+                        throw Error(`cannot compute Phi(${left}, ${right}) when previous block is '${previous_block}'.`)
                     }
                     break;
                 }
