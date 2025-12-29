@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { assert_defined, get_boolean, valid } from './type_assertions.ts'
+import { get_boolean, valid } from './type_assertions.ts'
 import { Call, Function, Get, Instruction, Label, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
 import { arithmetic, comparison } from "./basic_operations.ts";
@@ -26,7 +26,7 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                     reg.set(valid(dest), { tag: 'Value', value: instruc[Get.Left] });
                     break;
                 case 'Copy':
-                    reg.set(valid(dest), assert_defined(reg.get(instruc[Get.Left])));
+                    reg.set(valid(dest), valid(reg.get(instruc[Get.Left])));
                     break;
                 case 'Add':
                     reg.set(valid(dest), arithmetic(instruc, reg, (l: number, r: number) => {return l + r;}));
@@ -78,7 +78,7 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                     // copy register contents into new frame as function arguments, with the parameter names as their register names
                     for (let i: number = 0; i < instruc[Get.Right]?.length; i++) {
                         const parameter: Register = (instructions[pc] as Function)[Get.Right][i];
-                        const value: Value        = assert_defined(reg.get(instruc[Get.Right][i]));
+                        const value: Value        = valid(reg.get(instruc[Get.Right][i]));
                         top(stack).registers.set(parameter, value);
                     }
                     previous_block = current_block;
@@ -86,21 +86,21 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                     break;
                 }
                 case 'Return': {
-                    pc = assert_defined(top(stack).return_pc);
+                    pc                  = valid(top(stack).return_pc);
                     previous_block      = current_block;
-                    current_block       = assert_defined(top(stack).return_block);
+                    current_block       = valid(top(stack).return_block);
                     const call: Call    = instructions[pc] as Call;
-                    const result: Value = assert_defined(reg.get(instruc[Get.Left]));
+                    const result: Value = valid(reg.get(instruc[Get.Left]));
                     previous(stack).registers.set(call[Get.Dest], result);
                     stack.pop();
                     break;
                 }
                 case 'Phi': {
                     if (previous_block === find_label_for_register(instructions, instruc[Get.Left])) {
-                        reg.set(valid(dest), assert_defined(reg.get(instruc[Get.Left])));
+                        reg.set(valid(dest), valid(reg.get(instruc[Get.Left])));
                     }
                     else if (previous_block === find_label_for_register(instructions, instruc[Get.Right])) {
-                        reg.set(valid(dest), assert_defined(reg.get(instruc[Get.Right])));
+                        reg.set(valid(dest), valid(reg.get(instruc[Get.Right])));
                     }
                     else {
                         throw Error(`cannot compute Phi(${instruc[Get.Left]}, ${instruc[Get.Right]}) when previous block is '${previous_block}'.`)
@@ -108,7 +108,7 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
                     break;
                 }
                 case 'Exit':
-                    return assert_defined(reg.get(instruc[Get.Left])).value;
+                    return valid(reg.get(instruc[Get.Left])).value;
                 case 'Label':
                     throw Error(`encountered unexpected Label '${instruc[Get.Left]}'.`)
                 case 'Function':
@@ -127,11 +127,11 @@ export function evaluate(instructions: readonly Instruction[]): RawValue {
 }
 
 function top(stack: Frame[]): Frame {
-    return assert_defined(stack[stack.length - 1]);
+    return valid(stack[stack.length - 1]);
 }
 
 function previous(stack: Frame[]): Frame {
-    return assert_defined(stack[stack.length - 2]);
+    return valid(stack[stack.length - 2]);
 }
 
 function find_label(instructions: readonly Instruction[], label: string): number {

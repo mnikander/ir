@@ -20,15 +20,6 @@ export function get_number(value: undefined | Value): number {
     }
 }
 
-export function assert_defined<T> (value: undefined | T): T {
-    if (value === undefined) {
-        throw Error('expected a defined value');
-    }
-    else {
-        return value;
-    }
-}
-
 export function valid<T> (value: null | undefined | T): T {
     if (value === undefined) {
         throw Error('expected a defined value');
