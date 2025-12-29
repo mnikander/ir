@@ -3,7 +3,7 @@
 import { get_boolean, valid } from './type_assertions.ts'
 import { Call, Function, Get, Instruction, Label, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
-import { arithmetic, comparison } from "./basic_operations.ts";
+import { add, constant, copy, divide, equal, multiply, remainder, subtract, unequal } from "./basic_operations.ts";
 
 type Frame = { registers: Map<Register, Value>, return_pc: undefined | number, return_block: undefined | string };
 
@@ -22,33 +22,15 @@ export function evaluate(program: readonly Instruction[]): RawValue {
             const dest: null | Register      = line[Get.Dest];
     
             switch (line[Get.Tag]) {
-                case 'Const':
-                    reg.set(valid(dest), { tag: 'Value', value: line[Get.Left] });
-                    break;
-                case 'Copy':
-                    reg.set(valid(dest), valid(reg.get(line[Get.Left])));
-                    break;
-                case 'Add':
-                    reg.set(valid(dest), arithmetic(line, reg, (l: number, r: number) => {return l + r;}));
-                    break;
-                case 'Subtract':
-                    reg.set(valid(dest), arithmetic(line, reg, (l: number, r: number) => {return l - r;}));
-                    break;
-                case 'Multiply':
-                    reg.set(valid(dest), arithmetic(line, reg, (l: number, r: number) => {return l * r;}));
-                    break;
-                case 'Divide':
-                    reg.set(valid(dest), arithmetic(line, reg, (l: number, r: number) => {return l / r;}));
-                    break;
-                case 'Remainder':
-                    reg.set(valid(dest), arithmetic(line, reg, (l: number, r: number) => {return l % r;}));
-                    break;
-                case 'Equal':
-                    reg.set(valid(dest), comparison(line, reg, (l, r) => { return l === r; }));
-                    break;
-                case 'Unequal':
-                    reg.set(valid(dest), comparison(line, reg, (l, r) => { return l !== r; }));
-                    break;
+                case 'Const':     reg.set(valid(dest), constant(line));       break;
+                case 'Copy':      reg.set(valid(dest), copy(line, reg));      break;
+                case 'Add':       reg.set(valid(dest), add(line, reg));       break;
+                case 'Subtract':  reg.set(valid(dest), subtract(line, reg));  break;
+                case 'Multiply':  reg.set(valid(dest), multiply(line, reg));  break;
+                case 'Divide':    reg.set(valid(dest), divide(line, reg));    break;
+                case 'Remainder': reg.set(valid(dest), remainder(line, reg)); break;
+                case 'Equal':     reg.set(valid(dest), equal(line, reg));     break;
+                case 'Unequal':   reg.set(valid(dest), unequal(line, reg));   break;
                 case 'Jump': {
                     pc = find_label(program, line[Get.Left]);
                     previous_block = current_block;
