@@ -3,7 +3,7 @@
 import { valid } from './type_assertions.ts'
 import { Get, Instruction, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
-import { add, branch, call, constant, copy, divide, equal, jump, multiply, phi, previous, remainder, returning, State, subtract, top, unequal } from "./state.ts";
+import { add, branch, call, constant, copy, divide, equal, jump, multiply, phi, remainder, returning, State, subtract, top, unequal } from "./state.ts";
 
 export function evaluate(program: readonly Instruction[]): RawValue {
     program = verify_single_assignment(program);
