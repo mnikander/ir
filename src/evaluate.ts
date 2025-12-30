@@ -19,20 +19,20 @@ export function evaluate(program: readonly Instruction[]): RawValue {
             const line: Instruction          = program[state.pc];
     
             switch (line[Get.Tag]) {
-                case 'Const':     state = constant(state, line);  break;
-                case 'Copy':      state = copy(state, line);      break;
-                case 'Add':       state = add(state, line);       break;
-                case 'Subtract':  state = subtract(state, line);  break;
-                case 'Multiply':  state = multiply(state, line);  break;
-                case 'Divide':    state = divide(state, line);    break;
+                case 'Const':     state =  constant(state, line); break;
+                case 'Copy':      state =      copy(state, line); break;
+                case 'Add':       state =       add(state, line); break;
+                case 'Subtract':  state =  subtract(state, line); break;
+                case 'Multiply':  state =  multiply(state, line); break;
+                case 'Divide':    state =    divide(state, line); break;
                 case 'Remainder': state = remainder(state, line); break;
-                case 'Equal':     state = equal(state, line);     break;
-                case 'Unequal':   state = unequal(state, line);   break;
-                case 'Jump':      state = jump(state, line, program); break;
-                case 'Branch':    state = branch(state, line, program); break;
-                case 'Call':      state = call(state, line, program); break;
+                case 'Equal':     state =     equal(state, line); break;
+                case 'Unequal':   state =   unequal(state, line); break;
+                case 'Jump':      state =      jump(state, line, program); break;
+                case 'Branch':    state =    branch(state, line, program); break;
+                case 'Call':      state =      call(state, line, program); break;
                 case 'Return':    state = returning(state, line, program); break;
-                case 'Phi':       state = phi(state, line, program); break;
+                case 'Phi':       state =       phi(state, line, program); break;
                 case 'Exit':      return exit(state, line);
                 case 'Block':     throw Error(`encountered unexpected Block '${line[Get.Left]}'.`);
                 case 'Function':  throw Error(`encountered unexpected Function '${line[Get.Left]}'.`);
