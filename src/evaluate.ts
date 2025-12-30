@@ -3,7 +3,7 @@
 import { get_boolean, valid } from './type_assertions.ts'
 import { Call, find_label, find_label_for_register, Function, Get, Instruction, Block, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
-import { add, branch, constant, copy, divide, equal, jump, multiply, previous, remainder, State, subtract, top, unequal } from "./state.ts";
+import { add, branch, call, constant, copy, divide, equal, jump, multiply, previous, remainder, State, subtract, top, unequal } from "./state.ts";
 
 export function evaluate(program: readonly Instruction[]): RawValue {
     program = verify_single_assignment(program);
@@ -33,27 +33,7 @@ export function evaluate(program: readonly Instruction[]): RawValue {
                 case 'Unequal':   state = unequal(line, state);   break;
                 case 'Jump':      state = jump(line, state, program); break;
                 case 'Branch':    state = branch(line, state, program); break;
-                case 'Call': {
-                    const new_pc: number   = find_label(program, line[Get.Left]);
-                    const provided: number = valid(line[Get.Right]).length;
-                    const expected: number = valid(program[new_pc][Get.Right]).length;
-                    if (provided !== expected) {
-                        throw Error(`function '${program[new_pc][Get.Left]}' expects ${expected} arguments, got ${provided}`);
-                    }
-                    state.stack.push({ registers: new Map<Register, Value>(),
-                                 return_pc: state.pc,
-                                 return_block: state.current_block });
-                    state.pc = new_pc;
-                    // copy register contents into new frame, as function arguments
-                    for (let i: number = 0; i < line[Get.Right]?.length; i++) {
-                        const parameter: Register = (program[state.pc] as Function)[Get.Right][i];
-                        const value: Value        = valid(reg.get(line[Get.Right][i]));
-                        top(state.stack).registers.set(parameter, value);
-                    }
-                    state.previous_block = state.current_block;
-                    state.current_block  = (program[state.pc] as Function)[Get.Left];
-                    break;
-                }
+                case 'Call':      state = call(line, state, program); break;
                 case 'Return': {
                     state.pc             = valid(top(state.stack).return_pc);
                     state.previous_block = state.current_block;

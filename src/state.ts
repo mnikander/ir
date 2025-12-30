@@ -1,4 +1,6 @@
-import { Copy, Const, Add, Subtract, Multiply, Divide, Remainder, Register, Value, Get, Instruction, Equal, Unequal, Jump, find_label, Block, Branch } from "./instructions.ts";
+import { Add, Block, Branch, Call, Copy, Const, Divide, Equal, find_label, 
+    Function, Get, Instruction, Jump, Multiply, Remainder, Register, Subtract, 
+    Unequal, Value } from "./instructions.ts";
 import { get_boolean, get_number, valid } from "./type_assertions.ts";
 
 export type Frame = { 
@@ -110,5 +112,28 @@ export function branch(line: Branch, state: State, program: readonly Instruction
     }
     state.previous_block = state.current_block;
     state.current_block  = (program[state.pc] as Block)[Get.Left];
+    return state;
+}
+
+export function call(line: Call, state: State, program: readonly Instruction[]): State {
+    const old_reg: Map<Register, Value> = registers(state);
+    const new_pc: number   = find_label(program, line[Get.Left]);
+    const provided: number = valid(line[Get.Right]).length;
+    const expected: number = valid(program[new_pc][Get.Right]).length;
+    if (provided !== expected) {
+        throw Error(`function '${program[new_pc][Get.Left]}' expects ${expected} arguments, got ${provided}`);
+    }
+    state.stack.push({ registers: new Map<Register, Value>(),
+                    return_pc: state.pc,
+                    return_block: state.current_block });
+    state.pc = new_pc;
+    // copy register contents into new frame, as function arguments
+    for (let i: number = 0; i < line[Get.Right]?.length; i++) {
+        const parameter: Register = (program[state.pc] as Function)[Get.Right][i];
+        const value: Value        = valid(old_reg.get(line[Get.Right][i]));
+        registers(state).set(parameter, value);
+    }
+    state.previous_block = state.current_block;
+    state.current_block  = (program[state.pc] as Function)[Get.Left];
     return state;
 }
