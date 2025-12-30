@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { get_boolean, valid } from './type_assertions.ts'
-import { Call, find_label, find_label_for_register, Function, Get, Instruction, Block, RawValue, Register, Value } from './instructions.ts'
+import { valid } from './type_assertions.ts'
+import { Call, find_label_for_register, Get, Instruction, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
 import { add, branch, call, constant, copy, divide, equal, jump, multiply, previous, remainder, State, subtract, top, unequal } from "./state.ts";
 
