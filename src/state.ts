@@ -1,5 +1,5 @@
-import { Copy, Const, Add, Subtract, Multiply, Divide, Remainder, Register, Value, Get, Instruction, Equal, Unequal, Jump, find_label, Block } from "./instructions.ts";
-import { get_number, valid } from "./type_assertions.ts";
+import { Copy, Const, Add, Subtract, Multiply, Divide, Remainder, Register, Value, Get, Instruction, Equal, Unequal, Jump, find_label, Block, Branch } from "./instructions.ts";
+import { get_boolean, get_number, valid } from "./type_assertions.ts";
 
 export type Frame = { 
     registers: Map<Register, Value>,
@@ -95,6 +95,19 @@ export function unequal(line: Unequal, state: State): State {
 
 export function jump(line: Jump, state: State, program: readonly Instruction[]): State {
     state.pc = find_label(program, line[Get.Left]);
+    state.previous_block = state.current_block;
+    state.current_block  = (program[state.pc] as Block)[Get.Left];
+    return state;
+}
+
+export function branch(line: Branch, state: State, program: readonly Instruction[]): State {
+    const condition = get_boolean(registers(state).get(line[Get.Last]));
+    if (condition) {
+        state.pc = find_label(program, line[Get.Left]);
+    }
+    else {
+        state.pc = find_label(program, line[Get.Right]);
+    }
     state.previous_block = state.current_block;
     state.current_block  = (program[state.pc] as Block)[Get.Left];
     return state;
