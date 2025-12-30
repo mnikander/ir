@@ -1,4 +1,4 @@
-import { Copy, Const, Add, Subtract, Multiply, Divide, Remainder, Register, Value, Get, Instruction, Equal, Unequal } from "./instructions.ts";
+import { Copy, Const, Add, Subtract, Multiply, Divide, Remainder, Register, Value, Get, Instruction, Equal, Unequal, Jump, find_label, Block } from "./instructions.ts";
 import { get_number, valid } from "./type_assertions.ts";
 
 export type Frame = { 
@@ -90,5 +90,12 @@ export function unequal(line: Unequal, state: State): State {
     const left  = valid(registers(state).get(line[Get.Left])).value;
     const right = valid(registers(state).get(line[Get.Right])).value;
     registers(state).set(dest(line), { tag: 'Value', value: left !== right });
+    return state;
+}
+
+export function jump(line: Jump, state: State, program: readonly Instruction[]): State {
+    state.pc = find_label(program, line[Get.Left]);
+    state.previous_block = state.current_block;
+    state.current_block  = (program[state.pc] as Block)[Get.Left];
     return state;
 }

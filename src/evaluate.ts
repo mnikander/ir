@@ -3,7 +3,7 @@
 import { get_boolean, valid } from './type_assertions.ts'
 import { Call, find_label, find_label_for_register, Function, Get, Instruction, Block, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
-import { add, constant, copy, divide, equal, multiply, previous, remainder, State, subtract, top, unequal } from "./state.ts";
+import { add, constant, copy, divide, equal, jump, multiply, previous, remainder, State, subtract, top, unequal } from "./state.ts";
 
 export function evaluate(program: readonly Instruction[]): RawValue {
     program = verify_single_assignment(program);
@@ -31,12 +31,7 @@ export function evaluate(program: readonly Instruction[]): RawValue {
                 case 'Remainder': state = remainder(line, state); break;
                 case 'Equal':     state = equal(line, state);     break;
                 case 'Unequal':   state = unequal(line, state);   break;
-                case 'Jump': {
-                    state.pc             = find_label(program, line[Get.Left]);
-                    state.previous_block = state.current_block;
-                    state.current_block  = (program[state.pc] as Block)[Get.Left];
-                    break;
-                }
+                case 'Jump':      state = jump(line, state, program); break;
                 case 'Branch': {
                     const condition = get_boolean(reg.get(line[Get.Last]));
                     if (condition) {
