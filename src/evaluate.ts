@@ -2,7 +2,7 @@
 
 import { Get, Instruction, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
-import { add, branch, call, constant, copy, divide, equal, exit, jump, multiply, phi, remainder, returning, State, subtract, top, unequal } from "./state.ts";
+import { add, branch, call, constant, copy, divide, drop, equal, exit, jump, move, multiply, phi, remainder, returning, State, subtract, top, unequal } from "./state.ts";
 
 export function evaluate(program: readonly Instruction[]): RawValue {
     program = verify_single_assignment(program);
@@ -21,6 +21,8 @@ export function evaluate(program: readonly Instruction[]): RawValue {
             switch (line[Get.Tag]) {
                 case 'Const':     state =  constant(state, line); break;
                 case 'Copy':      state =      copy(state, line); break;
+                case 'Drop':      state =      drop(state, line); break;
+                case 'Move':      state =      move(state, line); break;
                 case 'Add':       state =       add(state, line); break;
                 case 'Subtract':  state =  subtract(state, line); break;
                 case 'Multiply':  state =  multiply(state, line); break;

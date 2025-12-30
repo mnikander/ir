@@ -297,3 +297,23 @@ describe('static single assignment', () => {
         expect(evaluate(input)).toBe(41);
     });
 });
+
+describe('memory and ownership', () => {
+    it('must throw a runtime-error when accessing a dropped register', () => {
+        const input: Instruction[] = [
+            [ '%0', 'Const', 0 ],
+            [ null, 'Drop', '%0' ],
+            [ null, 'Exit', '%0' ],
+        ];
+        expect(() => {evaluate(input)}).toThrow();
+    });
+
+    it('must throw a runtime-error when accessing a moved register', () => {
+        const input: Instruction[] = [
+            [ '%0', 'Const', 0 ],
+            [ '%1', 'Move', '%0' ],
+            [ null, 'Exit', '%0' ],
+        ];
+        expect(() => {evaluate(input)}).toThrow();
+    });
+});

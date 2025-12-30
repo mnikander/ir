@@ -1,6 +1,6 @@
-import { Add, Block, Branch, Call, Copy, Const, Divide, Equal, Exit, find_label,
-    find_label_for_register, Function, Get, Instruction, Jump, Multiply, Phi,
-    RawValue, Register, Remainder, Return, Subtract, Unequal, Value } from "./instructions.ts";
+import { Add, Block, Branch, Call, Copy, Const, Divide, Drop, Equal, Exit, find_label,
+    find_label_for_register, Function, Get, Instruction, Jump, Move, Multiply, Phi,
+    RawValue, Register, Remainder, Return, Subtract, Unequal, Value, } from "./instructions.ts";
 import { get_boolean, get_number, valid } from "./type_assertions.ts";
 
 export type Frame = { 
@@ -39,6 +39,17 @@ export function constant(state: State, line: Const): State {
 
 export function copy(state: State, line: Copy): State {
     registers(state).set(dest(line), valid(registers(state).get(line[Get.Left])));
+    return state;
+}
+
+export function drop(state: State, line: Drop): State {
+    registers(state).delete(line[Get.Left]);
+    return state;
+}
+
+export function move(state: State, line: Move): State {
+    registers(state).set(dest(line), valid(registers(state).get(line[Get.Left]))); // copy
+    registers(state).delete(line[Get.Left]); // drop
     return state;
 }
 
