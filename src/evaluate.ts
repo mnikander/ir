@@ -4,19 +4,7 @@ import { get_boolean, valid } from './type_assertions.ts'
 import { Call, Function, Get, Instruction, Label, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
 import { add, constant, copy, divide, equal, multiply, remainder, subtract, unequal } from "./basic_operations.ts";
-
-type Frame = { 
-    registers: Map<Register, Value>,
-    return_pc: undefined | number,
-    return_block: undefined | string,
-};
-
-type State = {
-    stack: Frame[],
-    pc: number,
-    current_block: string,
-    previous_block: undefined | string,
-};
+import { previous, State, top } from "./state.ts";
 
 export function evaluate(program: readonly Instruction[]): RawValue {
     program = verify_single_assignment(program);
@@ -124,14 +112,6 @@ export function evaluate(program: readonly Instruction[]): RawValue {
         // catch and then re-throw all errors, with the line-number prepended, for easier debugging
         throw Error(`Line ${state.pc}: ` + (error as Error).message);
     }
-}
-
-function top(stack: Frame[]): Frame {
-    return valid(stack[stack.length - 1]);
-}
-
-function previous(stack: Frame[]): Frame {
-    return valid(stack[stack.length - 2]);
 }
 
 function find_label(program: readonly Instruction[], label: string): number {
