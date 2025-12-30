@@ -1,6 +1,6 @@
-import { Add, Block, Branch, Call, Copy, Const, Divide, Equal, find_label_for_register,
-    find_label, Function, Get, Instruction, Jump, Multiply, Phi, Register,
-    Remainder, Return, Subtract, Unequal, Value } from "./instructions.ts";
+import { Add, Block, Branch, Call, Copy, Const, Divide, Equal, Exit, find_label,
+    find_label_for_register, Function, Get, Instruction, Jump, Multiply, Phi,
+    RawValue, Register, Remainder, Return, Subtract, Unequal, Value } from "./instructions.ts";
 import { get_boolean, get_number, valid } from "./type_assertions.ts";
 
 export type Frame = { 
@@ -159,4 +159,9 @@ export function phi(state: State, line: Phi, program: readonly Instruction[]): S
         throw Error(`cannot compute Phi(${left}, ${right}) when previous block is '${state.previous_block}'.`)
     }
     return state;
+}
+
+export function exit(state: State, line: Exit): RawValue {
+    const reg: Map<Register, Value>  = top(state.stack).registers;
+    return valid(reg.get(line[Get.Left])).value;
 }

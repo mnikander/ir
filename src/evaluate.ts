@@ -1,9 +1,8 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { valid } from './type_assertions.ts'
 import { Get, Instruction, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
-import { add, branch, call, constant, copy, divide, equal, jump, multiply, phi, remainder, returning, State, subtract, top, unequal } from "./state.ts";
+import { add, branch, call, constant, copy, divide, equal, exit, jump, multiply, phi, remainder, returning, State, subtract, top, unequal } from "./state.ts";
 
 export function evaluate(program: readonly Instruction[]): RawValue {
     program = verify_single_assignment(program);
@@ -18,7 +17,6 @@ export function evaluate(program: readonly Instruction[]): RawValue {
         while (state.pc < program.length) {
             if (top(state.stack) === undefined) throw Error(`Bug -- no valid stack frame`);
             const line: Instruction          = program[state.pc];
-            const reg: Map<Register, Value>  = top(state.stack).registers;
     
             switch (line[Get.Tag]) {
                 case 'Const':     state = constant(state, line);  break;
@@ -35,7 +33,7 @@ export function evaluate(program: readonly Instruction[]): RawValue {
                 case 'Call':      state = call(state, line, program); break;
                 case 'Return':    state = returning(state, line, program); break;
                 case 'Phi':       state = phi(state, line, program); break;
-                case 'Exit':      return valid(reg.get(line[Get.Left])).value;
+                case 'Exit':      return exit(state, line);
                 case 'Block':     throw Error(`encountered unexpected Block '${line[Get.Left]}'.`);
                 case 'Function':  throw Error(`encountered unexpected Function '${line[Get.Left]}'.`);
                 default:          throw Error(`unhandled instruction type '${(line as Instruction)[Get.Tag]}'`);
