@@ -19,7 +19,6 @@ export function evaluate(program: readonly Instruction[]): RawValue {
             if (top(state.stack) === undefined) throw Error(`Bug -- no valid stack frame`);
             const line: Instruction          = program[state.pc];
             const reg: Map<Register, Value>  = top(state.stack).registers;
-            const dest: null | Register      = line[Get.Dest];
     
             switch (line[Get.Tag]) {
                 case 'Const':     state = constant(state, line);  break;
@@ -36,14 +35,10 @@ export function evaluate(program: readonly Instruction[]): RawValue {
                 case 'Call':      state = call(state, line, program); break;
                 case 'Return':    state = returning(state, line, program); break;
                 case 'Phi':       state = phi(state, line, program); break;
-                case 'Exit':
-                    return valid(reg.get(line[Get.Left])).value;
-                case 'Block':
-                    throw Error(`encountered unexpected Block '${line[Get.Left]}'.`)
-                case 'Function':
-                    throw Error(`encountered unexpected Function '${line[Get.Left]}'.`)
-                default:
-                    throw Error(`unhandled instruction type '${(line as Instruction)[Get.Tag]}'`);
+                case 'Exit':      return valid(reg.get(line[Get.Left])).value;
+                case 'Block':     throw Error(`encountered unexpected Block '${line[Get.Left]}'.`)
+                case 'Function':  throw Error(`encountered unexpected Function '${line[Get.Left]}'.`)
+                default:          throw Error(`unhandled instruction type '${(line as Instruction)[Get.Tag]}'`);
             }
             state.pc++;
         }
