@@ -3,7 +3,7 @@
 import { valid } from './type_assertions.ts'
 import { Call, find_label_for_register, Get, Instruction, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
-import { add, branch, call, constant, copy, divide, equal, jump, multiply, previous, remainder, State, subtract, top, unequal } from "./state.ts";
+import { add, branch, call, constant, copy, divide, equal, jump, multiply, previous, remainder, returning, State, subtract, top, unequal } from "./state.ts";
 
 export function evaluate(program: readonly Instruction[]): RawValue {
     program = verify_single_assignment(program);
@@ -34,16 +34,7 @@ export function evaluate(program: readonly Instruction[]): RawValue {
                 case 'Jump':      state = jump(line, state, program); break;
                 case 'Branch':    state = branch(line, state, program); break;
                 case 'Call':      state = call(line, state, program); break;
-                case 'Return': {
-                    state.pc             = valid(top(state.stack).return_pc);
-                    state.previous_block = state.current_block;
-                    state.current_block  = valid(top(state.stack).return_block);
-                    const call: Call     = program[state.pc] as Call;
-                    const result: Value  = valid(reg.get(line[Get.Left]));
-                    previous(state.stack).registers.set(call[Get.Dest], result);
-                    state.stack.pop();
-                    break;
-                }
+                case 'Return':    state = returning(line, state, program); break;
                 case 'Phi': {
                     const left:  Register = line[Get.Left];
                     const right: Register = line[Get.Right];

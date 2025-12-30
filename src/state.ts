@@ -1,5 +1,5 @@
 import { Add, Block, Branch, Call, Copy, Const, Divide, Equal, find_label, 
-    Function, Get, Instruction, Jump, Multiply, Remainder, Register, Subtract, 
+    Function, Get, Instruction, Jump, Multiply, Register, Remainder, Return, Subtract, 
     Unequal, Value } from "./instructions.ts";
 import { get_boolean, get_number, valid } from "./type_assertions.ts";
 
@@ -135,5 +135,16 @@ export function call(line: Call, state: State, program: readonly Instruction[]):
     }
     state.previous_block = state.current_block;
     state.current_block  = (program[state.pc] as Function)[Get.Left];
+    return state;
+}
+
+export function returning(line: Return, state: State, program: readonly Instruction[]): State {
+    state.pc             = valid(top(state.stack).return_pc);
+    state.previous_block = state.current_block;
+    state.current_block  = valid(top(state.stack).return_block);
+    const call: Call     = program[state.pc] as Call;
+    const result: Value  = valid(registers(state).get(line[Get.Left]));
+    previous(state.stack).registers.set(call[Get.Dest], result);
+    state.stack.pop();
     return state;
 }
