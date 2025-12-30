@@ -32,3 +32,32 @@ export type Branch      = [ destination: null,     tag: 'Branch',    thenLabel: 
 export type Return      = [ destination: null,     tag: 'Return',    left: Register ];
 export type Exit        = [ destination: null,     tag: 'Exit',      left: Register ];
 export type Phi         = [ destination: Register, tag: 'Phi',       left: Register, right: Register ];
+
+export function find_label(program: readonly Instruction[], label: string): number {
+    const isCorrectLabelOrFunction = (inst: Instruction) => { return (inst[Get.Tag] === 'Label' || inst[Get.Tag] === 'Function') && inst[Get.Left] === label; };
+    return program.findIndex(isCorrectLabelOrFunction);
+}
+
+export function find_label_for_register(program: readonly Instruction[], register: Register): string {
+    let label: string = '@Entry';
+    for (let index: number = 0; index < program.length; index++) {
+        const line: Instruction     = program[index];
+        const dest: null | Register = line[Get.Dest];
+
+        if (line[Get.Tag] === 'Label') {
+            label = line[Get.Left];
+        }
+        else if (line[Get.Tag] === 'Function') {
+            label = line[Get.Left];
+            for (const arg of line[Get.Right]) {
+                if (arg === register) {
+                    return label;
+                }
+            }
+        }
+        else if (dest !== null && dest === register) {
+            return label;
+        }
+    }
+    return label;
+}

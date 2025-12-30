@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { get_boolean, valid } from './type_assertions.ts'
-import { Call, Function, Get, Instruction, Label, RawValue, Register, Value } from './instructions.ts'
+import { Call, find_label, find_label_for_register, Function, Get, Instruction, Label, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
 import { add, constant, copy, divide, equal, multiply, previous, remainder, State, subtract, top, unequal } from "./state.ts";
 
@@ -111,33 +111,4 @@ export function evaluate(program: readonly Instruction[]): RawValue {
         // catch and then re-throw all errors, with the line-number prepended, for easier debugging
         throw Error(`Line ${state.pc}: ` + (error as Error).message);
     }
-}
-
-function find_label(program: readonly Instruction[], label: string): number {
-    const isCorrectLabelOrFunction = (inst: Instruction) => { return (inst[Get.Tag] === 'Label' || inst[Get.Tag] === 'Function') && inst[Get.Left] === label; };
-    return program.findIndex(isCorrectLabelOrFunction);
-}
-
-function find_label_for_register(program: readonly Instruction[], register: Register): string {
-    let label: string = '@Entry';
-    for (let index: number = 0; index < program.length; index++) {
-        const line: Instruction     = program[index];
-        const dest: null | Register = line[Get.Dest];
-
-        if (line[Get.Tag] === 'Label') {
-            label = line[Get.Left];
-        }
-        else if (line[Get.Tag] === 'Function') {
-            label = line[Get.Left];
-            for (const arg of line[Get.Right]) {
-                if (arg === register) {
-                    return label;
-                }
-            }
-        }
-        else if (dest !== null && dest === register) {
-            return label;
-        }
-    }
-    return label;
 }
