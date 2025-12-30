@@ -24,10 +24,6 @@ export function previous(stack: Frame[]): Frame {
     return valid(stack[stack.length - 2]);
 }
 
-// function line(program: readonly Instruction[], state: State): Instruction {
-//     return program[state.pc];
-// }
-
 function registers(state: State): Map<Register, Value> {
     return top(state.stack).registers;
 }
