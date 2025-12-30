@@ -22,20 +22,20 @@ export function evaluate(program: readonly Instruction[]): RawValue {
             const dest: null | Register      = line[Get.Dest];
     
             switch (line[Get.Tag]) {
-                case 'Const':     state = constant(line, state);  break;
-                case 'Copy':      state = copy(line, state);      break;
-                case 'Add':       state = add(line, state);       break;
-                case 'Subtract':  state = subtract(line, state);  break;
-                case 'Multiply':  state = multiply(line, state);  break;
-                case 'Divide':    state = divide(line, state);    break;
-                case 'Remainder': state = remainder(line, state); break;
-                case 'Equal':     state = equal(line, state);     break;
-                case 'Unequal':   state = unequal(line, state);   break;
-                case 'Jump':      state = jump(line, state, program); break;
-                case 'Branch':    state = branch(line, state, program); break;
-                case 'Call':      state = call(line, state, program); break;
-                case 'Return':    state = returning(line, state, program); break;
-                case 'Phi':       state = phi(line, state, program); break;
+                case 'Const':     state = constant(state, line);  break;
+                case 'Copy':      state = copy(state, line);      break;
+                case 'Add':       state = add(state, line);       break;
+                case 'Subtract':  state = subtract(state, line);  break;
+                case 'Multiply':  state = multiply(state, line);  break;
+                case 'Divide':    state = divide(state, line);    break;
+                case 'Remainder': state = remainder(state, line); break;
+                case 'Equal':     state = equal(state, line);     break;
+                case 'Unequal':   state = unequal(state, line);   break;
+                case 'Jump':      state = jump(state, line, program); break;
+                case 'Branch':    state = branch(state, line, program); break;
+                case 'Call':      state = call(state, line, program); break;
+                case 'Return':    state = returning(state, line, program); break;
+                case 'Phi':       state = phi(state, line, program); break;
                 case 'Exit':
                     return valid(reg.get(line[Get.Left])).value;
                 case 'Block':

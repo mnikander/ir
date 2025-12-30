@@ -36,73 +36,73 @@ function dest(line: Instruction): Register {
     return valid(line[Get.Dest]);
 }
 
-export function constant(line: Const, state: State): State {
+export function constant(state: State, line: Const): State {
     registers(state).set(dest(line), { tag: 'Value', value: line[Get.Left] });
     return state;
 }
 
-export function copy(line: Copy, state: State): State {
+export function copy(state: State, line: Copy): State {
     registers(state).set(dest(line), valid(registers(state).get(line[Get.Left])));
     return state;
 }
 
-export function add(line: Add, state: State): State {
+export function add(state: State, line: Add): State {
     const left:  number = get_number(registers(state).get(line[Get.Left]));
     const right: number = get_number(registers(state).get(line[Get.Right]));
     registers(state).set(dest(line), { tag: 'Value', value: left + right });
     return state;
 }
 
-export function subtract(line: Subtract, state: State): State {
+export function subtract(state: State, line: Subtract): State {
     const left:  number = get_number(registers(state).get(line[Get.Left]));
     const right: number = get_number(registers(state).get(line[Get.Right]));
     registers(state).set(dest(line), { tag: 'Value', value: left - right });
     return state;
 }
 
-export function multiply(line: Multiply, state: State): State {
+export function multiply(state: State, line: Multiply): State {
     const left:  number = get_number(registers(state).get(line[Get.Left]));
     const right: number = get_number(registers(state).get(line[Get.Right]));
     registers(state).set(dest(line), { tag: 'Value', value: left * right });
     return state;
 }
 
-export function divide(line: Divide, state: State): State {
+export function divide(state: State, line: Divide): State {
     const left:  number = get_number(registers(state).get(line[Get.Left]));
     const right: number = get_number(registers(state).get(line[Get.Right]));
     registers(state).set(dest(line), { tag: 'Value', value: left / right });
     return state;
 }
 
-export function remainder(line: Remainder, state: State): State {
+export function remainder(state: State, line: Remainder): State {
     const left:  number = get_number(registers(state).get(line[Get.Left]));
     const right: number = get_number(registers(state).get(line[Get.Right]));
     registers(state).set(dest(line), { tag: 'Value', value: left % right });
     return state;
 }
 
-export function equal(line: Equal, state: State): State {
+export function equal(state: State, line: Equal): State {
     const left  = valid(registers(state).get(line[Get.Left])).value;
     const right = valid(registers(state).get(line[Get.Right])).value;
     registers(state).set(dest(line), { tag: 'Value', value: left === right });
     return state;
 }
 
-export function unequal(line: Unequal, state: State): State {
+export function unequal(state: State, line: Unequal): State {
     const left  = valid(registers(state).get(line[Get.Left])).value;
     const right = valid(registers(state).get(line[Get.Right])).value;
     registers(state).set(dest(line), { tag: 'Value', value: left !== right });
     return state;
 }
 
-export function jump(line: Jump, state: State, program: readonly Instruction[]): State {
+export function jump(state: State, line: Jump, program: readonly Instruction[]): State {
     state.pc = find_label(program, line[Get.Left]);
     state.previous_block = state.current_block;
     state.current_block  = (program[state.pc] as Block)[Get.Left];
     return state;
 }
 
-export function branch(line: Branch, state: State, program: readonly Instruction[]): State {
+export function branch(state: State, line: Branch, program: readonly Instruction[]): State {
     const condition = get_boolean(registers(state).get(line[Get.Last]));
     if (condition) {
         state.pc = find_label(program, line[Get.Left]);
@@ -115,7 +115,7 @@ export function branch(line: Branch, state: State, program: readonly Instruction
     return state;
 }
 
-export function call(line: Call, state: State, program: readonly Instruction[]): State {
+export function call(state: State, line: Call, program: readonly Instruction[]): State {
     const old_reg: Map<Register, Value> = registers(state);
     const new_pc: number   = find_label(program, line[Get.Left]);
     const provided: number = valid(line[Get.Right]).length;
@@ -138,7 +138,7 @@ export function call(line: Call, state: State, program: readonly Instruction[]):
     return state;
 }
 
-export function returning(line: Return, state: State, program: readonly Instruction[]): State {
+export function returning(state: State, line: Return, program: readonly Instruction[]): State {
     state.pc             = valid(top(state.stack).return_pc);
     state.previous_block = state.current_block;
     state.current_block  = valid(top(state.stack).return_block);
@@ -149,7 +149,7 @@ export function returning(line: Return, state: State, program: readonly Instruct
     return state;
 }
 
-export function phi(line: Phi, state: State, program: readonly Instruction[]): State {
+export function phi(state: State, line: Phi, program: readonly Instruction[]): State {
     const left:  Register = line[Get.Left];
     const right: Register = line[Get.Right];
     const reg: Map<Register, Value> = registers(state);
