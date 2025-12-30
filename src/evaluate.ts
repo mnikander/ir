@@ -3,12 +3,11 @@
 import { get_boolean, valid } from './type_assertions.ts'
 import { Call, Function, Get, Instruction, Label, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
-import { add, constant, copy, divide, equal, multiply, remainder, subtract, unequal } from "./basic_operations.ts";
-import { previous, State, top } from "./state.ts";
+import { add, constant, copy, divide, equal, multiply, previous, remainder, State, subtract, top, unequal } from "./state.ts";
 
 export function evaluate(program: readonly Instruction[]): RawValue {
     program = verify_single_assignment(program);
-    const state: State = {
+    let state: State = {
         stack: [ {registers: new Map<Register, Value>(), return_pc: undefined, return_block: undefined } ],
         pc: 0,
         current_block: '@Entry',
@@ -23,15 +22,15 @@ export function evaluate(program: readonly Instruction[]): RawValue {
             const dest: null | Register      = line[Get.Dest];
     
             switch (line[Get.Tag]) {
-                case 'Const':     reg.set(valid(dest), constant(line));       break;
-                case 'Copy':      reg.set(valid(dest), copy(line, reg));      break;
-                case 'Add':       reg.set(valid(dest), add(line, reg));       break;
-                case 'Subtract':  reg.set(valid(dest), subtract(line, reg));  break;
-                case 'Multiply':  reg.set(valid(dest), multiply(line, reg));  break;
-                case 'Divide':    reg.set(valid(dest), divide(line, reg));    break;
-                case 'Remainder': reg.set(valid(dest), remainder(line, reg)); break;
-                case 'Equal':     reg.set(valid(dest), equal(line, reg));     break;
-                case 'Unequal':   reg.set(valid(dest), unequal(line, reg));   break;
+                case 'Const':     state = constant(line, state);  break;
+                case 'Copy':      state = copy(line, state);      break;
+                case 'Add':       state = add(line, state);       break;
+                case 'Subtract':  state = subtract(line, state);  break;
+                case 'Multiply':  state = multiply(line, state);  break;
+                case 'Divide':    state = divide(line, state);    break;
+                case 'Remainder': state = remainder(line, state); break;
+                case 'Equal':     state = equal(line, state);     break;
+                case 'Unequal':   state = unequal(line, state);   break;
                 case 'Jump': {
                     state.pc             = find_label(program, line[Get.Left]);
                     state.previous_block = state.current_block;
