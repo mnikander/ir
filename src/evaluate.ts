@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { get_boolean, valid } from './type_assertions.ts'
-import { Call, find_label, find_label_for_register, Function, Get, Instruction, Label, RawValue, Register, Value } from './instructions.ts'
+import { Call, find_label, find_label_for_register, Function, Get, Instruction, Block, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
 import { add, constant, copy, divide, equal, multiply, previous, remainder, State, subtract, top, unequal } from "./state.ts";
 
@@ -34,7 +34,7 @@ export function evaluate(program: readonly Instruction[]): RawValue {
                 case 'Jump': {
                     state.pc             = find_label(program, line[Get.Left]);
                     state.previous_block = state.current_block;
-                    state.current_block  = (program[state.pc] as Label)[Get.Left];
+                    state.current_block  = (program[state.pc] as Block)[Get.Left];
                     break;
                 }
                 case 'Branch': {
@@ -46,7 +46,7 @@ export function evaluate(program: readonly Instruction[]): RawValue {
                         state.pc = find_label(program, line[Get.Right]);
                     }
                     state.previous_block = state.current_block;
-                    state.current_block  = (program[state.pc] as Label)[Get.Left];
+                    state.current_block  = (program[state.pc] as Block)[Get.Left];
                     break;
                 }
                 case 'Call': {
@@ -96,8 +96,8 @@ export function evaluate(program: readonly Instruction[]): RawValue {
                 }
                 case 'Exit':
                     return valid(reg.get(line[Get.Left])).value;
-                case 'Label':
-                    throw Error(`encountered unexpected Label '${line[Get.Left]}'.`)
+                case 'Block':
+                    throw Error(`encountered unexpected Block '${line[Get.Left]}'.`)
                 case 'Function':
                     throw Error(`encountered unexpected Function '${line[Get.Left]}'.`)
                 default:
