@@ -1,9 +1,9 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { valid } from './type_assertions.ts'
-import { Call, find_label_for_register, Get, Instruction, RawValue, Register, Value } from './instructions.ts'
+import { Get, Instruction, RawValue, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
-import { add, branch, call, constant, copy, divide, equal, jump, multiply, previous, remainder, returning, State, subtract, top, unequal } from "./state.ts";
+import { add, branch, call, constant, copy, divide, equal, jump, multiply, phi, previous, remainder, returning, State, subtract, top, unequal } from "./state.ts";
 
 export function evaluate(program: readonly Instruction[]): RawValue {
     program = verify_single_assignment(program);
@@ -35,20 +35,7 @@ export function evaluate(program: readonly Instruction[]): RawValue {
                 case 'Branch':    state = branch(line, state, program); break;
                 case 'Call':      state = call(line, state, program); break;
                 case 'Return':    state = returning(line, state, program); break;
-                case 'Phi': {
-                    const left:  Register = line[Get.Left];
-                    const right: Register = line[Get.Right];
-                    if (state.previous_block === find_label_for_register(program, left)) {
-                        reg.set(valid(dest), valid(reg.get(left)));
-                    }
-                    else if (state.previous_block === find_label_for_register(program, right)) {
-                        reg.set(valid(dest), valid(reg.get(right)));
-                    }
-                    else {
-                        throw Error(`cannot compute Phi(${left}, ${right}) when previous block is '${state.previous_block}'.`)
-                    }
-                    break;
-                }
+                case 'Phi':       state = phi(line, state, program); break;
                 case 'Exit':
                     return valid(reg.get(line[Get.Left])).value;
                 case 'Block':
