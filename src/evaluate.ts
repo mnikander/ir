@@ -5,7 +5,11 @@ import { Call, Function, Get, Instruction, Label, RawValue, Register, Value } fr
 import { verify_single_assignment } from './analysis.ts';
 import { add, constant, copy, divide, equal, multiply, remainder, subtract, unequal } from "./basic_operations.ts";
 
-type Frame = { registers: Map<Register, Value>, return_pc: undefined | number, return_block: undefined | string };
+type Frame = { 
+    registers: Map<Register, Value>,
+    return_pc: undefined | number,
+    return_block: undefined | string,
+};
 
 export function evaluate(program: readonly Instruction[]): RawValue {
     program = verify_single_assignment(program);
