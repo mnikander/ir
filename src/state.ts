@@ -1,10 +1,11 @@
-import { Add, Block, Branch, Call, Copy, Const, Divide, Drop, Equal, Exit, find_label,
+import { Add, Block, Branch, Call, Copy, Const, Deref, Divide, Drop, Equal, Exit, find_label,
     find_label_for_register, Function, Get, Instruction, Jump, Move, Multiply, Phi,
-    RawValue, Register, Remainder, Return, Subtract, Unequal, Value, } from "./instructions.ts";
+    RawValue, Ref, Reference, Register, Remainder, Return, Subtract, Unequal, Value,
+    } from "./instructions.ts";
 import { get_boolean, get_number, valid } from "./type_assertions.ts";
 
 export type Frame = { 
-    registers: Map<Register, Value>,
+    registers: Map<Register, Value | Reference>,
     return_pc: undefined | number,
     return_block: undefined | string,
 };
@@ -24,7 +25,7 @@ export function previous(stack: Frame[]): Frame {
     return valid(stack[stack.length - 2]);
 }
 
-function registers(state: State): Map<Register, Value> {
+function registers(state: State): Map<Register, Value | Reference> {
     return top(state.stack).registers;
 }
 
@@ -50,6 +51,24 @@ export function drop(state: State, line: Drop): State {
 export function move(state: State, line: Move): State {
     registers(state).set(dest(line), valid(registers(state).get(line[Get.Left]))); // copy
     registers(state).delete(line[Get.Left]); // drop
+    return state;
+}
+
+export function ref(state: State, line: Ref): State {
+    registers(state).set(dest(line), { tag: 'Reference', value: line[Get.Left] });
+    return state;
+}
+
+export function deref(state: State, line: Deref): State {
+    const r: Value | Reference = valid(registers(state).get(line[Get.Left]));
+    if (r.tag !== 'Reference') {
+        throw Error(`'deref' expected a reference, got '${r.tag}'`);
+    }
+    else {
+        const value: Reference | Value = valid(registers(state).get(r.value));
+        registers(state).set(dest(line), value);
+    }
+
     return state;
 }
 
@@ -123,21 +142,21 @@ export function branch(state: State, line: Branch, program: readonly Instruction
 }
 
 export function call(state: State, line: Call, program: readonly Instruction[]): State {
-    const old_reg: Map<Register, Value> = registers(state);
+    const old_reg: Map<Register, Value | Reference> = registers(state);
     const new_pc: number   = find_label(program, line[Get.Left]);
     const provided: number = valid(line[Get.Right]).length;
     const expected: number = valid(program[new_pc][Get.Right]).length;
     if (provided !== expected) {
         throw Error(`function '${program[new_pc][Get.Left]}' expects ${expected} arguments, got ${provided}`);
     }
-    state.stack.push({ registers: new Map<Register, Value>(),
+    state.stack.push({ registers: new Map<Register, Value | Reference>(),
                     return_pc: state.pc,
                     return_block: state.current_block });
     state.pc = new_pc;
     // copy register contents into new frame, as function arguments
     for (let i: number = 0; i < line[Get.Right]?.length; i++) {
-        const parameter: Register = (program[state.pc] as Function)[Get.Right][i];
-        const value: Value        = valid(old_reg.get(line[Get.Right][i]));
+        const parameter: Register      = (program[state.pc] as Function)[Get.Right][i];
+        const value: Reference | Value = valid(old_reg.get(line[Get.Right][i]));
         registers(state).set(parameter, value);
     }
     state.previous_block = state.current_block;
@@ -146,11 +165,11 @@ export function call(state: State, line: Call, program: readonly Instruction[]):
 }
 
 export function returning(state: State, line: Return, program: readonly Instruction[]): State {
-    state.pc             = valid(top(state.stack).return_pc);
-    state.previous_block = state.current_block;
-    state.current_block  = valid(top(state.stack).return_block);
-    const call: Call     = program[state.pc] as Call;
-    const result: Value  = valid(registers(state).get(line[Get.Left]));
+    state.pc                        = valid(top(state.stack).return_pc);
+    state.previous_block            = state.current_block;
+    state.current_block             = valid(top(state.stack).return_block);
+    const call: Call                = program[state.pc] as Call;
+    const result: Reference | Value = valid(registers(state).get(line[Get.Left]));
     previous(state.stack).registers.set(call[Get.Dest], result);
     state.stack.pop();
     return state;
@@ -159,7 +178,7 @@ export function returning(state: State, line: Return, program: readonly Instruct
 export function phi(state: State, line: Phi, program: readonly Instruction[]): State {
     const left:  Register = line[Get.Left];
     const right: Register = line[Get.Right];
-    const reg: Map<Register, Value> = registers(state);
+    const reg: Map<Register, Value | Reference> = registers(state);
     if (state.previous_block === find_label_for_register(program, left)) {
         reg.set(dest(line), valid(reg.get(left)));
     }
@@ -173,6 +192,10 @@ export function phi(state: State, line: Phi, program: readonly Instruction[]): S
 }
 
 export function exit(state: State, line: Exit): RawValue {
-    const reg: Map<Register, Value>  = top(state.stack).registers;
-    return valid(reg.get(line[Get.Left])).value;
+    const reg: Map<Register, Value | Reference> = top(state.stack).registers;
+    const return_register: Reference | Value = valid(reg.get(line[Get.Left]));
+    if (return_register.tag !== 'Value') {
+        throw Error(`Exit expects a Value, got '${return_register}'`);
+    }
+    return return_register.value;
 }

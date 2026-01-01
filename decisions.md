@@ -21,4 +21,5 @@
 |019|2025-12-17|           | project    | create deno.json file instead of direct imports     | Needed for CI pipeline via Github Actions. Deno automatically checks for a deno.json or package.json and installs the necessary dependencies on the system.|
 |020|2025-12-30|           | impl       | use an object to hold the interpreter state         | Allows cleaning up the interpreter. Enables pure functions for each instruction: take a state and return a state. Allows using a match-expression in the interpreter loop. |
 |021|2025-12-30|           | impl       | keep the program and the state separate             | Separation of concerns. There are functions which only need the state or only need the program. |
+|022|2026-01-01|           | IR         | `ref` and `deref` as separate instructions          | Keeps the grammar and implementation simple, albeit more verbose. Allowing them inline, such as `%z = ADD (deref %r) b` would complicate things. |
 |   |          |           |            |                                                     | |

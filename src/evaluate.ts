@@ -1,13 +1,13 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { Get, Instruction, RawValue, Register, Value } from './instructions.ts'
+import { Get, Instruction, RawValue, Reference, Register, Value } from './instructions.ts'
 import { verify_single_assignment } from './analysis.ts';
-import { add, branch, call, constant, copy, divide, drop, equal, exit, jump, move, multiply, phi, remainder, returning, State, subtract, top, unequal } from "./state.ts";
+import { add, branch, call, constant, copy, deref, divide, drop, equal, exit, jump, move, multiply, phi, ref, remainder, returning, State, subtract, top, unequal } from "./state.ts";
 
 export function evaluate(program: readonly Instruction[]): RawValue {
     program = verify_single_assignment(program);
     let state: State = {
-        stack: [ {registers: new Map<Register, Value>(), return_pc: undefined, return_block: undefined } ],
+        stack: [ {registers: new Map<Register, Value | Reference>(), return_pc: undefined, return_block: undefined } ],
         pc: 0,
         current_block: '@Entry',
         previous_block: undefined,
@@ -16,13 +16,15 @@ export function evaluate(program: readonly Instruction[]): RawValue {
     try {
         while (state.pc < program.length) {
             if (top(state.stack) === undefined) throw Error(`Bug -- no valid stack frame`);
-            const line: Instruction          = program[state.pc];
+            const line: Instruction     = program[state.pc];
     
             switch (line[Get.Tag]) {
                 case 'Const':     state =  constant(state, line); break;
                 case 'Copy':      state =      copy(state, line); break;
                 case 'Drop':      state =      drop(state, line); break;
                 case 'Move':      state =      move(state, line); break;
+                case 'Ref':       state =       ref(state, line); break;
+                case 'Deref':     state =     deref(state, line); break;
                 case 'Add':       state =       add(state, line); break;
                 case 'Subtract':  state =  subtract(state, line); break;
                 case 'Multiply':  state =  multiply(state, line); break;

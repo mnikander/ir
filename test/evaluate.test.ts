@@ -316,4 +316,23 @@ describe('memory and ownership', () => {
         ];
         expect(() => {evaluate(input)}).toThrow();
     });
+
+    it('must throw a runtime-error when exiting with a Reference instead of a Value', () => {
+        const input: Instruction[] = [
+            [ '%0', 'Const', 0 ],
+            [ '%1', 'Ref', '%0' ],
+            [ null, 'Exit', '%1' ],
+        ];
+        expect(() => {evaluate(input)}).toThrow();
+    });
+
+    it('must reference and dereference a register', () => {
+        const input: Instruction[] = [
+            [ '%0', 'Const', 42 ],
+            [ '%1', 'Ref', '%0' ],
+            [ '%2', 'Deref', '%1' ],
+            [ null, 'Exit', '%2' ],
+        ];
+        expect(evaluate(input)).toBe(42);
+    });
 });
