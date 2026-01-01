@@ -16,6 +16,15 @@ describe('constants and exit', () => {
         expect(() => evaluate(input)).toThrow();
     });
 
+    it('must throw a runtime-error when exiting with a Reference instead of a Value', () => {
+        const input: Instruction[] = [
+            [ '%0', 'Const', 0 ],
+            [ '%1', 'Ref', '%0' ],
+            [ null, 'Exit', '%1' ],
+        ];
+        expect(() => {evaluate(input)}).toThrow();
+    });
+
     it('must evaluate a constant', () => {
         const input: Instruction[] = [
             [ '%0', 'Const', 11 ],
@@ -299,33 +308,6 @@ describe('static single assignment', () => {
 });
 
 describe('memory and ownership', () => {
-    it('must throw a runtime-error when accessing a dropped register', () => {
-        const input: Instruction[] = [
-            [ '%0', 'Const', 0 ],
-            [ null, 'Drop', '%0' ],
-            [ null, 'Exit', '%0' ],
-        ];
-        expect(() => {evaluate(input)}).toThrow();
-    });
-
-    it('must throw a runtime-error when accessing a moved register', () => {
-        const input: Instruction[] = [
-            [ '%0', 'Const', 0 ],
-            [ '%1', 'Move', '%0' ],
-            [ null, 'Exit', '%0' ],
-        ];
-        expect(() => {evaluate(input)}).toThrow();
-    });
-
-    it('must throw a runtime-error when exiting with a Reference instead of a Value', () => {
-        const input: Instruction[] = [
-            [ '%0', 'Const', 0 ],
-            [ '%1', 'Ref', '%0' ],
-            [ null, 'Exit', '%1' ],
-        ];
-        expect(() => {evaluate(input)}).toThrow();
-    });
-
     it('must reference and dereference a register', () => {
         const input: Instruction[] = [
             [ '%x', 'Const', 42 ],
@@ -336,7 +318,25 @@ describe('memory and ownership', () => {
         expect(evaluate(input)).toBe(42);
     });
 
-    it('must detect a dangling reference when the original register is dropped', () => {
+    it('must detect a use-after-drop', () => {
+        const input: Instruction[] = [
+            [ '%0', 'Const', 0 ],
+            [ null, 'Drop', '%0' ],
+            [ null, 'Exit', '%0' ],
+        ];
+        expect(() => {evaluate(input)}).toThrow();
+    });
+
+    it('must detect a use-after-move', () => {
+        const input: Instruction[] = [
+            [ '%0', 'Const', 0 ],
+            [ '%1', 'Move', '%0' ],
+            [ null, 'Exit', '%0' ],
+        ];
+        expect(() => {evaluate(input)}).toThrow();
+    });
+
+    it('must detect a dangling reference when the source register is dropped', () => {
         const input: Instruction[] = [
             [ '%x', 'Const', 42 ],
             [ '%r', 'Ref', '%x' ],
@@ -348,7 +348,7 @@ describe('memory and ownership', () => {
         expect(() => {evaluate(input)}).toThrow();
     });
 
-    it('must detect a dangling reference when the original register is moved', () => {
+    it('must detect a dangling reference when the source register is moved', () => {
         const input: Instruction[] = [
             [ '%x', 'Const', 42 ],
             [ '%r', 'Ref', '%x' ],
