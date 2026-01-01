@@ -327,6 +327,17 @@ describe('memory and ownership', () => {
         expect(() => {evaluate(input)}).toThrow();
     });
 
+    it.skip('must detect a double-drop', () => {
+        const input: Instruction[] = [
+            [ '%0', 'Const', 0 ],
+            [ '%1', 'Const', 0 ],
+            [ null, 'Drop', '%0' ],
+            [ null, 'Drop', '%0' ],
+            [ null, 'Exit', '%1' ],
+        ];
+        expect(() => {evaluate(input)}).toThrow();
+    });
+
     it('must detect a use-after-move', () => {
         const input: Instruction[] = [
             [ '%0', 'Const', 0 ],
