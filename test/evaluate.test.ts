@@ -328,11 +328,35 @@ describe('memory and ownership', () => {
 
     it('must reference and dereference a register', () => {
         const input: Instruction[] = [
-            [ '%0', 'Const', 42 ],
-            [ '%1', 'Ref', '%0' ],
-            [ '%2', 'Deref', '%1' ],
-            [ null, 'Exit', '%2' ],
+            [ '%x', 'Const', 42 ],
+            [ '%r', 'Ref', '%x' ],
+            [ '%t', 'Deref', '%r' ],
+            [ null, 'Exit', '%t' ],
         ];
         expect(evaluate(input)).toBe(42);
+    });
+
+    it('must detect a dangling reference when the original register is dropped', () => {
+        const input: Instruction[] = [
+            [ '%x', 'Const', 42 ],
+            [ '%r', 'Ref', '%x' ],
+            [ null, 'Drop', '%x' ],
+            [ '%t', 'Deref', '%r' ],
+            [ null, 'Exit', '%t' ],
+        ];
+        // TODO: a borrow-checker should detect this, instead of it being a runtime error:
+        expect(() => {evaluate(input)}).toThrow();
+    });
+
+    it('must detect a dangling reference when the original register is moved', () => {
+        const input: Instruction[] = [
+            [ '%x', 'Const', 42 ],
+            [ '%r', 'Ref', '%x' ],
+            [ '%y', 'Move', '%x' ],
+            [ '%t', 'Deref', '%r' ],
+            [ null, 'Exit', '%t' ],
+        ];
+        // TODO: a borrow-checker should detect this, instead of it being a runtime error:
+        expect(() => {evaluate(input)}).toThrow();
     });
 });
