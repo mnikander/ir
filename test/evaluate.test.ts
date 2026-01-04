@@ -179,7 +179,7 @@ describe('function call', () => {
             [ null, 'Jump', '@Termination' ],
             
             [ null, 'Block', '@Termination' ],
-            [ '%10', 'Phi', '%9', '%acc' ],
+            [ '%10', 'Phi', '@Body', '%9', '@factorial', '%acc' ],
             [ null, 'Return', '%10' ],
         ];
         expect(evaluate(input)).toBe(120);
@@ -238,7 +238,7 @@ describe('static single assignment', () => {
             [ null, 'Jump',  '@End' ],
 
             [ null, 'Block', '@End' ],
-            [ '%3', 'Phi',  '%1', '%2' ],
+            [ '%3', 'Phi', '@First', '%1', '@Second', '%2' ],
             [ null, 'Exit', '%3' ],
         ];
         expect(evaluate(input)).toBe(22);
@@ -257,7 +257,7 @@ describe('static single assignment', () => {
             [ null, 'Jump',  '@Loop' ],
             
             [ null, 'Block', '@Loop' ],
-            [ '%3', 'Phi',   '%0', '%4' ],
+            [ '%3', 'Phi', '@Entry', '%0', '@Loop', '%4' ],
             [ '%4', 'Add',   '%1', '%3' ],
             [ '%5', 'Unequal', '%3', '%2' ],
             [ null, 'Branch', '@Loop', '@End', '%5' ],
@@ -268,7 +268,7 @@ describe('static single assignment', () => {
         expect(evaluate(input)).toBe(3);
     });
 
-    it.skip('phi node must allow assignment from dominator blocks which are not the immediate dominator', () => {
+    it('phi node must allow assignment from dominator blocks which are not the immediate dominator', () => {
         // Control flow graph with a split in the Entry node and a Join in node D
         //
         //      Entry
@@ -296,10 +296,10 @@ describe('static single assignment', () => {
             [ '%charlie', 'Const', 21 ],
             [ null, 'Jump', '@D' ],
             
-            [ null, 'Block', '@D' ],
             // join the register from block A with those of block B and C respectively
-            [ '%grandparent', 'Phi', '%alpha', '%bravo' ],
-            [ '%parent',      'Phi', '%alpha', '%charlie' ],
+            [ null, 'Block', '@D' ],
+            [ '%grandparent', 'Phi', '@A', '%alpha', '@C', '%bravo' ], // this currently fails, only the immediate predecessor block is available in the interpreter and 'B' comes from a grandparent
+            [ '%parent',      'Phi', '@A', '%alpha', '@C', '%charlie' ],
             [ '%total', 'Add', '%grandparent', '%parent'],
             [ null, 'Exit',  '%total' ],
         ];

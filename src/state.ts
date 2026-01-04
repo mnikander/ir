@@ -1,7 +1,4 @@
-import { Add, Block, Branch, Call, Copy, Const, Deref, Divide, Drop, Equal, Exit, find_label,
-    find_label_for_register, Function, Get, Instruction, Jump, Move, Multiply, Phi,
-    RawValue, Ref, Reference, Register, Remainder, Return, Subtract, Unequal, Value,
-    } from "./instructions.ts";
+import { Add, Block, Branch, Call, Copy, Const, Deref, Divide, Drop, Equal, Exit, find_label, Function, Get, Instruction, Jump, Move, Multiply, Phi, RawValue, Ref, Reference, Register, Remainder, Return, Subtract, Unequal, Value, Label } from "./instructions.ts";
 import { get_boolean, get_number, valid } from "./type_assertions.ts";
 
 export type Frame = { 
@@ -175,14 +172,17 @@ export function returning(state: State, line: Return, program: readonly Instruct
     return state;
 }
 
-export function phi(state: State, line: Phi, program: readonly Instruction[]): State {
-    const left:  Register = line[Get.Left];
-    const right: Register = line[Get.Right];
+export function phi(state: State, line: Phi): State {
+    const blk_left: Label  = line[Get.First];
+    const left:  Register  = line[Get.Second];
+    const blk_right: Label = line[Get.Third];
+    const right: Register  = line[Get.Fourth];
+
     const reg: Map<Register, Value | Reference> = registers(state);
-    if (state.previous_block === find_label_for_register(program, left)) {
+    if (state.previous_block === blk_left) {
         reg.set(dest(line), valid(reg.get(left)));
     }
-    else if (state.previous_block === find_label_for_register(program, right)) {
+    else if (state.previous_block === blk_right) {
         reg.set(dest(line), valid(reg.get(right)));
     }
     else {

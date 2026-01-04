@@ -36,7 +36,7 @@ export function evaluate(program: readonly Instruction[]): RawValue {
                 case 'Branch':    state =    branch(state, line, program); break;
                 case 'Call':      state =      call(state, line, program); break;
                 case 'Return':    state = returning(state, line, program); break;
-                case 'Phi':       state =       phi(state, line, program); break;
+                case 'Phi':       state =       phi(state, line); break;
                 case 'Exit':      return exit(state, line);
                 case 'Block':     throw Error(`encountered unexpected Block '${line[Get.Left]}'.`);
                 case 'Function':  throw Error(`encountered unexpected Function '${line[Get.Left]}'.`);
