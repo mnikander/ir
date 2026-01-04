@@ -6,9 +6,12 @@ import { add, branch, call, constant, copy, deref, divide, drop, equal, exit, ju
 
 export function evaluate(program: readonly Instruction[]): RawValue {
     program = verify_single_assignment(program);
+
+    if (program[0][Get.Left] !== '@Entry') throw Error(`Expected valid '@Entry' block at start of program`);
+
     let state: State = {
         stack: [ {registers: new Map<Register, Value | Reference>(), return_pc: undefined, return_block: undefined } ],
-        pc: 0,
+        pc: 1, // we ignore the Entry-block statement at index 0
         current_block: '@Entry',
         previous_block: undefined,
     };
