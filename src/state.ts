@@ -129,7 +129,7 @@ export function jump(state: State, line: Jump, program: readonly Instruction[]):
 }
 
 export function branch(state: State, line: Branch, program: readonly Instruction[]): State {
-    const condition = get_boolean(registers(state).get(line[Get.Last]));
+    const condition = get_boolean(registers(state).get(line[Get.Third]));
     if (condition) {
         state.pc = find_label(program, line[Get.Left]);
     }

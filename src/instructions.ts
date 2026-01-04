@@ -7,11 +7,14 @@ export type Value       = { tag: 'Value', value: RawValue };
 export type Reference   = { tag: 'Reference', value: Register };
 
 export enum Get {
-    Dest  = 0,
-    Tag   = 1,
-    Left  = 2,
-    Right = 3,
-    Last  = 4,
+    Dest   = 0,
+    Tag    = 1,
+    Left   = 2,
+    Right  = 3,
+    First  = 2,
+    Second = 3,
+    Third  = 4,
+    Fourth = 5,
 }
 
 export type Instruction = Const | Copy | Drop | Move | Ref | Deref
