@@ -305,6 +305,35 @@ describe('static single assignment', () => {
         ];
         expect(evaluate(input)).toBe(41);
     });
+
+    it('phi node must allow assignment when both inputs are available', () => {
+        //
+        //      Entry
+        //        |
+        //        A
+        //        | \
+        //        |  B
+        //        | /
+        //        C
+        //
+        const input: Instruction[] = [
+            [ null, 'Jump', '@A' ],
+            
+            [ null, 'Block', '@A' ],
+            [ '%alpha', 'Const', 10 ],
+            [ '%condition', 'Const', false ],
+            [ null, 'Branch', '@B', '@C', '%condition' ],
+            
+            [ null, 'Block', '@B' ],
+            [ '%bravo', 'Const', 20 ],
+            [ null, 'Jump', '@C' ],
+            
+            [ null, 'Block', '@C' ],
+            [ '%result', 'Phi', '@A', '%alpha', '@B', '%bravo' ], // this currently fails, only the immediate predecessor block is available in the interpreter and 'B' comes from a grandparent
+            [ null, 'Exit',  '%result' ],
+        ];
+        expect(evaluate(input)).toBe(20);
+    });
 });
 
 describe('memory and ownership', () => {
