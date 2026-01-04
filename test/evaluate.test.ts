@@ -311,9 +311,9 @@ describe('static single assignment', () => {
         //      Entry
         //        |
         //        A
-        //        | \
-        //        |  B
-        //        | /
+        //      / |
+        //     B  |
+        //      \ |
         //        C
         //
         const input: Instruction[] = [
@@ -321,8 +321,8 @@ describe('static single assignment', () => {
             
             [ null, 'Block', '@A' ],
             [ '%alpha', 'Const', 10 ],
-            [ '%condition', 'Const', false ],
-            [ null, 'Branch', '@B', '@C', '%condition' ],
+            [ '%condition', 'Const', true ],
+            [ null, 'Branch', '@B', '@C', '%condition' ], // branch to B
             
             [ null, 'Block', '@B' ],
             [ '%bravo', 'Const', 20 ],
