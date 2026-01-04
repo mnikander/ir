@@ -1,6 +1,8 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { Instruction, Get, Register, Function } from "./instructions.ts";
+import { Function, Get, Instruction, Label, Register } from "./instructions.ts";
+
+export type Interval = { begin: number, end: number };
 
 export function verify_single_assignment(instructions: readonly Instruction[]): readonly Instruction[] {
     const assigned_registers = new Set<Register>();
@@ -26,4 +28,30 @@ function assign(register: Register, assigned_registers: Set<Register>, line: num
         assigned_registers.add(register);
     }
     return assigned_registers;
+}
+
+export function table_of_contents(program: readonly Instruction[]): Map<Label, Interval> {
+    if (program[0][Get.Left] !== '@Entry') throw Error(`Expected valid '@Entry' block at start of program`);
+    
+    const blocks: Map<Label, Interval> = new Map();
+    let block: Label = '@Entry';
+    let first: number = 0;
+
+    for (let index: number = 1; index < program.length; index++) {
+        const line: Instruction = program[index];
+
+        if (line[Get.Tag] === 'Block' || line[Get.Tag] === 'Function') {
+            // store the current block
+            const interval: Interval = { begin: first, end: index };
+            blocks.set(block, interval);
+            
+            // start next block
+            block = line[Get.First];
+            first = index;
+        }
+    }
+    const interval: Interval = { begin: first, end: program.length };
+    blocks.set(block, interval);
+
+    return blocks;
 }

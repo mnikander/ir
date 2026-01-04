@@ -50,8 +50,3 @@ export type Jump        = [ destination: null,     tag: 'Jump',      block: Labe
 export type Branch      = [ destination: null,     tag: 'Branch',    thenLabel: Label, elseLabel: Label, condition: Register ];
 export type Return      = [ destination: null,     tag: 'Return',    left: Register ];
 export type Exit        = [ destination: null,     tag: 'Exit',      left: Register ];
-
-export function find_label(program: readonly Instruction[], block: string): number {
-    const isCorrectLabelOrFunction = (inst: Instruction) => { return (inst[Get.Tag] === 'Block' || inst[Get.Tag] === 'Function') && inst[Get.Left] === block; };
-    return program.findIndex(isCorrectLabelOrFunction);
-}

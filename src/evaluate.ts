@@ -1,17 +1,18 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { Get, Instruction, RawValue, Reference, Register, Value } from './instructions.ts'
-import { verify_single_assignment } from './analysis.ts';
+import { Get, Instruction, Label, RawValue, Reference, Register, Value } from './instructions.ts'
+import { Interval, table_of_contents, verify_single_assignment } from './analysis.ts';
 import { add, branch, call, constant, copy, deref, divide, drop, equal, exit, jump, move, multiply, phi, ref, remainder, returning, State, subtract, top, unequal } from "./state.ts";
 
 export function evaluate(program: readonly Instruction[]): RawValue {
     program = verify_single_assignment(program);
+    const toc: Map<Label, Interval> = table_of_contents(program);
 
     if (program[0][Get.Left] !== '@Entry') throw Error(`Expected valid '@Entry' block at start of program`);
 
     let state: State = {
         stack: [ {registers: new Map<Register, Value | Reference>(), return_pc: undefined, return_block: undefined } ],
-        pc: 1, // we ignore the Entry-block statement at index 0
+        pc: 1, // we skip over the Entry-block statement at index 0
         current_block: '@Entry',
         previous_block: undefined,
     };
@@ -35,9 +36,9 @@ export function evaluate(program: readonly Instruction[]): RawValue {
                 case 'Remainder': state = remainder(state, line); break;
                 case 'Equal':     state =     equal(state, line); break;
                 case 'Unequal':   state =   unequal(state, line); break;
-                case 'Jump':      state =      jump(state, line, program); break;
-                case 'Branch':    state =    branch(state, line, program); break;
-                case 'Call':      state =      call(state, line, program); break;
+                case 'Jump':      state =      jump(state, line, program, toc); break;
+                case 'Branch':    state =    branch(state, line, program, toc); break;
+                case 'Call':      state =      call(state, line, program, toc); break;
                 case 'Return':    state = returning(state, line, program); break;
                 case 'Phi':       state =       phi(state, line); break;
                 case 'Exit':      return exit(state, line);
