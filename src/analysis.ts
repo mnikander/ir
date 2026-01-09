@@ -4,6 +4,7 @@ import { Function, Get, Instruction, Label, Register } from "./instructions.ts";
 
 export type Interval = { begin: number, end: number };
 export type Edge     = { from: Label, to: Label }; // TODO: `availablity: Set<Register>`
+export type CFG      = { nodes: Label[], edges: Edge[] };
 
 export function verify_single_assignment(instructions: readonly Instruction[]): readonly Instruction[] {
     const assigned_registers = new Set<Register>();
@@ -57,23 +58,24 @@ export function table_of_contents(program: readonly Instruction[]): Map<Label, I
     return blocks;
 }
 
-export function compute_control_flow_edges(program: readonly Instruction[]): Edge[] {
-    const cfg: Edge[] = [];
+export function compute_control_flow_graph(program: readonly Instruction[]): CFG {
+    const cfg: CFG = { nodes: [], edges: [] };
     let current: Label = '@Entry';
     for (let index: number = 0; index < program.length; index++) {
         const line: Instruction = program[index];
         if (line[Get.Tag] === 'Block' || line[Get.Tag] === 'Function') {
+            cfg.nodes.push(line[Get.First]);
             current = line[Get.First];
         }
         else if (line[Get.Tag] === 'Jump') {
             const edge: Edge = { from: current, to: line[Get.Left]};
-            cfg.push(edge);
+            cfg.edges.push(edge);
         }
         else if (line[Get.Tag] === 'Branch') {
             const left_edge: Edge = { from: current, to: line[Get.Left]};
             const right_edge: Edge = { from: current, to: line[Get.Right]};
-            cfg.push(left_edge);
-            cfg.push(right_edge);
+            cfg.edges.push(left_edge);
+            cfg.edges.push(right_edge);
         }
     }
     return cfg;
