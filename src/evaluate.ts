@@ -10,12 +10,12 @@ export function evaluate(program: readonly Instruction[]): RawValue {
     const cfg: CFG = compute_control_flow_graph(program);
     
     if(cfg.nodes.length === 0) throw Error(`Expected to find at least one basic block in the program.`);
-    if (program[0][Get.Left] !== '@Entry') throw Error(`Expected valid '@Entry' block at start of program`);
+    if (program[0][Get.Left] !== '@entry') throw Error(`Expected valid '@entry' block at start of program`);
 
     let state: State = {
         stack: [ {registers: new Map<Register, Value | Reference>(), return_pc: undefined, return_block: undefined } ],
         pc: 1, // we skip over the Entry-block statement at index 0
-        current_block: '@Entry',
+        current_block: '@entry',
         previous_block: undefined,
     };
 

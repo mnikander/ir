@@ -11,7 +11,7 @@ describe('constants and exit', () => {
 
     it('must throw error if there is no Exit instruction', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
         ];
         expect(() => evaluate(input)).toThrow();
@@ -27,7 +27,7 @@ describe('constants and exit', () => {
 
     it('must throw a runtime-error when exiting with a Reference instead of a Value', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 0 ],
             [ '%1', 'Ref', '%0' ],
             [ null, 'Exit', '%1' ],
@@ -37,7 +37,7 @@ describe('constants and exit', () => {
 
     it('must evaluate a constant', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             [ null, 'Exit', '%0' ],
         ];
@@ -48,7 +48,7 @@ describe('constants and exit', () => {
 describe('copying of registers', () => {
     it('must copy a constant', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Copy', '%0' ],
             [ null, 'Exit', '%1' ],
@@ -60,7 +60,7 @@ describe('copying of registers', () => {
 describe('arithmetic operations', () => {
     it('must evaluate integer addition', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
             [ '%2', 'Add',  '%0', '%1' ],
@@ -73,11 +73,11 @@ describe('arithmetic operations', () => {
 describe('labels, jump, and branch', () => {
     it('must report an error if a block falls through into the next label', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             // the missing Terminator statement here, should cause an error
 
-            [ null, 'Block', '@First' ],
+            [ null, 'Block', '@first' ],
             [ '%1', 'Const', 22 ],
             [ null, 'Exit',  '%2' ],
         ];
@@ -86,14 +86,14 @@ describe('labels, jump, and branch', () => {
 
     it('must execute the correct line of code after an unconditional jump', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
-            [ null, 'Jump',  '@Second' ],
+            [ null, 'Block', '@entry' ],
+            [ null, 'Jump',  '@second' ],
 
-            [ null, 'Block', '@First' ],
+            [ null, 'Block', '@first' ],
             [ '%1', 'Const', 11 ],
             [ null, 'Exit',  '%1' ],
             
-            [ null, 'Block', '@Second' ],
+            [ null, 'Block', '@second' ],
             [ '%2', 'Const', 22 ],
             [ null, 'Exit',  '%2' ],
         ];
@@ -102,22 +102,22 @@ describe('labels, jump, and branch', () => {
 
     it('must execute first branch if the condition is true', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', true ],
             [ '%1', 'Const', 11 ],
             [ '%2', 'Const', 22 ],
             [ '%3', 'Const', 44 ],
-            [ null, 'Branch', '@Then', '@Else', '%0' ],
+            [ null, 'Branch', '@then', '@else', '%0' ],
 
-            [ null, 'Block', '@Then' ],
+            [ null, 'Block', '@then' ],
             [ '%4', 'Add',   '%1', '%2' ],
-            [ null, 'Jump',  '@End' ],
+            [ null, 'Jump',  '@end' ],
 
-            [ null, 'Block', '@Else' ],
+            [ null, 'Block', '@else' ],
             [ '%5', 'Add',   '%2', '%3' ],
-            [ null, 'Jump',  '@End' ],
+            [ null, 'Jump',  '@end' ],
 
-            [ null, 'Block', '@End' ],
+            [ null, 'Block', '@end' ],
             [ null, 'Exit',  '%4' ],
         ];
         expect(evaluate(input)).toBe(33);
@@ -125,22 +125,22 @@ describe('labels, jump, and branch', () => {
 
     it('must execute the second branch when condition is false', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', false ],
             [ '%1', 'Const', 11 ],
             [ '%2', 'Const', 22 ],
             [ '%3', 'Const', 44 ],
-            [ null, 'Branch', '@Then', '@Else' , '%0' ],
+            [ null, 'Branch', '@then', '@else' , '%0' ],
             
-            [ null, 'Block', '@Then' ],
+            [ null, 'Block', '@then' ],
             [ '%4', 'Add',   '%1', '%2' ],
-            [ null, 'Jump',  '@End' ],
+            [ null, 'Jump',  '@end' ],
             
-            [ null, 'Block', '@Else' ],
+            [ null, 'Block', '@else' ],
             [ '%5', 'Add',   '%2', '%3' ],
-            [ null, 'Jump',  '@End' ],
+            [ null, 'Jump',  '@end' ],
             
-            [ null, 'Block', '@End' ],
+            [ null, 'Block', '@end' ],
             [ null, 'Exit',  '%5' ],
         ];
         expect(evaluate(input)).toBe(66);
@@ -150,7 +150,7 @@ describe('labels, jump, and branch', () => {
 describe('function call', () => {
     it('must support calling the identity function', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
             [ '%2', 'Call', '@identity', ['%1'] ],
@@ -164,13 +164,13 @@ describe('function call', () => {
 
     it('must support calling a binary function', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
-            [ '%2', 'Call', '@First', ['%0', '%1'] ],
+            [ '%2', 'Call', '@first', ['%0', '%1'] ],
             [ null, 'Exit', '%2' ],
 
-            [ null, 'Function', '@First', ['%a', '%b'] ],
+            [ null, 'Function', '@first', ['%a', '%b'] ],
             [ null, 'Return', '%a' ],
         ];
         expect(evaluate(input)).toBe(11);
@@ -181,7 +181,7 @@ describe('function call', () => {
         // function factorial(n, acc = 1):
         //     return n == 1 ? acc : factorial(n-1, n*acc);
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 5 ],
             [ '%1', 'Const', 1 ],
             [ '%2', 'Call', '@factorial', ['%0', '%1'] ],
@@ -190,16 +190,16 @@ describe('function call', () => {
             [ null, 'Function', '@factorial', ['%n', '%acc'] ],
             [ '%3', 'Const', 1 ],
             [ '%6', 'Equal', '%n', '%3' ],
-            [ null, 'Branch', '@Termination', '@Body', '%6' ],
+            [ null, 'Branch', '@termination', '@body', '%6' ],
             
-            [ null, 'Block', '@Body' ],
+            [ null, 'Block', '@body' ],
             [ '%7', 'Subtract', '%n', '%3' ],
             [ '%8', 'Multiply', '%n', '%acc' ],
             [ '%9', 'Call', '@factorial', ['%7', '%8'] ],
-            [ null, 'Jump', '@Termination' ],
+            [ null, 'Jump', '@termination' ],
             
-            [ null, 'Block', '@Termination' ],
-            [ '%10', 'Phi', '@Body', '%9', '@factorial', '%acc' ],
+            [ null, 'Block', '@termination' ],
+            [ '%10', 'Phi', '@body', '%9', '@factorial', '%acc' ],
             [ null, 'Return', '%10' ],
         ];
         expect(evaluate(input)).toBe(120);
@@ -209,7 +209,7 @@ describe('function call', () => {
 describe('static single assignment', () => {
     it('must throw an error when re-assigning to a register', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             [ '%0', 'Const', 22 ], // attempt to reassign register 0
             [ null, 'Exit', '%1' ],
@@ -219,13 +219,13 @@ describe('static single assignment', () => {
 
     it('must throw an error when function parameters have the same name', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
-            [ '%2', 'Call', '@First', ['%0', '%1'] ],
+            [ '%2', 'Call', '@first', ['%0', '%1'] ],
             [ null, 'Exit', '%2' ],
 
-            [ null, 'Function', '@First', ['%a', '%a'] ],
+            [ null, 'Function', '@first', ['%a', '%a'] ],
             [ null, 'Return', '%a' ],
         ];
         expect(() => {evaluate(input)}).toThrow();
@@ -233,7 +233,7 @@ describe('static single assignment', () => {
 
     it('must throw an error when function parameter registers are not unique', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
             [ '%2', 'Call', '@identity', ['%1'] ],
@@ -250,19 +250,19 @@ describe('static single assignment', () => {
 
     it('phi node must assign from the correct register after an unconditional jump', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
-            [ null, 'Jump',  '@Second' ],
+            [ null, 'Block', '@entry' ],
+            [ null, 'Jump',  '@second' ],
 
-            [ null, 'Block', '@First' ],
+            [ null, 'Block', '@first' ],
             [ '%1', 'Const', 11 ],
-            [ null, 'Jump',  '@End' ],
+            [ null, 'Jump',  '@end' ],
 
-            [ null, 'Block', '@Second' ],
+            [ null, 'Block', '@second' ],
             [ '%2', 'Const', 22 ],
-            [ null, 'Jump',  '@End' ],
+            [ null, 'Jump',  '@end' ],
 
-            [ null, 'Block', '@End' ],
-            [ '%3', 'Phi', '@First', '%1', '@Second', '%2' ],
+            [ null, 'Block', '@end' ],
+            [ '%3', 'Phi', '@first', '%1', '@second', '%2' ],
             [ null, 'Exit', '%3' ],
         ];
         expect(evaluate(input)).toBe(22);
@@ -275,19 +275,19 @@ describe('static single assignment', () => {
         // }
         // return i;
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 0 ],
             [ '%1', 'Const', 1 ],
             [ '%2', 'Const', 3 ],
-            [ null, 'Jump',  '@Loop' ],
+            [ null, 'Jump',  '@loop' ],
             
-            [ null, 'Block', '@Loop' ],
-            [ '%3', 'Phi', '@Entry', '%0', '@Loop', '%4' ],
+            [ null, 'Block', '@loop' ],
+            [ '%3', 'Phi', '@entry', '%0', '@loop', '%4' ],
             [ '%4', 'Add',   '%1', '%3' ],
             [ '%5', 'Unequal', '%3', '%2' ],
-            [ null, 'Branch', '@Loop', '@End', '%5' ],
+            [ null, 'Branch', '@loop', '@end', '%5' ],
             
-            [ null, 'Block', '@End' ],
+            [ null, 'Block', '@end' ],
             [ null, 'Exit',  '%3' ],
         ];
         expect(evaluate(input)).toBe(3);
@@ -305,26 +305,26 @@ describe('static single assignment', () => {
         //         D
         //
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%condition', 'Const', false ],
-            [ null, 'Branch', '@A', '@B', '%condition' ], // hard-code that we take the else-branch to block B
+            [ null, 'Branch', '@a', '@b', '%condition' ], // hard-code that we take the else-branch to block B
 
-            [ null, 'Block', '@A' ],
+            [ null, 'Block', '@a' ],
             [ '%alpha', 'Const', 10 ],
-            [ null, 'Jump', '@D' ],
+            [ null, 'Jump', '@d' ],
             
-            [ null, 'Block', '@B' ],
+            [ null, 'Block', '@b' ],
             [ '%bravo', 'Const', 20 ],
-            [ null, 'Jump', '@C' ],
+            [ null, 'Jump', '@c' ],
             
-            [ null, 'Block', '@C' ],
+            [ null, 'Block', '@c' ],
             [ '%charlie', 'Const', 21 ],
-            [ null, 'Jump', '@D' ],
+            [ null, 'Jump', '@d' ],
             
             // join the register from block A with those of block B and C respectively
-            [ null, 'Block', '@D' ],
-            [ '%grandparent', 'Phi', '@A', '%alpha', '@C', '%bravo' ], // this currently fails, only the immediate predecessor block is available in the interpreter and 'B' comes from a grandparent
-            [ '%parent',      'Phi', '@A', '%alpha', '@C', '%charlie' ],
+            [ null, 'Block', '@d' ],
+            [ '%grandparent', 'Phi', '@a', '%alpha', '@c', '%bravo' ], // this currently fails, only the immediate predecessor block is available in the interpreter and 'B' comes from a grandparent
+            [ '%parent',      'Phi', '@a', '%alpha', '@c', '%charlie' ],
             [ '%total', 'Add', '%grandparent', '%parent'],
             [ null, 'Exit',  '%total' ],
         ];
@@ -342,20 +342,20 @@ describe('static single assignment', () => {
         //        C
         //
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
-            [ null, 'Jump', '@A' ],
+            [ null, 'Block', '@entry' ],
+            [ null, 'Jump', '@a' ],
             
-            [ null, 'Block', '@A' ],
+            [ null, 'Block', '@a' ],
             [ '%alpha', 'Const', 10 ],
             [ '%condition', 'Const', true ],
-            [ null, 'Branch', '@B', '@C', '%condition' ], // branch to B
+            [ null, 'Branch', '@b', '@c', '%condition' ], // branch to B
             
-            [ null, 'Block', '@B' ],
+            [ null, 'Block', '@b' ],
             [ '%bravo', 'Const', 20 ],
-            [ null, 'Jump', '@C' ],
+            [ null, 'Jump', '@c' ],
             
-            [ null, 'Block', '@C' ],
-            [ '%result', 'Phi', '@A', '%alpha', '@B', '%bravo' ], // this currently fails, only the immediate predecessor block is available in the interpreter and 'B' comes from a grandparent
+            [ null, 'Block', '@c' ],
+            [ '%result', 'Phi', '@a', '%alpha', '@b', '%bravo' ], // this currently fails, only the immediate predecessor block is available in the interpreter and 'B' comes from a grandparent
             [ null, 'Exit',  '%result' ],
         ];
         expect(evaluate(input)).toBe(20);
@@ -365,7 +365,7 @@ describe('static single assignment', () => {
 describe('memory and ownership', () => {
     it('must reference and dereference a register', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%x', 'Const', 42 ],
             [ '%r', 'Ref', '%x' ],
             [ '%t', 'Deref', '%r' ],
@@ -376,7 +376,7 @@ describe('memory and ownership', () => {
 
     it('must detect a use-after-drop', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 0 ],
             [ null, 'Drop', '%0' ],
             [ null, 'Exit', '%0' ],
@@ -386,7 +386,7 @@ describe('memory and ownership', () => {
 
     it.skip('must detect a double-drop', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 0 ],
             [ '%1', 'Const', 0 ],
             [ null, 'Drop', '%0' ],
@@ -398,7 +398,7 @@ describe('memory and ownership', () => {
 
     it('must detect a use-after-move', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 0 ],
             [ '%1', 'Move', '%0' ],
             [ null, 'Exit', '%0' ],
@@ -408,7 +408,7 @@ describe('memory and ownership', () => {
 
     it('must detect a dangling reference when the source register is dropped', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%x', 'Const', 42 ],
             [ '%r', 'Ref', '%x' ],
             [ null, 'Drop', '%x' ],
@@ -421,7 +421,7 @@ describe('memory and ownership', () => {
 
     it('must detect a dangling reference when the source register is moved', () => {
         const input: Instruction[] = [
-            [ null, 'Block', '@Entry' ],
+            [ null, 'Block', '@entry' ],
             [ '%x', 'Const', 42 ],
             [ '%r', 'Ref', '%x' ],
             [ '%y', 'Move', '%x' ],

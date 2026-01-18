@@ -33,10 +33,10 @@ function assign(register: Register, assigned_registers: Set<Register>, line: num
 }
 
 export function table_of_contents(program: readonly Instruction[]): Map<Label, Interval> {
-    if (program[0][Get.Left] !== '@Entry') throw Error(`Expected valid '@Entry' block at start of program`);
+    if (program[0][Get.Left] !== '@entry') throw Error(`Expected valid '@entry' block at start of program`);
     
     const blocks: Map<Label, Interval> = new Map();
-    let block: Label = '@Entry';
+    let block: Label = '@entry';
     let first: number = 0;
 
     for (let index: number = 1; index < program.length; index++) {
@@ -60,7 +60,7 @@ export function table_of_contents(program: readonly Instruction[]): Map<Label, I
 
 export function compute_control_flow_graph(program: readonly Instruction[]): CFG {
     const cfg: CFG = { nodes: [], edges: [] };
-    let block: Label = '@Entry';
+    let block: Label = '@entry';
     for (let index: number = 0; index < program.length; index++) {
         const line: Instruction = program[index];
         if (line[Get.Tag] === 'Block' || line[Get.Tag] === 'Function') {
