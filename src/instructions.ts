@@ -23,6 +23,8 @@ export type Instruction = Const | Copy | Drop | Move | Ref | Deref
                         | Block | Function | Call | Phi
                         | Jump | Branch | Return | Exit;
 
+export type Unary       = Const | Copy | Drop | Move | Ref | Deref;
+export type Binary      = Add | Subtract | Multiply | Divide | Remainder | Equal | Unequal;
 export type Terminator  = Jump | Branch | Return | Exit;
 
 export type Const       = [ destination: Register, tag: 'Const',     constant: RawValue ];
