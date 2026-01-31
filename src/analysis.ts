@@ -69,7 +69,7 @@ export function adjacency_list(program: readonly Instruction[]): Edge[] {
     return edges;
 }
 
-export function control_flow_graph(nodes: Label[], adjacency_list: Edge[]): CFG[] {
+export function control_flow_graph(nodes: readonly Label[], adjacency_list: readonly Edge[]): CFG[] {
     let cfg: CFG[] = [];
     nodes.forEach((label : Label) => { cfg = insert_node(label, cfg) });
     adjacency_list.forEach((edge: Edge) => { cfg = insert_edge(edge, cfg) });
