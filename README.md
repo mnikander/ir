@@ -18,3 +18,10 @@ Build and run the tests with:
 ```
 deno test
 ```
+
+## More Information
+- [Design of the Intermediate Representation](./design.md)
+- [Log of Design Decisions](./decisions.md)
+
+---
+**Copyright (c) 2026 Marco Nikander**
