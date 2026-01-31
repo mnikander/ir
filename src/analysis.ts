@@ -69,27 +69,6 @@ export function adjacency_list(program: readonly Instruction[]): Edge[] {
     return edges;
 }
 
-export function control_flow_graph(nodes: readonly Label[], adjacency_list: readonly Edge[]): CFG[] {
-    let cfg: CFG[] = [];
-    nodes.forEach((label : Label) => { cfg = insert_node(label, cfg) });
-    adjacency_list.forEach((edge: Edge) => { cfg = insert_edge(edge, cfg) });
-    return cfg;
-
-    function insert_node(block: Label, cfg: CFG[]): CFG[] {
-        cfg.push({ label: block, predecessors: [], successors: [] })
-        return cfg;
-    }
-    
-    function insert_edge(edge: Edge, cfg: CFG[]): CFG[] {
-        const from: number = cfg.findIndex((block: CFG) => { return block.label === edge.from; });
-        const to: number   = cfg.findIndex((block: CFG) => { return block.label === edge.to; });
-        if (from === -1 || to === -1) throw Error(`The CFG edge '(${edge.from}, ${edge.to})' contains an unknown block label`);
-        cfg[from].successors.push(to);
-        cfg[to].predecessors.push(from);
-        return cfg;
-    }
-}
-
 // for each block and function label, find the first and last line in the code
 export function table_of_contents(program: readonly Instruction[]): Map<Label, Interval> {
     if (program[0][Get.Left] !== '@entry') throw Error(`Expected valid '@entry' block at start of program`);
@@ -115,4 +94,25 @@ export function table_of_contents(program: readonly Instruction[]): Map<Label, I
     blocks.set(block, interval);
 
     return blocks;
+}
+
+export function control_flow_graph(nodes: readonly Label[], adjacency_list: readonly Edge[]): CFG[] {
+    let cfg: CFG[] = [];
+    nodes.forEach((label : Label) => { cfg = insert_node(label, cfg) });
+    adjacency_list.forEach((edge: Edge) => { cfg = insert_edge(edge, cfg) });
+    return cfg;
+
+    function insert_node(block: Label, cfg: CFG[]): CFG[] {
+        cfg.push({ label: block, predecessors: [], successors: [] })
+        return cfg;
+    }
+    
+    function insert_edge(edge: Edge, cfg: CFG[]): CFG[] {
+        const from: number = cfg.findIndex((block: CFG) => { return block.label === edge.from; });
+        const to: number   = cfg.findIndex((block: CFG) => { return block.label === edge.to; });
+        if (from === -1 || to === -1) throw Error(`The CFG edge '(${edge.from}, ${edge.to})' contains an unknown block label`);
+        cfg[from].successors.push(to);
+        cfg[to].predecessors.push(from);
+        return cfg;
+    }
 }
