@@ -47,33 +47,6 @@ export function node_list(program: readonly Instruction[]): Label[] {
     };
 }
 
-// for each block and function label, find the first and last line in the code
-export function table_of_contents(program: readonly Instruction[]): Map<Label, Interval> {
-    if (program[0][Get.Left] !== '@entry') throw Error(`Expected valid '@entry' block at start of program`);
-    
-    const blocks: Map<Label, Interval> = new Map();
-    let block: Label = '@entry';
-    let first: number = 0;
-
-    for (let index: number = 1; index < program.length; index++) {
-        const line: Instruction = program[index];
-
-        if (line[Get.Tag] === 'Block' || line[Get.Tag] === 'Function') {
-            // store the current block
-            const interval: Interval = { begin: first, end: index };
-            blocks.set(block, interval);
-            
-            // start next block
-            block = line[Get.First];
-            first = index;
-        }
-    }
-    const interval: Interval = { begin: first, end: program.length };
-    blocks.set(block, interval);
-
-    return blocks;
-}
-
 export function adjacency_list(program: readonly Instruction[]): Edge[] {
     const edges: Edge[] = [];
     let block: Label = '@';
@@ -115,4 +88,31 @@ export function control_flow_graph(nodes: Label[], adjacency_list: Edge[]): CFG[
         cfg[to].predecessors.push(from);
         return cfg;
     }
+}
+
+// for each block and function label, find the first and last line in the code
+export function table_of_contents(program: readonly Instruction[]): Map<Label, Interval> {
+    if (program[0][Get.Left] !== '@entry') throw Error(`Expected valid '@entry' block at start of program`);
+    
+    const blocks: Map<Label, Interval> = new Map();
+    let block: Label = '@entry';
+    let first: number = 0;
+
+    for (let index: number = 1; index < program.length; index++) {
+        const line: Instruction = program[index];
+
+        if (line[Get.Tag] === 'Block' || line[Get.Tag] === 'Function') {
+            // store the current block
+            const interval: Interval = { begin: first, end: index };
+            blocks.set(block, interval);
+            
+            // start next block
+            block = line[Get.First];
+            first = index;
+        }
+    }
+    const interval: Interval = { begin: first, end: program.length };
+    blocks.set(block, interval);
+
+    return blocks;
 }
