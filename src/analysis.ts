@@ -1,11 +1,10 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { Function, Get, Instruction, Label, Register } from "./instructions.ts";
-import { valid } from "./type_assertions.ts";
 
 export type Interval = { begin: number, end: number };
 export type Edge     = { from: Label, to: Label, availability?: Set<Register> };
-export type CFG      = { label: Label, predecessors: Label[], successors: Label[] };
+export type CFG      = { label: Label, predecessors: number[], successors: number[] };
 
 export function verify_single_assignment(instructions: readonly Instruction[]): readonly Instruction[] {
     const assigned_registers = new Set<Register>();
@@ -109,10 +108,11 @@ export function control_flow_graph(nodes: Label[], adjacency_list: Edge[]): CFG[
     }
     
     function insert_edge(edge: Edge, cfg: CFG[]): CFG[] {
-        const from: CFG = valid(cfg.find((block: CFG) => { return block.label === edge.from; } ));
-        const to: CFG   = valid(cfg.find((block: CFG) => { return block.label === edge.to; } ));
-        from.successors.push(to.label);
-        to.predecessors.push(from.label);
+        const from: number = cfg.findIndex((block: CFG) => { return block.label === edge.from; });
+        const to: number   = cfg.findIndex((block: CFG) => { return block.label === edge.to; });
+        if (from === -1 || to === -1) throw Error(`The CFG edge '(${edge.from}, ${edge.to})' contains an unknown block label`);
+        cfg[from].successors.push(to);
+        cfg[to].predecessors.push(from);
         return cfg;
     }
 }
