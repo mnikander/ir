@@ -1,9 +1,11 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { Function, Get, Instruction, Label, Register } from "./instructions.ts";
+import { valid } from "./type_assertions.ts";
 
 export type Interval = { begin: number, end: number };
 export type Edge     = { from: Label, to: Label, availability?: Set<Register> };
+export type CFG      = { label: Label, predecessors: Label[], successors: Label[] };
 
 export function verify_single_assignment(instructions: readonly Instruction[]): readonly Instruction[] {
     const assigned_registers = new Set<Register>();
@@ -58,8 +60,8 @@ export function table_of_contents(program: readonly Instruction[]): Map<Label, I
     return blocks;
 }
 
-export function compute_adjacency_lists(program: readonly Instruction[]): Edge[] {
-    const edges = [];
+export function adjacency_list(program: readonly Instruction[]): Edge[] {
+    const edges: Edge[] = [];
     let block: Label = '@';
     for (let index: number = 0; index < program.length; index++) {
         const line: Instruction = program[index];
@@ -78,4 +80,25 @@ export function compute_adjacency_lists(program: readonly Instruction[]): Edge[]
         }
     }
     return edges;
+}
+
+export function control_flow_graph(table_of_contents: Map<Label, Interval>, adjacency_list: Edge[]): CFG[] {
+    let cfg: CFG[] = [];
+    table_of_contents.forEach((_interval, label : Label, _toc) => { cfg = insert_node(label, cfg) });
+    adjacency_list.forEach((edge: Edge) => { cfg = insert_edge(edge, cfg) });
+
+    function insert_node(block: Label, cfg: CFG[]): CFG[] {
+        cfg.push({ label: block, predecessors: [], successors: [] })
+        return cfg;
+    }
+    
+    function insert_edge(edge: Edge, cfg: CFG[]): CFG[] {
+        const from: CFG = valid(cfg.find((block: CFG) => { return block.label === edge.from; } ));
+        const to: CFG   = valid(cfg.find((block: CFG) => { return block.label === edge.to; } ));
+        from.successors.push(to.label);
+        to.predecessors.push(from.label);
+        return cfg;
+    }
+
+    return cfg;
 }
