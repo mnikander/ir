@@ -1,6 +1,7 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { Function, Get, Instruction, Label, Register } from "./instructions.ts";
+import { valid } from "./type_assertions.ts";
 
 export type Interval = { begin: number, end: number };
 export type Edge     = { from: Label, to: Label, availability?: Set<Register> };
@@ -114,5 +115,39 @@ export function control_flow_graph(nodes: readonly Label[], adjacency_list: read
         cfg[from].successors.push(to);
         cfg[to].predecessors.push(from);
         return cfg;
+    }
+}
+
+export function reachability(nodes: readonly Label[], edges: readonly Edge[]): Map<Label, Set<Label>> {
+    const reach: Map<Label, Set<Label>> = new Map();
+    const discovered: Set<Label> = new Set();
+    nodes.forEach(initialize_set);
+    edges.forEach(add_edge);
+    nodes.forEach(dfs);
+    return reach;
+
+    function initialize_set(label: Label) {
+        reach.set(label, new Set());
+    }
+
+    function add_edge(edge: Edge) {
+        valid(reach.get(edge.from)).add(edge.to);
+    }
+    
+    function dfs(current: Label) {
+        const root: Label = current;
+        dfs_impl(current);
+        
+        function dfs_impl(current: Label) {
+            discovered.add(current);
+
+            const neighbors: Set<Label> = valid(reach.get(current));
+            neighbors.forEach((neighbor: Label) => { 
+                if (!discovered.has(neighbor)) {
+                    valid(reach.get(root)).add(neighbor); // add Edge(root, current)
+                    dfs_impl(neighbor);
+                }
+            });
+        }
     }
 }
