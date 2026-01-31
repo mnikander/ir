@@ -12,7 +12,7 @@ export function evaluate(program: readonly Instruction[]): RawValue {
     const nodes: Label[] = node_list(program);
     const edges: Edge[] = adjacency_list(program);
     const cfg: CFG[] = control_flow_graph(nodes, edges);
-    const reach: Map<Label, Set<Label>> = reachability(nodes, edges);
+    const _reach: Map<Label, Set<Label>> = reachability(nodes, edges);
     if (cfg.length < 1) throw Error(`Expected control flow graph to contain at least one block`);
     
 
