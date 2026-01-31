@@ -2,12 +2,12 @@ import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 import { evaluate } from "../src/evaluate.ts";
 import { Instruction, Label } from "../src/instructions.ts";
-import { adjacency_list, control_flow_graph, Edge, Interval, table_of_contents } from "../src/analysis.ts";
+import { adjacency_list, control_flow_graph, Edge, node_list } from "../src/analysis.ts";
 
 function count_cfg_nodes(program: Instruction[]): number {
-    const toc: Map<Label, Interval> = table_of_contents(program);
-    const adj: Edge[] = adjacency_list(program);
-    return control_flow_graph(toc, adj).length;
+    const nodes: Label[] = node_list(program);
+    const edges: Edge[] = adjacency_list(program);
+    return control_flow_graph(nodes, edges).length;
 }
 
 describe('constants and exit', () => {

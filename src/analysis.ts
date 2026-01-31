@@ -33,6 +33,21 @@ function assign(register: Register, assigned_registers: Set<Register>, line: num
     return assigned_registers;
 }
 
+export function node_list(program: readonly Instruction[]): Label[] {
+    const list: Label[] = [];
+    const set: Set<Label> = new Set();
+    program.forEach(append_label);
+    if (list.length !== set.size) throw Error(`Expected all functions and blocks to have unique names`);
+    return list;
+    
+    function append_label(line: Instruction) {
+        if (line[Get.Tag] === 'Block' || line[Get.Tag] === 'Function') {
+            list.push(line[Get.First]);
+            set.add(line[Get.First]);
+        }
+    };
+}
+
 // for each block and function label, find the first and last line in the code
 export function table_of_contents(program: readonly Instruction[]): Map<Label, Interval> {
     if (program[0][Get.Left] !== '@entry') throw Error(`Expected valid '@entry' block at start of program`);
@@ -82,10 +97,11 @@ export function adjacency_list(program: readonly Instruction[]): Edge[] {
     return edges;
 }
 
-export function control_flow_graph(table_of_contents: Map<Label, Interval>, adjacency_list: Edge[]): CFG[] {
+export function control_flow_graph(nodes: Label[], adjacency_list: Edge[]): CFG[] {
     let cfg: CFG[] = [];
-    table_of_contents.forEach((_interval, label : Label, _toc) => { cfg = insert_node(label, cfg) });
+    nodes.forEach((label : Label) => { cfg = insert_node(label, cfg) });
     adjacency_list.forEach((edge: Edge) => { cfg = insert_edge(edge, cfg) });
+    return cfg;
 
     function insert_node(block: Label, cfg: CFG[]): CFG[] {
         cfg.push({ label: block, predecessors: [], successors: [] })
@@ -99,6 +115,4 @@ export function control_flow_graph(table_of_contents: Map<Label, Interval>, adja
         to.predecessors.push(from.label);
         return cfg;
     }
-
-    return cfg;
 }

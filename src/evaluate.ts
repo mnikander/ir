@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { Get, Instruction, Label, RawValue, Reference, Register, Value } from './instructions.ts'
-import { CFG, adjacency_list, control_flow_graph, Interval, table_of_contents, verify_single_assignment } from './analysis.ts';
+import { CFG, adjacency_list, control_flow_graph, Interval, table_of_contents, verify_single_assignment, node_list } from './analysis.ts';
 import { add, branch, call, constant, copy, deref, divide, drop, equal, exit, jump, move, multiply, phi, ref, remainder, returning, State, subtract, top, unequal } from "./state.ts";
 
 export function evaluate(program: readonly Instruction[]): RawValue {
@@ -9,7 +9,7 @@ export function evaluate(program: readonly Instruction[]): RawValue {
     const toc: Map<Label, Interval> = table_of_contents(program);
     if (program[0][Get.Left] !== '@entry') throw Error(`Expected valid '@entry' block at start of program`);
 
-    const cfg: CFG[] = control_flow_graph(toc, adjacency_list(program));
+    const cfg: CFG[] = control_flow_graph(node_list(program), adjacency_list(program));
     if (cfg.length < 1) throw Error(`Expected control flow graph to contain at least one block`);
 
     let state: State = {
