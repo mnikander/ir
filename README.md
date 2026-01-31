@@ -7,7 +7,7 @@ Like all IRs, it sits between high-level languages such as C or TypeScript on on
 ## Getting Started
 
 This project is implemented in TypeScript, using [Deno](https://deno.com/).
-After setting up deno, just navigate into the root directory and install all dependencies using:
+After setting up deno, navigate into the directory of this repository and install the required dependencies using:
 
 ```
 cd ir/
@@ -20,8 +20,8 @@ deno test
 ```
 
 ## More Information
-- [Design of the Intermediate Representation](./design.md)
-- [Log of Design Decisions](./decisions.md)
+- [IR design](./design.md)
+- [Log of design decisions for the interpreter and IR](./decisions.md)
 
 ---
 **Copyright (c) 2026 Marco Nikander**
