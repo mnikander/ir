@@ -2,11 +2,11 @@ import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 import { evaluate } from "../src/evaluate.ts";
 import { Instruction, Label } from "../src/instructions.ts";
-import { adjacency_list, control_flow_graph, Edge, node_list } from "../src/analysis.ts";
+import { adjacency_list, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
 function count_cfg_nodes(program: Instruction[]): number {
     const nodes: Label[] = node_list(program);
-    const edges: Edge[] = adjacency_list(program);
+    const edges: Edge[]  = adjacency_list(program);
     return control_flow_graph(nodes, edges).length;
 }
 
@@ -23,6 +23,7 @@ describe('constants and exit', () => {
         ];
         expect(() => evaluate(input)).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
+        expect(table_of_contents(input).size).toBe(1);
     });
 
     it('must throw error if there is no Entry block', () => {
@@ -43,6 +44,7 @@ describe('constants and exit', () => {
         ];
         expect(() => {evaluate(input)}).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
+        expect(table_of_contents(input).size).toBe(1);
     });
 
     it('must evaluate a constant', () => {
@@ -53,6 +55,7 @@ describe('constants and exit', () => {
         ];
         expect(evaluate(input)).toBe(11);
         expect(count_cfg_nodes(input)).toBe(1);
+        expect(table_of_contents(input).size).toBe(1);
     });
 });
 
@@ -66,6 +69,7 @@ describe('copying of registers', () => {
         ];
         expect(evaluate(input)).toBe(11);
         expect(count_cfg_nodes(input)).toBe(1);
+        expect(table_of_contents(input).size).toBe(1);
     });
 });
 
@@ -80,6 +84,7 @@ describe('arithmetic operations', () => {
         ];
         expect(evaluate(input)).toBe(33);
         expect(count_cfg_nodes(input)).toBe(1);
+        expect(table_of_contents(input).size).toBe(1);
     });
 });
 
@@ -96,6 +101,7 @@ describe('labels, jump, and branch', () => {
         ];
         expect(() => {evaluate(input)}).toThrow();
         expect(count_cfg_nodes(input)).toBeGreaterThanOrEqual(1);
+        expect(table_of_contents(input).size).toBeGreaterThanOrEqual(1);
     });
 
     it('must execute the correct line of code after an unconditional jump', () => {
@@ -111,6 +117,7 @@ describe('labels, jump, and branch', () => {
             [ '%2', 'Const', 22 ],
             [ null, 'Exit',  '%2' ],
         ];
+        expect(table_of_contents(input).size).toBe(3);
         expect(evaluate(input)).toBe(22);
         expect(count_cfg_nodes(input)).toBe(3);
     });
@@ -137,6 +144,7 @@ describe('labels, jump, and branch', () => {
         ];
         expect(evaluate(input)).toBe(33);
         expect(count_cfg_nodes(input)).toBe(4);
+        expect(table_of_contents(input).size).toBe(4);
     });
 
     it('must execute the second branch when condition is false', () => {
@@ -161,6 +169,7 @@ describe('labels, jump, and branch', () => {
         ];
         expect(evaluate(input)).toBe(66);
         expect(count_cfg_nodes(input)).toBe(4);
+        expect(table_of_contents(input).size).toBe(4);
     });
 });
 
@@ -178,6 +187,7 @@ describe('function call', () => {
         ];
         expect(evaluate(input)).toBe(22);
         expect(count_cfg_nodes(input)).toBe(2);
+        expect(table_of_contents(input).size).toBe(2);
     });
 
     it('must support calling a binary function', () => {
@@ -193,6 +203,7 @@ describe('function call', () => {
         ];
         expect(evaluate(input)).toBe(11);
         expect(count_cfg_nodes(input)).toBe(2);
+        expect(table_of_contents(input).size).toBe(2);
     });
 
     it('must evaluate tail-recursive functions', () => {
@@ -223,6 +234,7 @@ describe('function call', () => {
         ];
         expect(evaluate(input)).toBe(120);
         expect(count_cfg_nodes(input)).toBe(4);
+        expect(table_of_contents(input).size).toBe(4);
     });
 });
 
@@ -236,6 +248,7 @@ describe('static single assignment', () => {
         ];
         expect(() => {evaluate(input)}).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
+        expect(table_of_contents(input).size).toBe(1);
     });
 
     it('must throw an error when function parameters have the same name', () => {
@@ -251,6 +264,7 @@ describe('static single assignment', () => {
         ];
         expect(() => {evaluate(input)}).toThrow();
         expect(count_cfg_nodes(input)).toBe(2);
+        expect(table_of_contents(input).size).toBe(2);
     });
 
     it('must throw an error when function parameter registers are not unique', () => {
@@ -269,6 +283,7 @@ describe('static single assignment', () => {
         ];
         expect(() => {evaluate(input)}).toThrow();
         expect(count_cfg_nodes(input)).toBe(3);
+        expect(table_of_contents(input).size).toBe(3);
     });
 
     it('phi node must assign from the correct register after an unconditional jump', () => {
@@ -290,6 +305,7 @@ describe('static single assignment', () => {
         ];
         expect(evaluate(input)).toBe(22);
         expect(count_cfg_nodes(input)).toBe(4);
+        expect(table_of_contents(input).size).toBe(4);
     });
 
     it('phi node must assign from the correct register when executing a loop', () => {
@@ -316,6 +332,7 @@ describe('static single assignment', () => {
         ];
         expect(evaluate(input)).toBe(3);
         expect(count_cfg_nodes(input)).toBe(3);
+        expect(table_of_contents(input).size).toBe(3);
     });
 
     it('phi node must allow assignment from dominator blocks which are not the immediate dominator', () => {
@@ -355,6 +372,7 @@ describe('static single assignment', () => {
         ];
         expect(evaluate(input)).toBe(41);
         expect(count_cfg_nodes(input)).toBe(5);
+        expect(table_of_contents(input).size).toBe(5);
     });
 
     it('phi node must allow assignment when both inputs are available', () => {
@@ -386,6 +404,7 @@ describe('static single assignment', () => {
         ];
         expect(evaluate(input)).toBe(20);
         expect(count_cfg_nodes(input)).toBe(4);
+        expect(table_of_contents(input).size).toBe(4);
     });
 });
 
@@ -411,6 +430,7 @@ describe('memory and ownership', () => {
         ];
         expect(() => {evaluate(input)}).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
+        expect(table_of_contents(input).size).toBe(1);
     });
 
     it.skip('must detect a double-drop', () => {
@@ -424,6 +444,7 @@ describe('memory and ownership', () => {
         ];
         expect(() => {evaluate(input)}).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
+        expect(table_of_contents(input).size).toBe(1);
     });
 
     it('must detect a use-after-move', () => {
@@ -435,6 +456,7 @@ describe('memory and ownership', () => {
         ];
         expect(() => {evaluate(input)}).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
+        expect(table_of_contents(input).size).toBe(1);
     });
 
     it('must detect a dangling reference when the source register is dropped', () => {
@@ -449,6 +471,7 @@ describe('memory and ownership', () => {
         // TODO: a borrow-checker should detect this, instead of it being a runtime error:
         expect(() => {evaluate(input)}).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
+        expect(table_of_contents(input).size).toBe(1);
     });
 
     it('must detect a dangling reference when the source register is moved', () => {
@@ -463,5 +486,6 @@ describe('memory and ownership', () => {
         // TODO: a borrow-checker should detect this, instead of it being a runtime error:
         expect(() => {evaluate(input)}).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
+        expect(table_of_contents(input).size).toBe(1);
     });
 });
