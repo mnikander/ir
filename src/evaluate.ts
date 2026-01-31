@@ -1,15 +1,12 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { Get, Instruction, Label, RawValue, Reference, Register, Value } from './instructions.ts'
-import { CFG, compute_control_flow_graph, Interval, table_of_contents, verify_single_assignment } from './analysis.ts';
+import { Interval, table_of_contents, verify_single_assignment } from './analysis.ts';
 import { add, branch, call, constant, copy, deref, divide, drop, equal, exit, jump, move, multiply, phi, ref, remainder, returning, State, subtract, top, unequal } from "./state.ts";
 
 export function evaluate(program: readonly Instruction[]): RawValue {
     program = verify_single_assignment(program);
     const toc: Map<Label, Interval> = table_of_contents(program);
-    const cfg: CFG = compute_control_flow_graph(program);
-    
-    if(cfg.nodes.length === 0) throw Error(`Expected to find at least one basic block in the program.`);
     if (program[0][Get.Left] !== '@entry') throw Error(`Expected valid '@entry' block at start of program`);
 
     let state: State = {

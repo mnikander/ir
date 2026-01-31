@@ -3,8 +3,7 @@
 import { Function, Get, Instruction, Label, Register } from "./instructions.ts";
 
 export type Interval = { begin: number, end: number };
-export type Edge     = { from: Label, to: Label }; // TODO: `availablity: Set<Register>`
-export type CFG      = { nodes: Label[], edges: Edge[] };
+export type Edge     = { from: Label, to: Label, availability?: Set<Register> };
 
 export function verify_single_assignment(instructions: readonly Instruction[]): readonly Instruction[] {
     const assigned_registers = new Set<Register>();
@@ -32,6 +31,7 @@ function assign(register: Register, assigned_registers: Set<Register>, line: num
     return assigned_registers;
 }
 
+// for each block and function label, find the first and last line in the code
 export function table_of_contents(program: readonly Instruction[]): Map<Label, Interval> {
     if (program[0][Get.Left] !== '@entry') throw Error(`Expected valid '@entry' block at start of program`);
     
@@ -58,25 +58,24 @@ export function table_of_contents(program: readonly Instruction[]): Map<Label, I
     return blocks;
 }
 
-export function compute_control_flow_graph(program: readonly Instruction[]): CFG {
-    const cfg: CFG = { nodes: [], edges: [] };
-    let block: Label = '@entry';
+export function compute_adjacency_lists(program: readonly Instruction[]): Edge[] {
+    const edges = [];
+    let block: Label = '@';
     for (let index: number = 0; index < program.length; index++) {
         const line: Instruction = program[index];
         if (line[Get.Tag] === 'Block' || line[Get.Tag] === 'Function') {
-            cfg.nodes.push(line[Get.First]);
             block = line[Get.First];
         }
         else if (line[Get.Tag] === 'Jump') {
             const edge: Edge = { from: block, to: line[Get.Left]};
-            cfg.edges.push(edge);
+            edges.push(edge);
         }
         else if (line[Get.Tag] === 'Branch') {
             const left_edge: Edge = { from: block, to: line[Get.Left]};
             const right_edge: Edge = { from: block, to: line[Get.Right]};
-            cfg.edges.push(left_edge);
-            cfg.edges.push(right_edge);
+            edges.push(left_edge);
+            edges.push(right_edge);
         }
     }
-    return cfg;
+    return edges;
 }
