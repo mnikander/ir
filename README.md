@@ -4,14 +4,14 @@ An interpreter for an intermediate representation (IR).
 This IR is based on three-address code (3AC aka TAC) and static single-assignment (SSA) form.
 Like all IRs, it sits between high-level languages such as C or TypeScript on one end, and Assembly on the other end.
 
-## Getting started
+## Getting Started
 
 This project is implemented in TypeScript, using [Deno](https://deno.com/).
-Unit testing is done using the 'behavior driven development' and 'expect' packages which can be installed with:
+After setting up deno, just navigate into the root directory and install all dependencies using:
 
 ```
-deno add jsr:@std/testing/bdd
-deno add jsr:@std/expect
+cd ir/
+deno install
 ```
 
 Build and run the tests with:
