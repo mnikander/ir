@@ -117,9 +117,9 @@ describe('labels, jump, and branch', () => {
             [ '%2', 'Const', 22 ],
             [ null, 'Exit',  '%2' ],
         ];
-        expect(table_of_contents(input).size).toBe(3);
         expect(evaluate(input)).toBe(22);
         expect(count_cfg_nodes(input)).toBe(3);
+        expect(table_of_contents(input).size).toBe(3);
     });
 
     it('must execute first branch if the condition is true', () => {
