@@ -399,10 +399,42 @@ describe('static single assignment', () => {
             [ null, 'Jump', '@c' ],
             
             [ null, 'Block', '@c' ],
-            [ '%result', 'Phi', '@a', '%alpha', '@b', '%bravo' ], // this currently fails, only the immediate predecessor block is available in the interpreter and 'B' comes from a grandparent
+            [ '%result', 'Phi', '@a', '%alpha', '@b', '%bravo' ],
             [ null, 'Exit',  '%result' ],
         ];
         expect(evaluate(input)).toBe(20);
+        expect(count_cfg_nodes(input)).toBe(4);
+        expect(table_of_contents(input).size).toBe(4);
+    });
+
+    it('must throw an error when a phi node is non-exhaustive', () => {
+        //
+        //        Entry
+        //        |   |
+        //        A   |
+        //      / |   |
+        //     B  |  /
+        //      \ | /
+        //        C
+        //
+        const input: Instruction[] = [
+            [ null, 'Block', '@entry' ],
+            [ '%echo', 'Const', false ],
+            [ null, 'Branch', '@a', '@c', '%echo'],
+            
+            [ null, 'Block', '@a' ],
+            [ '%alpha', 'Const', true ],
+            [ null, 'Branch', '@b', '@c', '%alpha' ], // branch to B
+            
+            [ null, 'Block', '@b' ],
+            [ '%bravo', 'Const', true ],
+            [ null, 'Jump', '@c' ],
+            
+            [ null, 'Block', '@c' ],
+            [ '%result', 'Phi', '@a', '%alpha', '@b', '%bravo' ], // this phi-node does NOT cover all incoming edges
+            [ null, 'Exit',  '%result' ],
+        ];
+        expect(() => {evaluate(input)}).toThrow();
         expect(count_cfg_nodes(input)).toBe(4);
         expect(table_of_contents(input).size).toBe(4);
     });
