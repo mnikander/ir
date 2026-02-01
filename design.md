@@ -13,7 +13,6 @@ Whether or not this IR is an acceptable compromise in practice, is an open quest
 The following sections outline:
 - problem and motivation
 - the design of the IR
-- the current project state and future work
 - sources and resources for further reading
 
 ## Motivation
@@ -112,28 +111,6 @@ For the moment, we will focus on stack-allocated memory though.
 - allows handling Maybe and Either values as primitives
 - cases `Nothing<T>` and `Just<T> 42` can be merged by a phi-node, like any other value
 
-## Current State and Future Work
-
-Done:
-- basic arithmetic and logic instructions
-- basic control flow instructions
-- `copy`
-- `move`
-- `drop`
-- `ref` and `deref` within a block
-
-In progress:
-- data-flow analysis for variables
-
-To Do:
-- functions consisting of several blocks
-- references across function boundaries
-- escaping vs. non-escaping references
-- `update`
-- data-flow analysis for references
-
-Optional:
-- scalarized tuples
 
 ## Sources and Resources
 - 
