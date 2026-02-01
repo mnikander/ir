@@ -1,20 +1,11 @@
 // Copyright (c) 2025 Marco Nikander
 
 import { Get, Instruction, Label, RawValue, Reference, Register, Value } from './instructions.ts'
-import { CFG, adjacency_list, control_flow_graph, Interval, table_of_contents, verify_single_assignment, node_list, Edge, reachability } from './analysis.ts';
+import { Interval, table_of_contents } from './analysis.ts';
 import { add, branch, call, constant, copy, deref, divide, drop, equal, exit, jump, move, multiply, phi, ref, remainder, returning, State, subtract, top, unequal } from "./state.ts";
 
 export function evaluate(program: readonly Instruction[]): RawValue {
-    program = verify_single_assignment(program);
     const toc: Map<Label, Interval> = table_of_contents(program);
-    if (program[0][Get.Left] !== '@entry') throw Error(`Expected valid '@entry' block at start of program`);
-
-    const nodes: Label[] = node_list(program);
-    const edges: Edge[] = adjacency_list(program);
-    const cfg: CFG[] = control_flow_graph(nodes, edges);
-    const _reach: Map<Label, Set<Label>> = reachability(nodes, edges);
-    if (cfg.length < 1) throw Error(`Expected control flow graph to contain at least one block`);
-    
 
     let state: State = {
         stack: [ {registers: new Map<Register, Value | Reference>(), return_pc: undefined, return_block: undefined } ],

@@ -7,7 +7,20 @@ export type Interval = { begin: number, end: number };
 export type Edge     = { from: Label, to: Label, availability?: Set<Register> };
 export type CFG      = { label: Label, predecessors: number[], successors: number[] };
 
-export function verify_single_assignment(instructions: readonly Instruction[]): readonly Instruction[] {
+export function analyze(program: readonly Instruction[]): readonly Instruction[] {
+    program = verify_single_assignment(program);
+    if (program[0][Get.Left] !== '@entry') throw Error(`Expected valid '@entry' block at start of program`);
+
+    const nodes: Label[] = node_list(program);
+    const edges: Edge[] = adjacency_list(program);
+    const cfg: CFG[] = control_flow_graph(nodes, edges);
+    const _reach: Map<Label, Set<Label>> = reachability(nodes, edges);
+    if (cfg.length < 1) throw Error(`Expected control flow graph to contain at least one block`);
+
+    return program;
+}
+
+function verify_single_assignment(instructions: readonly Instruction[]): readonly Instruction[] {
     const assigned_registers = new Set<Register>();
 
     for (let line: number = 0; line < instructions.length; ++line) {

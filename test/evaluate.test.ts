@@ -2,7 +2,7 @@ import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 import { evaluate } from "../src/evaluate.ts";
 import { Instruction, Label } from "../src/instructions.ts";
-import { adjacency_list, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
+import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
 function count_cfg_nodes(program: Instruction[]): number {
     const nodes: Label[] = node_list(program);
@@ -13,7 +13,7 @@ function count_cfg_nodes(program: Instruction[]): number {
 describe('constants and exit', () => {
     it('must throw error on empty input', () => {
         const input: Instruction[] = [];
-        expect(() => evaluate(input)).toThrow();
+        expect(() => evaluate(analyze(input))).toThrow();
     });
 
     it('must throw error if there is no Exit instruction', () => {
@@ -21,7 +21,7 @@ describe('constants and exit', () => {
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
         ];
-        expect(() => evaluate(input)).toThrow();
+        expect(() => evaluate(analyze(input))).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
         expect(table_of_contents(input).size).toBe(1);
     });
@@ -31,7 +31,7 @@ describe('constants and exit', () => {
             [ '%0', 'Const', 11 ],
             [ null, 'Exit', '%0' ],
         ];
-        expect(() => evaluate(input)).toThrow();
+        expect(() => evaluate(analyze(input))).toThrow();
         // TODO: it would be nice if I could enforce 'CFG.length === 0' here
     });
 
@@ -42,7 +42,7 @@ describe('constants and exit', () => {
             [ '%1', 'Ref', '%0' ],
             [ null, 'Exit', '%1' ],
         ];
-        expect(() => {evaluate(input)}).toThrow();
+        expect(() => {evaluate(analyze(input))}).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
         expect(table_of_contents(input).size).toBe(1);
     });
@@ -53,7 +53,7 @@ describe('constants and exit', () => {
             [ '%0', 'Const', 11 ],
             [ null, 'Exit', '%0' ],
         ];
-        expect(evaluate(input)).toBe(11);
+        expect(evaluate(analyze(input))).toBe(11);
         expect(count_cfg_nodes(input)).toBe(1);
         expect(table_of_contents(input).size).toBe(1);
     });
@@ -67,7 +67,7 @@ describe('copying of registers', () => {
             [ '%1', 'Copy', '%0' ],
             [ null, 'Exit', '%1' ],
         ];
-        expect(evaluate(input)).toBe(11);
+        expect(evaluate(analyze(input))).toBe(11);
         expect(count_cfg_nodes(input)).toBe(1);
         expect(table_of_contents(input).size).toBe(1);
     });
@@ -82,7 +82,7 @@ describe('arithmetic operations', () => {
             [ '%2', 'Add',  '%0', '%1' ],
             [ null, 'Exit', '%2' ],
         ];
-        expect(evaluate(input)).toBe(33);
+        expect(evaluate(analyze(input))).toBe(33);
         expect(count_cfg_nodes(input)).toBe(1);
         expect(table_of_contents(input).size).toBe(1);
     });
@@ -99,7 +99,7 @@ describe('labels, jump, and branch', () => {
             [ '%1', 'Const', 22 ],
             [ null, 'Exit',  '%2' ],
         ];
-        expect(() => {evaluate(input)}).toThrow();
+        expect(() => {evaluate(analyze(input))}).toThrow();
         expect(count_cfg_nodes(input)).toBeGreaterThanOrEqual(1);
         expect(table_of_contents(input).size).toBeGreaterThanOrEqual(1);
     });
@@ -117,7 +117,7 @@ describe('labels, jump, and branch', () => {
             [ '%2', 'Const', 22 ],
             [ null, 'Exit',  '%2' ],
         ];
-        expect(evaluate(input)).toBe(22);
+        expect(evaluate(analyze(input))).toBe(22);
         expect(count_cfg_nodes(input)).toBe(3);
         expect(table_of_contents(input).size).toBe(3);
     });
@@ -142,7 +142,7 @@ describe('labels, jump, and branch', () => {
             [ null, 'Block', '@end' ],
             [ null, 'Exit',  '%4' ],
         ];
-        expect(evaluate(input)).toBe(33);
+        expect(evaluate(analyze(input))).toBe(33);
         expect(count_cfg_nodes(input)).toBe(4);
         expect(table_of_contents(input).size).toBe(4);
     });
@@ -167,7 +167,7 @@ describe('labels, jump, and branch', () => {
             [ null, 'Block', '@end' ],
             [ null, 'Exit',  '%5' ],
         ];
-        expect(evaluate(input)).toBe(66);
+        expect(evaluate(analyze(input))).toBe(66);
         expect(count_cfg_nodes(input)).toBe(4);
         expect(table_of_contents(input).size).toBe(4);
     });
@@ -185,7 +185,7 @@ describe('function call', () => {
             [ null, 'Function', '@identity', ['%a'] ],
             [ null, 'Return', '%a' ],
         ];
-        expect(evaluate(input)).toBe(22);
+        expect(evaluate(analyze(input))).toBe(22);
         expect(count_cfg_nodes(input)).toBe(2);
         expect(table_of_contents(input).size).toBe(2);
     });
@@ -201,7 +201,7 @@ describe('function call', () => {
             [ null, 'Function', '@first', ['%a', '%b'] ],
             [ null, 'Return', '%a' ],
         ];
-        expect(evaluate(input)).toBe(11);
+        expect(evaluate(analyze(input))).toBe(11);
         expect(count_cfg_nodes(input)).toBe(2);
         expect(table_of_contents(input).size).toBe(2);
     });
@@ -232,7 +232,7 @@ describe('function call', () => {
             [ '%10', 'Phi', '@body', '%9', '@factorial', '%acc' ],
             [ null, 'Return', '%10' ],
         ];
-        expect(evaluate(input)).toBe(120);
+        expect(evaluate(analyze(input))).toBe(120);
         expect(count_cfg_nodes(input)).toBe(4);
         expect(table_of_contents(input).size).toBe(4);
     });
@@ -246,7 +246,7 @@ describe('static single assignment', () => {
             [ '%0', 'Const', 22 ], // attempt to reassign register 0
             [ null, 'Exit', '%1' ],
         ];
-        expect(() => {evaluate(input)}).toThrow();
+        expect(() => {evaluate(analyze(input))}).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
         expect(table_of_contents(input).size).toBe(1);
     });
@@ -262,7 +262,7 @@ describe('static single assignment', () => {
             [ null, 'Function', '@first', ['%a', '%a'] ],
             [ null, 'Return', '%a' ],
         ];
-        expect(() => {evaluate(input)}).toThrow();
+        expect(() => {evaluate(analyze(input))}).toThrow();
         expect(count_cfg_nodes(input)).toBe(2);
         expect(table_of_contents(input).size).toBe(2);
     });
@@ -281,7 +281,7 @@ describe('static single assignment', () => {
             [ null, 'Function', '@identity2', ['%a'] ],
             [ null, 'Return', '%a' ],
         ];
-        expect(() => {evaluate(input)}).toThrow();
+        expect(() => {evaluate(analyze(input))}).toThrow();
         expect(count_cfg_nodes(input)).toBe(3);
         expect(table_of_contents(input).size).toBe(3);
     });
@@ -303,7 +303,7 @@ describe('static single assignment', () => {
             [ '%3', 'Phi', '@first', '%1', '@second', '%2' ],
             [ null, 'Exit', '%3' ],
         ];
-        expect(evaluate(input)).toBe(22);
+        expect(evaluate(analyze(input))).toBe(22);
         expect(count_cfg_nodes(input)).toBe(4);
         expect(table_of_contents(input).size).toBe(4);
     });
@@ -330,7 +330,7 @@ describe('static single assignment', () => {
             [ null, 'Block', '@end' ],
             [ null, 'Exit',  '%3' ],
         ];
-        expect(evaluate(input)).toBe(3);
+        expect(evaluate(analyze(input))).toBe(3);
         expect(count_cfg_nodes(input)).toBe(3);
         expect(table_of_contents(input).size).toBe(3);
     });
@@ -370,7 +370,7 @@ describe('static single assignment', () => {
             [ '%total', 'Add', '%grandparent', '%parent'],
             [ null, 'Exit',  '%total' ],
         ];
-        expect(evaluate(input)).toBe(41);
+        expect(evaluate(analyze(input))).toBe(41);
         expect(count_cfg_nodes(input)).toBe(5);
         expect(table_of_contents(input).size).toBe(5);
     });
@@ -402,7 +402,7 @@ describe('static single assignment', () => {
             [ '%result', 'Phi', '@a', '%alpha', '@b', '%bravo' ],
             [ null, 'Exit',  '%result' ],
         ];
-        expect(evaluate(input)).toBe(20);
+        expect(evaluate(analyze(input))).toBe(20);
         expect(count_cfg_nodes(input)).toBe(4);
         expect(table_of_contents(input).size).toBe(4);
     });
@@ -434,7 +434,8 @@ describe('static single assignment', () => {
             [ '%result', 'Phi', '@a', '%alpha', '@b', '%bravo' ], // this phi-node does NOT cover all incoming edges
             [ null, 'Exit',  '%result' ],
         ];
-        expect(() => {evaluate(input)}).toThrow();
+        // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
+        expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(4);
         expect(table_of_contents(input).size).toBe(4);
     });
@@ -449,8 +450,9 @@ describe('memory and ownership', () => {
             [ '%t', 'Deref', '%r' ],
             [ null, 'Exit', '%t' ],
         ];
-        expect(evaluate(input)).toBe(42);
+        expect(evaluate(analyze(input))).toBe(42);
         expect(count_cfg_nodes(input)).toBe(1);
+        expect(table_of_contents(input).size).toBe(1);
     });
 
     it('must detect a use-after-drop', () => {
@@ -460,7 +462,8 @@ describe('memory and ownership', () => {
             [ null, 'Drop', '%0' ],
             [ null, 'Exit', '%0' ],
         ];
-        expect(() => {evaluate(input)}).toThrow();
+        // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
+        expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(1);
         expect(table_of_contents(input).size).toBe(1);
     });
@@ -474,7 +477,8 @@ describe('memory and ownership', () => {
             [ null, 'Drop', '%0' ],
             [ null, 'Exit', '%1' ],
         ];
-        expect(() => {evaluate(input)}).toThrow();
+        // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
+        expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(1);
         expect(table_of_contents(input).size).toBe(1);
     });
@@ -486,7 +490,8 @@ describe('memory and ownership', () => {
             [ '%1', 'Move', '%0' ],
             [ null, 'Exit', '%0' ],
         ];
-        expect(() => {evaluate(input)}).toThrow();
+        // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
+        expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(1);
         expect(table_of_contents(input).size).toBe(1);
     });
@@ -500,8 +505,8 @@ describe('memory and ownership', () => {
             [ '%t', 'Deref', '%r' ],
             [ null, 'Exit', '%t' ],
         ];
-        // TODO: a borrow-checker should detect this, instead of it being a runtime error:
-        expect(() => {evaluate(input)}).toThrow();
+        // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
+        expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(1);
         expect(table_of_contents(input).size).toBe(1);
     });
@@ -515,8 +520,8 @@ describe('memory and ownership', () => {
             [ '%t', 'Deref', '%r' ],
             [ null, 'Exit', '%t' ],
         ];
-        // TODO: a borrow-checker should detect this, instead of it being a runtime error:
-        expect(() => {evaluate(input)}).toThrow();
+        // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
+        expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(1);
         expect(table_of_contents(input).size).toBe(1);
     });
