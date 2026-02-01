@@ -468,7 +468,7 @@ describe('memory and ownership', () => {
         expect(table_of_contents(input).size).toBe(1);
     });
 
-    it.skip('must detect a double-drop', () => {
+    it('must detect a double-drop', () => {
         const input: Instruction[] = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 0 ],

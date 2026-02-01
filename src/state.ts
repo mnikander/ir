@@ -42,6 +42,9 @@ export function copy(state: State, line: Copy): State {
 }
 
 export function drop(state: State, line: Drop): State {
+    if (!registers(state).has(line[Get.Left])) {
+        throw Error(`double-free of register '${line[Get.Left]}'`);
+    }
     registers(state).delete(line[Get.Left]);
     return state;
 }
@@ -66,7 +69,6 @@ export function deref(state: State, line: Deref): State {
         const value: Reference | Value = valid(registers(state).get(r.value));
         registers(state).set(dest(line), value);
     }
-
     return state;
 }
 
