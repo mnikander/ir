@@ -107,6 +107,11 @@ For the moment, we will focus on stack-allocated memory though.
 - scalarized tuples are good for performance
 - allows validating meaningful examples with references
 
+### Optional: Tagged Unions
+- add tagged unions as a language-level construct
+- allows handling Maybe and Either values as primitives
+- cases `Nothing<T>` and `Just<T> 42` can be merged by a phi-node, like any other value
+
 ## Current State and Future Work
 
 Done:
