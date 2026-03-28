@@ -52,7 +52,9 @@ terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
 
+// Code Example:
 /*
+
 block @entry:
 %a = const true
 %b = not %a
