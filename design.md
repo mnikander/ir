@@ -1,54 +1,46 @@
 # Design of the Intermediate Representation
 
-This is a static single-assignment (SSA) borrow-checked intermediate representation (IR).
-It is intended as a compilation target, on which memory-safety can be checked, before further lowering.
+This is a static single-assignment (SSA) intermediate representation (IR).
+This IR is intended as a compilation target, on which borrow-checking can be performed, before further lowering.
 It combines ideas from LLVM IR and Rust MIR.
 The interpreter serves as a prototype to validate the language semantics.
 
-The language is deliberately kept close to LLVM IR, so that lowering is easy.
+The [instruction set](signatures.md) is deliberately kept small and close to LLVM IR, so that lowering is easy.
 The ownership and borrowing model is greatly simplified compared to that of Rust MIR.
 Certain language features are omitted entirely, to simplify the semantics and reduce the need for annotations.
-Whether or not this IR is an acceptable compromise in practice, is an open question.
-
-The following sections outline:
-- problem and motivation
-- the design of the IR
-- sources and resources for further reading
 
 ## Motivation
 <!-- What problem am I trying to solve? -->
 <!-- Which other solutions and projects exist? -->
+
+The goal is to write:
 - memory-safe programs
-- no garbage-collection overhead
-- deterministic runtime for real-time applications
-- make simplified borrow-checking more accessible for other language designers
+- without garbage-collection overhead
+- with deterministic runtime for real-time applications
+- without lifetime annotations
 
 ## Design
 <!-- What design decisions and trade-offs were made, and why? -->
 <!-- What is the language? -->
 <!-- How are references modelled? -->
 <!-- How are aggregate types modelled? -->
-<!-- -->
-<!-- -->
 
-### ?. Static Single-Assignment
-- variables are immutable, easy to reason about and optimize
+There is a table of [design decisions](decisions.md) which outlines many design decisions and the reasoning behind them.
+Several important features are:
 
-### ?. Move Semantics and In-Place Update
-- `move`
-- `update`
+| Feature                             | Why? |
+| :--                                 | :--  |
+| static single-assignment (SSA) form | variables are easy to reason about and optimize |
+| `drop` instruction                  | 'undefining' a variable allows modelling the lifetime |
+| `move` instruction                  | allows transfering unique ownership of a resource to another variable |
+| destructive `update` instruction    | allows the immutable data paradigm AND in-place modification of large data structures |
+| `copy` is a deep copy               | no shared ownership, keeps lifetimes and ownership semantics clear |
+| call-by-value                       | keeps the language implementation relatively simple |
+| storage is on the stack by default  | good runtime performance, lifetimes tied to lexical scope are easy to reason about |
+| heap storage, i.e. `box` is explicit| heap storage is vital for persistent data, but must be freed at the end of its lifetime |
 
-### ?. References are Baked-In
-- `ref` and `deref`
-- cheaper than copying for aggregate types
-- lifetime of a reference must be explicitly checked against its target
-- escaping vs. non-escaping references allow aggressive optimization and avoid lifetime annotations
 
-### ?. Deep Copy
-- `copy`
-- lifetime is disjoint from the original, **no sharing** under any circumstances
-
-### ?. Life-Cycle of a Variable
+## Life-Cycle of a Variable
 
 At a given source-location, a variable can be in one of several valid states:
 
@@ -95,25 +87,10 @@ This means there is no need to explicitly free a stack-allocated variable.
 A heap-allocated variable *must* be freed explicitly.
 This means heap variables are not allowed to be in the 'Defined' state, when the enclosing function returns.
 That would be a memory leak.
-For the moment, we will focus on stack-allocated memory though.
 
-### ?. Explicit Heap Storage
-- `box` which is like the `std::unique_ptr` in C++
-
-### Optional: Scalarized Tuples
-- add tuples as a language-level construct
-- immutable data and the lack of bit-wise operations makes it easy to _scalarize_ all tuples
-- scalarized tuples are good for performance
-- allows validating meaningful examples with references
-
-### Optional: Tagged Unions
-- add tagged unions as a language-level construct
-- allows handling Maybe and Either values as primitives
-- cases `Nothing<T>` and `Just<T> 42` can be merged by a phi-node, like any other value
-
-
-## Sources and Resources
-- 
+## Resources
+- [instruction set](signatures.md)
+- [design decisions](decisions.md)
 
 ---
 **Copyright (c) 2026 Marco Nikander**
