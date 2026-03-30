@@ -4,7 +4,7 @@
 | :---                     | :---                         | :---                                    | :---                           | :---    | :--- |
 |                          |                              |                                         |                                |         | |
 | **Special Forms**        |                              |                                         |                                |         | |
-| Value definition         | `=`                          | `%x = %a`                               | Value                          | Unit    | |
+| Value definition         | `=`                          | `%x = %a`                               | Value                          |         | |
 | Function call            | `call`                       | `%x = call @f [%a %b]`                  | Function, Tuple Value*         | Value   | |
 | Phi node                 | `phi`                        | `%x = phi [[@left %l] [@right %r]]`     | Tuple (Tuple Label Value)*     | Value   | |
 |                          |                              |                                         |                                |         | |
@@ -18,12 +18,12 @@
 | Logical                  | `and` <br> `or`              | `%x = and %a %b`                        | Boolean, Boolean               | Boolean | _not available yet_ |
 |                          |                              |                                         |                                |         | |
 | **Control Flow**         |                              |                                         |                                |         | |
-| Basic block              | `block`                      | `block @entry`:                         | Label                          | Bottom  | |
-| Function definition      | `function`                   | `function @identity [%arg]`:            | Label, Tuple Value*            | Bottom  | |
-| Jump                     | `jump`                       | `jump @end`                             | Label                          | Bottom  | unconditional branch |
-| Branch                   | `branch`                     | `branch @left @right %c`                | Label, Label, Boolean          | Bottom  | conditional branch |
-| Return                   | `return`                     | `return %x`                             | Value                          | Bottom  | |
-| Exit                     | `exit`                       | `exit %x`                               | Value                          | Bottom  | _will hopefully be replaced by `return`_ |
+| Basic block              | `block`                      | `block @entry`:                         | Label                          |         | |
+| Function definition      | `function`                   | `function @identity [%arg]`:            | Label, Tuple Value*            |         | |
+| Jump                     | `jump`                       | `jump @end`                             | Label                          |         | unconditional branch |
+| Branch                   | `branch`                     | `branch @left @right %c`                | Label, Label, Boolean          |         | conditional branch |
+| Return                   | `return`                     | `return %x`                             | Value                          |         | |
+| Exit                     | `exit`                       | `exit %x`                               | Value                          |         | _will hopefully be replaced by `return`_ |
 |                          |                              |                                         |                                |         | |
 
 ## Notes
