@@ -435,6 +435,23 @@ describe('static single assignment', () => {
         //      \ | /
         //        C
         //
+        //
+        // block @entry:
+        // %echo = constant false
+        // branch %echo @a @c
+        // 
+        // block @a:
+        // %alpha = constant true
+        // branch %alpha @b @c
+        // 
+        // block @b:
+        // %bravo = constant true
+        // jump @c
+        //
+        // block @c:
+        // %result = phi [[@entry, %echo], [@a, %alpha], [@b, %bravo]]
+        // exit %result
+        //
         const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%echo', 'Const', false ],
@@ -466,6 +483,23 @@ describe('static single assignment', () => {
         //     B  |  /
         //      \ | /
         //        C
+        //
+        //
+        // block @entry:
+        // %echo = constant false
+        // branch %echo @a @c
+        // 
+        // block @a:
+        // %alpha = constant true
+        // branch %alpha @b @c
+        // 
+        // block @b:
+        // %bravo = constant true
+        // jump @c
+        //
+        // block @c:
+        // %result = phi [[@a, %alpha], [@b, %bravo]]  // this phi-node does NOT cover all incoming edges
+        // exit %result
         //
         const input: Program = [
             [ null, 'Block', '@entry' ],
