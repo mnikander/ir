@@ -179,7 +179,7 @@ export function returning(state: State, line: Return, program: Program): State {
 export function phi(state: State, line: Phi): State {
 
     const reg: Map<Register, Value | Reference> = registers(state);
-    const incoming: [ Label, Register][] = line[Get.First];
+    const incoming: [ Label, Register][] = line[Get.Left];
     let found = false;
     for (let i = 0; i < incoming.length && !found; ++i) {
         const label: Label     = incoming[i][0];

@@ -48,7 +48,4 @@ export enum Get {
     Tag    = 1,
     Left   = 2, // alias to first argument
     Right  = 3, // alias to second argument
-    First  = 2,
-    Second = 3,
-    Third  = 4,
 }

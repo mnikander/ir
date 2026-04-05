@@ -24,14 +24,14 @@ export function to_string(program: Program): string {
                 case 'Remainder': output += binary(line); break;
                 case 'Equal':     output += binary(line); break;
                 case 'Unequal':   output += binary(line); break;
-                case 'Jump':      output += `${line[Get.Tag].toLowerCase()} ${line[Get.First]}\n`; break;
+                case 'Jump':      output += `${line[Get.Tag].toLowerCase()} ${line[Get.Left]}\n`; break;
                 case 'Branch':    output += `${line[Get.Tag].toLowerCase()} ${line[Get.Left]} ${line[Get.Right][0]} ${line[Get.Right][1]} \n`; break;
-                case 'Call':      output += `${line[Get.Tag].toLowerCase()} ${line[Get.First]} [${line[Get.Second]}]\n`; break;
-                case 'Return':    output += `${line[Get.Tag].toLowerCase()} ${line[Get.First]}\n`; break;
+                case 'Call':      output += `${line[Get.Tag].toLowerCase()} ${line[Get.Left]} [${line[Get.Right]}]\n`; break;
+                case 'Return':    output += `${line[Get.Tag].toLowerCase()} ${line[Get.Left]}\n`; break;
                 case 'Phi':       output += `${line[Get.Dest]}\t= ${line[Get.Tag].toLowerCase()} ${concat_phi_entries(line)} \n`; break;
-                case 'Exit':      output += `${line[Get.Tag].toLowerCase()} ${line[Get.First]}\n`; break;
-                case 'Block':     output += `\n${line[Get.Tag].toLowerCase()} ${line[Get.First]}:\n`; break;
-                case 'Function':  output += `\n${line[Get.Tag].toLowerCase()} ${line[Get.First]} [${line[Get.Second]}]:\n`; break;
+                case 'Exit':      output += `${line[Get.Tag].toLowerCase()} ${line[Get.Left]}\n`; break;
+                case 'Block':     output += `\n${line[Get.Tag].toLowerCase()} ${line[Get.Left]}:\n`; break;
+                case 'Function':  output += `\n${line[Get.Tag].toLowerCase()} ${line[Get.Left]} [${line[Get.Right]}]:\n`; break;
                 default:          throw Error(`unhandled instruction type '${(line as Instruction)[Get.Tag]}'`);
             }
             pc++;
@@ -45,16 +45,16 @@ export function to_string(program: Program): string {
 }
 
 function unary(line: Ownership): string {
-    return `${line[Get.Dest]}\t= ${line[Get.Tag].toLowerCase()} ${line[Get.First]}\n`;
+    return `${line[Get.Dest]}\t= ${line[Get.Tag].toLowerCase()} ${line[Get.Left]}\n`;
 }
 
 function binary(line: Arithmetic | Comparison): string {
-    return `${line[Get.Dest]}\t= ${line[Get.Tag].toLowerCase()} ${line[Get.First]} ${line[Get.Second]}\n`;
+    return `${line[Get.Dest]}\t= ${line[Get.Tag].toLowerCase()} ${line[Get.Left]} ${line[Get.Right]}\n`;
 }
 
 export function concat_phi_entries(phi: Phi): string {
     let result: string = '';
-    phi[Get.First].forEach((lr: [Label, Register]) => {
+    phi[Get.Left].forEach((lr: [Label, Register]) => {
         result += lr[0];
         result += ' ';
         result += lr[1];

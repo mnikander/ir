@@ -55,8 +55,8 @@ export function node_list(program: Program): Label[] {
     
     function append_label(line: Instruction) {
         if (line[Get.Tag] === 'Block' || line[Get.Tag] === 'Function') {
-            list.push(line[Get.First]);
-            set.add(line[Get.First]);
+            list.push(line[Get.Left]);
+            set.add(line[Get.Left]);
         }
     };
 }
@@ -67,7 +67,7 @@ export function adjacency_list(program: Program): Edge[] {
     for (let index: number = 0; index < program.length; index++) {
         const line: Instruction = program[index];
         if (line[Get.Tag] === 'Block' || line[Get.Tag] === 'Function') {
-            block = line[Get.First];
+            block = line[Get.Left];
         }
         else if (line[Get.Tag] === 'Jump') {
             const edge: Edge = { from: block, to: line[Get.Left]};
@@ -100,7 +100,7 @@ export function table_of_contents(program: Program): Map<Label, Interval> {
             blocks.set(block, interval);
             
             // start next block
-            block = line[Get.First];
+            block = line[Get.Left];
             first = index;
         }
     }
