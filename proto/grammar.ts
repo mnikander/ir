@@ -1,8 +1,8 @@
 // Copyright (c) 2026 Marco Nikander
 
 export type Program      = Function[];
-export type Function     = { name: Label,        parameters: Input[],  blocks: Block[] };
-export type Block        = { name: Label,        phi_nodes: Phi[],     instructions: Instruction[], terminator: Terminator };
+export type Function     = { func: Label,        params: Input[],      blocks: Block[] };
+export type Block        = { block: Label,       joins: Phi[],         lines: Instruction[], terminator: Terminator };
 export type Instruction  = Call | Ownership | Arithmetic | Comparison;
 
 export type Phi          = [ destination: Value, tag: 'Phi',           inputs: [label: Label, value: Input][]];

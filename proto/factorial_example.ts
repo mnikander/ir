@@ -5,14 +5,14 @@ import { Program } from "./grammar.ts";
 export const factorial : Program =
 [
     {
-        name: '@main',
-        parameters: [],
+        func: '@main',
+        params: [],
         blocks:
         [
             {
-                name: '@entry',
-                phi_nodes: [],
-                instructions: [
+                block: '@entry',
+                joins: [],
+                lines: [
                     ['%result', 'Call', '@factorial', [[5]]],
                 ],
                 terminator: [ null, 'Exit', ['%result']],
@@ -20,42 +20,41 @@ export const factorial : Program =
         ]
     },
     {
-        name: '@factorial',
-        parameters: [['%arg'],],
+        func: '@factorial',
+        params: [['%arg'],],
         blocks:
         [
             {
-                name: '@entry',
-                phi_nodes: [],
-                instructions: [],
+                block: '@entry',
+                joins: [],
+                lines: [],
                 terminator: [null, 'Jump', '@gate']
             },
             {
-                name: '@gate',
-                phi_nodes: [
+                block: '@gate',
+                joins: [
                     ['%acc', 'Phi', [ ['@entry', [1]     ], ['@body', ['%new_acc']] ] ],
                     ['%n',   'Phi', [ ['@entry', ['%arg']], ['@body', ['%new_n']  ] ] ],
                 ],
-                instructions:
+                lines:
                 [
                     ['%continue',   'Greater',   ['%n'], [1]],
                 ],
                 terminator: [null, 'Branch', ['%continue'], ['@body', '@end']]
             },
             {
-                name: '@body',
-                phi_nodes: [],
-                instructions:
-                [
+                block: '@body',
+                joins: [],
+                lines: [
                     ['%new_acc', 'Multiply', ['%n'], ['%acc']],
                     ['%new_n',   'Subtract', ['%n'], [1]],
                 ],
                 terminator: [null, 'Jump', '@gate']
             },
             {
-                name: '@end',
-                phi_nodes: [],
-                instructions: [],
+                block: '@end',
+                joins: [],
+                lines: [],
                 terminator: [null, 'Return', ['%n']]
             },
         ]
