@@ -41,7 +41,7 @@ export type Branch       = [ destination: null,  tag: 'Branch',        condition
 export type Return       = [ destination: null,  tag: 'Return',        left: Input ];
 export type Exit         = [ destination: null,  tag: 'Exit',          left: Input ];
 
-export type Input        = [number] | ['copy', Value] | ['move', Value];
+export type Input        = [number] | [Value] | ['Move', Value];
 export type Value        = `%${string}`;
 export type Label        = `@${string}`;
 
