@@ -9,8 +9,8 @@ export function evaluate(program: Program): Primitive {
 
     let state: State = {
         stack: [ {registers: new Map<Register, Value | Reference>(), return_pc: undefined, return_block: undefined } ],
-        pc: 1, // we skip over the Entry-block statement at index 0
-        current_block: '@entry',
+        pc: 2, // we skip over `function @main` and its entry-block statement
+        current_block: '@main.entry',
         previous_block: undefined,
     };
 

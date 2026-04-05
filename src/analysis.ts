@@ -9,7 +9,8 @@ export type CFG      = { label: Label, predecessors: number[], successors: numbe
 
 export function analyze(program: Program): Program {
     program = verify_single_assignment(program);
-    if (program[0][Get.Left] !== '@entry') throw Error(`Expected valid '@entry' block at start of program`);
+    if (program[0][Get.Tag] !== 'Function' || program[0][Get.Left] !== '@main') throw Error(`Expected valid '@main' function at start of program`);
+    if (program[1][Get.Tag] !== 'Block' || program[1][Get.Left] !== '@main.entry') throw Error(`Expected valid '@main.entry' block after '@main' function`);
 
     const nodes: Label[] = node_list(program);
     const edges: Edge[] = adjacency_list(program);
@@ -50,11 +51,11 @@ export function node_list(program: Program): Label[] {
     const list: Label[] = [];
     const set: Set<Label> = new Set();
     program.forEach(append_label);
-    if (list.length !== set.size) throw Error(`Expected all functions and blocks to have unique names`);
+    if (list.length !== set.size) throw Error(`Expected all blocks to have unique names`);
     return list;
     
     function append_label(line: Instruction) {
-        if (line[Get.Tag] === 'Block' || line[Get.Tag] === 'Function') {
+        if (line[Get.Tag] === 'Block') {
             list.push(line[Get.Left]);
             set.add(line[Get.Left]);
         }
@@ -66,7 +67,7 @@ export function adjacency_list(program: Program): Edge[] {
     let block: Label = '@';
     for (let index: number = 0; index < program.length; index++) {
         const line: Instruction = program[index];
-        if (line[Get.Tag] === 'Block' || line[Get.Tag] === 'Function') {
+        if (line[Get.Tag] === 'Block') {
             block = line[Get.Left];
         }
         else if (line[Get.Tag] === 'Jump') {
@@ -85,29 +86,46 @@ export function adjacency_list(program: Program): Edge[] {
 
 // for each block and function label, find the first and last line in the code
 export function table_of_contents(program: Program): Map<Label, Interval> {
-    if (program[0][Get.Left] !== '@entry') throw Error(`Expected valid '@entry' block at start of program`);
+    if (program[0][Get.Tag] !== 'Function' || program[0][Get.Left] !== '@main') throw Error(`Expected valid '@main' function at start of program`);
+    if (program[1][Get.Tag] !== 'Block' || program[1][Get.Left] !== '@main.entry') throw Error(`Expected valid '@main.entry' block after '@main' function`);
     
-    const blocks: Map<Label, Interval> = new Map();
-    let block: Label = '@entry';
-    let first: number = 0;
+    const toc: Map<Label, Interval> = new Map();
 
-    for (let index: number = 1; index < program.length; index++) {
+    // pass 1: function intervals
+    for (let index = 0; index < program.length; index++) {
         const line: Instruction = program[index];
-
-        if (line[Get.Tag] === 'Block' || line[Get.Tag] === 'Function') {
-            // store the current block
-            const interval: Interval = { begin: first, end: index };
-            blocks.set(block, interval);
-            
-            // start next block
-            block = line[Get.Left];
-            first = index;
+        if (line[Get.Tag] === 'Function') {
+            let end: number = program.length;
+            for (let next = index + 1; next < program.length && end === program.length; next++) {
+                if (program[next][Get.Tag] === 'Function') {
+                    end = next;
+                }
+            }
+            toc.set(line[Get.Left], { begin: index, end });
         }
     }
-    const interval: Interval = { begin: first, end: program.length };
-    blocks.set(block, interval);
 
-    return blocks;
+    // pass 2: block intervals
+    let block: Label = '@main.entry';
+    let first: number = 1;
+    for (let index = 2; index < program.length; index++) {
+        const line: Instruction = program[index];
+
+        if (line[Get.Tag] === 'Function' || line[Get.Tag] === 'Block') {
+            toc.set(block, { begin: first, end: index });
+            if (line[Get.Tag] === 'Function') {
+                block = (valid(program[index + 1]) as Instruction)[Get.Left] as Label;
+                first = index + 1;
+            }
+            else {
+                block = line[Get.Left];
+                first = index;
+            }
+        }
+    }
+    toc.set(block, { begin: first, end: program.length });
+
+    return toc;
 }
 
 export function control_flow_graph(nodes: Label[], adjacency_list: Edge[]): CFG[] {

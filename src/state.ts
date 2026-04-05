@@ -192,11 +192,13 @@ export function branch(state: State, line: Branch, program: Program, blocks: Map
 
 export function call(state: State, line: Call, program: Program, blocks: Map<Label, Interval>): State {
     const old_reg: Map<Register, Value | Reference> = registers(state);
-    const new_pc: number   = valid(blocks.get(line[Get.Left])).begin;
+    const function_pc: number = valid(blocks.get(line[Get.Left])).begin;
+    const entry_block: Label = (program[function_pc + 1] as Block)[Get.Left];
+    const new_pc: number = function_pc + 1;
     const provided: number = valid(line[Get.Right]).length;
-    const expected: number = valid(program[new_pc][Get.Right]).length;
+    const expected: number = valid(program[function_pc][Get.Right]).length;
     if (provided !== expected) {
-        throw Error(`function '${program[new_pc][Get.Left]}' expects ${expected} arguments, got ${provided}`);
+        throw Error(`function '${program[function_pc][Get.Left]}' expects ${expected} arguments, got ${provided}`);
     }
     state.stack.push({ registers: new Map<Register, Value | Reference>(),
                     return_pc: state.pc,
@@ -204,12 +206,12 @@ export function call(state: State, line: Call, program: Program, blocks: Map<Lab
     state.pc = new_pc;
     // copy register contents into new frame, as function arguments
     for (let i: number = 0; i < line[Get.Right]?.length; i++) {
-        const parameter: Register      = (program[state.pc] as Function)[Get.Right][i];
+        const parameter: Register      = (program[function_pc] as Function)[Get.Right][i];
         const value: Reference | Value = valid(old_reg.get(line[Get.Right][i]));
         registers(state).set(parameter, value);
     }
     state.previous_block = state.current_block;
-    state.current_block  = (program[state.pc] as Function)[Get.Left];
+    state.current_block  = entry_block;
     return state;
 }
 

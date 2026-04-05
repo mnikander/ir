@@ -1,11 +1,11 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 import { evaluate } from "../src/evaluate.ts";
-import { Label, Program } from "../src/instructions.ts";
+import { Program } from "../src/instructions.ts";
 import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
 function count_cfg_nodes(program: Program): number {
-    const nodes: Label[] = node_list(program);
+    const nodes = node_list(program);
     const edges: Edge[]  = adjacency_list(program);
     return control_flow_graph(nodes, edges).length;
 }
@@ -22,23 +22,28 @@ describe('constants and exit', () => {
     });
 
     it('must throw error if there is no Exit instruction', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant 11
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', 11 ],
         ];
         expect(() => evaluate(analyze(input))).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(count_toc_nodes(input)).toBe(1);
+        expect(count_toc_nodes(input)).toBe(2);
     });
 
     it('must throw error if there is no Entry block', () => {
+        // function @main []:
+        // (missing block @main.entry)
         // %0 = constant 11
         // exit %0
 
         const input: Program = [
+            [ null, 'Function', '@main', [] ],
             [ '%0', 'Const', 11 ],
             [ null, 'Exit', '%0' ],
         ];
@@ -47,67 +52,75 @@ describe('constants and exit', () => {
     });
 
     it('must throw a runtime-error when exiting with a Reference instead of a Value', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant 0
         // %1 = ref %0
         // exit %1
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', 0 ],
             [ '%1', 'Ref', '%0' ],
             [ null, 'Exit', '%1' ],
         ];
         expect(() => {evaluate(analyze(input))}).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(count_toc_nodes(input)).toBe(1);
+        expect(count_toc_nodes(input)).toBe(2);
     });
 
     it('must evaluate a constant', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant 11
         // exit %0
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', 11 ],
             [ null, 'Exit', '%0' ],
         ];
         expect(evaluate(analyze(input))).toBe(11);
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(count_toc_nodes(input)).toBe(1);
+        expect(count_toc_nodes(input)).toBe(2);
     });
 });
 
 describe('copying of registers', () => {
     it('must copy a constant', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant 11
         // %1 = copy %0
         // exit %1
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Copy', '%0' ],
             [ null, 'Exit', '%1' ],
         ];
         expect(evaluate(analyze(input))).toBe(11);
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(count_toc_nodes(input)).toBe(1);
+        expect(count_toc_nodes(input)).toBe(2);
     });
 });
 
 describe('arithmetic operations', () => {
     it('must evaluate integer addition', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant 11
         // %1 = constant 22
         // %2 = add %0, %1
         // exit %2
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
             [ '%2', 'Add',  '%0', '%1' ],
@@ -115,203 +128,215 @@ describe('arithmetic operations', () => {
         ];
         expect(evaluate(analyze(input))).toBe(33);
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(count_toc_nodes(input)).toBe(1);
+        expect(count_toc_nodes(input)).toBe(2);
     });
 });
 
 describe('labels, jump, and branch', () => {
     it('must report an error if a block falls through into the next label', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant 11
         // (missing terminator)
         //
-        // block @first:
+        // block @main.first:
         // %1 = constant 22
         // exit %2
         
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', 11 ],
             // the missing Terminator statement here, should cause an error
 
-            [ null, 'Block', '@first' ],
+            [ null, 'Block', '@main.first' ],
             [ '%1', 'Const', 22 ],
             [ null, 'Exit',  '%2' ],
         ];
         expect(() => {evaluate(analyze(input))}).toThrow();
         expect(count_cfg_nodes(input)).toBeGreaterThanOrEqual(1);
-        expect(count_toc_nodes(input)).toBeGreaterThanOrEqual(1);
+        expect(count_toc_nodes(input)).toBeGreaterThanOrEqual(2);
     });
 
     it('must execute the correct line of code after an unconditional jump', () => {
-        // block @entry:
-        // jump @second
+        // function @main []:
+        // block @main.entry:
+        // jump @main.second
         //
-        // block @first:
+        // block @main.first:
         // %1 = constant 11
         // exit %1
         //
-        // block @second:
+        // block @main.second:
         // %2 = constant 22
         // exit %2
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
-            [ null, 'Jump',  '@second' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
+            [ null, 'Jump',  '@main.second' ],
 
-            [ null, 'Block', '@first' ],
+            [ null, 'Block', '@main.first' ],
             [ '%1', 'Const', 11 ],
             [ null, 'Exit',  '%1' ],
             
-            [ null, 'Block', '@second' ],
+            [ null, 'Block', '@main.second' ],
             [ '%2', 'Const', 22 ],
             [ null, 'Exit',  '%2' ],
         ];
         expect(evaluate(analyze(input))).toBe(22);
         expect(count_cfg_nodes(input)).toBe(3);
-        expect(count_toc_nodes(input)).toBe(3);
+        expect(count_toc_nodes(input)).toBe(4);
     });
 
     it('must execute first branch if the condition is true', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant true
         // %1 = constant 11
         // %2 = constant 22
         // %3 = constant 44
-        // branch %0 @then @else
+        // branch %0 @main.then @main.else
         //
-        // block @then:
+        // block @main.then:
         // %4 = add %1, %2
-        // jump @end
+        // jump @main.end
         //
-        // block @else:
+        // block @main.else:
         // %5 = add %2, %3
-        // jump @end
+        // jump @main.end
         //
-        // block @end:
+        // block @main.end:
         // exit %4
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', true ],
             [ '%1', 'Const', 11 ],
             [ '%2', 'Const', 22 ],
             [ '%3', 'Const', 44 ],
-            [ null, 'Branch', '%0', ['@then', '@else'] ],
+            [ null, 'Branch', '%0', ['@main.then', '@main.else'] ],
 
-            [ null, 'Block', '@then' ],
+            [ null, 'Block', '@main.then' ],
             [ '%4', 'Add',   '%1', '%2' ],
-            [ null, 'Jump',  '@end' ],
+            [ null, 'Jump',  '@main.end' ],
 
-            [ null, 'Block', '@else' ],
+            [ null, 'Block', '@main.else' ],
             [ '%5', 'Add',   '%2', '%3' ],
-            [ null, 'Jump',  '@end' ],
+            [ null, 'Jump',  '@main.end' ],
 
-            [ null, 'Block', '@end' ],
+            [ null, 'Block', '@main.end' ],
             [ null, 'Exit',  '%4' ],
         ];
         expect(evaluate(analyze(input))).toBe(33);
         expect(count_cfg_nodes(input)).toBe(4);
-        expect(count_toc_nodes(input)).toBe(4);
+        expect(count_toc_nodes(input)).toBe(5);
     });
 
     it('must execute the second branch when condition is false', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant false
         // %1 = constant 11
         // %2 = constant 22
         // %3 = constant 44
-        // branch %0 @then @else
+        // branch %0 @main.then @main.else
         //
-        // block @then:
+        // block @main.then:
         // %4 = add %1, %2
-        // jump @end
+        // jump @main.end
         //
-        // block @else:
+        // block @main.else:
         // %5 = add %2, %3
-        // jump @end
+        // jump @main.end
         //
-        // block @end:
+        // block @main.end:
         // exit %5
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', false ],
             [ '%1', 'Const', 11 ],
             [ '%2', 'Const', 22 ],
             [ '%3', 'Const', 44 ],
-            [ null, 'Branch', '%0', ['@then', '@else'] ],
+            [ null, 'Branch', '%0', ['@main.then', '@main.else'] ],
             
-            [ null, 'Block', '@then' ],
+            [ null, 'Block', '@main.then' ],
             [ '%4', 'Add',   '%1', '%2' ],
-            [ null, 'Jump',  '@end' ],
+            [ null, 'Jump',  '@main.end' ],
             
-            [ null, 'Block', '@else' ],
+            [ null, 'Block', '@main.else' ],
             [ '%5', 'Add',   '%2', '%3' ],
-            [ null, 'Jump',  '@end' ],
+            [ null, 'Jump',  '@main.end' ],
             
-            [ null, 'Block', '@end' ],
+            [ null, 'Block', '@main.end' ],
             [ null, 'Exit',  '%5' ],
         ];
         expect(evaluate(analyze(input))).toBe(66);
         expect(count_cfg_nodes(input)).toBe(4);
-        expect(count_toc_nodes(input)).toBe(4);
+        expect(count_toc_nodes(input)).toBe(5);
     });
 });
 
 describe('function call', () => {
     it('must support calling the identity function', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant 11
         // %1 = constant 22
         // %2 = call @identity [%1]
         // exit %2
         //
         // function @identity [%a]:
-        // block @entry:
+        // block @identity.entry:
         // return %a
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
             [ '%2', 'Call', '@identity', ['%1'] ],
             [ null, 'Exit', '%2' ],
 
             [ null, 'Function', '@identity', ['%a'] ],
-            // [ null, 'Block', '@entry' ], // TODO: this needs to work
+            [ null, 'Block', '@identity.entry' ],
             [ null, 'Return', '%a' ],
         ];
         expect(evaluate(analyze(input))).toBe(22);
         expect(count_cfg_nodes(input)).toBe(2);
-        expect(count_toc_nodes(input)).toBe(2);
+        expect(count_toc_nodes(input)).toBe(4);
     });
 
     it('must support calling a binary function', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant 11
         // %1 = constant 22
         // %2 = call @first [%0, %1]
         // exit %2
         //
         // function @first [%a, %b]:
-        // block @entry:
+        // block @first.entry:
         // return %a
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
             [ '%2', 'Call', '@first', ['%0', '%1'] ],
             [ null, 'Exit', '%2' ],
 
             [ null, 'Function', '@first', ['%a', '%b'] ],
-            // [ null, 'Block', '@entry' ], // TODO: this needs to work
+            [ null, 'Block', '@first.entry' ],
             [ null, 'Return', '%a' ],
         ];
         expect(evaluate(analyze(input))).toBe(11);
         expect(count_cfg_nodes(input)).toBe(2);
-        expect(count_toc_nodes(input)).toBe(2);
+        expect(count_toc_nodes(input)).toBe(4);
     });
 
     it('must evaluate tail-recursive functions', () => {
@@ -324,172 +349,182 @@ describe('function call', () => {
         //
         // IR code:
         //
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant 5
         // %1 = constant 1
         // %2 = call @factorial [%0, %1]
         // exit %2
         //
         // function @factorial [%n, %acc]:
-        // block @entry:
+        // block @factorial.entry:
         // %3 = constant 1
         // %6 = equal %n, %3
-        // branch %6 @termination @body
+        // branch %6 @factorial.termination @factorial.body
         //
-        // block @body:
+        // block @factorial.body:
         // %7 = subtract %n, %3
         // %8 = multiply %n, %acc
         // %9 = call @factorial [%7, %8]
-        // jump @termination
+        // jump @factorial.termination
         //
-        // block @termination:
-        // %10 = phi [[@body, %9], [@factorial, %acc]]
+        // block @factorial.termination:
+        // %10 = phi [[@factorial.body, %9], [@factorial.entry, %acc]]
         // return %10
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', 5 ],
             [ '%1', 'Const', 1 ],
             [ '%2', 'Call', '@factorial', ['%0', '%1'] ],
             [ null, 'Exit', '%2' ],
-
+            
             [ null, 'Function', '@factorial', ['%n', '%acc'] ],
-            // [ null, 'Block', '@entry' ], // TODO: this needs to work
+            [ null, 'Block', '@factorial.entry' ],
             [ '%3', 'Const', 1 ],
             [ '%6', 'Equal', '%n', '%3' ],
-            [ null, 'Branch', '%6', ['@termination', '@body'] ],
+            [ null, 'Branch', '%6', ['@factorial.termination', '@factorial.body'] ],
             
-            [ null, 'Block', '@body' ],
+            [ null, 'Block', '@factorial.body' ],
             [ '%7', 'Subtract', '%n', '%3' ],
             [ '%8', 'Multiply', '%n', '%acc' ],
             [ '%9', 'Call', '@factorial', ['%7', '%8'] ],
-            [ null, 'Jump', '@termination' ],
+            [ null, 'Jump', '@factorial.termination' ],
             
-            [ null, 'Block', '@termination' ],
-            [ '%10', 'Phi', [['@body', '%9'], ['@factorial', '%acc']] ],
+            [ null, 'Block', '@factorial.termination' ],
+            [ '%10', 'Phi', [['@factorial.body', '%9'], ['@factorial.entry', '%acc']] ],
             [ null, 'Return', '%10' ],
         ];
         expect(evaluate(analyze(input))).toBe(120);
         expect(count_cfg_nodes(input)).toBe(4);
-        expect(count_toc_nodes(input)).toBe(4);
+        expect(count_toc_nodes(input)).toBe(6);
     });
 });
 
 describe('static single assignment', () => {
     it('must throw an error when re-assigning to a register', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant 11
         // %0 = constant 22
         // exit %1
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', 11 ],
             [ '%0', 'Const', 22 ], // attempt to reassign register 0
             [ null, 'Exit', '%1' ],
         ];
         expect(() => {evaluate(analyze(input))}).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(count_toc_nodes(input)).toBe(1);
+        expect(count_toc_nodes(input)).toBe(2);
     });
 
     it('must throw an error when function parameters have the same name', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant 11
         // %1 = constant 22
         // %2 = call @first [%0, %1]
         // exit %2
         //
         // function @first [%a, %a]:
-        // block @entry:
+        // block @first.entry:
         // return %a
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
             [ '%2', 'Call', '@first', ['%0', '%1'] ],
             [ null, 'Exit', '%2' ],
 
             [ null, 'Function', '@first', ['%a', '%a'] ],
-            // [ null, 'Block', '@entry' ], // TODO: this needs to work
+            [ null, 'Block', '@first.entry' ],
             [ null, 'Return', '%a' ],
         ];
         expect(() => {evaluate(analyze(input))}).toThrow();
         expect(count_cfg_nodes(input)).toBe(2);
-        expect(count_toc_nodes(input)).toBe(2);
+        expect(count_toc_nodes(input)).toBe(4);
     });
 
     it('must throw an error when function parameter registers are not unique', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant 11
         // %1 = constant 22
         // %2 = call @identity [%1]
         // exit %2
-
+        //
         // function @identity [%a]:
-        // block @entry:
+        // block @identity.entry:
         // return %a
-
+        //
         // function @identity2 [%a]:
-        // block @entry:
+        // block @identity2.entry:
         // return %a
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
             [ '%2', 'Call', '@identity', ['%1'] ],
             [ null, 'Exit', '%2' ],
 
             [ null, 'Function', '@identity', ['%a'] ],
-            // [ null, 'Block', '@entry' ], // TODO: this needs to work
+            [ null, 'Block', '@identity.entry' ],
             [ null, 'Return', '%a' ],
-
+            
             [ null, 'Function', '@identity2', ['%a'] ],
-            // [ null, 'Block', '@entry' ], // TODO: this needs to work
+            [ null, 'Block', '@identity2.entry' ],
             [ null, 'Return', '%a' ],
         ];
         expect(() => {evaluate(analyze(input))}).toThrow();
         expect(count_cfg_nodes(input)).toBe(3);
-        expect(count_toc_nodes(input)).toBe(3);
+        expect(count_toc_nodes(input)).toBe(6);
     });
 
     it('phi node must assign from the correct register after an unconditional jump', () => {
-        // block @entry:
-        // jump @second
+        // function @main []:
+        // block @main.entry:
+        // jump @main.second
         //
-        // block @first:
+        // block @main.first:
         // %1 = constant 11
-        // jump @end
+        // jump @main.end
         //
-        // block @second:
+        // block @main.second:
         // %2 = constant 22
-        // jump @end
+        // jump @main.end
         //
-        // block @end:
-        // %3 = phi [[@first, %1], [@second, %2]]
+        // block @main.end:
+        // %3 = phi [[@main.first, %1], [@main.second, %2]]
         // exit %3
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
-            [ null, 'Jump',  '@second' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
+            [ null, 'Jump',  '@main.second' ],
 
-            [ null, 'Block', '@first' ],
+            [ null, 'Block', '@main.first' ],
             [ '%1', 'Const', 11 ],
-            [ null, 'Jump',  '@end' ],
+            [ null, 'Jump',  '@main.end' ],
 
-            [ null, 'Block', '@second' ],
+            [ null, 'Block', '@main.second' ],
             [ '%2', 'Const', 22 ],
-            [ null, 'Jump',  '@end' ],
+            [ null, 'Jump',  '@main.end' ],
 
-            [ null, 'Block', '@end' ],
-            [ '%3', 'Phi', [['@first', '%1'], ['@second', '%2']] ],
+            [ null, 'Block', '@main.end' ],
+            [ '%3', 'Phi', [['@main.first', '%1'], ['@main.second', '%2']] ],
             [ null, 'Exit', '%3' ],
         ];
         expect(evaluate(analyze(input))).toBe(22);
         expect(count_cfg_nodes(input)).toBe(4);
-        expect(count_toc_nodes(input)).toBe(4);
+        expect(count_toc_nodes(input)).toBe(5);
     });
 
     it('phi node must assign from the correct register when executing a loop', () => {
@@ -504,40 +539,42 @@ describe('static single assignment', () => {
         //
         // IR-code:
         //
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant 0
         // %1 = constant 1
         // %2 = constant 3
-        // jump @loop
+        // jump @main.loop
         //
-        // block @loop:
-        // %3 = phi [[@entry, %0], [@loop, %4]]
+        // block @main.loop:
+        // %3 = phi [[@main.entry, %0], [@main.loop, %4]]
         // %4 = add %1, %3
         // %5 = unequal %3, %2
-        // branch %5 @loop @end
+        // branch %5 @main.loop @main.end
         //
-        // block @end:
+        // block @main.end:
         // exit %3
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', 0 ],
             [ '%1', 'Const', 1 ],
             [ '%2', 'Const', 3 ],
-            [ null, 'Jump',  '@loop' ],
+            [ null, 'Jump',  '@main.loop' ],
             
-            [ null, 'Block', '@loop' ],
-            [ '%3', 'Phi', [['@entry', '%0'], ['@loop', '%4']] ],
+            [ null, 'Block', '@main.loop' ],
+            [ '%3', 'Phi', [['@main.entry', '%0'], ['@main.loop', '%4']] ],
             [ '%4', 'Add',   '%1', '%3' ],
             [ '%5', 'Unequal', '%3', '%2' ],
-            [ null, 'Branch', '%5', ['@loop', '@end'] ],
+            [ null, 'Branch', '%5', ['@main.loop', '@main.end'] ],
             
-            [ null, 'Block', '@end' ],
+            [ null, 'Block', '@main.end' ],
             [ null, 'Exit',  '%3' ],
         ];
         expect(evaluate(analyze(input))).toBe(3);
         expect(count_cfg_nodes(input)).toBe(3);
-        expect(count_toc_nodes(input)).toBe(3);
+        expect(count_toc_nodes(input)).toBe(4);
     });
 
     it('phi node must allow assignment from dominator blocks which are not the immediate dominator', () => {
@@ -552,55 +589,56 @@ describe('static single assignment', () => {
         //         D
         //
         //
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %condition = constant false
-        // branch %condition @a @b
+        // branch %condition @main.a @main.b
         //
-        // block @a:
+        // block @main.a:
         // %alpha = constant 10
-        // jump @d
+        // jump @main.d
         //
-        // block @b:
+        // block @main.b:
         // %bravo = constant 20
-        // jump @c
+        // jump @main.c
         //
-        // block @c:
+        // block @main.c:
         // %charlie = constant 21
-        // jump @d
+        // jump @main.d
         //
-        // block @d:
-        // %grandparent = phi [[@a, %alpha], [@c, %bravo]]
-        // %parent = phi [[@a, %alpha], [@c, %charlie]]
+        // block @main.d:
+        // %grandparent = phi [[@main.a, %alpha], [@main.c, %bravo]]
+        // %parent = phi [[@main.a, %alpha], [@main.c, %charlie]]
         // %total = add %grandparent, %parent
         // exit %total
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%condition', 'Const', false ],
-            [ null, 'Branch', '%condition', ['@a', '@b'] ], // hard-code that we take the else-branch to block B
+            [ null, 'Branch', '%condition', ['@main.a', '@main.b'] ],
 
-            [ null, 'Block', '@a' ],
+            [ null, 'Block', '@main.a' ],
             [ '%alpha', 'Const', 10 ],
-            [ null, 'Jump', '@d' ],
+            [ null, 'Jump', '@main.d' ],
             
-            [ null, 'Block', '@b' ],
+            [ null, 'Block', '@main.b' ],
             [ '%bravo', 'Const', 20 ],
-            [ null, 'Jump', '@c' ],
+            [ null, 'Jump', '@main.c' ],
             
-            [ null, 'Block', '@c' ],
+            [ null, 'Block', '@main.c' ],
             [ '%charlie', 'Const', 21 ],
-            [ null, 'Jump', '@d' ],
+            [ null, 'Jump', '@main.d' ],
             
-            // join the register from block A with those of block B and C respectively
-            [ null, 'Block', '@d' ],
-            [ '%grandparent', 'Phi', [['@a', '%alpha'], ['@c', '%bravo']] ], // this currently fails, only the immediate predecessor block is available in the interpreter and 'B' comes from a grandparent
-            [ '%parent',      'Phi', [['@a', '%alpha'], ['@c', '%charlie']] ],
+            [ null, 'Block', '@main.d' ],
+            [ '%grandparent', 'Phi', [['@main.a', '%alpha'], ['@main.c', '%bravo']] ],
+            [ '%parent',      'Phi', [['@main.a', '%alpha'], ['@main.c', '%charlie']] ],
             [ '%total', 'Add', '%grandparent', '%parent'],
             [ null, 'Exit',  '%total' ],
         ];
         expect(evaluate(analyze(input))).toBe(41);
         expect(count_cfg_nodes(input)).toBe(5);
-        expect(count_toc_nodes(input)).toBe(5);
+        expect(count_toc_nodes(input)).toBe(6);
     });
 
     it('phi node must allow assignment when both inputs are available', () => {
@@ -614,42 +652,44 @@ describe('static single assignment', () => {
         //        C
         //
         //
-        // block @entry:
-        // jump @a
+        // function @main []:
+        // block @main.entry:
+        // jump @main.a
         // 
-        // block @a:
+        // block @main.a:
         // %alpha = constant 10
         // %condition = constant true
-        // branch %condition @b @c
+        // branch %condition @main.b @main.c
         // 
-        // block @b:
+        // block @main.b:
         // %bravo = constant 20
-        // jump @c
+        // jump @main.c
         //
-        // block @c:
-        // %result = phi [[@a, %alpha], [@b, %bravo]]
+        // block @main.c:
+        // %result = phi [[@main.a, %alpha], [@main.b, %bravo]]
         // exit %result
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
-            [ null, 'Jump', '@a' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
+            [ null, 'Jump', '@main.a' ],
             
-            [ null, 'Block', '@a' ],
+            [ null, 'Block', '@main.a' ],
             [ '%alpha', 'Const', 10 ],
             [ '%condition', 'Const', true ],
-            [ null, 'Branch', '%condition', ['@b', '@c'] ], // branch to B
+            [ null, 'Branch', '%condition', ['@main.b', '@main.c'] ],
             
-            [ null, 'Block', '@b' ],
+            [ null, 'Block', '@main.b' ],
             [ '%bravo', 'Const', 20 ],
-            [ null, 'Jump', '@c' ],
+            [ null, 'Jump', '@main.c' ],
             
-            [ null, 'Block', '@c' ],
-            [ '%result', 'Phi', [['@a', '%alpha'], ['@b', '%bravo']] ],
+            [ null, 'Block', '@main.c' ],
+            [ '%result', 'Phi', [['@main.a', '%alpha'], ['@main.b', '%bravo']] ],
             [ null, 'Exit',  '%result' ],
         ];
         expect(evaluate(analyze(input))).toBe(20);
         expect(count_cfg_nodes(input)).toBe(4);
-        expect(count_toc_nodes(input)).toBe(4);
+        expect(count_toc_nodes(input)).toBe(5);
     });
 
     it('must allow assignment when three inputs are available', () => {
@@ -663,42 +703,44 @@ describe('static single assignment', () => {
         //        C
         //
         //
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %echo = constant false
-        // branch %echo @a @c
+        // branch %echo @main.a @main.c
         // 
-        // block @a:
+        // block @main.a:
         // %alpha = constant true
-        // branch %alpha @b @c
+        // branch %alpha @main.b @main.c
         // 
-        // block @b:
+        // block @main.b:
         // %bravo = constant true
-        // jump @c
+        // jump @main.c
         //
-        // block @c:
-        // %result = phi [[@entry, %echo], [@a, %alpha], [@b, %bravo]]
+        // block @main.c:
+        // %result = phi [[@main.entry, %echo], [@main.a, %alpha], [@main.b, %bravo]]
         // exit %result
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%echo', 'Const', false ],
-            [ null, 'Branch','%echo', [ '@a', '@c']],
+            [ null, 'Branch','%echo', [ '@main.a', '@main.c' ]],
             
-            [ null, 'Block', '@a' ],
+            [ null, 'Block', '@main.a' ],
             [ '%alpha', 'Const', true ],
-            [ null, 'Branch', '%alpha', ['@b', '@c'] ], // branch to B
+            [ null, 'Branch', '%alpha', ['@main.b', '@main.c'] ],
             
-            [ null, 'Block', '@b' ],
+            [ null, 'Block', '@main.b' ],
             [ '%bravo', 'Const', true ],
-            [ null, 'Jump', '@c' ],
+            [ null, 'Jump', '@main.c' ],
             
-            [ null, 'Block', '@c' ],
-            [ '%result', 'Phi', [['@entry', '%echo'], ['@a', '%alpha'], ['@b', '%bravo']] ],
+            [ null, 'Block', '@main.c' ],
+            [ '%result', 'Phi', [['@main.entry', '%echo'], ['@main.a', '%alpha'], ['@main.b', '%bravo']] ],
             [ null, 'Exit',  '%result' ],
         ];
         expect(evaluate(analyze(input))).toBe(false);
         expect(count_cfg_nodes(input)).toBe(4);
-        expect(count_toc_nodes(input)).toBe(4);
+        expect(count_toc_nodes(input)).toBe(5);
     });
 
     it('must throw an error when a phi node is non-exhaustive', () => {
@@ -712,56 +754,60 @@ describe('static single assignment', () => {
         //        C
         //
         //
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %echo = constant false
-        // branch %echo @a @c
+        // branch %echo @main.a @main.c
         // 
-        // block @a:
+        // block @main.a:
         // %alpha = constant true
-        // branch %alpha @b @c
+        // branch %alpha @main.b @main.c
         // 
-        // block @b:
+        // block @main.b:
         // %bravo = constant true
-        // jump @c
+        // jump @main.c
         //
-        // block @c:
-        // %result = phi [[@a, %alpha], [@b, %bravo]]  // this phi-node does NOT cover all incoming edges
+        // block @main.c:
+        // %result = phi [[@main.a, %alpha], [@main.b, %bravo]]  // this phi-node does NOT cover all incoming edges
         // exit %result
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%echo', 'Const', false ],
-            [ null, 'Branch', '%echo', ['@a', '@c'] ],
+            [ null, 'Branch', '%echo', ['@main.a', '@main.c'] ],
             
-            [ null, 'Block', '@a' ],
+            [ null, 'Block', '@main.a' ],
             [ '%alpha', 'Const', true ],
-            [ null, 'Branch', '%alpha', ['@b', '@c'] ], // branch to B
+            [ null, 'Branch', '%alpha', ['@main.b', '@main.c'] ],
             
-            [ null, 'Block', '@b' ],
+            [ null, 'Block', '@main.b' ],
             [ '%bravo', 'Const', true ],
-            [ null, 'Jump', '@c' ],
+            [ null, 'Jump', '@main.c' ],
             
-            [ null, 'Block', '@c' ],
-            [ '%result', 'Phi', [['@a', '%alpha'], ['@b', '%bravo']] ], // this phi-node does NOT cover all incoming edges
+            [ null, 'Block', '@main.c' ],
+            [ '%result', 'Phi', [['@main.a', '%alpha'], ['@main.b', '%bravo']] ],
             [ null, 'Exit',  '%result' ],
         ];
         // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
         expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(4);
-        expect(count_toc_nodes(input)).toBe(4);
+        expect(count_toc_nodes(input)).toBe(5);
     });
 });
 
 describe('memory and ownership', () => {
     it('must reference and dereference a register', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %x = constant 42
         // %r = ref %x
         // %t = deref %r
         // exit %t
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%x', 'Const', 42 ],
             [ '%r', 'Ref', '%x' ],
             [ '%t', 'Deref', '%r' ],
@@ -769,17 +815,19 @@ describe('memory and ownership', () => {
         ];
         expect(evaluate(analyze(input))).toBe(42);
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(count_toc_nodes(input)).toBe(1);
+        expect(count_toc_nodes(input)).toBe(2);
     });
 
     it('must detect a use-after-drop', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant 0
         // drop %0
         // exit %0
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', 0 ],
             [ null, 'Drop', '%0' ],
             [ null, 'Exit', '%0' ],
@@ -787,11 +835,12 @@ describe('memory and ownership', () => {
         // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
         expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(count_toc_nodes(input)).toBe(1);
+        expect(count_toc_nodes(input)).toBe(2);
     });
 
     it('must detect a double-drop', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant 0
         // %1 = constant 0
         // drop %0
@@ -799,7 +848,8 @@ describe('memory and ownership', () => {
         // exit %1
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', 0 ],
             [ '%1', 'Const', 0 ],
             [ null, 'Drop', '%0' ],
@@ -809,17 +859,19 @@ describe('memory and ownership', () => {
         // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
         expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(count_toc_nodes(input)).toBe(1);
+        expect(count_toc_nodes(input)).toBe(2);
     });
 
     it('must detect a use-after-move', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %0 = constant 0
         // %1 = move %0
         // exit %0
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%0', 'Const', 0 ],
             [ '%1', 'Move', '%0' ],
             [ null, 'Exit', '%0' ],
@@ -827,11 +879,12 @@ describe('memory and ownership', () => {
         // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
         expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(count_toc_nodes(input)).toBe(1);
+        expect(count_toc_nodes(input)).toBe(2);
     });
 
     it('must detect a dangling reference when the source register is dropped', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %x = constant 42
         // %r = ref %x
         // drop %x
@@ -839,7 +892,8 @@ describe('memory and ownership', () => {
         // exit %t
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%x', 'Const', 42 ],
             [ '%r', 'Ref', '%x' ],
             [ null, 'Drop', '%x' ],
@@ -849,11 +903,12 @@ describe('memory and ownership', () => {
         // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
         expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(count_toc_nodes(input)).toBe(1);
+        expect(count_toc_nodes(input)).toBe(2);
     });
 
     it('must detect a dangling reference when the source register is moved', () => {
-        // block @entry:
+        // function @main []:
+        // block @main.entry:
         // %x = constant 42
         // %r = ref %x
         // %y = move %x
@@ -861,7 +916,8 @@ describe('memory and ownership', () => {
         // exit %t
 
         const input: Program = [
-            [ null, 'Block', '@entry' ],
+            [ null, 'Function', '@main', [] ],
+            [ null, 'Block', '@main.entry' ],
             [ '%x', 'Const', 42 ],
             [ '%r', 'Ref', '%x' ],
             [ '%y', 'Move', '%x' ],
@@ -871,6 +927,6 @@ describe('memory and ownership', () => {
         // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
         expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(count_toc_nodes(input)).toBe(1);
+        expect(count_toc_nodes(input)).toBe(2);
     });
 });
