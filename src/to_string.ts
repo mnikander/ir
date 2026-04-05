@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Marco Nikander
 
-import { Binary, Instruction, Get, Unary } from "./instructions.ts";
+import { Arithmetic, Comparison, Get, Instruction, Ownership } from "./instructions.ts";
 
 export function to_string(program: readonly Instruction[]): string {
     let pc: number = 0;
@@ -44,10 +44,10 @@ export function to_string(program: readonly Instruction[]): string {
     return output;
 }
 
-function unary(line: Unary): string {
+function unary(line: Ownership): string {
     return `${line[Get.Dest]}\t= ${line[Get.Tag].toLowerCase()} ${line[Get.First]}\n`;
 }
 
-function binary(line: Binary): string {
+function binary(line: Arithmetic | Comparison): string {
     return `${line[Get.Dest]}\t= ${line[Get.Tag].toLowerCase()} ${line[Get.First]} ${line[Get.Second]}\n`;
 }
