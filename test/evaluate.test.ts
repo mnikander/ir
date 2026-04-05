@@ -1,10 +1,10 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 import { evaluate } from "../src/evaluate.ts";
-import { Instruction, Label } from "../src/instructions.ts";
+import { Label, Program } from "../src/instructions.ts";
 import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
-function count_cfg_nodes(program: Instruction[]): number {
+function count_cfg_nodes(program: Program): number {
     const nodes: Label[] = node_list(program);
     const edges: Edge[]  = adjacency_list(program);
     return control_flow_graph(nodes, edges).length;
@@ -12,12 +12,12 @@ function count_cfg_nodes(program: Instruction[]): number {
 
 describe('constants and exit', () => {
     it('must throw error on empty input', () => {
-        const input: Instruction[] = [];
+        const input: Program = [];
         expect(() => evaluate(analyze(input))).toThrow();
     });
 
     it('must throw error if there is no Exit instruction', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
         ];
@@ -27,7 +27,7 @@ describe('constants and exit', () => {
     });
 
     it('must throw error if there is no Entry block', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ '%0', 'Const', 11 ],
             [ null, 'Exit', '%0' ],
         ];
@@ -36,7 +36,7 @@ describe('constants and exit', () => {
     });
 
     it('must throw a runtime-error when exiting with a Reference instead of a Value', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 0 ],
             [ '%1', 'Ref', '%0' ],
@@ -48,7 +48,7 @@ describe('constants and exit', () => {
     });
 
     it('must evaluate a constant', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             [ null, 'Exit', '%0' ],
@@ -61,7 +61,7 @@ describe('constants and exit', () => {
 
 describe('copying of registers', () => {
     it('must copy a constant', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Copy', '%0' ],
@@ -75,7 +75,7 @@ describe('copying of registers', () => {
 
 describe('arithmetic operations', () => {
     it('must evaluate integer addition', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
@@ -90,7 +90,7 @@ describe('arithmetic operations', () => {
 
 describe('labels, jump, and branch', () => {
     it('must report an error if a block falls through into the next label', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             // the missing Terminator statement here, should cause an error
@@ -105,7 +105,7 @@ describe('labels, jump, and branch', () => {
     });
 
     it('must execute the correct line of code after an unconditional jump', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ null, 'Jump',  '@second' ],
 
@@ -123,7 +123,7 @@ describe('labels, jump, and branch', () => {
     });
 
     it('must execute first branch if the condition is true', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', true ],
             [ '%1', 'Const', 11 ],
@@ -148,7 +148,7 @@ describe('labels, jump, and branch', () => {
     });
 
     it('must execute the second branch when condition is false', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', false ],
             [ '%1', 'Const', 11 ],
@@ -175,7 +175,7 @@ describe('labels, jump, and branch', () => {
 
 describe('function call', () => {
     it('must support calling the identity function', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
@@ -191,7 +191,7 @@ describe('function call', () => {
     });
 
     it('must support calling a binary function', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
@@ -210,7 +210,7 @@ describe('function call', () => {
         // return factorial(5)
         // function factorial(n, acc = 1):
         //     return n == 1 ? acc : factorial(n-1, n*acc);
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 5 ],
             [ '%1', 'Const', 1 ],
@@ -240,7 +240,7 @@ describe('function call', () => {
 
 describe('static single assignment', () => {
     it('must throw an error when re-assigning to a register', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             [ '%0', 'Const', 22 ], // attempt to reassign register 0
@@ -252,7 +252,7 @@ describe('static single assignment', () => {
     });
 
     it('must throw an error when function parameters have the same name', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
@@ -268,7 +268,7 @@ describe('static single assignment', () => {
     });
 
     it('must throw an error when function parameter registers are not unique', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 11 ],
             [ '%1', 'Const', 22 ],
@@ -287,7 +287,7 @@ describe('static single assignment', () => {
     });
 
     it('phi node must assign from the correct register after an unconditional jump', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ null, 'Jump',  '@second' ],
 
@@ -314,7 +314,7 @@ describe('static single assignment', () => {
         //     i++;
         // }
         // return i;
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 0 ],
             [ '%1', 'Const', 1 ],
@@ -346,7 +346,7 @@ describe('static single assignment', () => {
         //        \ /
         //         D
         //
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%condition', 'Const', false ],
             [ null, 'Branch', '@a', '@b', '%condition' ], // hard-code that we take the else-branch to block B
@@ -385,7 +385,7 @@ describe('static single assignment', () => {
         //      \ |
         //        C
         //
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ null, 'Jump', '@a' ],
             
@@ -417,7 +417,7 @@ describe('static single assignment', () => {
         //      \ | /
         //        C
         //
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%echo', 'Const', false ],
             [ null, 'Branch', '@a', '@c', '%echo'],
@@ -449,7 +449,7 @@ describe('static single assignment', () => {
         //      \ | /
         //        C
         //
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%echo', 'Const', false ],
             [ null, 'Branch', '@a', '@c', '%echo'],
@@ -475,7 +475,7 @@ describe('static single assignment', () => {
 
 describe('memory and ownership', () => {
     it('must reference and dereference a register', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%x', 'Const', 42 ],
             [ '%r', 'Ref', '%x' ],
@@ -488,7 +488,7 @@ describe('memory and ownership', () => {
     });
 
     it('must detect a use-after-drop', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 0 ],
             [ null, 'Drop', '%0' ],
@@ -501,7 +501,7 @@ describe('memory and ownership', () => {
     });
 
     it('must detect a double-drop', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 0 ],
             [ '%1', 'Const', 0 ],
@@ -516,7 +516,7 @@ describe('memory and ownership', () => {
     });
 
     it('must detect a use-after-move', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%0', 'Const', 0 ],
             [ '%1', 'Move', '%0' ],
@@ -529,7 +529,7 @@ describe('memory and ownership', () => {
     });
 
     it('must detect a dangling reference when the source register is dropped', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%x', 'Const', 42 ],
             [ '%r', 'Ref', '%x' ],
@@ -544,7 +544,7 @@ describe('memory and ownership', () => {
     });
 
     it('must detect a dangling reference when the source register is moved', () => {
-        const input: Instruction[] = [
+        const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%x', 'Const', 42 ],
             [ '%r', 'Ref', '%x' ],

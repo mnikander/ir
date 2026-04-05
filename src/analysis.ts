@@ -1,13 +1,13 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { Function, Get, Instruction, Label, Register } from "./instructions.ts";
+import { Function, Get, Instruction, Label, Program, Register } from "./instructions.ts";
 import { valid } from "./type_assertions.ts";
 
 export type Interval = { begin: number, end: number };
 export type Edge     = { from: Label, to: Label, availability?: Set<Register> };
 export type CFG      = { label: Label, predecessors: number[], successors: number[] };
 
-export function analyze(program: readonly Instruction[]): readonly Instruction[] {
+export function analyze(program: Program): Program {
     program = verify_single_assignment(program);
     if (program[0][Get.Left] !== '@entry') throw Error(`Expected valid '@entry' block at start of program`);
 
@@ -20,7 +20,7 @@ export function analyze(program: readonly Instruction[]): readonly Instruction[]
     return program;
 }
 
-function verify_single_assignment(instructions: readonly Instruction[]): readonly Instruction[] {
+function verify_single_assignment(instructions: Program): Program {
     const assigned_registers = new Set<Register>();
 
     for (let line: number = 0; line < instructions.length; ++line) {
@@ -46,7 +46,7 @@ function assign_register(register: Register, assigned_registers: Set<Register>, 
     return assigned_registers;
 }
 
-export function node_list(program: readonly Instruction[]): Label[] {
+export function node_list(program: Program): Label[] {
     const list: Label[] = [];
     const set: Set<Label> = new Set();
     program.forEach(append_label);
@@ -61,7 +61,7 @@ export function node_list(program: readonly Instruction[]): Label[] {
     };
 }
 
-export function adjacency_list(program: readonly Instruction[]): Edge[] {
+export function adjacency_list(program: Program): Edge[] {
     const edges: Edge[] = [];
     let block: Label = '@';
     for (let index: number = 0; index < program.length; index++) {
@@ -84,7 +84,7 @@ export function adjacency_list(program: readonly Instruction[]): Edge[] {
 }
 
 // for each block and function label, find the first and last line in the code
-export function table_of_contents(program: readonly Instruction[]): Map<Label, Interval> {
+export function table_of_contents(program: Program): Map<Label, Interval> {
     if (program[0][Get.Left] !== '@entry') throw Error(`Expected valid '@entry' block at start of program`);
     
     const blocks: Map<Label, Interval> = new Map();
@@ -110,7 +110,7 @@ export function table_of_contents(program: readonly Instruction[]): Map<Label, I
     return blocks;
 }
 
-export function control_flow_graph(nodes: readonly Label[], adjacency_list: readonly Edge[]): CFG[] {
+export function control_flow_graph(nodes: Label[], adjacency_list: Edge[]): CFG[] {
     let cfg: CFG[] = [];
     nodes.forEach((label : Label) => { cfg = insert_node(label, cfg) });
     adjacency_list.forEach((edge: Edge) => { cfg = insert_edge(edge, cfg) });
@@ -131,7 +131,7 @@ export function control_flow_graph(nodes: readonly Label[], adjacency_list: read
     }
 }
 
-export function reachability(nodes: readonly Label[], edges: readonly Edge[]): Map<Label, Set<Label>> {
+export function reachability(nodes: Label[], edges: Edge[]): Map<Label, Set<Label>> {
     const reach: Map<Label, Set<Label>> = new Map();
     const discovered: Set<Label> = new Set();
     nodes.forEach(initialize_set);

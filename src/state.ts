@@ -1,5 +1,5 @@
 import { Interval } from "./analysis.ts"
-import { Add, Block, Branch, Call, Copy, Const, Deref, Divide, Drop, Equal, Exit, Function, Get, Instruction, Jump, Move, Multiply, Phi, RawValue, Ref, Reference, Register, Remainder, Return, Subtract, Unequal, Value, Label } from "./instructions.ts";
+import { Add, Block, Branch, Call, Copy, Const, Deref, Divide, Drop, Equal, Exit, Function, Get, Instruction, Jump, Move, Multiply, Phi, RawValue, Ref, Reference, Register, Remainder, Return, Subtract, Unequal, Value, Label, Program } from "./instructions.ts";
 import { concat_phi_entries } from "./to_string.ts";
 import { get_boolean, get_number, valid } from "./type_assertions.ts";
 
@@ -122,14 +122,14 @@ export function unequal(state: State, line: Unequal): State {
     return state;
 }
 
-export function jump(state: State, line: Jump, program: readonly Instruction[], blocks: Map<Label, Interval>): State {
+export function jump(state: State, line: Jump, program: Program, blocks: Map<Label, Interval>): State {
     state.pc = valid(blocks.get(line[Get.Left])).begin;
     state.previous_block = state.current_block;
     state.current_block  = (program[state.pc] as Block)[Get.Left];
     return state;
 }
 
-export function branch(state: State, line: Branch, program: readonly Instruction[], blocks: Map<Label, Interval>): State {
+export function branch(state: State, line: Branch, program: Program, blocks: Map<Label, Interval>): State {
     const condition = get_boolean(registers(state).get(line[Get.Third]));
     if (condition) {
         state.pc = valid(blocks.get(line[Get.Left])).begin;
@@ -142,7 +142,7 @@ export function branch(state: State, line: Branch, program: readonly Instruction
     return state;
 }
 
-export function call(state: State, line: Call, program: readonly Instruction[], blocks: Map<Label, Interval>): State {
+export function call(state: State, line: Call, program: Program, blocks: Map<Label, Interval>): State {
     const old_reg: Map<Register, Value | Reference> = registers(state);
     const new_pc: number   = valid(blocks.get(line[Get.Left])).begin;
     const provided: number = valid(line[Get.Right]).length;
@@ -165,7 +165,7 @@ export function call(state: State, line: Call, program: readonly Instruction[], 
     return state;
 }
 
-export function returning(state: State, line: Return, program: readonly Instruction[]): State {
+export function returning(state: State, line: Return, program: Program): State {
     state.pc                        = valid(top(state.stack).return_pc);
     state.previous_block            = state.current_block;
     state.current_block             = valid(top(state.stack).return_block);

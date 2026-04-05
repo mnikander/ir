@@ -1,5 +1,6 @@
 // Copyright (c) 2025 Marco Nikander
 
+export type Program     = readonly Instruction[];
 export type Function    = [ destination: null,     tag: 'Function',  block: Label, parameters: Register[] ];
 export type Block       = [ destination: null,     tag: 'Block',     block: Label ];
 

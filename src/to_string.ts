@@ -1,8 +1,8 @@
 // Copyright (c) 2026 Marco Nikander
 
-import { Arithmetic, Comparison, Get, Instruction, Label, Ownership, Phi, Register } from "./instructions.ts";
+import { Arithmetic, Comparison, Get, Instruction, Label, Ownership, Phi, Program, Register } from "./instructions.ts";
 
-export function to_string(program: readonly Instruction[]): string {
+export function to_string(program: Program): string {
     let pc: number = 0;
     let output: string = "";
 

@@ -1,9 +1,9 @@
 // Copyright (c) 2026 Marco Nikander
 
-import { Instruction } from "../src/instructions.ts";
+import { Program } from "../src/instructions.ts";
 import { to_string } from "../src/to_string.ts";
 
-const program: Instruction[] = [
+const program: Program = [
     [ null, 'Block', '@entry' ],
     [ '%0', 'Const', 5 ],
     [ '%1', 'Const', 1 ],
