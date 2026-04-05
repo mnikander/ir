@@ -2,8 +2,8 @@
 
 export type Program      = Function[];
 export type Function     = { func: Label,        params: Input[],      blocks: Block[] };
-export type Block        = { block: Label,       joins: Phi[],         lines: Instruction[], terminator: Terminator };
-export type Instruction  = Call | Ownership | Arithmetic | Comparison;
+export type Block        = { block: Label,       joins: Phi[],         lines: Line[], terminator: Terminator };
+export type Line         = Call | Ownership | Arithmetic | Comparison;
 
 export type Phi          = [ destination: Value, tag: 'Phi',           inputs: [label: Label, value: Input][]];
 export type Call         = [ destination: Value, tag: 'Call',          label: Label, arguments: Input[] ];
