@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Marco Nikander
 
-import { Arithmetic, Comparison, Get, Instruction, Label, Ownership, Phi, Program, Register } from "./instructions.ts";
+import { Arithmetic, Comparison, Get, Instruction, Label, Misc, Ownership, Phi, Program, Register } from "./instructions.ts";
 
 export function to_string(program: Program): string {
     let pc: number = 0;
@@ -44,7 +44,7 @@ export function to_string(program: Program): string {
     return output;
 }
 
-function unary(line: Ownership): string {
+function unary(line: Ownership | Misc): string {
     return `${line[Get.Dest]}\t= ${line[Get.Tag].toLowerCase()} ${line[Get.Left]}\n`;
 }
 
