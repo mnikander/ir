@@ -28,7 +28,7 @@ export function to_string(program: readonly Instruction[]): string {
                 case 'Branch':    output += `${line[Get.Tag].toLowerCase()} ${line[Get.First]} ${line[Get.Second]} ${line[Get.Third]} \n`; break;
                 case 'Call':      output += `${line[Get.Tag].toLowerCase()} ${line[Get.First]} [${line[Get.Second]}]\n`; break;
                 case 'Return':    output += `${line[Get.Tag].toLowerCase()} ${line[Get.First]}\n`; break;
-                case 'Phi':       output += `${line[Get.Dest]}\t= ${line[Get.Tag].toLowerCase()} ` + concat_phi_entries(line) + '\n'; break;
+                case 'Phi':       output += `${line[Get.Dest]}\t= ${line[Get.Tag].toLowerCase()} ${concat_phi_entries(line)} \n`; break;
                 case 'Exit':      output += `${line[Get.Tag].toLowerCase()} ${line[Get.First]}\n`; break;
                 case 'Block':     output += `\n${line[Get.Tag].toLowerCase()} ${line[Get.First]}:\n`; break;
                 case 'Function':  output += `\n${line[Get.Tag].toLowerCase()} ${line[Get.First]} [${line[Get.Second]}]:\n`; break;
@@ -52,7 +52,7 @@ function binary(line: Arithmetic | Comparison): string {
     return `${line[Get.Dest]}\t= ${line[Get.Tag].toLowerCase()} ${line[Get.First]} ${line[Get.Second]}\n`;
 }
 
-function concat_phi_entries(phi: Phi): string {
+export function concat_phi_entries(phi: Phi): string {
     let result: string = '';
     phi[Get.First].forEach((lr: [Label, Register]) => {
         result += lr[0];

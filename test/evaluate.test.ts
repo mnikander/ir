@@ -407,6 +407,38 @@ describe('static single assignment', () => {
         expect(table_of_contents(input).size).toBe(4);
     });
 
+    it('must allow assignment when three inputs are available', () => {
+        //
+        //        Entry
+        //        |   |
+        //        A   |
+        //      / |   |
+        //     B  |  /
+        //      \ | /
+        //        C
+        //
+        const input: Instruction[] = [
+            [ null, 'Block', '@entry' ],
+            [ '%echo', 'Const', false ],
+            [ null, 'Branch', '@a', '@c', '%echo'],
+            
+            [ null, 'Block', '@a' ],
+            [ '%alpha', 'Const', true ],
+            [ null, 'Branch', '@b', '@c', '%alpha' ], // branch to B
+            
+            [ null, 'Block', '@b' ],
+            [ '%bravo', 'Const', true ],
+            [ null, 'Jump', '@c' ],
+            
+            [ null, 'Block', '@c' ],
+            [ '%result', 'Phi', [['@entry', '%echo'], ['@a', '%alpha'], ['@b', '%bravo']] ],
+            [ null, 'Exit',  '%result' ],
+        ];
+        expect(evaluate(analyze(input))).toBe(false);
+        expect(count_cfg_nodes(input)).toBe(4);
+        expect(table_of_contents(input).size).toBe(4);
+    });
+
     it('must throw an error when a phi node is non-exhaustive', () => {
         //
         //        Entry

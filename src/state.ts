@@ -1,5 +1,6 @@
 import { Interval } from "./analysis.ts"
 import { Add, Block, Branch, Call, Copy, Const, Deref, Divide, Drop, Equal, Exit, Function, Get, Instruction, Jump, Move, Multiply, Phi, RawValue, Ref, Reference, Register, Remainder, Return, Subtract, Unequal, Value, Label } from "./instructions.ts";
+import { concat_phi_entries } from "./to_string.ts";
 import { get_boolean, get_number, valid } from "./type_assertions.ts";
 
 export type Frame = { 
@@ -176,20 +177,20 @@ export function returning(state: State, line: Return, program: readonly Instruct
 }
 
 export function phi(state: State, line: Phi): State {
-    const blk_left: Label  = line[Get.First][0][0];
-    const left:  Register  = line[Get.First][0][1];
-    const blk_right: Label = line[Get.First][1][0];
-    const right: Register  = line[Get.First][1][1];
 
     const reg: Map<Register, Value | Reference> = registers(state);
-    if (state.previous_block === blk_left) {
-        reg.set(dest(line), valid(reg.get(left)));
+    const incoming: [ Label, Register][] = line[Get.First];
+    let found = false;
+    for (let i = 0; i < incoming.length && !found; ++i) {
+        const label: Label     = incoming[i][0];
+        const value: Register  = incoming[i][1];
+        if (state.previous_block === label) {
+            found = true;
+            reg.set(dest(line), valid(reg.get(value)));
+        }
     }
-    else if (state.previous_block === blk_right) {
-        reg.set(dest(line), valid(reg.get(right)));
-    }
-    else {
-        throw Error(`cannot compute Phi(${left}, ${right}) when previous block is '${state.previous_block}'.`)
+    if (!found) {
+        throw Error(`cannot compute Phi(${concat_phi_entries(line)}) when previous block is '${state.previous_block}'.`)
     }
     return state;
 }
