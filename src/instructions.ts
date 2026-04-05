@@ -3,7 +3,7 @@
 export type Function    = [ destination: null,     tag: 'Function',  block: Label, parameters: Register[] ];
 export type Block       = [ destination: null,     tag: 'Block',     block: Label ];
 
-export type Phi         = [ destination: Register, tag: 'Phi',       first: Label, second: Register, third: Label, fourth: Register ];
+export type Phi         = [ destination: Register, tag: 'Phi',       inputs: [[label: Label, value: Register],[label: Label, value: Register]] ];
 export type Call        = [ destination: Register, tag: 'Call',      block: Label, arguments: Register[] ];
 
 export type Instruction = Call | Ownership | Arithmetic | Comparison
@@ -50,5 +50,4 @@ export enum Get {
     First  = 2,
     Second = 3,
     Third  = 4,
-    Fourth = 5,
 }

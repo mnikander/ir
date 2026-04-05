@@ -22,7 +22,7 @@ const program: Instruction[] = [
     [ null, 'Jump', '@termination' ],
     
     [ null, 'Block', '@termination' ],
-    [ '%10', 'Phi', '@body', '%9', '@factorial', '%acc' ],
+    [ '%10', 'Phi', [['@body', '%9'], ['@factorial', '%acc']] ],
     [ null, 'Return', '%10' ],
 ];
 

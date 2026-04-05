@@ -176,10 +176,10 @@ export function returning(state: State, line: Return, program: readonly Instruct
 }
 
 export function phi(state: State, line: Phi): State {
-    const blk_left: Label  = line[Get.First];
-    const left:  Register  = line[Get.Second];
-    const blk_right: Label = line[Get.Third];
-    const right: Register  = line[Get.Fourth];
+    const blk_left: Label  = line[Get.First][0][0];
+    const left:  Register  = line[Get.First][0][1];
+    const blk_right: Label = line[Get.First][1][0];
+    const right: Register  = line[Get.First][1][1];
 
     const reg: Map<Register, Value | Reference> = registers(state);
     if (state.previous_block === blk_left) {

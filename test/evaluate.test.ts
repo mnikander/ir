@@ -229,7 +229,7 @@ describe('function call', () => {
             [ null, 'Jump', '@termination' ],
             
             [ null, 'Block', '@termination' ],
-            [ '%10', 'Phi', '@body', '%9', '@factorial', '%acc' ],
+            [ '%10', 'Phi', [['@body', '%9'], ['@factorial', '%acc']] ],
             [ null, 'Return', '%10' ],
         ];
         expect(evaluate(analyze(input))).toBe(120);
@@ -300,7 +300,7 @@ describe('static single assignment', () => {
             [ null, 'Jump',  '@end' ],
 
             [ null, 'Block', '@end' ],
-            [ '%3', 'Phi', '@first', '%1', '@second', '%2' ],
+            [ '%3', 'Phi', [['@first', '%1'], ['@second', '%2']] ],
             [ null, 'Exit', '%3' ],
         ];
         expect(evaluate(analyze(input))).toBe(22);
@@ -322,7 +322,7 @@ describe('static single assignment', () => {
             [ null, 'Jump',  '@loop' ],
             
             [ null, 'Block', '@loop' ],
-            [ '%3', 'Phi', '@entry', '%0', '@loop', '%4' ],
+            [ '%3', 'Phi', [['@entry', '%0'], ['@loop', '%4']] ],
             [ '%4', 'Add',   '%1', '%3' ],
             [ '%5', 'Unequal', '%3', '%2' ],
             [ null, 'Branch', '@loop', '@end', '%5' ],
@@ -365,8 +365,8 @@ describe('static single assignment', () => {
             
             // join the register from block A with those of block B and C respectively
             [ null, 'Block', '@d' ],
-            [ '%grandparent', 'Phi', '@a', '%alpha', '@c', '%bravo' ], // this currently fails, only the immediate predecessor block is available in the interpreter and 'B' comes from a grandparent
-            [ '%parent',      'Phi', '@a', '%alpha', '@c', '%charlie' ],
+            [ '%grandparent', 'Phi', [['@a', '%alpha'], ['@c', '%bravo']] ], // this currently fails, only the immediate predecessor block is available in the interpreter and 'B' comes from a grandparent
+            [ '%parent',      'Phi', [['@a', '%alpha'], ['@c', '%charlie']] ],
             [ '%total', 'Add', '%grandparent', '%parent'],
             [ null, 'Exit',  '%total' ],
         ];
@@ -399,7 +399,7 @@ describe('static single assignment', () => {
             [ null, 'Jump', '@c' ],
             
             [ null, 'Block', '@c' ],
-            [ '%result', 'Phi', '@a', '%alpha', '@b', '%bravo' ],
+            [ '%result', 'Phi', [['@a', '%alpha'], ['@b', '%bravo']] ],
             [ null, 'Exit',  '%result' ],
         ];
         expect(evaluate(analyze(input))).toBe(20);
@@ -431,7 +431,7 @@ describe('static single assignment', () => {
             [ null, 'Jump', '@c' ],
             
             [ null, 'Block', '@c' ],
-            [ '%result', 'Phi', '@a', '%alpha', '@b', '%bravo' ], // this phi-node does NOT cover all incoming edges
+            [ '%result', 'Phi', [['@a', '%alpha'], ['@b', '%bravo']] ], // this phi-node does NOT cover all incoming edges
             [ null, 'Exit',  '%result' ],
         ];
         // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error

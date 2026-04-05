@@ -28,7 +28,7 @@ export function to_string(program: readonly Instruction[]): string {
                 case 'Branch':    output += `${line[Get.Tag].toLowerCase()} ${line[Get.First]} ${line[Get.Second]} ${line[Get.Third]} \n`; break;
                 case 'Call':      output += `${line[Get.Tag].toLowerCase()} ${line[Get.First]} [${line[Get.Second]}]\n`; break;
                 case 'Return':    output += `${line[Get.Tag].toLowerCase()} ${line[Get.First]}\n`; break;
-                case 'Phi':       output += `${line[Get.Dest]}\t= ${line[Get.Tag].toLowerCase()} ${line[Get.First]} ${line[Get.Second]} ${line[Get.Third]} ${line[Get.Fourth]}\n`; break;
+                case 'Phi':       output += `${line[Get.Dest]}\t= ${line[Get.Tag].toLowerCase()} ${line[Get.First][0][0]} ${line[Get.First][0][1]} ${line[Get.First][1][0]} ${line[Get.First][1][1]}\n`; break;
                 case 'Exit':      output += `${line[Get.Tag].toLowerCase()} ${line[Get.First]}\n`; break;
                 case 'Block':     output += `\n${line[Get.Tag].toLowerCase()} ${line[Get.First]}:\n`; break;
                 case 'Function':  output += `\n${line[Get.Tag].toLowerCase()} ${line[Get.First]} [${line[Get.Second]}]:\n`; break;
