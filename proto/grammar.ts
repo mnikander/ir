@@ -51,20 +51,3 @@ export enum Get {
     Left   = 2, // alias to first argument
     Right  = 3, // alias to second argument
 }
-
-const program : Program =
-[
-    {
-        name: '@main',
-        parameters: [],
-        blocks:
-        [
-            {
-                name: '@entry',
-                phi_nodes: [],
-                instructions: [],
-                terminator: [ null, 'Exit', [0]],
-            },
-        ]
-    },
-];
