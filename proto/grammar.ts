@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Marco Nikander
 
-export type Program      = Function[];
+export type Program      = readonly Function[];
 export type Function     = { func: Label,           params: Input[],      blocks: Block[] };
 export type Block        = { block: Label,          joins: Phi[],         lines: Line[], terminator: Terminator };
 export type Line         = Call | Ownership | Arithmetic | Comparison;
