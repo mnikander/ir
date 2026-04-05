@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Marco Nikander
 
-import { Arithmetic, Comparison, Get, Instruction, Label, Misc, Ownership, Phi, Program, Register } from "./instructions.ts";
+import { Arithmetic, Comparison, Get, Instruction, Label, Misc, Negative, Ownership, Phi, Program, Register } from "./instructions.ts";
 
 export function to_string(program: Program): string {
     let pc: number = 0;
@@ -17,13 +17,20 @@ export function to_string(program: Program): string {
                 case 'Move':      output += unary(line); break;
                 case 'Ref':       output += unary(line); break;
                 case 'Deref':     output += unary(line); break;
+                case 'Negate':    output += unary(line); break;
                 case 'Add':       output += binary(line); break;
                 case 'Subtract':  output += binary(line); break;
                 case 'Multiply':  output += binary(line); break;
                 case 'Divide':    output += binary(line); break;
                 case 'Remainder': output += binary(line); break;
+                case 'Minimum':   output += binary(line); break;
+                case 'Maximum':   output += binary(line); break;
                 case 'Equal':     output += binary(line); break;
                 case 'Unequal':   output += binary(line); break;
+                case 'Less':      output += binary(line); break;
+                case 'LessEqual': output += binary(line); break;
+                case 'Greater':   output += binary(line); break;
+                case 'GreaterEqual': output += binary(line); break;
                 case 'Jump':      output += `${line[Get.Tag].toLowerCase()} ${line[Get.Left]}\n`; break;
                 case 'Branch':    output += `${line[Get.Tag].toLowerCase()} ${line[Get.Left]} ${line[Get.Right][0]} ${line[Get.Right][1]} \n`; break;
                 case 'Call':      output += `${line[Get.Tag].toLowerCase()} ${line[Get.Left]} [${line[Get.Right]}]\n`; break;
@@ -44,7 +51,7 @@ export function to_string(program: Program): string {
     return output;
 }
 
-function unary(line: Ownership | Misc): string {
+function unary(line: Ownership | Misc | Negative): string {
     return `${line[Get.Dest]}\t= ${line[Get.Tag].toLowerCase()} ${line[Get.Left]}\n`;
 }
 

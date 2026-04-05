@@ -1,5 +1,5 @@
 import { Interval } from "./analysis.ts"
-import { Add, Block, Branch, Call, Copy, Const, Deref, Divide, Drop, Equal, Exit, Function, Get, Instruction, Jump, Move, Multiply, Phi, Primitive, Ref, Reference, Register, Remainder, Return, Subtract, Unequal, Value, Label, Program } from "./instructions.ts";
+import { Add, Block, Branch, Call, Copy, Const, Deref, Divide, Drop, Equal, Exit, Function, Get, Greater, GreaterEqual, Instruction, Jump, Less, LessEqual, Maximum, Minimum, Move, Multiply, Negative, Phi, Primitive, Ref, Reference, Register, Remainder, Return, Subtract, Unequal, Value, Label, Program } from "./instructions.ts";
 import { concat_phi_entries } from "./to_string.ts";
 import { get_boolean, get_number, valid } from "./type_assertions.ts";
 
@@ -108,6 +108,26 @@ export function remainder(state: State, line: Remainder): State {
     return state;
 }
 
+export function minimum(state: State, line: Minimum): State {
+    const left:  number = get_number(registers(state).get(line[Get.Left]));
+    const right: number = get_number(registers(state).get(line[Get.Right]));
+    registers(state).set(dest(line), { tag: 'Value', value: Math.min(left, right) });
+    return state;
+}
+
+export function maximum(state: State, line: Maximum): State {
+    const left:  number = get_number(registers(state).get(line[Get.Left]));
+    const right: number = get_number(registers(state).get(line[Get.Right]));
+    registers(state).set(dest(line), { tag: 'Value', value: Math.max(left, right) });
+    return state;
+}
+
+export function negative(state: State, line: Negative): State {
+    const left: number = get_number(registers(state).get(line[Get.Left]));
+    registers(state).set(dest(line), { tag: 'Value', value: -left });
+    return state;
+}
+
 export function equal(state: State, line: Equal): State {
     const left  = valid(registers(state).get(line[Get.Left])).value;
     const right = valid(registers(state).get(line[Get.Right])).value;
@@ -119,6 +139,34 @@ export function unequal(state: State, line: Unequal): State {
     const left  = valid(registers(state).get(line[Get.Left])).value;
     const right = valid(registers(state).get(line[Get.Right])).value;
     registers(state).set(dest(line), { tag: 'Value', value: left !== right });
+    return state;
+}
+
+export function less(state: State, line: Less): State {
+    const left:  number = get_number(registers(state).get(line[Get.Left]));
+    const right: number = get_number(registers(state).get(line[Get.Right]));
+    registers(state).set(dest(line), { tag: 'Value', value: left < right });
+    return state;
+}
+
+export function less_equal(state: State, line: LessEqual): State {
+    const left:  number = get_number(registers(state).get(line[Get.Left]));
+    const right: number = get_number(registers(state).get(line[Get.Right]));
+    registers(state).set(dest(line), { tag: 'Value', value: left <= right });
+    return state;
+}
+
+export function greater(state: State, line: Greater): State {
+    const left:  number = get_number(registers(state).get(line[Get.Left]));
+    const right: number = get_number(registers(state).get(line[Get.Right]));
+    registers(state).set(dest(line), { tag: 'Value', value: left > right });
+    return state;
+}
+
+export function greater_equal(state: State, line: GreaterEqual): State {
+    const left:  number = get_number(registers(state).get(line[Get.Left]));
+    const right: number = get_number(registers(state).get(line[Get.Right]));
+    registers(state).set(dest(line), { tag: 'Value', value: left >= right });
     return state;
 }
 

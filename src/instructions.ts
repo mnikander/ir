@@ -27,23 +27,23 @@ export type Ownership    = Drop;
 // export type Update       = [ destination: Register, tag: 'Update',        pointer: Register, source: Register ];
 export type Drop         = [ destination: null,     tag: 'Drop',          source: Register ];
 
-export type Arithmetic   = Add | Subtract | Multiply | Divide | Remainder; // | Minimum | Maximum | Negative;
+export type Arithmetic   = Add | Subtract | Multiply | Divide | Remainder | Minimum | Maximum | Negative;
 export type Add          = [ destination: Register, tag: 'Add',           left: Register, right: Register ];
 export type Subtract     = [ destination: Register, tag: 'Subtract',      left: Register, right: Register ];
 export type Multiply     = [ destination: Register, tag: 'Multiply',      left: Register, right: Register ];
 export type Divide       = [ destination: Register, tag: 'Divide',        left: Register, right: Register ];
 export type Remainder    = [ destination: Register, tag: 'Remainder',     left: Register, right: Register ];
-// export type Minimum      = [ destination: Register, tag: 'Minimum',       left: Register, right: Register ];
-// export type Maximum      = [ destination: Register, tag: 'Maximum',       left: Register, right: Register ];
-// export type Negative     = [ destination: Register, tag: 'Negate',        left: Register ];
+export type Minimum      = [ destination: Register, tag: 'Minimum',       left: Register, right: Register ];
+export type Maximum      = [ destination: Register, tag: 'Maximum',       left: Register, right: Register ];
+export type Negative     = [ destination: Register, tag: 'Negate',        left: Register ];
 
-export type Comparison   = Equal | Unequal; // | Less | LessEqual | Greater | GreaterEqual;
+export type Comparison   = Equal | Unequal | Less | LessEqual | Greater | GreaterEqual;
 export type Equal        = [ destination: Register, tag: 'Equal',         left: Register, right: Register ];
 export type Unequal      = [ destination: Register, tag: 'Unequal',       left: Register, right: Register ];
-// export type Less         = [ destination: Register, tag: 'Less',          left: Register, right: Register ];
-// export type LessEqual    = [ destination: Register, tag: 'LessEqual',     left: Register, right: Register ];
-// export type Greater      = [ destination: Register, tag: 'Greater',       left: Register, right: Register ];
-// export type GreaterEqual = [ destination: Register, tag: 'GreaterEqual',  left: Register, right: Register ];
+export type Less         = [ destination: Register, tag: 'Less',          left: Register, right: Register ];
+export type LessEqual    = [ destination: Register, tag: 'LessEqual',     left: Register, right: Register ];
+export type Greater      = [ destination: Register, tag: 'Greater',       left: Register, right: Register ];
+export type GreaterEqual = [ destination: Register, tag: 'GreaterEqual',  left: Register, right: Register ];
 
 export type Terminator   = Jump | Branch | Return | Exit;
 export type Jump         = [ destination: null,     tag: 'Jump',          block: Label ];

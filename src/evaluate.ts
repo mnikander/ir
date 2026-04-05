@@ -2,7 +2,7 @@
 
 import { Get, Instruction, Label, Program, Primitive, Reference, Register, Value } from './instructions.ts'
 import { Interval, table_of_contents } from './analysis.ts';
-import { add, branch, call, constant, copy, deref, divide, drop, equal, exit, jump, move, multiply, phi, ref, remainder, returning, State, subtract, top, unequal } from "./state.ts";
+import { add, branch, call, constant, copy, deref, divide, drop, equal, exit, greater, greater_equal, jump, less, less_equal, maximum, minimum, move, multiply, negative, phi, ref, remainder, returning, State, subtract, top, unequal } from "./state.ts";
 
 export function evaluate(program: Program): Primitive {
     const toc: Map<Label, Interval> = table_of_contents(program);
@@ -31,8 +31,15 @@ export function evaluate(program: Program): Primitive {
                 case 'Multiply':  state =  multiply(state, line); break;
                 case 'Divide':    state =    divide(state, line); break;
                 case 'Remainder': state = remainder(state, line); break;
+                case 'Minimum':   state =   minimum(state, line); break;
+                case 'Maximum':   state =   maximum(state, line); break;
+                case 'Negate':    state =  negative(state, line); break;
                 case 'Equal':     state =     equal(state, line); break;
                 case 'Unequal':   state =   unequal(state, line); break;
+                case 'Less':      state =      less(state, line); break;
+                case 'LessEqual': state = less_equal(state, line); break;
+                case 'Greater':   state =   greater(state, line); break;
+                case 'GreaterEqual': state = greater_equal(state, line); break;
                 case 'Jump':      state =      jump(state, line, program, toc); break;
                 case 'Branch':    state =    branch(state, line, program, toc); break;
                 case 'Call':      state =      call(state, line, program, toc); break;
