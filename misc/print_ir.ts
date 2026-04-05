@@ -13,7 +13,7 @@ const program: Program = [
     [ null, 'Function', '@factorial', ['%n', '%acc'] ],
     [ '%3', 'Const', 1 ],
     [ '%6', 'Equal', '%n', '%3' ],
-    [ null, 'Branch', '@termination', '@body', '%6' ],
+    [ null, 'Branch', '%6', ['@termination', '@body'] ],
     
     [ null, 'Block', '@body' ],
     [ '%7', 'Subtract', '%n', '%3' ],

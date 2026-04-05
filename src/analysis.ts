@@ -74,8 +74,8 @@ export function adjacency_list(program: Program): Edge[] {
             edges.push(edge);
         }
         else if (line[Get.Tag] === 'Branch') {
-            const left_edge: Edge = { from: block, to: line[Get.Left]};
-            const right_edge: Edge = { from: block, to: line[Get.Right]};
+            const left_edge: Edge = { from: block, to: line[Get.Right][0]};
+            const right_edge: Edge = { from: block, to: line[Get.Right][1]};
             edges.push(left_edge);
             edges.push(right_edge);
         }

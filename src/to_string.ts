@@ -25,7 +25,7 @@ export function to_string(program: Program): string {
                 case 'Equal':     output += binary(line); break;
                 case 'Unequal':   output += binary(line); break;
                 case 'Jump':      output += `${line[Get.Tag].toLowerCase()} ${line[Get.First]}\n`; break;
-                case 'Branch':    output += `${line[Get.Tag].toLowerCase()} ${line[Get.First]} ${line[Get.Second]} ${line[Get.Third]} \n`; break;
+                case 'Branch':    output += `${line[Get.Tag].toLowerCase()} ${line[Get.Left]} ${line[Get.Right][0]} ${line[Get.Right][1]} \n`; break;
                 case 'Call':      output += `${line[Get.Tag].toLowerCase()} ${line[Get.First]} [${line[Get.Second]}]\n`; break;
                 case 'Return':    output += `${line[Get.Tag].toLowerCase()} ${line[Get.First]}\n`; break;
                 case 'Phi':       output += `${line[Get.Dest]}\t= ${line[Get.Tag].toLowerCase()} ${concat_phi_entries(line)} \n`; break;

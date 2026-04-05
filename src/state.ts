@@ -130,12 +130,12 @@ export function jump(state: State, line: Jump, program: Program, blocks: Map<Lab
 }
 
 export function branch(state: State, line: Branch, program: Program, blocks: Map<Label, Interval>): State {
-    const condition = get_boolean(registers(state).get(line[Get.Third]));
+    const condition = get_boolean(registers(state).get(line[Get.Left]));
     if (condition) {
-        state.pc = valid(blocks.get(line[Get.Left])).begin;
+        state.pc = valid(blocks.get(line[Get.Right][0])).begin;
     }
     else {
-        state.pc = valid(blocks.get(line[Get.Right])).begin;
+        state.pc = valid(blocks.get(line[Get.Right][1])).begin;
     }
     state.previous_block = state.current_block;
     state.current_block  = (program[state.pc] as Block)[Get.Left];

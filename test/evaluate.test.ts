@@ -129,7 +129,7 @@ describe('labels, jump, and branch', () => {
             [ '%1', 'Const', 11 ],
             [ '%2', 'Const', 22 ],
             [ '%3', 'Const', 44 ],
-            [ null, 'Branch', '@then', '@else', '%0' ],
+            [ null, 'Branch', '%0', ['@then', '@else'] ],
 
             [ null, 'Block', '@then' ],
             [ '%4', 'Add',   '%1', '%2' ],
@@ -154,7 +154,7 @@ describe('labels, jump, and branch', () => {
             [ '%1', 'Const', 11 ],
             [ '%2', 'Const', 22 ],
             [ '%3', 'Const', 44 ],
-            [ null, 'Branch', '@then', '@else' , '%0' ],
+            [ null, 'Branch', '%0', ['@then', '@else'] ],
             
             [ null, 'Block', '@then' ],
             [ '%4', 'Add',   '%1', '%2' ],
@@ -220,7 +220,7 @@ describe('function call', () => {
             [ null, 'Function', '@factorial', ['%n', '%acc'] ],
             [ '%3', 'Const', 1 ],
             [ '%6', 'Equal', '%n', '%3' ],
-            [ null, 'Branch', '@termination', '@body', '%6' ],
+            [ null, 'Branch', '%6', ['@termination', '@body'] ],
             
             [ null, 'Block', '@body' ],
             [ '%7', 'Subtract', '%n', '%3' ],
@@ -325,7 +325,7 @@ describe('static single assignment', () => {
             [ '%3', 'Phi', [['@entry', '%0'], ['@loop', '%4']] ],
             [ '%4', 'Add',   '%1', '%3' ],
             [ '%5', 'Unequal', '%3', '%2' ],
-            [ null, 'Branch', '@loop', '@end', '%5' ],
+            [ null, 'Branch', '%5', ['@loop', '@end'] ],
             
             [ null, 'Block', '@end' ],
             [ null, 'Exit',  '%3' ],
@@ -349,7 +349,7 @@ describe('static single assignment', () => {
         const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%condition', 'Const', false ],
-            [ null, 'Branch', '@a', '@b', '%condition' ], // hard-code that we take the else-branch to block B
+            [ null, 'Branch', '%condition', ['@a', '@b'] ], // hard-code that we take the else-branch to block B
 
             [ null, 'Block', '@a' ],
             [ '%alpha', 'Const', 10 ],
@@ -392,7 +392,7 @@ describe('static single assignment', () => {
             [ null, 'Block', '@a' ],
             [ '%alpha', 'Const', 10 ],
             [ '%condition', 'Const', true ],
-            [ null, 'Branch', '@b', '@c', '%condition' ], // branch to B
+            [ null, 'Branch', '%condition', ['@b', '@c'] ], // branch to B
             
             [ null, 'Block', '@b' ],
             [ '%bravo', 'Const', 20 ],
@@ -420,11 +420,11 @@ describe('static single assignment', () => {
         const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%echo', 'Const', false ],
-            [ null, 'Branch', '@a', '@c', '%echo'],
+            [ null, 'Branch','%echo', [ '@a', '@c']],
             
             [ null, 'Block', '@a' ],
             [ '%alpha', 'Const', true ],
-            [ null, 'Branch', '@b', '@c', '%alpha' ], // branch to B
+            [ null, 'Branch', '%alpha', ['@b', '@c'] ], // branch to B
             
             [ null, 'Block', '@b' ],
             [ '%bravo', 'Const', true ],
@@ -452,11 +452,11 @@ describe('static single assignment', () => {
         const input: Program = [
             [ null, 'Block', '@entry' ],
             [ '%echo', 'Const', false ],
-            [ null, 'Branch', '@a', '@c', '%echo'],
+            [ null, 'Branch', '%echo', ['@a', '@c'] ],
             
             [ null, 'Block', '@a' ],
             [ '%alpha', 'Const', true ],
-            [ null, 'Branch', '@b', '@c', '%alpha' ], // branch to B
+            [ null, 'Branch', '%alpha', ['@b', '@c'] ], // branch to B
             
             [ null, 'Block', '@b' ],
             [ '%bravo', 'Const', true ],

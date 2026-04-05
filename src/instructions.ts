@@ -33,7 +33,7 @@ export type Unequal     = [ destination: Register, tag: 'Unequal',   left: Regis
 
 export type Terminator  = Jump | Branch | Return | Exit;
 export type Jump        = [ destination: null,     tag: 'Jump',      block: Label ];
-export type Branch      = [ destination: null,     tag: 'Branch',    thenLabel: Label, elseLabel: Label, condition: Register ];
+export type Branch      = [ destination: null,     tag: 'Branch',    condition: Register, block: [Label, Label] ];
 export type Return      = [ destination: null,     tag: 'Return',    left: Register ];
 export type Exit        = [ destination: null,     tag: 'Exit',      left: Register ];
 
