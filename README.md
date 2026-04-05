@@ -19,6 +19,11 @@ Build and run the tests with:
 deno test
 ```
 
+You can run the pretty-printing example with:
+```
+deno run misc/print_ir.ts
+```
+
 ## More Information
 - [IR design](./design.md)
 - [Log of design decisions for the interpreter and IR](./decisions.md)
