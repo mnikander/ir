@@ -10,6 +10,10 @@ function count_cfg_nodes(program: Program): number {
     return control_flow_graph(nodes, edges).length;
 }
 
+function count_toc_nodes(program: Program): number {
+    return table_of_contents(program).size;
+}
+
 describe('constants and exit', () => {
     it('must throw error on empty input', () => {
         // (empty program)
@@ -27,7 +31,7 @@ describe('constants and exit', () => {
         ];
         expect(() => evaluate(analyze(input))).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(table_of_contents(input).size).toBe(1);
+        expect(count_toc_nodes(input)).toBe(1);
     });
 
     it('must throw error if there is no Entry block', () => {
@@ -56,7 +60,7 @@ describe('constants and exit', () => {
         ];
         expect(() => {evaluate(analyze(input))}).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(table_of_contents(input).size).toBe(1);
+        expect(count_toc_nodes(input)).toBe(1);
     });
 
     it('must evaluate a constant', () => {
@@ -71,7 +75,7 @@ describe('constants and exit', () => {
         ];
         expect(evaluate(analyze(input))).toBe(11);
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(table_of_contents(input).size).toBe(1);
+        expect(count_toc_nodes(input)).toBe(1);
     });
 });
 
@@ -90,7 +94,7 @@ describe('copying of registers', () => {
         ];
         expect(evaluate(analyze(input))).toBe(11);
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(table_of_contents(input).size).toBe(1);
+        expect(count_toc_nodes(input)).toBe(1);
     });
 });
 
@@ -111,7 +115,7 @@ describe('arithmetic operations', () => {
         ];
         expect(evaluate(analyze(input))).toBe(33);
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(table_of_contents(input).size).toBe(1);
+        expect(count_toc_nodes(input)).toBe(1);
     });
 });
 
@@ -136,7 +140,7 @@ describe('labels, jump, and branch', () => {
         ];
         expect(() => {evaluate(analyze(input))}).toThrow();
         expect(count_cfg_nodes(input)).toBeGreaterThanOrEqual(1);
-        expect(table_of_contents(input).size).toBeGreaterThanOrEqual(1);
+        expect(count_toc_nodes(input)).toBeGreaterThanOrEqual(1);
     });
 
     it('must execute the correct line of code after an unconditional jump', () => {
@@ -165,7 +169,7 @@ describe('labels, jump, and branch', () => {
         ];
         expect(evaluate(analyze(input))).toBe(22);
         expect(count_cfg_nodes(input)).toBe(3);
-        expect(table_of_contents(input).size).toBe(3);
+        expect(count_toc_nodes(input)).toBe(3);
     });
 
     it('must execute first branch if the condition is true', () => {
@@ -208,7 +212,7 @@ describe('labels, jump, and branch', () => {
         ];
         expect(evaluate(analyze(input))).toBe(33);
         expect(count_cfg_nodes(input)).toBe(4);
-        expect(table_of_contents(input).size).toBe(4);
+        expect(count_toc_nodes(input)).toBe(4);
     });
 
     it('must execute the second branch when condition is false', () => {
@@ -251,7 +255,7 @@ describe('labels, jump, and branch', () => {
         ];
         expect(evaluate(analyze(input))).toBe(66);
         expect(count_cfg_nodes(input)).toBe(4);
-        expect(table_of_contents(input).size).toBe(4);
+        expect(count_toc_nodes(input)).toBe(4);
     });
 });
 
@@ -280,7 +284,7 @@ describe('function call', () => {
         ];
         expect(evaluate(analyze(input))).toBe(22);
         expect(count_cfg_nodes(input)).toBe(2);
-        expect(table_of_contents(input).size).toBe(2);
+        expect(count_toc_nodes(input)).toBe(2);
     });
 
     it('must support calling a binary function', () => {
@@ -307,7 +311,7 @@ describe('function call', () => {
         ];
         expect(evaluate(analyze(input))).toBe(11);
         expect(count_cfg_nodes(input)).toBe(2);
-        expect(table_of_contents(input).size).toBe(2);
+        expect(count_toc_nodes(input)).toBe(2);
     });
 
     it('must evaluate tail-recursive functions', () => {
@@ -367,7 +371,7 @@ describe('function call', () => {
         ];
         expect(evaluate(analyze(input))).toBe(120);
         expect(count_cfg_nodes(input)).toBe(4);
-        expect(table_of_contents(input).size).toBe(4);
+        expect(count_toc_nodes(input)).toBe(4);
     });
 });
 
@@ -386,7 +390,7 @@ describe('static single assignment', () => {
         ];
         expect(() => {evaluate(analyze(input))}).toThrow();
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(table_of_contents(input).size).toBe(1);
+        expect(count_toc_nodes(input)).toBe(1);
     });
 
     it('must throw an error when function parameters have the same name', () => {
@@ -413,7 +417,7 @@ describe('static single assignment', () => {
         ];
         expect(() => {evaluate(analyze(input))}).toThrow();
         expect(count_cfg_nodes(input)).toBe(2);
-        expect(table_of_contents(input).size).toBe(2);
+        expect(count_toc_nodes(input)).toBe(2);
     });
 
     it('must throw an error when function parameter registers are not unique', () => {
@@ -448,7 +452,7 @@ describe('static single assignment', () => {
         ];
         expect(() => {evaluate(analyze(input))}).toThrow();
         expect(count_cfg_nodes(input)).toBe(3);
-        expect(table_of_contents(input).size).toBe(3);
+        expect(count_toc_nodes(input)).toBe(3);
     });
 
     it('phi node must assign from the correct register after an unconditional jump', () => {
@@ -485,7 +489,7 @@ describe('static single assignment', () => {
         ];
         expect(evaluate(analyze(input))).toBe(22);
         expect(count_cfg_nodes(input)).toBe(4);
-        expect(table_of_contents(input).size).toBe(4);
+        expect(count_toc_nodes(input)).toBe(4);
     });
 
     it('phi node must assign from the correct register when executing a loop', () => {
@@ -533,7 +537,7 @@ describe('static single assignment', () => {
         ];
         expect(evaluate(analyze(input))).toBe(3);
         expect(count_cfg_nodes(input)).toBe(3);
-        expect(table_of_contents(input).size).toBe(3);
+        expect(count_toc_nodes(input)).toBe(3);
     });
 
     it('phi node must allow assignment from dominator blocks which are not the immediate dominator', () => {
@@ -596,7 +600,7 @@ describe('static single assignment', () => {
         ];
         expect(evaluate(analyze(input))).toBe(41);
         expect(count_cfg_nodes(input)).toBe(5);
-        expect(table_of_contents(input).size).toBe(5);
+        expect(count_toc_nodes(input)).toBe(5);
     });
 
     it('phi node must allow assignment when both inputs are available', () => {
@@ -645,7 +649,7 @@ describe('static single assignment', () => {
         ];
         expect(evaluate(analyze(input))).toBe(20);
         expect(count_cfg_nodes(input)).toBe(4);
-        expect(table_of_contents(input).size).toBe(4);
+        expect(count_toc_nodes(input)).toBe(4);
     });
 
     it('must allow assignment when three inputs are available', () => {
@@ -694,7 +698,7 @@ describe('static single assignment', () => {
         ];
         expect(evaluate(analyze(input))).toBe(false);
         expect(count_cfg_nodes(input)).toBe(4);
-        expect(table_of_contents(input).size).toBe(4);
+        expect(count_toc_nodes(input)).toBe(4);
     });
 
     it('must throw an error when a phi node is non-exhaustive', () => {
@@ -744,7 +748,7 @@ describe('static single assignment', () => {
         // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
         expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(4);
-        expect(table_of_contents(input).size).toBe(4);
+        expect(count_toc_nodes(input)).toBe(4);
     });
 });
 
@@ -765,7 +769,7 @@ describe('memory and ownership', () => {
         ];
         expect(evaluate(analyze(input))).toBe(42);
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(table_of_contents(input).size).toBe(1);
+        expect(count_toc_nodes(input)).toBe(1);
     });
 
     it('must detect a use-after-drop', () => {
@@ -783,7 +787,7 @@ describe('memory and ownership', () => {
         // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
         expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(table_of_contents(input).size).toBe(1);
+        expect(count_toc_nodes(input)).toBe(1);
     });
 
     it('must detect a double-drop', () => {
@@ -805,7 +809,7 @@ describe('memory and ownership', () => {
         // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
         expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(table_of_contents(input).size).toBe(1);
+        expect(count_toc_nodes(input)).toBe(1);
     });
 
     it('must detect a use-after-move', () => {
@@ -823,7 +827,7 @@ describe('memory and ownership', () => {
         // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
         expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(table_of_contents(input).size).toBe(1);
+        expect(count_toc_nodes(input)).toBe(1);
     });
 
     it('must detect a dangling reference when the source register is dropped', () => {
@@ -845,7 +849,7 @@ describe('memory and ownership', () => {
         // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
         expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(table_of_contents(input).size).toBe(1);
+        expect(count_toc_nodes(input)).toBe(1);
     });
 
     it('must detect a dangling reference when the source register is moved', () => {
@@ -867,6 +871,6 @@ describe('memory and ownership', () => {
         // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
         expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
         expect(count_cfg_nodes(input)).toBe(1);
-        expect(table_of_contents(input).size).toBe(1);
+        expect(count_toc_nodes(input)).toBe(1);
     });
 });
