@@ -32,4 +32,5 @@
 |030|2026-04-05| impl       | include a generation counter in the stack memory    | Allows the runtime environment to report memory leaks. All it needs to do is check whether or not a pointer has the same generation as the memory it is pointing to.|
 |031|2026-04-05| AST        | instructions and terminators with same array format | Keeps field-access simple and uniform. The tag and 1st argument can be accessed with simple helpers for all types. It's ok if Terminators have `null` as their destination.|
 |032|2026-04-05| AST        | use JS objects, for program, function, and block    | Makes it easier to read, without introducing too much noise. It's worth it to make the high-level structure of the code visible. A static analysis pass can easily pick out the stuff it needs.|
+|033|2026-04-05| impl       | pass `branch` labels as a pair                      | Makes the IR more uniform, 3-address code. Makes `branch` more cumbersome, but eliminates the need to support a 3rd argument.|
 |   |          |            |                                                     | |

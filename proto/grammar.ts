@@ -37,7 +37,7 @@ export type GreaterEqual = [ destination: Value, tag: 'GreaterEqual',  left: Inp
 
 export type Terminator   = Jump | Branch | Return | Exit;
 export type Jump         = [ destination: null,  tag: 'Jump',          block: Label ];
-export type Branch       = [ destination: null,  tag: 'Branch',        thenBlock: Label, elseBlock: Label, condition: Value ];
+export type Branch       = [ destination: null,  tag: 'Branch',        condition: Input, block: [Label, Label] ];
 export type Return       = [ destination: null,  tag: 'Return',        left: Input ];
 export type Exit         = [ destination: null,  tag: 'Exit',          left: Input ];
 
@@ -50,10 +50,6 @@ export enum Get {
     Tag    = 1,
     Left   = 2, // alias to first argument
     Right  = 3, // alias to second argument
-    First  = 2,
-    Second = 3,
-    Third  = 4,
-    Fourth = 5,
 }
 
 const program : Program =
