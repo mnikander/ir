@@ -385,6 +385,24 @@ describe('static single assignment', () => {
         //      \ |
         //        C
         //
+        //
+        // block @entry:
+        // jump @a
+        // 
+        // block @a:
+        // %alpha = constant 10
+        // %condition = constant true
+        // branch %condition @b @c
+        // 
+        // block @b:
+        // %bravo = constant 20
+        // jump @c
+        //
+        // block @c:
+        // %result = phi [[@a, %alpha], [@b, %bravo]]
+        // exit %result
+        //
+
         const input: Program = [
             [ null, 'Block', '@entry' ],
             [ null, 'Jump', '@a' ],
