@@ -3,7 +3,7 @@
 export type Program      = Function[];
 export type Function     = { name: Label,        parameters: Input[],  blocks: Block[] };
 export type Block        = { name: Label,        phi_nodes: Phi[],     instructions: Instruction[], terminator: Terminator };
-export type Instruction  = Call | Ownership | Arithmetic | Logic | Comparison;
+export type Instruction  = Call | Ownership | Arithmetic | Comparison;
 
 export type Phi          = [ destination: Value, tag: 'Phi',           inputs: [label: Label, value: Input][]];
 export type Call         = [ destination: Value, tag: 'Call',          label: Label, arguments: Input[] ];
@@ -27,11 +27,6 @@ export type Minimum      = [ destination: Value, tag: 'Minimum',       left: Inp
 export type Maximum      = [ destination: Value, tag: 'Maximum',       left: Input, right: Input ];
 export type Negative     = [ destination: Value, tag: 'Negate',        left: Input ];
 
-export type Logic        = And | Or | Not;
-export type And          = [ destination: Value, tag: 'And',           left: Input, right: Input ];
-export type Or           = [ destination: Value, tag: 'Or',            left: Input, right: Input ];
-export type Not          = [ destination: Value, tag: 'Not',           left: Input];
-
 export type Comparison   = Equal | Unequal | Less | LessEqual | Greater | GreaterEqual;
 export type Equal        = [ destination: Value, tag: 'Equal',         left: Input, right: Input ];
 export type Unequal      = [ destination: Value, tag: 'Unequal',       left: Input, right: Input ];
@@ -46,8 +41,7 @@ export type Branch       = [ destination: null,  tag: 'Branch',        thenBlock
 export type Return       = [ destination: null,  tag: 'Return',        left: Input ];
 export type Exit         = [ destination: null,  tag: 'Exit',          left: Input ];
 
-export type Input        = [Primitive] | ['copy', Value] | ['move', Value];
-export type Primitive    = boolean | number;
+export type Input        = [number] | ['copy', Value] | ['move', Value];
 export type Value        = `%${string}`;
 export type Label        = `@${string}`;
 
