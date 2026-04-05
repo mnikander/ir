@@ -1,5 +1,5 @@
 import { Interval } from "./analysis.ts"
-import { Add, Block, Branch, Call, Copy, Const, Deref, Divide, Drop, Equal, Exit, Function, Get, Instruction, Jump, Move, Multiply, Phi, RawValue, Ref, Reference, Register, Remainder, Return, Subtract, Unequal, Value, Label, Program } from "./instructions.ts";
+import { Add, Block, Branch, Call, Copy, Const, Deref, Divide, Drop, Equal, Exit, Function, Get, Instruction, Jump, Move, Multiply, Phi, Primitive, Ref, Reference, Register, Remainder, Return, Subtract, Unequal, Value, Label, Program } from "./instructions.ts";
 import { concat_phi_entries } from "./to_string.ts";
 import { get_boolean, get_number, valid } from "./type_assertions.ts";
 
@@ -195,7 +195,7 @@ export function phi(state: State, line: Phi): State {
     return state;
 }
 
-export function exit(state: State, line: Exit): RawValue {
+export function exit(state: State, line: Exit): Primitive {
     const reg: Map<Register, Value | Reference> = top(state.stack).registers;
     const return_register: Reference | Value = valid(reg.get(line[Get.Left]));
     if (return_register.tag !== 'Value') {

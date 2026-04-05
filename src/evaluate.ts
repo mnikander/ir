@@ -1,10 +1,10 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { Get, Instruction, Label, Program, RawValue, Reference, Register, Value } from './instructions.ts'
+import { Get, Instruction, Label, Program, Primitive, Reference, Register, Value } from './instructions.ts'
 import { Interval, table_of_contents } from './analysis.ts';
 import { add, branch, call, constant, copy, deref, divide, drop, equal, exit, jump, move, multiply, phi, ref, remainder, returning, State, subtract, top, unequal } from "./state.ts";
 
-export function evaluate(program: Program): RawValue {
+export function evaluate(program: Program): Primitive {
     const toc: Map<Label, Interval> = table_of_contents(program);
 
     let state: State = {

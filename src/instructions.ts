@@ -12,7 +12,7 @@ export type Instruction = Call | Ownership | Arithmetic | Comparison
                         | Terminator;
 
 export type Ownership   = Const | Copy | Drop | Move | Ref | Deref;
-export type Const       = [ destination: Register, tag: 'Const',     constant: RawValue ];
+export type Const       = [ destination: Register, tag: 'Const',     constant: Primitive ];
 export type Copy        = [ destination: Register, tag: 'Copy',      source: Register ];
 export type Drop        = [ destination: null,     tag: 'Drop',      source: Register ];
 export type Move        = [ destination: Register, tag: 'Move',      source: Register ];
@@ -37,8 +37,8 @@ export type Branch      = [ destination: null,     tag: 'Branch',    thenLabel: 
 export type Return      = [ destination: null,     tag: 'Return',    left: Register ];
 export type Exit        = [ destination: null,     tag: 'Exit',      left: Register ];
 
-export type RawValue    = boolean | number;
-export type Value       = { tag: 'Value', value: RawValue };
+export type Primitive   = boolean | number;
+export type Value       = { tag: 'Value', value: Primitive };
 export type Reference   = { tag: 'Reference', value: Register };
 export type Register    = `%${string}`;
 export type Label       = `@${string}`;
