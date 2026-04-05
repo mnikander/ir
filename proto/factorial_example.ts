@@ -2,6 +2,22 @@
 
 import { Program } from "./grammar.ts";
 
+// func main(): int
+// {
+//   result = factorial 5
+//   return result
+// }
+//
+// func factorial(int arg): int
+// {
+//   acc = 1
+//   while (n > 1) {
+//     acc = n * acc
+//     n   = n - 1
+//   }
+//   return acc
+// }
+
 export const factorial : Program =
 [
     {
