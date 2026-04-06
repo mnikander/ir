@@ -1,18 +1,18 @@
 
-|###| Invariants of every valid IR program                                             | Tag     |Checked|Unit-Test|
-| --| --                                                                               | --      |--     |--       |
-|   | satisfies the context-free grammar specified in [AST](../proto/ast.ts)           | grammar |       |         |
-|   | $\forall$ Registers: names are globally unique                                   | SSA     |       |         |
-|   | $\forall$ Functions: names is globally unique                                    | SSA     |       |         |
-|   | $\neg\exists$ a control flow edge into the `entry` Block                         | SSA     |       |         |
-|   | $\forall$ Blocks: name is scoped to its Function name                            |         |       |         |
-|   | $\forall$ Blocks: name is unique in a Function                                   |         |       |         |
-|   | $\exists$ `main` Function                                                        |         |       |         |
-|   | $\neg\exists$ a Function before the `main` Function                              |         |       |         |
-|   | $\forall$ Functions: $\exist$ `entry` Block                                      |         |       |         |
-|   | $\forall$ Functions: $\neg\exists$ a Block before the `entry` Block              |         |       |         |
-|   | $\forall \Phi$-nodes: each Register is exactly 'Live' on its incoming CFG edge   | borrow  |       |         |
-|   | |         | | |
+| YYYY-MM-DD | Id     | Invariants of every valid IR program                                             | Tag     |Checked|Unit-Test|
+| --         | --     | --                                                                               | --      |--     |--       |
+| 2026-04-06 | #d5a | satisfies the context-free grammar specified in [AST](../proto/ast.ts)           | grammar |       |         |
+| 2026-04-06 | #53a | $\forall$ Registers: names are globally unique                                   | SSA     |       |         |
+| 2026-04-06 | #259 | $\forall$ Functions: names is globally unique                                    | SSA     |       |         |
+| 2026-04-06 | #95d | $\neg\exists$ a control flow edge into the `entry` Block                         | SSA     |       |         |
+| 2026-04-06 | #aba | $\forall$ Blocks: name is scoped to its Function name                            |         |       |         |
+| 2026-04-06 | #51d | $\forall$ Blocks: name is unique in a Function                                   |         |       |         |
+| 2026-04-06 | #1c6 | $\exists$ `main` Function                                                        |         |       |         |
+| 2026-04-06 | #0e0 | $\neg\exists$ a Function before the `main` Function                              |         |       |         |
+| 2026-04-06 | #9cc | $\forall$ Functions: $\exist$ `entry` Block                                      |         |       |         |
+| 2026-04-06 | #a02 | $\forall$ Functions: $\neg\exists$ a Block before the `entry` Block              |         |       |         |
+| 2026-04-06 | #bfe | $\forall \Phi$-nodes: each Register is exactly 'Live' on its incoming CFG edge   | borrow  |       |         |
+| 2026- |  | |         | | |
 
 ---
 **Copyright (c) 2026 Marco Nikander**
