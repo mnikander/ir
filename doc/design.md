@@ -90,7 +90,7 @@ That would be a memory leak.
 
 ## Resources
 - [instruction set](signatures.md)
-- [design decisions](decisions.md)
+- [design decisions]decisions.md)
 
 ---
 **Copyright (c) 2026 Marco Nikander**

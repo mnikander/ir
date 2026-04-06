@@ -25,8 +25,8 @@ deno run misc/print_ir.ts
 ```
 
 ## More Information
-- [IR design](./design.md)
-- [Log of design decisions for the interpreter and IR](./decisions.md)
+- [IR design](./doc/design.md)
+- [Log of design decisions for the interpreter and IR](./doc/decisions.md)
 
 ---
 **Copyright (c) 2026 Marco Nikander**
