@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Marco Nikander
 
-import { Program } from "../src/instructions.ts";
+import { Program } from "../src/current_grammar.ts";
 import { to_string } from "../src/to_string.ts";
 
 const program: Program = [

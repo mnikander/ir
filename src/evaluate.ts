@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { Get, Instruction, Label, Program, Primitive, Reference, Register, Value } from './instructions.ts'
+import { Get, Instruction, Label, Program, Primitive, Reference, Register, Value } from './current_grammar.ts'
 import { Interval, table_of_contents } from './analysis.ts';
 import { add, branch, call, constant, copy, deref, divide, drop, equal, exit, greater, greater_equal, jump, less, less_equal, maximum, minimum, move, multiply, negative, phi, ref, remainder, returning, State, subtract, top, unequal } from "./state.ts";
 

@@ -51,11 +51,11 @@ export type Branch       = [ destination: null,     tag: 'Branch',        condit
 export type Return       = [ destination: null,     tag: 'Return',        left: Register ];
 export type Exit         = [ destination: null,     tag: 'Exit',          left: Register ];
 
-export type Primitive    = boolean | number;
 export type Value        = { tag: 'Value', value: Primitive };
 export type Reference    = { tag: 'Reference', value: Register };
 export type Register     = `%${string}`;
 export type Label        = `@${string}`;
+export type Primitive    = boolean | number;
 
 export enum Get {
     Dest  = 0,

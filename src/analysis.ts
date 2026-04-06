@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { Function, Get, Instruction, Label, Program, Register } from "./instructions.ts";
+import { Function, Get, Instruction, Label, Program, Register } from "./current_grammar.ts";
 import { valid } from "./type_assertions.ts";
 
 export type Interval = { begin: number, end: number };

@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { Value, Reference } from './instructions.ts'
+import { Value, Reference } from './current_grammar.ts'
 
 export function get_boolean(value: undefined | Reference | Value): boolean {
     if (value === undefined || typeof value.value !== 'boolean') {

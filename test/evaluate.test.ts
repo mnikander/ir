@@ -1,7 +1,7 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 import { evaluate } from "../src/evaluate.ts";
-import { Program } from "../src/instructions.ts";
+import { Program } from "../src/current_grammar.ts";
 import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
 function count_cfg_nodes(program: Program): number {

@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Marco Nikander
 
-import { Arithmetic, Comparison, Get, Instruction, Label, Misc, Negative, Ownership, Phi, Program, Register } from "./instructions.ts";
+import { Arithmetic, Comparison, Get, Instruction, Label, Misc, Negative, Ownership, Phi, Program, Register } from "./current_grammar.ts";
 
 export function to_string(program: Program): string {
     let pc: number = 0;
