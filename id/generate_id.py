@@ -3,11 +3,13 @@
 import argparse
 from pathlib import Path
 import secrets
+import sys
 
 
 ALPHABET = "0123456789abcdef"
 CODE_LENGTH = 3
 COLORS_FILE = Path(__file__).with_name("id.txt")
+MAX_PERMUTATIONS = len(ALPHABET) ** CODE_LENGTH
 
 
 def generate_code() -> str:
@@ -39,6 +41,15 @@ def main() -> None:
         parser.error("count must be a positive integer")
 
     existing_colors = load_existing_colors()
+    remaining_colors = MAX_PERMUTATIONS - len(existing_colors)
+
+    if args.count > remaining_colors:
+        print(
+            f"error: requested {args.count} new colors, but only {remaining_colors} remain available",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
+
     new_colors: list[str] = []
 
     while len(new_colors) < args.count:
