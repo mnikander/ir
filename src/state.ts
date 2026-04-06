@@ -32,6 +32,50 @@ function dest(line: Instruction): Register {
     return valid(line[Get.Dest]);
 }
 
+export function phi(state: State, line: Phi): State {
+
+    const reg: Map<Register, Value | Reference> = registers(state);
+    const incoming: [ Label, Register][] = line[Get.Left];
+    let found = false;
+    for (let i = 0; i < incoming.length && !found; ++i) {
+        const label: Label     = incoming[i][0];
+        const value: Register  = incoming[i][1];
+        if (state.previous_block === label) {
+            found = true;
+            reg.set(dest(line), valid(reg.get(value)));
+        }
+    }
+    if (!found) {
+        throw Error(`cannot compute Phi(${concat_phi_entries(line)}) when previous block is '${state.previous_block}'.`)
+    }
+    return state;
+}
+
+export function call(state: State, line: Call, program: Program, blocks: Map<Label, Interval>): State {
+    const old_reg: Map<Register, Value | Reference> = registers(state);
+    const function_pc: number = valid(blocks.get(line[Get.Left])).begin;
+    const entry_block: Label = (program[function_pc + 1] as Block)[Get.Left];
+    const new_pc: number = function_pc + 1;
+    const provided: number = valid(line[Get.Right]).length;
+    const expected: number = valid(program[function_pc][Get.Right]).length;
+    if (provided !== expected) {
+        throw Error(`function '${program[function_pc][Get.Left]}' expects ${expected} arguments, got ${provided}`);
+    }
+    state.stack.push({ registers: new Map<Register, Value | Reference>(),
+                    return_pc: state.pc,
+                    return_block: state.current_block });
+    state.pc = new_pc;
+    // copy register contents into new frame, as function arguments
+    for (let i: number = 0; i < line[Get.Right]?.length; i++) {
+        const parameter: Register      = (program[function_pc] as Function)[Get.Right][i];
+        const value: Reference | Value = valid(old_reg.get(line[Get.Right][i]));
+        registers(state).set(parameter, value);
+    }
+    state.previous_block = state.current_block;
+    state.current_block  = entry_block;
+    return state;
+}
+
 export function constant(state: State, line: Const): State {
     registers(state).set(dest(line), { tag: 'Value', value: line[Get.Left] });
     return state;
@@ -39,14 +83,6 @@ export function constant(state: State, line: Const): State {
 
 export function copy(state: State, line: Copy): State {
     registers(state).set(dest(line), valid(registers(state).get(line[Get.Left])));
-    return state;
-}
-
-export function drop(state: State, line: Drop): State {
-    if (!registers(state).has(line[Get.Left])) {
-        throw Error(`double-free of register '${line[Get.Left]}'`);
-    }
-    registers(state).delete(line[Get.Left]);
     return state;
 }
 
@@ -70,6 +106,14 @@ export function deref(state: State, line: Deref): State {
         const value: Reference | Value = valid(registers(state).get(r.value));
         registers(state).set(dest(line), value);
     }
+    return state;
+}
+
+export function drop(state: State, line: Drop): State {
+    if (!registers(state).has(line[Get.Left])) {
+        throw Error(`double-free of register '${line[Get.Left]}'`);
+    }
+    registers(state).delete(line[Get.Left]);
     return state;
 }
 
@@ -190,31 +234,6 @@ export function branch(state: State, line: Branch, program: Program, blocks: Map
     return state;
 }
 
-export function call(state: State, line: Call, program: Program, blocks: Map<Label, Interval>): State {
-    const old_reg: Map<Register, Value | Reference> = registers(state);
-    const function_pc: number = valid(blocks.get(line[Get.Left])).begin;
-    const entry_block: Label = (program[function_pc + 1] as Block)[Get.Left];
-    const new_pc: number = function_pc + 1;
-    const provided: number = valid(line[Get.Right]).length;
-    const expected: number = valid(program[function_pc][Get.Right]).length;
-    if (provided !== expected) {
-        throw Error(`function '${program[function_pc][Get.Left]}' expects ${expected} arguments, got ${provided}`);
-    }
-    state.stack.push({ registers: new Map<Register, Value | Reference>(),
-                    return_pc: state.pc,
-                    return_block: state.current_block });
-    state.pc = new_pc;
-    // copy register contents into new frame, as function arguments
-    for (let i: number = 0; i < line[Get.Right]?.length; i++) {
-        const parameter: Register      = (program[function_pc] as Function)[Get.Right][i];
-        const value: Reference | Value = valid(old_reg.get(line[Get.Right][i]));
-        registers(state).set(parameter, value);
-    }
-    state.previous_block = state.current_block;
-    state.current_block  = entry_block;
-    return state;
-}
-
 export function returning(state: State, line: Return, program: Program): State {
     state.pc                        = valid(top(state.stack).return_pc);
     state.previous_block            = state.current_block;
@@ -223,25 +242,6 @@ export function returning(state: State, line: Return, program: Program): State {
     const result: Reference | Value = valid(registers(state).get(line[Get.Left]));
     previous(state.stack).registers.set(call[Get.Dest], result);
     state.stack.pop();
-    return state;
-}
-
-export function phi(state: State, line: Phi): State {
-
-    const reg: Map<Register, Value | Reference> = registers(state);
-    const incoming: [ Label, Register][] = line[Get.Left];
-    let found = false;
-    for (let i = 0; i < incoming.length && !found; ++i) {
-        const label: Label     = incoming[i][0];
-        const value: Register  = incoming[i][1];
-        if (state.previous_block === label) {
-            found = true;
-            reg.set(dest(line), valid(reg.get(value)));
-        }
-    }
-    if (!found) {
-        throw Error(`cannot compute Phi(${concat_phi_entries(line)}) when previous block is '${state.previous_block}'.`)
-    }
     return state;
 }
 
