@@ -3,6 +3,7 @@
 This repository is a Deno/TypeScript prototype for an SSA-style intermediate representation (IR) and its interpreter.
 The current executable implementation lives in `src/` and operates on a flat instruction stream.
 The material in `proto/` is not used by the runtime yet; it captures the intended future direction for the IR.
+Longer-form design/reference documents now live under `doc/`.
 
 ## Working Model
 
@@ -11,14 +12,14 @@ There are effectively two IR layers in the repo:
 1. Current interpreter path
    - Defined in [src/instructions.ts](/home/marco/Documents/ir/src/instructions.ts)
    - Programs are `Instruction[]`
-   - Entry point must begin with `@entry`
+   - Programs begin with `function @main`, followed by `block @main.entry`
    - Main pipeline is `analyze(program)` then `evaluate(program)`
    - This is the only implementation currently in use
 
 2. Prototype redesign
    - Defined in [proto/grammar.ts](/home/marco/Documents/ir/proto/grammar.ts) and [proto/ast.ts](/home/marco/Documents/ir/proto/ast.ts)
    - Programs are structured as functions with nested blocks
-   - Adds the newer ownership/storage ideas described in [design.md](/home/marco/Documents/ir/design.md)
+   - Adds the newer ownership/storage ideas described in [design.md](/home/marco/Documents/ir/doc/design.md)
    - This is future-facing design work and is not yet wired into the runtime in `src/`
 
 ## Important Files
@@ -26,14 +27,17 @@ There are effectively two IR layers in the repo:
 - [README.md](/home/marco/Documents/ir/README.md)
   Short project intro and basic Deno commands.
 
-- [design.md](/home/marco/Documents/ir/design.md)
+- [design.md](/home/marco/Documents/ir/doc/design.md)
   High-level IR goals: SSA, ownership/lifetime tracking, compilation-target motivation.
 
-- [decisions.md](/home/marco/Documents/ir/decisions.md)
+- [decisions.md](/home/marco/Documents/ir/doc/decisions.md)
   Chronological design log. The most important recent note is decision 024 on `2026-04-05`, which says the IR and implementation are being overhauled.
 
-- [signatures.md](/home/marco/Documents/ir/signatures.md)
+- [signatures.md](/home/marco/Documents/ir/doc/signatures.md)
   Human-readable instruction set reference for the current interpreter. Some entries are still aspirational and broader than what `src/` currently implements.
+
+- [invariants.md](/home/marco/Documents/ir/doc/invariants.md)
+  Collected invariants for the IR/interpreter as that documentation grows.
 
 ## Runtime Architecture
 
@@ -55,10 +59,10 @@ There are effectively two IR layers in the repo:
   Performs lightweight validation and graph construction.
   Current responsibilities:
   - single-assignment check for destination registers and function parameters
-  - collect block/function labels
+  - collect block labels for CFG construction
   - build adjacency list and CFG
   - compute reachability
-  - compute a table of contents mapping labels to instruction index ranges
+  - compute a table of contents mapping function and block labels to instruction index ranges
 
   Important note:
   `analyze()` currently computes several structures mainly as validation and then returns the original `Program` unchanged.
@@ -97,7 +101,7 @@ There are effectively two IR layers in the repo:
 
 The tests currently cover:
 - empty/invalid programs
-- `@entry` and `Exit` requirements
+- `@main` / `@main.entry` and `Exit` requirements
 - constants and copies
 - arithmetic
 - block structure, jumps, and branches
@@ -133,7 +137,7 @@ If we are working on the current interpreter:
 
 If we are working on the redesign:
 
-1. Read [design.md](/home/marco/Documents/ir/design.md) and the latest entries in [decisions.md](/home/marco/Documents/ir/decisions.md).
+1. Read [design.md](/home/marco/Documents/ir/doc/design.md) and the latest entries in [decisions.md](/home/marco/Documents/ir/doc/decisions.md).
 2. Use [proto/ast.ts](/home/marco/Documents/ir/proto/ast.ts) and/or [proto/grammar.ts](/home/marco/Documents/ir/proto/grammar.ts) as the source of truth for the next shape.
 3. Expect separate follow-up implementation work to be needed in `src/`, because the current runtime does not consume the new structured form yet.
 
