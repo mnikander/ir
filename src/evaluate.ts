@@ -20,10 +20,12 @@ export function evaluate(program: Program): Primitive {
             const line: Instruction     = program[state.pc];
     
             switch (line[Get.Tag]) {
+                case 'Phi':          state =           phi(state, line); break;
+                case 'Call':         state =          call(state, line, program, toc); break;
                 case 'Const':        state =      constant(state, line); break;
                 case 'Copy':         state =          copy(state, line); break;
-                case 'Drop':         state =          drop(state, line); break;
                 case 'Move':         state =          move(state, line); break;
+                case 'Drop':         state =          drop(state, line); break;
                 case 'Ref':          state =           ref(state, line); break;
                 case 'Deref':        state =         deref(state, line); break;
                 case 'Add':          state =           add(state, line); break;
@@ -42,13 +44,11 @@ export function evaluate(program: Program): Primitive {
                 case 'GreaterEqual': state = greater_equal(state, line); break;
                 case 'Jump':         state =          jump(state, line, program, toc); break;
                 case 'Branch':       state =        branch(state, line, program, toc); break;
-                case 'Call':         state =          call(state, line, program, toc); break;
                 case 'Return':       state =     returning(state, line, program); break;
-                case 'Phi':          state =           phi(state, line); break;
                 case 'Exit':         return exit(state, line);
-                case 'Block':        throw Error(`encountered unexpected Block '${line[Get.Left]}'.`);
                 case 'Function':     throw Error(`encountered unexpected Function '${line[Get.Left]}'.`);
-                default:             throw Error(`unhandled instruction type '${(line as Instruction)[Get.Tag]}'`);
+                case 'Block':        throw Error(`encountered unexpected Block '${line[Get.Left]}'.`);
+                default:             throw Error(`unhandled instruction type '${(line as Line)[Get.Tag]}'`);
             }
             state.pc++;
         }
