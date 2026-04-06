@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Marco Nikander
 
-import { Program } from "./grammar.ts";
+import { Program } from "./final_grammar.ts";
 
 // func main(): int
 // {

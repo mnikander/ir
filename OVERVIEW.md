@@ -17,7 +17,7 @@ There are effectively two IR layers in the repo:
    - This is the only implementation currently in use
 
 2. Prototype redesign
-   - Defined in [proto/grammar.ts](/home/marco/Documents/ir/proto/grammar.ts) and [proto/ast.ts](/home/marco/Documents/ir/proto/ast.ts)
+   - Defined in [proto/final_grammar.ts](/home/marco/Documents/ir/proto/final_grammar.ts) and [proto/refactoring_grammar.ts](/home/marco/Documents/ir/proto/refactoring_grammar.ts)
    - Programs are structured as functions with nested blocks
    - Adds the newer ownership/storage ideas described in [design.md](/home/marco/Documents/ir/doc/design.md)
    - This is future-facing design work and is not yet wired into the runtime in `src/`
@@ -121,7 +121,7 @@ The repository has a clear present-vs-future split:
 
 - `src/` is the active implementation
 - `proto/` and recent decisions describe a newer structured IR with different ownership/storage semantics
-- [proto/ast.ts](/home/marco/Documents/ir/proto/ast.ts) and [proto/grammar.ts](/home/marco/Documents/ir/proto/grammar.ts) are design/prototyping artifacts for future work
+- [proto/refactoring_grammar.ts](/home/marco/Documents/ir/proto/refactoring_grammar.ts) and [proto/final_grammar.ts](/home/marco/Documents/ir/proto/final_grammar.ts) are design/prototyping artifacts for future work
 
 Practical takeaway:
 Unless a task is explicitly about future design, treat `src/` as the source of truth.
@@ -138,7 +138,7 @@ If we are working on the current interpreter:
 If we are working on the redesign:
 
 1. Read [design.md](/home/marco/Documents/ir/doc/design.md) and the latest entries in [decisions.md](/home/marco/Documents/ir/doc/decisions.md).
-2. Use [proto/ast.ts](/home/marco/Documents/ir/proto/ast.ts) and/or [proto/grammar.ts](/home/marco/Documents/ir/proto/grammar.ts) as the source of truth for the next shape.
+2. Use [proto/refactoring_grammar.ts](/home/marco/Documents/ir/proto/refactoring_grammar.ts) and/or [proto/final_grammar.ts](/home/marco/Documents/ir/proto/final_grammar.ts) as the source of truth for the next shape.
 3. Expect separate follow-up implementation work to be needed in `src/`, because the current runtime does not consume the new structured form yet.
 
 ## Commands
