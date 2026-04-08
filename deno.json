@@ -6,7 +6,8 @@
   "fmt": {
     "exclude": [
       "*/*grammar.ts",
-      "src/evaluate.ts"
+      "src/evaluate.ts",
+      "proto/register_machine.ts"
     ]
   }
 }
