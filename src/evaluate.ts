@@ -4,6 +4,7 @@ import {
   Get,
   Instruction,
   Label,
+  Line,
   Primitive,
   Program,
   Reference,
