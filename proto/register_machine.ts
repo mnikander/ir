@@ -7,16 +7,18 @@ import {
   top,
 } from "./separate_stacks.ts"
 import {
-  Get,
-  Instruction,
-  Primitive,
-  Value,
+  Add,
+  Alloc,
   Copy,
   Constant,
+  Instruction,
+  Get,
+  Jump,
+  LineNumber,
   Load,
+  Primitive,
+  Value,
   Store,
-  Alloc,
-  Add,
   Pointer,
   to_value,
   to_pointer,
@@ -79,9 +81,9 @@ export function evaluate(program: Program): Primitive {
           // case 'LessEqual':    stack =    less_equal(stack, line); break;
           // case 'Greater':      stack =       greater(stack, line); break;
           // case 'GreaterEqual': stack = greater_equal(stack, line); break;
-          // case 'Jump':         stack =          jump(stack, line, program); break;
-          // case 'Branch':       stack =        branch(stack, line, program); break;
-          // case 'Call':         stack =          call(stack, line, program); break;
+          case 'Jump':         stack =          jump(stack, line); break;
+          // case 'Branch':       stack =        branch(stack, line, program); break; // TODO: implement next
+          // case 'Call':         stack =          call(stack, line, program); break; // TODO: implement next
           case 'Return':       stack =           ret(stack, line); break;
           default:             throw Error(`unhandled instruction type '${(line as Instruction)[Get.Tag]}'`);
       }
@@ -151,6 +153,16 @@ function add(stack: Stack, line: Add): Stack {
   top(stack).pc++;
   return stack;
 }
+
+function jump(stack: Stack, line: Jump): Stack {
+  const ln: LineNumber = line[Get.Left];
+  top(stack).pc = ln.line;
+  return stack;
+}
+
+// TODO: implement branch
+
+// TODO: implement call
 
 function ret(stack: Stack, line: Return): Stack {
   // copy return value
