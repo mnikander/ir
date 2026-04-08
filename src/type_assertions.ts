@@ -1,33 +1,29 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { Value, Reference } from './current_grammar.ts'
+import { Reference, Value } from "./current_grammar.ts";
 
 export function get_boolean(value: undefined | Reference | Value): boolean {
-    if (value === undefined || typeof value.value !== 'boolean') {
-        throw Error('expected value to contain a boolean');
-    }
-    else {
-        return value.value;
-    }
+  if (value === undefined || typeof value.value !== "boolean") {
+    throw Error("expected value to contain a boolean");
+  } else {
+    return value.value;
+  }
 }
 
 export function get_number(value: undefined | Reference | Value): number {
-    if (value === undefined || typeof value.value !== 'number') {
-        throw Error('expected value to contain a number');
-    }
-    else {
-        return value.value;
-    }
+  if (value === undefined || typeof value.value !== "number") {
+    throw Error("expected value to contain a number");
+  } else {
+    return value.value;
+  }
 }
 
-export function valid<T> (value: null | undefined | T): T {
-    if (value === undefined) {
-        throw Error('expected a defined value');
-    }
-    else if (value === null) {
-        throw Error('expected a non-null value');
-    }
-    else {
-        return value;
-    }
+export function valid<T>(value: null | undefined | T): T {
+  if (value === undefined) {
+    throw Error("expected a defined value");
+  } else if (value === null) {
+    throw Error("expected a non-null value");
+  } else {
+    return value;
+  }
 }
