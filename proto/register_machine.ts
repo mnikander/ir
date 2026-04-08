@@ -139,6 +139,7 @@ function alloc(stack: Stack, line: Alloc): Stack {
   const data: Data = stack.data[source];
   const ptr: number = stack.data.push(data) - 1;
   stack.data[dest] = { tag: 'Pointer', address: ptr };
+  top(stack).pc++;
   return stack;
 }
 
