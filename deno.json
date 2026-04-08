@@ -7,7 +7,8 @@
     "exclude": [
       "*/*grammar.ts",
       "src/evaluate.ts",
-      "proto/register_machine.ts"
+      "proto/register_machine.ts",
+      "doc/decisions.md"
     ]
   }
 }

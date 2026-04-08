@@ -33,4 +33,6 @@
 | 2026-04-05 | #6c4 | AST     | instructions and terminators with same array format | Keeps field-access simple and uniform. The tag and 1st argument can be accessed with simple helpers for all types. It's ok if Terminators have `null` as their destination.|
 | 2026-04-05 | #955 | AST     | use JS objects, for program, function, and block    | The evaluator and static analysis passes have direct access to the program structure, and don't need to generate an index.|
 | 2026-04-05 | #bc9 | impl    | pass `branch` block label arguments as a pair       | Makes the IR more uniform, 3-address code. Makes `branch` more cumbersome, but eliminates the need to support a 3rd argument.|
+| 2026-04-08 | #cc9 | impl    | lower to a really simple linear IR for execution    | Much simpler evaluator. A lowering pass is extra implementation work, but separates concerns cleanly between analysis and execution. Each IR can be optimized for its task.|
+| 2026-04-08 | #132 | impl    | separate stacks for data and framer                 | No need to maintain current state separately, the current frame information can always be retrieved from the top of the stack.|
 |            |        |         |                                                     | |
