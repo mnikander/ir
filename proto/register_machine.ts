@@ -39,17 +39,16 @@ export function evaluate(program: Program): Primitive {
     frames:
     [
       {
-        tag: "Frame",
         // this is a special 'exit-frame' whose only purpose is to catch the 
         // return value of the main function
+        tag: "Frame",
         return_address: -1,
         base_address: 0,
         pc: -1,
       },
       {
+        // main-function frame
         tag: "Frame",
-        // this is a special 'exit-frame' whose only purpose is to catch the 
-        // return value of the main function
         return_address: 0,
         base_address: 1,
         pc: 0,
