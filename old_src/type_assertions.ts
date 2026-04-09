@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Marco Nikander
 
-import { Reference, Value } from "./current_grammar.ts";
+import { Reference, Value } from "./old_grammar.ts";
 
 export function get_boolean(value: undefined | Reference | Value): boolean {
   if (value === undefined || typeof value.value !== "boolean") {

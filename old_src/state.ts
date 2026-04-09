@@ -36,7 +36,7 @@ import {
   Subtract,
   Unequal,
   Value,
-} from "./current_grammar.ts";
+} from "./old_grammar.ts";
 import { concat_phi_entries } from "./to_string.ts";
 import { get_boolean, get_number } from "./type_assertions.ts";
 import { valid } from "./utility.ts";

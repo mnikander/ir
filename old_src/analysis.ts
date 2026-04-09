@@ -7,7 +7,7 @@ import {
   Label,
   Program,
   Register,
-} from "./current_grammar.ts";
+} from "./old_grammar.ts";
 import { valid } from "./utility.ts";
 
 export type Interval = { begin: number; end: number };

@@ -1,7 +1,7 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 import { evaluate } from "../../old_src/evaluate.ts";
-import { Program } from "../../old_src/current_grammar.ts";
+import { Program } from "../../old_src/old_grammar.ts";
 import {
   adjacency_list,
   analyze,

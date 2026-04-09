@@ -12,7 +12,7 @@ import {
   Phi,
   Program,
   Register,
-} from "./current_grammar.ts";
+} from "./old_grammar.ts";
 
 export function to_string(program: Program): string {
   let pc: number = 0;
