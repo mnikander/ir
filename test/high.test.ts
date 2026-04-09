@@ -1,13 +1,13 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 // import { evaluate } from "../src/evaluate.ts";
-import { Program } from "../src/high/refactoring_grammar.ts";
+import * as HIR from "../src/high/refactoring_grammar.ts";
 // import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
 describe("constants and exit", () => {
   it("must throw error on empty input", () => {
     // (empty program)
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -23,7 +23,7 @@ describe("constants and exit", () => {
     // (missing block @main.entry)
     // %0 = constant 11
     // exit %0
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -51,7 +51,7 @@ describe("constants and exit", () => {
     // %0 = constant 0
     // %1 = ref %0
     // exit %1
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -78,7 +78,7 @@ describe("constants and exit", () => {
     // block @main.entry:
     // %0 = constant 11
     // exit %0
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -107,7 +107,7 @@ describe("copying of registers", () => {
     // %0 = constant 11
     // %1 = copy %0
     // exit %1
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -138,7 +138,7 @@ describe("arithmetic operations", () => {
     // %1 = constant 22
     // %2 = add %0, %1
     // exit %2
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -172,7 +172,7 @@ describe("labels, jump, and branch", () => {
   //     // block @main.first:
   //     // %1 = constant 22
   //     // exit %2
-  //     const input: Program = [
+  //     const input: HIR.Program = [
   //         {
   //             func: '@main',
   //             params: [],
@@ -214,7 +214,7 @@ describe("labels, jump, and branch", () => {
     // block @main.second:
     // %2 = constant 22
     // exit %2
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -268,7 +268,7 @@ describe("labels, jump, and branch", () => {
     //
     // block @main.end:
     // exit %4
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -333,7 +333,7 @@ describe("labels, jump, and branch", () => {
     //
     // block @main.end:
     // exit %5
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -392,7 +392,7 @@ describe("function call", () => {
     // function @identity [%a]:
     // block @identity.entry:
     // return %a
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -438,7 +438,7 @@ describe("function call", () => {
     // function @first [%a, %b]:
     // block @first.entry:
     // return %a
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -505,7 +505,7 @@ describe("function call", () => {
     // block @factorial.termination:
     // %10 = phi [[@factorial.body, %9], [@factorial.entry, %acc]]
     // return %10
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -575,7 +575,7 @@ describe("static single assignment", () => {
     // %0 = constant 11
     // %0 = constant 22
     // exit %1
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -608,7 +608,7 @@ describe("static single assignment", () => {
     // function @first [%a, %a]:
     // block @first.entry:
     // return %a
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -658,7 +658,7 @@ describe("static single assignment", () => {
     // function @identity2 [%a]:
     // block @identity2.entry:
     // return %a
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -723,7 +723,7 @@ describe("static single assignment", () => {
     // block @main.end:
     // %3 = phi [[@main.first, %1], [@main.second, %2]]
     // exit %3
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -793,7 +793,7 @@ describe("static single assignment", () => {
     //
     // block @main.end:
     // exit %3
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -867,7 +867,7 @@ describe("static single assignment", () => {
     // %parent = phi [[@main.a, %alpha], [@main.c, %charlie]]
     // %total = add %grandparent, %parent
     // exit %total
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -956,7 +956,7 @@ describe("static single assignment", () => {
     // block @main.c:
     // %result = phi [[@main.a, %alpha], [@main.b, %bravo]]
     // exit %result
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -1030,7 +1030,7 @@ describe("static single assignment", () => {
     // block @main.c:
     // %result = phi [[@main.entry, %echo], [@main.a, %alpha], [@main.b, %bravo]]
     // exit %result
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -1105,7 +1105,7 @@ describe("static single assignment", () => {
     // block @main.c:
     // %result = phi [[@main.a, %alpha], [@main.b, %bravo]]  // this phi-node does NOT cover all incoming edges
     // exit %result
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -1163,7 +1163,7 @@ describe("memory and ownership", () => {
     // %r = ref %x
     // %t = deref %r
     // exit %t
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -1192,7 +1192,7 @@ describe("memory and ownership", () => {
     // %0 = constant 0
     // drop %0
     // exit %0
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -1223,7 +1223,7 @@ describe("memory and ownership", () => {
     // drop %0
     // drop %0
     // exit %1
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -1254,7 +1254,7 @@ describe("memory and ownership", () => {
     // %0 = constant 0
     // %1 = move %0
     // exit %0
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -1285,7 +1285,7 @@ describe("memory and ownership", () => {
     // drop %x
     // %t = deref %r
     // exit %t
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
@@ -1318,7 +1318,7 @@ describe("memory and ownership", () => {
     // %y = move %x
     // %t = deref %r
     // exit %t
-    const input: Program = [
+    const input: HIR.Program = [
       {
         func: "@main",
         params: [],
