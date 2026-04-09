@@ -30,7 +30,7 @@ The repo now looks like a compiler/runtime prototype with multiple layers:
 
 4. Runtime
    - a register machine / stack machine hybrid that executes the low-level IR
-   - lives in [register_machine.ts](/home/marco/Documents/ir/src/runtime/register_machine.ts)
+   - lives in [machine.ts](/home/marco/Documents/ir/src/runtime/machine.ts)
 
 ## Important Files
 
@@ -90,7 +90,7 @@ The repo now looks like a compiler/runtime prototype with multiple layers:
 
 ## Runtime
 
-- [register_machine.ts](/home/marco/Documents/ir/src/runtime/register_machine.ts)
+- [machine.ts](/home/marco/Documents/ir/src/runtime/machine.ts)
   Main evaluator for the low-level IR.
 
   Current runtime shape:
@@ -169,7 +169,7 @@ If we are working on the active runtime:
 
 1. Read [low_grammar.ts](/home/marco/Documents/ir/src/low/low_grammar.ts) to confirm the exact instruction format.
 2. Inspect [stack.ts](/home/marco/Documents/ir/src/runtime/stack.ts) to understand addressing and frame layout.
-3. Implement runtime behavior in [register_machine.ts](/home/marco/Documents/ir/src/runtime/register_machine.ts).
+3. Implement runtime behavior in [machine.ts](/home/marco/Documents/ir/src/runtime/machine.ts).
 4. Verify behavior in [runtime.test.ts](/home/marco/Documents/ir/test/runtime.test.ts).
 
 If we are working on the HIR design:

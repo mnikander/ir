@@ -1,7 +1,7 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 import * as LIR from "../src/low/low_grammar.ts";
-import { evaluate } from "../src/runtime/register_machine.ts";
+import { evaluate } from "../src/runtime/machine.ts";
 
 describe("constants and exit", () => {
   it.skip("must throw error on empty input", () => {
