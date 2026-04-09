@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Marco Nikander
 
-import { Data } from "./low_grammar.ts";
-import { valid } from "../old_src/utility.ts";
+import { Data } from "../low/low_grammar.ts";
+import { valid } from "../../old_src/utility.ts";
 
 // this design allows 'living off the top of the stack', because it's easy to
 // always get the current frame

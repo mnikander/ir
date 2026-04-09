@@ -1,7 +1,12 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
-import { Instruction, Pointer, Program, Value } from "../proto/low_grammar.ts";
-import { evaluate } from "../proto/register_machine.ts";
+import {
+  Instruction,
+  Pointer,
+  Program,
+  Value,
+} from "../src/low/low_grammar.ts";
+import { evaluate } from "../src/runtime/register_machine.ts";
 
 describe("constants and exit", () => {
   it.skip("must throw error on empty input", () => {
