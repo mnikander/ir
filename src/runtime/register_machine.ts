@@ -54,24 +54,12 @@ export function evaluate(program: Program): Primitive {
     while (stack.frames.length > 1) {
       const line: Instruction = program[top(stack).pc];
       switch (line[Get.Tag]) {
-        case "Constant":
-          stack = constant(stack, line);
-          break;
-        case "Copy":
-          stack = copy(stack, line);
-          break;
-        case "Load":
-          stack = load(stack, line);
-          break;
-        case "Store":
-          stack = store(stack, line);
-          break;
-        case "Alloc":
-          stack = alloc(stack, line);
-          break;
-        case "Add":
-          stack = add(stack, line);
-          break;
+        case "Constant":     stack =      constant(stack, line); break;
+        case "Copy":         stack =          copy(stack, line); break;
+        case "Load":         stack =          load(stack, line); break;
+        case "Store":        stack =         store(stack, line); break;
+        case "Alloc":        stack =         alloc(stack, line); break;
+        case "Add":          stack =           add(stack, line); break;
         // case 'Subtract':     stack =      subtract(stack, line); break;
         // case 'Multiply':     stack =      multiply(stack, line); break;
         // case 'Divide':       stack =        divide(stack, line); break;
@@ -85,18 +73,11 @@ export function evaluate(program: Program): Primitive {
         // case 'LessEqual':    stack =    less_equal(stack, line); break;
         // case 'Greater':      stack =       greater(stack, line); break;
         // case 'GreaterEqual': stack = greater_equal(stack, line); break;
-        case "Jump":
-          stack = jump(stack, line);
-          break;
+        case "Jump":         stack =          jump(stack, line); break;
         // case 'Branch':       stack =        branch(stack, line, program); break; // TODO: implement next
         // case 'Call':         stack =          call(stack, line, program); break; // TODO: implement next
-        case "Return":
-          stack = ret(stack, line);
-          break;
-        default:
-          throw Error(
-            `unhandled instruction type '${(line as Instruction)[Get.Tag]}'`,
-          );
+        case "Return":       stack = ret(stack, line); break;
+        default: throw Error(`unhandled instruction type '${(line as Instruction)[Get.Tag]}'`);
       }
     }
     return to_value(stack.data[0]).value;

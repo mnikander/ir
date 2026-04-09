@@ -8,7 +8,7 @@
       "*/*grammar.ts",
       "*/*/*grammar.ts",
       "src/evaluate.ts",
-      "proto/register_machine.ts",
+      "src/runtime/register_machine.ts",
       "doc/decisions.md"
     ]
   }
