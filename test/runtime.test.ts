@@ -1,17 +1,12 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
-import {
-  Instruction,
-  Pointer,
-  Program,
-  Value,
-} from "../src/low/low_grammar.ts";
+import * as LIR from "../src/low/low_grammar.ts";
 import { evaluate } from "../src/runtime/register_machine.ts";
 
 describe("constants and exit", () => {
   it.skip("must throw error on empty input", () => {
     // (empty program)
-    const input: Program = [];
+    const input: LIR.Program = [];
     expect(() => evaluate(input)).toThrow();
   });
 
@@ -20,8 +15,8 @@ describe("constants and exit", () => {
     // block @main.entry:
     // %0 = constant 11
 
-    const input: Program = [
-      [0, "Constant", { tag: "Value", value: 11 }],
+    const input: LIR.Program = [
+      [0, "Constant", 11],
     ];
     expect(() => evaluate(input)).toThrow();
   });
@@ -32,8 +27,8 @@ describe("constants and exit", () => {
     // %0 = constant 11
     // exit %0
 
-    const input: Program = [
-      [0, "Constant", { tag: "Value", value: 11 }],
+    const input: LIR.Program = [
+      [0, "Constant", 11],
       [null, "Return", 0],
     ];
     expect(() => evaluate(input)).toThrow();
@@ -47,8 +42,8 @@ describe("constants and exit", () => {
     // %1 = ref %0
     // exit %1
 
-    const input: Program = [
-      [0, "Constant", { tag: "Value", value: 0 }],
+    const input: LIR.Program = [
+      [0, "Constant", 0],
       [1, "Alloc", 0],
       [null, "Return", 1],
     ];
@@ -63,8 +58,8 @@ describe("constants and exit", () => {
     // %0 = constant 11
     // exit %0
 
-    const input: Program = [
-      [0, "Constant", { tag: "Value", value: 11 }],
+    const input: LIR.Program = [
+      [0, "Constant", 11],
       [null, "Return", 0],
     ];
     expect(evaluate(input)).toBe(11);
@@ -79,8 +74,8 @@ describe("copying of registers", () => {
     // %1 = copy %0
     // exit %1
 
-    const input: Program = [
-      [0, "Constant", { tag: "Value", value: 11 }],
+    const input: LIR.Program = [
+      [0, "Constant", 11],
       [1, "Copy", 0],
       [null, "Return", 1],
     ];
@@ -97,9 +92,9 @@ describe("arithmetic operations", () => {
     // %2 = add %0, %1
     // exit %2
 
-    const input: Program = [
-      [0, "Constant", { tag: "Value", value: 11 }],
-      [1, "Constant", { tag: "Value", value: 22 }],
+    const input: LIR.Program = [
+      [0, "Constant", 11],
+      [1, "Constant", 22],
       [2, "Add", 0, 1],
       [null, "Return", 2],
     ];
@@ -118,14 +113,14 @@ describe("labels, jump, and branch", () => {
   //     // %1 = constant 22
   //     // exit %2
 
-  //     const input: Program = [
+  //     const input: LIR.Program = [
   //       [null, "Function", "@main", []],
   //       [null, "Block", "@main.entry"],
-  //       [0, "Constant", { tag: "Value", value: 11 }],
+  //       [0, "Constant", 11],
   //       // the missing Terminator statement here, should cause an error
 
   //       [null, "Block", "@main.first"],
-  //       [1, "Constant", { tag: "Value", value: 22 }],
+  //       [1, "Constant", 22 ],
   //       [null, "Exit", 2],
   //     ];
   //     expect(() => {
@@ -146,13 +141,13 @@ describe("labels, jump, and branch", () => {
     // %2 = constant 22
     // exit %2
 
-    const input: Program = [
+    const input: LIR.Program = [
       [null, "Jump", { tag: "LineNumber", line: 3 }],
 
-      [1, "Constant", { tag: "Value", value: 11 }],
+      [1, "Constant", 11],
       [null, "Return", 1],
 
-      [2, "Constant", { tag: "Value", value: 22 }],
+      [2, "Constant", 22],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(22);
@@ -178,13 +173,13 @@ describe("labels, jump, and branch", () => {
   //     // block @main.end:
   //     // exit %4
 
-  //     const input: Program = [
+  //     const input: LIR.Program = [
   //       [null, "Function", "@main", []],
   //       [null, "Block", "@main.entry"],
-  //       [0, "Constant", { tag: "Value", value: 1 }],
-  //       [1, "Constant", { tag: "Value", value: 11 }],
-  //       [2, "Constant", { tag: "Value", value: 22 }],
-  //       [3, "Constant", { tag: "Value", value: 44 }],
+  //       [0, "Constant", 1 ],
+  //       [1, "Constant", 11],
+  //       [2, "Constant", 22 ],
+  //       [3, "Constant", 44 ],
   //       [null, "Branch", 0, ["@main.then", "@main.else"]],
 
   //       [null, "Block", "@main.then"],
@@ -221,7 +216,7 @@ describe("labels, jump, and branch", () => {
   //     // block @main.end:
   //     // exit %5
 
-  //     const input: Program = [
+  //     const input: LIR.Program = [
   //       [null, "Function", "@main", []],
   //       [null, "Block", "@main.entry"],
   //       [0, "Constant", false],
@@ -258,7 +253,7 @@ describe("labels, jump, and branch", () => {
 //     // block @identity.entry:
 //     // return %a
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       [0, "Constant", 11],
@@ -285,7 +280,7 @@ describe("labels, jump, and branch", () => {
 //     // block @first.entry:
 //     // return %a
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       [0, "Constant", 11],
@@ -333,7 +328,7 @@ describe("labels, jump, and branch", () => {
 //     // %10 = phi [[@factorial.body, %9], [@factorial.entry, %acc]]
 //     // return %10
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       [0, "Constant", 5],
@@ -369,7 +364,7 @@ describe("labels, jump, and branch", () => {
 //     // %0 = constant 22
 //     // exit %1
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       [0, "Constant", 11],
@@ -393,7 +388,7 @@ describe("labels, jump, and branch", () => {
 //     // block @first.entry:
 //     // return %a
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       [0, "Constant", 11],
@@ -426,7 +421,7 @@ describe("labels, jump, and branch", () => {
 //     // block @identity2.entry:
 //     // return %a
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       [0, "Constant", 11],
@@ -464,7 +459,7 @@ describe("labels, jump, and branch", () => {
 //     // %3 = phi [[@main.first, %1], [@main.second, %2]]
 //     // exit %3
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       [null, "Jump", "@main.second"],
@@ -512,7 +507,7 @@ describe("labels, jump, and branch", () => {
 //     // block @main.end:
 //     // exit %3
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       [0, "Constant", 0],
@@ -567,7 +562,7 @@ describe("labels, jump, and branch", () => {
 //     // %total = add %grandparent, %parent
 //     // exit %total
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       ["%condition", "Constant", false],
@@ -622,7 +617,7 @@ describe("labels, jump, and branch", () => {
 //     // %result = phi [[@main.a, %alpha], [@main.b, %bravo]]
 //     // exit %result
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       [null, "Jump", "@main.a"],
@@ -671,7 +666,7 @@ describe("labels, jump, and branch", () => {
 //     // %result = phi [[@main.entry, %echo], [@main.a, %alpha], [@main.b, %bravo]]
 //     // exit %result
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       ["%echo", "Constant", false],
@@ -723,7 +718,7 @@ describe("labels, jump, and branch", () => {
 //     // %result = phi [[@main.a, %alpha], [@main.b, %bravo]]  // this phi-node does NOT cover all incoming edges
 //     // exit %result
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       ["%echo", "Constant", false],
@@ -756,7 +751,7 @@ describe("labels, jump, and branch", () => {
 //     // %t = deref %r
 //     // exit %t
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       ["%x", "Constant", 42],
@@ -774,7 +769,7 @@ describe("labels, jump, and branch", () => {
 //     // drop %0
 //     // exit %0
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       [0, "Constant", 0],
@@ -795,7 +790,7 @@ describe("labels, jump, and branch", () => {
 //     // drop %0
 //     // exit %1
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       [0, "Constant", 0],
@@ -816,7 +811,7 @@ describe("labels, jump, and branch", () => {
 //     // %1 = move %0
 //     // exit %0
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       [0, "Constant", 0],
@@ -837,7 +832,7 @@ describe("labels, jump, and branch", () => {
 //     // %t = deref %r
 //     // exit %t
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       ["%x", "Constant", 42],
@@ -860,7 +855,7 @@ describe("labels, jump, and branch", () => {
 //     // %t = deref %r
 //     // exit %t
 
-//     const input: Program = [
+//     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
 //       ["%x", "Constant", 42],

@@ -1,25 +1,28 @@
 // Copyright (c) 2026 Marco Nikander
 
-import { Frame, peek, Stack, top } from "./stack.ts";
+import {
+  Data,
+  Pointer,
+  Stack,
+  to_pointer,
+  to_value,
+  top,
+  Value,
+} from "./stack.ts";
 import {
   Add,
   Alloc,
   Constant,
   Copy,
-  Data,
   Get,
   Instruction,
   Jump,
   LineNumber,
   Load,
-  Pointer,
   Primitive,
   Program,
   Return,
   Store,
-  to_pointer,
-  to_value,
-  Value,
 } from "../low/low_grammar.ts";
 
 export function evaluate(program: Program): Primitive {
@@ -90,7 +93,7 @@ export function evaluate(program: Program): Primitive {
 function constant(stack: Stack, line: Constant): Stack {
   const base: number = top(stack).base_address;
   const dest: number = base + line[Get.Dest];
-  const value: Value = line[Get.Left];
+  const value: Value = { tag: "Value", value: line[Get.Left] };
   stack.data[dest] = value;
   top(stack).pc++;
   return stack;

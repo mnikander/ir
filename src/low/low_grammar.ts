@@ -4,7 +4,7 @@ export type Program      = readonly Instruction[];
 export type Instruction  = Memory | Arithmetic | Comparison | Control;
 
 export type Memory       = Constant | Copy | Load | Store | Alloc;
-export type Constant     = [ destination: Offset, tag: 'Constant',     value: Value ];
+export type Constant     = [ destination: Offset, tag: 'Constant',     value: Primitive ];
 export type Copy         = [ destination: Offset, tag: 'Copy',         source: Offset ];
 export type Load         = [ destination: Offset, tag: 'Load',         source: Offset ];
 export type Store        = [ destination: Offset ,tag: 'Store',        source: Offset ];
@@ -41,27 +41,6 @@ export enum Get {
     Right  = 3, // alias to second argument
 }
 
-export type Offset = number;
-export type Data = Pointer | Value;
-export type Pointer = { tag: "Pointer"; address: number }; // TODO: add generation-counter for debugging
-export type Value = { tag: "Value"; value: Primitive; annotation?: string };
-export type LineNumber = { tag: "LineNumber"; line: number };
 export type Primitive = number;
-
-export function to_value(item: Data): Value {
-  if (item.tag === 'Value') {
-    return item;
-  }
-  else {
-    throw Error(`Expected a Value, got a '${item.tag}' instead`);
-  }
-}
-
-export function to_pointer(item: Data): Pointer {
-  if (item.tag === 'Pointer') {
-    return item;
-  }
-  else {
-    throw Error(`Expected a Pointer, got a '${item.tag}' instead`);
-  }
-}
+export type Offset = number;
+export type LineNumber = { tag: "LineNumber"; line: number };
