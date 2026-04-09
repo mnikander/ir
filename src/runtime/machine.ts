@@ -9,23 +9,9 @@ import {
   top,
   Value,
 } from "./stack.ts";
-import {
-  Add,
-  Alloc,
-  Constant,
-  Copy,
-  Get,
-  Instruction,
-  Jump,
-  LineNumber,
-  Load,
-  Primitive,
-  Program,
-  Return,
-  Store,
-} from "../low/low_grammar.ts";
+import * as LIR from "../low/low_grammar.ts";
 
-export function evaluate(program: Program): Primitive {
+export function evaluate(program: LIR.Program): LIR.Primitive {
   let stack: Stack = {
     data: [
       {
@@ -55,8 +41,8 @@ export function evaluate(program: Program): Primitive {
 
   try {
     while (stack.frames.length > 1) {
-      const line: Instruction = program[top(stack).pc];
-      switch (line[Get.Tag]) {
+      const line: LIR.Instruction = program[top(stack).pc];
+      switch (line[LIR.Get.Tag]) {
         case "Constant":     stack =      constant(stack, line); break;
         case "Copy":         stack =          copy(stack, line); break;
         case "Load":         stack =          load(stack, line); break;
@@ -80,7 +66,7 @@ export function evaluate(program: Program): Primitive {
         // case 'Branch':       stack =        branch(stack, line, program); break; // TODO: implement next
         // case 'Call':         stack =          call(stack, line, program); break; // TODO: implement next
         case "Return":       stack = ret(stack, line); break;
-        default: throw Error(`unhandled instruction type '${(line as Instruction)[Get.Tag]}'`);
+        default: throw Error(`unhandled instruction type '${(line as LIR.Instruction)[LIR.Get.Tag]}'`);
       }
     }
     return to_value(stack.data[0]).value;
@@ -90,46 +76,46 @@ export function evaluate(program: Program): Primitive {
   }
 }
 
-function constant(stack: Stack, line: Constant): Stack {
+function constant(stack: Stack, line: LIR.Constant): Stack {
   const base: number = top(stack).base_address;
-  const dest: number = base + line[Get.Dest];
-  const value: Value = { tag: "Value", value: line[Get.Left] };
+  const dest: number = base + line[LIR.Get.Dest];
+  const value: Value = { tag: "Value", value: line[LIR.Get.Left] };
   stack.data[dest] = value;
   top(stack).pc++;
   return stack;
 }
 
-function copy(stack: Stack, line: Copy): Stack {
+function copy(stack: Stack, line: LIR.Copy): Stack {
   const base: number = top(stack).base_address;
-  const dest: number = base + line[Get.Dest];
-  const source: number = base + line[Get.Left];
+  const dest: number = base + line[LIR.Get.Dest];
+  const source: number = base + line[LIR.Get.Left];
   stack.data[dest] = stack.data[source];
   top(stack).pc++;
   return stack;
 }
 
-function load(stack: Stack, line: Load): Stack {
+function load(stack: Stack, line: LIR.Load): Stack {
   const base: number = top(stack).base_address;
-  const source_ptr: Pointer = to_pointer(stack.data[line[Get.Left]]);
-  const dest: number = base + line[Get.Dest];
+  const source_ptr: Pointer = to_pointer(stack.data[line[LIR.Get.Left]]);
+  const dest: number = base + line[LIR.Get.Dest];
   stack.data[dest] = stack.data[source_ptr.address];
   top(stack).pc++;
   return stack;
 }
 
-function store(stack: Stack, line: Store): Stack {
+function store(stack: Stack, line: LIR.Store): Stack {
   const base: number = top(stack).base_address;
-  const source: number = base + line[Get.Left];
-  const dest_ptr: Pointer = to_pointer(stack.data[line[Get.Dest]]);
+  const source: number = base + line[LIR.Get.Left];
+  const dest_ptr: Pointer = to_pointer(stack.data[line[LIR.Get.Dest]]);
   stack.data[dest_ptr.address] = stack.data[source];
   top(stack).pc++;
   return stack;
 }
 
-function alloc(stack: Stack, line: Alloc): Stack {
+function alloc(stack: Stack, line: LIR.Alloc): Stack {
   const base: number = top(stack).base_address;
-  const source: number = base + line[Get.Left];
-  const dest: number = base + line[Get.Dest];
+  const source: number = base + line[LIR.Get.Left];
+  const dest: number = base + line[LIR.Get.Dest];
   const data: Data = stack.data[source];
   const ptr: number = stack.data.push(data) - 1;
   stack.data[dest] = { tag: "Pointer", address: ptr };
@@ -137,11 +123,11 @@ function alloc(stack: Stack, line: Alloc): Stack {
   return stack;
 }
 
-function add(stack: Stack, line: Add): Stack {
+function add(stack: Stack, line: LIR.Add): Stack {
   const base: number = top(stack).base_address;
-  const dest: number = base + line[Get.Dest];
-  const left: number = base + line[Get.Left];
-  const right: number = base + line[Get.Right];
+  const dest: number = base + line[LIR.Get.Dest];
+  const left: number = base + line[LIR.Get.Left];
+  const right: number = base + line[LIR.Get.Right];
   const l: Value = to_value(stack.data[left]);
   const r: Value = to_value(stack.data[right]);
   stack.data[dest] = { tag: "Value", value: l.value + r.value };
@@ -149,8 +135,8 @@ function add(stack: Stack, line: Add): Stack {
   return stack;
 }
 
-function jump(stack: Stack, line: Jump): Stack {
-  const ln: LineNumber = line[Get.Left];
+function jump(stack: Stack, line: LIR.Jump): Stack {
+  const ln: LIR.LineNumber = line[LIR.Get.Left];
   top(stack).pc = ln.line;
   return stack;
 }
@@ -159,10 +145,10 @@ function jump(stack: Stack, line: Jump): Stack {
 
 // TODO: implement call
 
-function ret(stack: Stack, line: Return): Stack {
+function ret(stack: Stack, line: LIR.Return): Stack {
   // copy return value
   const base: number = top(stack).base_address;
-  const source: number = base + line[Get.Left];
+  const source: number = base + line[LIR.Get.Left];
   const dest: number = top(stack).return_address;
   stack.data[dest] = stack.data[source];
   stack.frames.pop();
