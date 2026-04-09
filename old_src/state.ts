@@ -39,7 +39,7 @@ import {
 } from "./old_grammar.ts";
 import { concat_phi_entries } from "./to_string.ts";
 import { get_boolean, get_number } from "./type_assertions.ts";
-import { valid } from "./utility.ts";
+import { valid } from "../src/utility.ts";
 
 export type Frame = {
   registers: Map<Register, Value | Reference>;

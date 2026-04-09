@@ -8,7 +8,7 @@ import {
   Program,
   Register,
 } from "./old_grammar.ts";
-import { valid } from "./utility.ts";
+import { valid } from "../src/utility.ts";
 
 export type Interval = { begin: number; end: number };
 export type Edge = { from: Label; to: Label; availability?: Set<Register> };
