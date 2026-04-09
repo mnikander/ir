@@ -1,152 +1,199 @@
 # Repository Overview
 
-This repository is a Deno/TypeScript prototype for an SSA-style intermediate representation (IR) and its interpreter.
-The current executable implementation lives in `src/` and operates on a flat instruction stream.
-The material in `proto/` is not used by the runtime yet; it captures the intended future direction for the IR.
-Longer-form design/reference documents now live under `doc/`.
+This repository is now organized around a new split between:
 
-## Working Model
+- a high-level SSA-style IR in `src/high/`
+- a lower-level register/offset-based IR in `src/low/`
+- a register-machine runtime in `src/runtime/`
 
-There are effectively two IR layers in the repo:
+The older flat interpreter has been moved aside into `old_src/` and `test/old/`.
 
-1. Current interpreter path
-   - Defined in [src/instructions.ts](/home/marco/Documents/ir/src/instructions.ts)
-   - Programs are `Instruction[]`
-   - Programs begin with `function @main`, followed by `block @main.entry`
-   - Main pipeline is `analyze(program)` then `evaluate(program)`
-   - This is the only implementation currently in use
+## Current Shape
 
-2. Prototype redesign
-   - Defined in [proto/final_grammar.ts](/home/marco/Documents/ir/proto/final_grammar.ts) and [proto/refactoring_grammar.ts](/home/marco/Documents/ir/proto/refactoring_grammar.ts)
-   - Programs are structured as functions with nested blocks
-   - Adds the newer ownership/storage ideas described in [design.md](/home/marco/Documents/ir/doc/design.md)
-   - This is future-facing design work and is not yet wired into the runtime in `src/`
+The active codebase is no longer the old tuple-interpreter described in earlier docs.
+The repo now looks like a compiler/runtime prototype with multiple layers:
+
+1. High-level IR
+   - structured by functions and blocks
+   - intended to model the source-facing SSA form
+   - lives in [high_grammar.ts](/home/marco/Documents/ir/src/high/high_grammar.ts)
+
+2. Refactoring / transitional high-level grammar
+   - older or alternate high-level grammar still kept in-tree
+   - useful as a comparison/reference while the design settles
+   - lives in [refactoring_grammar.ts](/home/marco/Documents/ir/src/high/refactoring_grammar.ts)
+
+3. Low-level IR
+   - linear instruction stream
+   - uses numeric stack-frame offsets and line-number jumps/calls
+   - lives in [low_grammar.ts](/home/marco/Documents/ir/src/low/low_grammar.ts)
+
+4. Runtime
+   - a register machine / stack machine hybrid that executes the low-level IR
+   - lives in [register_machine.ts](/home/marco/Documents/ir/src/runtime/register_machine.ts)
 
 ## Important Files
 
 - [README.md](/home/marco/Documents/ir/README.md)
-  Short project intro and basic Deno commands.
+  Short project intro and Deno commands. It still gives the project-level entry point, but the internal structure has evolved beyond the older interpreter layout.
 
 - [design.md](/home/marco/Documents/ir/doc/design.md)
-  High-level IR goals: SSA, ownership/lifetime tracking, compilation-target motivation.
+  High-level design goals for the IR family.
 
 - [decisions.md](/home/marco/Documents/ir/doc/decisions.md)
-  Chronological design log. The most important recent note is decision 024 on `2026-04-05`, which says the IR and implementation are being overhauled.
+  Decision log. This is the best place to understand why the architecture keeps shifting.
 
 - [signatures.md](/home/marco/Documents/ir/doc/signatures.md)
-  Human-readable instruction set reference for the current interpreter. Some entries are still aspirational and broader than what `src/` currently implements.
+  Human-readable instruction reference.
 
 - [invariants.md](/home/marco/Documents/ir/doc/invariants.md)
-  Collected invariants for the IR/interpreter as that documentation grows.
+  Intended invariants for valid IR programs.
 
-## Runtime Architecture
+## Source Layout
 
-### Instruction definitions
+### High-Level IR
 
-- [src/instructions.ts](/home/marco/Documents/ir/src/instructions.ts)
-  Defines the current tuple-based IR.
-  Key instruction groups:
-  - structure: `Function`, `Block`
-  - data: `Const`, `Copy`, `Move`, `Ref`, `Deref`
-  - arithmetic: `Add`, `Subtract`, `Multiply`, `Divide`, `Remainder`, `Minimum`, `Maximum`, `Negate`
-  - comparison: `Equal`, `Unequal`, `Less`, `LessEqual`, `Greater`, `GreaterEqual`
-  - control flow: `Jump`, `Branch`, `Return`, `Exit`
-  - SSA merge: `Phi`
+- [high_grammar.ts](/home/marco/Documents/ir/src/high/high_grammar.ts)
+  Defines the main structured HIR:
+  - `Program = Function[]`
+  - `Function = { func, params, blocks }`
+  - `Block = { block, joins, lines, terminator }`
 
-### Static analysis
+  This grammar supports:
+  - SSA-style phi nodes
+  - ownership/pointer-oriented operations like `Define`, `Stack`, `Heap`, `Borrow`, `Dereference`, `Update`, `Drop`
+  - arithmetic and comparison operations over `Input`
+  - explicit block terminators
 
-- [src/analysis.ts](/home/marco/Documents/ir/src/analysis.ts)
-  Performs lightweight validation and graph construction.
-  Current responsibilities:
-  - single-assignment check for destination registers and function parameters
-  - collect block labels for CFG construction
-  - build adjacency list and CFG
-  - compute reachability
-  - compute a table of contents mapping function and block labels to instruction index ranges
+- [refactoring_grammar.ts](/home/marco/Documents/ir/src/high/refactoring_grammar.ts)
+  Transitional/legacy HIR grammar that still looks closer to the older tuple-based interpreter model.
+  It is useful when comparing the old and new representations.
 
-  Important note:
-  `analyze()` currently computes several structures mainly as validation and then returns the original `Program` unchanged.
+- [factorial_example.ts](/home/marco/Documents/ir/src/high/factorial_example.ts)
+  Small example HIR program for orientation.
 
-### Interpreter
+### Low-Level IR
 
-- [src/evaluate.ts](/home/marco/Documents/ir/src/evaluate.ts)
-  Main execution loop. It:
-  - builds a table of contents from labels to instruction ranges
-  - initializes interpreter state
-  - dispatches instructions by tag
-  - rethrows errors with the current line number attached
+- [low_grammar.ts](/home/marco/Documents/ir/src/low/low_grammar.ts)
+  Defines the LIR consumed by the runtime.
 
-- [src/state.ts](/home/marco/Documents/ir/src/state.ts)
-  Holds the operational semantics for each instruction and the runtime state shape.
-  Runtime model:
-  - explicit call stack of frames
-  - each frame stores a `Map<Register, Value | Reference>`
-  - `pc`, `current_block`, and `previous_block` drive control flow and phi resolution
+  Key traits:
+  - `Program = Instruction[]`
+  - registers are replaced by numeric `Offset`s
+  - control flow targets are concrete `LineNumber`s
+  - instructions are grouped into `Memory`, `Arithmetic`, `Comparison`, and `Control`
 
-### Utilities
+  Currently visible low-level operations include:
+  - memory: `Constant`, `Copy`, `Load`, `Store`, `Alloc`
+  - arithmetic/comparison families
+  - control: `Jump`, `Branch`, `Call`, `Return`
 
-- [src/type_assertions.ts](/home/marco/Documents/ir/src/type_assertions.ts)
-  Small runtime guards such as `valid`, `get_number`, and `get_boolean`.
+## Runtime
 
-- [src/to_string.ts](/home/marco/Documents/ir/src/to_string.ts)
-  Pretty-printer for the current flat IR.
+- [register_machine.ts](/home/marco/Documents/ir/src/runtime/register_machine.ts)
+  Main evaluator for the low-level IR.
 
-- [misc/print_ir.ts](/home/marco/Documents/ir/misc/print_ir.ts)
-  Example program that prints a factorial IR snippet using `to_string`.
+  Current runtime shape:
+  - initializes a special exit frame plus a main-function frame
+  - executes instructions by reading `pc` from the top frame
+  - stores runtime data in a flat stack-backed array
+  - currently implements a subset of the LIR, with `Branch` and `Call` still marked TODO
+
+  Implemented today:
+  - `Constant`
+  - `Copy`
+  - `Load`
+  - `Store`
+  - `Alloc`
+  - `Add`
+  - `Jump`
+  - `Return`
+
+- [stack.ts](/home/marco/Documents/ir/src/runtime/stack.ts)
+  Runtime data model and helpers.
+
+  Important concepts:
+  - `Stack = { data, frames }`
+  - `Frame = { return_address, base_address, pc }`
+  - runtime values are either `Value` or `Pointer`
+  - helper conversions `to_value()` and `to_pointer()` enforce runtime expectations
+
+- [utility.ts](/home/marco/Documents/ir/src/utility.ts)
+  Small shared helpers such as `valid()`.
 
 ## Tests
 
-- [test/evaluate.test.ts](/home/marco/Documents/ir/test/evaluate.test.ts)
-  Main behavioral test suite for the current interpreter.
+There are now multiple test layers:
 
-The tests currently cover:
-- empty/invalid programs
-- `@main` / `@main.entry` and `Exit` requirements
-- constants and copies
-- arithmetic
-- block structure, jumps, and branches
-- function calls
-- static single-assignment checks and phi behavior
-- memory and ownership behavior (`ref`, `deref`, `drop`, `move`)
-- CFG-related helper expectations
+- [runtime.test.ts](/home/marco/Documents/ir/test/runtime.test.ts)
+  Main active runtime tests for the low-level register machine.
+  These are the most important tests for current execution behavior.
 
-Current note:
-The newly added arithmetic/comparison operations are implemented in `src/`, but do not yet have dedicated tests in [test/evaluate.test.ts](/home/marco/Documents/ir/test/evaluate.test.ts).
+- [high.test.ts](/home/marco/Documents/ir/test/high.test.ts)
+  HIR-shape tests/examples.
+  Many assertions are currently placeholders or commented out, which suggests this area is still under construction.
 
-When changing `src/`, this file is the first place to check for intended behavior.
-
-## Current Design Tension
-
-The repository has a clear present-vs-future split:
-
-- `src/` is the active implementation
-- `proto/` and recent decisions describe a newer structured IR with different ownership/storage semantics
-- [proto/refactoring_grammar.ts](/home/marco/Documents/ir/proto/refactoring_grammar.ts) and [proto/final_grammar.ts](/home/marco/Documents/ir/proto/final_grammar.ts) are design/prototyping artifacts for future work
+- [evaluate.test.ts](/home/marco/Documents/ir/test/old/evaluate.test.ts)
+  Old interpreter tests preserved under `test/old/`.
 
 Practical takeaway:
-Unless a task is explicitly about future design, treat `src/` as the source of truth.
+If you are changing the active evaluator, start with [runtime.test.ts](/home/marco/Documents/ir/test/runtime.test.ts), not the archived tests.
+
+## Legacy / Archive
+
+- `old_src/`
+  Archived implementation of the earlier interpreter architecture.
+
+  Notable files:
+  - [analysis.ts](/home/marco/Documents/ir/old_src/analysis.ts)
+  - [evaluate.ts](/home/marco/Documents/ir/old_src/evaluate.ts)
+  - [state.ts](/home/marco/Documents/ir/old_src/state.ts)
+  - [to_string.ts](/home/marco/Documents/ir/old_src/to_string.ts)
+
+This folder is useful for reference and migration work, but it is no longer the primary implementation path.
+
+## Other Repo Areas
+
+- `doc/`
+  Design docs, invariants, grammar notes, and instruction signatures.
+
+- `id/`
+  Small utility area for ID generation experiments.
+
+- `notes.ignore.md`
+  Scratch notes outside the main tracked architecture docs.
 
 ## Suggested Workflow
 
-If we are working on the current interpreter:
+If we are working on the active runtime:
 
-1. Start with [src/instructions.ts](/home/marco/Documents/ir/src/instructions.ts) to confirm the exact tuple shape.
-2. Inspect [src/analysis.ts](/home/marco/Documents/ir/src/analysis.ts) if labels, SSA checks, or CFG behavior are involved.
-3. Implement execution changes in [src/state.ts](/home/marco/Documents/ir/src/state.ts) and dispatch changes in [src/evaluate.ts](/home/marco/Documents/ir/src/evaluate.ts).
-4. Update or add tests in [test/evaluate.test.ts](/home/marco/Documents/ir/test/evaluate.test.ts).
+1. Read [low_grammar.ts](/home/marco/Documents/ir/src/low/low_grammar.ts) to confirm the exact instruction format.
+2. Inspect [stack.ts](/home/marco/Documents/ir/src/runtime/stack.ts) to understand addressing and frame layout.
+3. Implement runtime behavior in [register_machine.ts](/home/marco/Documents/ir/src/runtime/register_machine.ts).
+4. Verify behavior in [runtime.test.ts](/home/marco/Documents/ir/test/runtime.test.ts).
 
-If we are working on the redesign:
+If we are working on the HIR design:
 
-1. Read [design.md](/home/marco/Documents/ir/doc/design.md) and the latest entries in [decisions.md](/home/marco/Documents/ir/doc/decisions.md).
-2. Use [proto/refactoring_grammar.ts](/home/marco/Documents/ir/proto/refactoring_grammar.ts) and/or [proto/final_grammar.ts](/home/marco/Documents/ir/proto/final_grammar.ts) as the source of truth for the next shape.
-3. Expect separate follow-up implementation work to be needed in `src/`, because the current runtime does not consume the new structured form yet.
+1. Start with [high_grammar.ts](/home/marco/Documents/ir/src/high/high_grammar.ts).
+2. Compare with [refactoring_grammar.ts](/home/marco/Documents/ir/src/high/refactoring_grammar.ts) when needed.
+3. Use [design.md](/home/marco/Documents/ir/doc/design.md), [decisions.md](/home/marco/Documents/ir/doc/decisions.md), and [invariants.md](/home/marco/Documents/ir/doc/invariants.md) as the design context.
+
+If we are tracing older behavior:
+
+1. Check `old_src/` and `test/old/`.
+2. Treat that code as reference material unless the task is explicitly about migration/cleanup.
 
 ## Commands
 
-- Run tests: `deno test`
-- Run the example printer: `deno run misc/print_ir.ts`
+- Run all tests: `deno test`
+- Run only runtime tests: `deno test test/runtime.test.ts`
+- Run only HIR tests: `deno test test/high.test.ts`
 
 ## Notes For Future Work
 
-- The repo already documents intent well in prose; the main challenge is keeping the active `src/` implementation clearly separated from the evolving `proto/` design work.
-- If we start making larger changes, this file can become the quick “where things are now” checkpoint for future sessions.
+- The repo now contains multiple IR layers, but only the low-level runtime is actively executable.
+- `Branch` and `Call` support in the register machine are visibly incomplete in the current runtime implementation.
+- The biggest source of confusion for future sessions will likely be the coexistence of:
+  - active runtime code in `src/runtime/`
+  - active-but-not-yet-executable HIR work in `src/high/`
+  - archived interpreter code in `old_src/`
