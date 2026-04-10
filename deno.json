@@ -8,8 +8,9 @@
       "*/*grammar.ts",
       "*/*/*grammar.ts",
       "src/evaluate.ts",
-      "src/runtime/register_machine.ts",
-      "doc/decisions.md"
+      "src/runtime/machine.ts",
+      "doc/*.md",
+      "OVERVIEW.*md"
     ]
   }
 }
