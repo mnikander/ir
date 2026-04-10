@@ -43,4 +43,4 @@ export enum Get {
 
 export type Primitive = number;
 export type Offset = number;
-export type LineNumber = { tag: "LineNumber"; line: number };
+export type LineNumber = { line: number };

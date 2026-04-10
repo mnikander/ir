@@ -117,7 +117,7 @@ describe("labels, jump, and branch", () => {
     // exit %2
 
     const input: LIR.Program = [
-      [null, "Jump", { tag: "LineNumber", line: 3 }],
+      [null, "Jump", { line: 3 }],
 
       [1, "Constant", 11],
       [null, "Return", 1],
@@ -153,14 +153,11 @@ describe("labels, jump, and branch", () => {
       [1, "Constant", 11],
       [2, "Constant", 22],
       [3, "Constant", 44],
-      [null, "Branch", 0, [{ tag: "LineNumber", line: 5 }, {
-        tag: "LineNumber",
-        line: 7,
-      }]],
+      [null, "Branch", 0, [{ line: 5 }, { line: 7 }]],
       [4, "Add", 1, 2],
-      [null, "Jump", { tag: "LineNumber", line: 9 }],
+      [null, "Jump", { line: 9 }],
       [4, "Add", 2, 3],
-      [null, "Jump", { tag: "LineNumber", line: 9 }],
+      [null, "Jump", { line: 9 }],
       [null, "Return", 4],
     ];
     expect(evaluate(input)).toBe(33);
@@ -191,14 +188,11 @@ describe("labels, jump, and branch", () => {
       [1, "Constant", 11],
       [2, "Constant", 22],
       [3, "Constant", 44],
-      [null, "Branch", 0, [{ tag: "LineNumber", line: 5 }, {
-        tag: "LineNumber",
-        line: 7,
-      }]],
+      [null, "Branch", 0, [{ line: 5 }, { line: 7 }]],
       [4, "Add", 1, 2],
-      [null, "Jump", { tag: "LineNumber", line: 9 }],
+      [null, "Jump", { line: 9 }],
       [4, "Add", 2, 3],
-      [null, "Jump", { tag: "LineNumber", line: 9 }],
+      [null, "Jump", { line: 9 }],
       [null, "Return", 4],
     ];
     expect(evaluate(input)).toBe(66);
