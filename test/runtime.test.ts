@@ -103,31 +103,6 @@ describe("arithmetic operations", () => {
 });
 
 describe("labels, jump, and branch", () => {
-  //   it("must report an error if a block falls through into the next label", () => {
-  //     // function @main []:
-  //     // block @main.entry:
-  //     // %0 = constant 11
-  //     // (missing terminator)
-  //     //
-  //     // block @main.first:
-  //     // %1 = constant 22
-  //     // exit %2
-
-  //     const input: LIR.Program = [
-  //       [null, "Function", "@main", []],
-  //       [null, "Block", "@main.entry"],
-  //       [0, "Constant", 11],
-  //       // the missing Terminator statement here, should cause an error
-
-  //       [null, "Block", "@main.first"],
-  //       [1, "Constant", 22 ],
-  //       [null, "Exit", 2],
-  //     ];
-  //     expect(() => {
-  //       evaluate(input);
-  //     }).toThrow();
-  //   });
-
   it("must execute the correct line of code after an unconditional jump", () => {
     // function @main []:
     // block @main.entry:
@@ -153,91 +128,81 @@ describe("labels, jump, and branch", () => {
     expect(evaluate(input)).toBe(22);
   });
 
-  //   it("must execute first branch if the condition is true", () => {
-  //     // function @main []:
-  //     // block @main.entry:
-  //     // %0 = constant true
-  //     // %1 = constant 11
-  //     // %2 = constant 22
-  //     // %3 = constant 44
-  //     // branch %0 @main.then @main.else
-  //     //
-  //     // block @main.then:
-  //     // %4 = add %1, %2
-  //     // jump @main.end
-  //     //
-  //     // block @main.else:
-  //     // %5 = add %2, %3
-  //     // jump @main.end
-  //     //
-  //     // block @main.end:
-  //     // exit %4
+  it("must execute first branch if the condition is true", () => {
+    // function @main []:
+    // block @main.entry:
+    // %0 = constant true
+    // %1 = constant 11
+    // %2 = constant 22
+    // %3 = constant 44
+    // branch %0 @main.then @main.else
+    //
+    // block @main.then:
+    // %4 = add %1, %2
+    // jump @main.end
+    //
+    // block @main.else:
+    // %5 = add %2, %3
+    // jump @main.end
+    //
+    // block @main.end:
+    // exit %4
 
-  //     const input: LIR.Program = [
-  //       [null, "Function", "@main", []],
-  //       [null, "Block", "@main.entry"],
-  //       [0, "Constant", 1 ],
-  //       [1, "Constant", 11],
-  //       [2, "Constant", 22 ],
-  //       [3, "Constant", 44 ],
-  //       [null, "Branch", 0, ["@main.then", "@main.else"]],
+    const input: LIR.Program = [
+      [0, "Constant", 1], // true
+      [1, "Constant", 11],
+      [2, "Constant", 22],
+      [3, "Constant", 44],
+      [null, "Branch", 0, [{ tag: "LineNumber", line: 5 }, {
+        tag: "LineNumber",
+        line: 7,
+      }]],
+      [4, "Add", 1, 2],
+      [null, "Jump", { tag: "LineNumber", line: 9 }],
+      [4, "Add", 2, 3],
+      [null, "Jump", { tag: "LineNumber", line: 9 }],
+      [null, "Return", 4],
+    ];
+    expect(evaluate(input)).toBe(33);
+  });
 
-  //       [null, "Block", "@main.then"],
-  //       [4, "Add", 1, 2],
-  //       [null, "Jump", "@main.end"],
+  it("must execute the second branch when condition is false", () => {
+    // function @main []:
+    // block @main.entry:
+    // %0 = constant false
+    // %1 = constant 11
+    // %2 = constant 22
+    // %3 = constant 44
+    // branch %0 @main.then @main.else
+    //
+    // block @main.then:
+    // %4 = add %1, %2
+    // jump @main.end
+    //
+    // block @main.else:
+    // %5 = add %2, %3
+    // jump @main.end
+    //
+    // block @main.end:
+    // exit %5
 
-  //       [null, "Block", "@main.else"],
-  //       [5, "Add", 2, 3],
-  //       [null, "Jump", "@main.end"],
-
-  //       [null, "Block", "@main.end"],
-  //       [null, "Exit", 4],
-  //     ];
-  //     expect(evaluate(input)).toBe(33);
-  //   });
-
-  //   it("must execute the second branch when condition is false", () => {
-  //     // function @main []:
-  //     // block @main.entry:
-  //     // %0 = constant false
-  //     // %1 = constant 11
-  //     // %2 = constant 22
-  //     // %3 = constant 44
-  //     // branch %0 @main.then @main.else
-  //     //
-  //     // block @main.then:
-  //     // %4 = add %1, %2
-  //     // jump @main.end
-  //     //
-  //     // block @main.else:
-  //     // %5 = add %2, %3
-  //     // jump @main.end
-  //     //
-  //     // block @main.end:
-  //     // exit %5
-
-  //     const input: LIR.Program = [
-  //       [null, "Function", "@main", []],
-  //       [null, "Block", "@main.entry"],
-  //       [0, "Constant", false],
-  //       [1, "Constant", 11],
-  //       [2, "Constant", 22],
-  //       [3, "Constant", 44],
-  //       [null, "Branch", 0, ["@main.then", "@main.else"]],
-
-  //       [null, "Block", "@main.then"],
-  //       [4, "Add", 1, 2],
-  //       [null, "Jump", "@main.end"],
-
-  //       [null, "Block", "@main.else"],
-  //       [5, "Add", 2, 3],
-  //       [null, "Jump", "@main.end"],
-
-  //       [null, "Block", "@main.end"],
-  //       [null, "Exit", 5],
-  //     ];
-  //     expect(evaluate(input)).toBe(66);
-  //   });
+    const input: LIR.Program = [
+      [0, "Constant", 0], // false
+      [1, "Constant", 11],
+      [2, "Constant", 22],
+      [3, "Constant", 44],
+      [null, "Branch", 0, [{ tag: "LineNumber", line: 5 }, {
+        tag: "LineNumber",
+        line: 7,
+      }]],
+      [4, "Add", 1, 2],
+      [null, "Jump", { tag: "LineNumber", line: 9 }],
+      [4, "Add", 2, 3],
+      [null, "Jump", { tag: "LineNumber", line: 9 }],
+      [null, "Return", 4],
+    ];
+    expect(evaluate(input)).toBe(66);
+  });
 });
 
 // describe("function call", () => {

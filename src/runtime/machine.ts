@@ -63,7 +63,7 @@ export function evaluate(program: LIR.Program): LIR.Primitive {
         // case 'Greater':      stack =       greater(stack, line); break;
         // case 'GreaterEqual': stack = greater_equal(stack, line); break;
         case "Jump":         stack =          jump(stack, line); break;
-        // case 'Branch':       stack =        branch(stack, line, program); break; // TODO: implement next
+        case 'Branch':       stack =        branch(stack, line); break;
         // case 'Call':         stack =          call(stack, line, program); break; // TODO: implement next
         case "Return":       stack = ret(stack, line); break;
         default: throw Error(`unhandled instruction type '${(line as LIR.Instruction)[LIR.Get.Tag]}'`);
@@ -136,12 +136,20 @@ function add(stack: Stack, line: LIR.Add): Stack {
 }
 
 function jump(stack: Stack, line: LIR.Jump): Stack {
-  const ln: LIR.LineNumber = line[LIR.Get.Left];
-  top(stack).pc = ln.line;
+  const target: number = line[LIR.Get.Left].line;
+  top(stack).pc = target;
   return stack;
 }
 
-// TODO: implement branch
+function branch(stack: Stack, line: LIR.Branch): Stack {
+  const base: number = top(stack).base_address;
+  const condition: number = base + line[LIR.Get.Left];
+  const left: LIR.LineNumber = line[LIR.Get.Right][0];
+  const right: LIR.LineNumber = line[LIR.Get.Right][1];
+  const c: Value = to_value(stack.data[condition]);
+  top(stack).pc = (c.value !== 0) ? left.line : right.line;
+  return stack;
+}
 
 // TODO: implement call
 
