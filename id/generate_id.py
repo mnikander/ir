@@ -62,6 +62,7 @@ def main() -> None:
     with COLORS_FILE.open("a", encoding="ascii") as file:
         for color in new_colors:
             file.write(color + "\n")
+            print(color)
 
 
 if __name__ == "__main__":
