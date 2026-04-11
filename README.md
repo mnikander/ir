@@ -24,6 +24,33 @@ You can run the pretty-printing example with:
 deno run misc/print_ir.ts
 ```
 
+## Commit Message Hook
+
+This repo includes a tracked `commit-msg` hook in `.githooks/` that enforces
+commit messages to start with one of these tags:
+
+- `feat`
+- `fix`
+- `doc`
+- `ref`
+- `tool`
+- `proto`
+
+Enable it once per clone with:
+
+```sh
+git config core.hooksPath .githooks
+chmod +x .githooks/commit-msg
+```
+
+Accepted examples:
+
+```text
+feat: add stack underflow check
+fix(runtime): correct program counter update
+doc: clarify SSA invariants
+```
+
 ## More Information
 - [IR design](./doc/design.md)
 - [Log of design decisions for the interpreter and IR](./doc/decisions.md)

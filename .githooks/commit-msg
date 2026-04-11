@@ -1,0 +1,16 @@
+#!/bin/sh
+
+msg_file="$1"
+first_line="$(head -n 1 "$msg_file")"
+
+pattern='^(feat|fix|ref|proto|doc|tool)(\(.+\))?: .+'
+
+if ! printf '%s\n' "$first_line" | grep -Eq "$pattern"; then
+  echo "Error: commit message must start with one of: feat, fix, ref, proto, doc, tool"
+  echo
+  echo "Examples:"
+  echo "  feat: add parser for low IR"
+  echo "  fix: handle empty block correctly"
+  echo "  ref(vm): simplify call frame layout"
+  exit 1
+fi
