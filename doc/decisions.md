@@ -40,4 +40,5 @@ Note: each line should be kept to a maximum of 260 characters. This allows viewi
 | 2026-04-08 | #cc9 | impl    | lower to a really simple linear IR for execution    | Much simpler evaluator. A lowering pass is extra implementation work, but separates concerns cleanly between analysis and execution. Each IR can be optimized for its task.|
 | 2026-04-08 | #132 | impl    | separate stacks for data and frames                 | No need to maintain current state separately, the current frame information can always be retrieved from the top of the stack.|
 | 2026-04-09 | #c12 | impl    | split src/ into subfolders                          | Encourage clear interfaces and a clear separation of concerns between static analysis, high and low IR, lowering passes, and the runtime.|
+| 2026-04-11 | #7ee | LIR     | include a `Noop` instruction in the LIR             | With an optional 'note' field, the noop can be used to document function and block labels in the LIR code, for readability and debugging.|
 |            |        |         |                                                     | |
