@@ -138,8 +138,8 @@ function add(stack: Stack, op: LIR.Add): Stack {
 }
 
 function jump(stack: Stack, op: LIR.Jump): Stack {
-  const target: number = op[LIR.Get.Left].line;
-  top(stack).pc = target;
+  const target: LIR.LineNumber = op[LIR.Get.Left];
+  top(stack).pc = target.line;
   return stack;
 }
 
