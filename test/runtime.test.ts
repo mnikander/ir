@@ -3,6 +3,11 @@ import { expect } from "@std/expect";
 import * as LIR from "../src/low/low_grammar.ts";
 import { evaluate } from "../src/runtime/machine.ts";
 
+// choose prime numbers for tests, to reduce chances of false-positive results for arithmetic ops
+const small: number = 11;
+const large: number = 13;
+const huge: number = 281;
+
 describe("constants and exit", () => {
   it.skip("must throw error on empty input", () => {
     // (empty program)
@@ -18,7 +23,7 @@ describe("constants and exit", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
+      [0, "Constant", small],
     ];
     expect(() => evaluate(input)).toThrow();
   });
@@ -31,7 +36,7 @@ describe("constants and exit", () => {
 
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
-      [0, "Constant", 11],
+      [0, "Constant", small],
       [null, "Return", 0],
     ];
     expect(() => evaluate(input)).toThrow();
@@ -48,7 +53,7 @@ describe("constants and exit", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 0],
+      [0, "Constant", small],
       [1, "Alloc", 0],
       [null, "Return", 1],
     ];
@@ -66,10 +71,10 @@ describe("constants and exit", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
+      [0, "Constant", small],
       [null, "Return", 0],
     ];
-    expect(evaluate(input)).toBe(11);
+    expect(evaluate(input)).toBe(small);
   });
 });
 
@@ -84,11 +89,11 @@ describe("copying of registers", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
+      [0, "Constant", small],
       [1, "Copy", 0],
       [null, "Return", 1],
     ];
-    expect(evaluate(input)).toBe(11);
+    expect(evaluate(input)).toBe(small);
   });
 });
 
@@ -104,285 +109,285 @@ describe("arithmetic operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
-      [1, "Constant", 22],
+      [0, "Constant", small],
+      [1, "Constant", large],
       [2, "Add", 0, 1],
       [null, "Return", 2],
     ];
-    expect(evaluate(input)).toBe(33);
+    expect(evaluate(input)).toBe(small + large);
   });
 
   it("must evaluate integer subtraction", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 33],
-      [1, "Constant", 22],
+      [0, "Constant", large],
+      [1, "Constant", small],
       [2, "Subtract", 0, 1],
       [null, "Return", 2],
     ];
-    expect(evaluate(input)).toBe(11);
+    expect(evaluate(input)).toBe(large - small);
   });
 
   it("must evaluate integer multiplication", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 6],
-      [1, "Constant", 7],
+      [0, "Constant", small],
+      [1, "Constant", large],
       [2, "Multiply", 0, 1],
       [null, "Return", 2],
     ];
-    expect(evaluate(input)).toBe(42);
+    expect(evaluate(input)).toBe(small * large);
   });
 
   it("must evaluate integer division", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 15],
-      [1, "Constant", 5],
+      [0, "Constant", small * large],
+      [1, "Constant", large],
       [2, "Divide", 0, 1],
       [null, "Return", 2],
     ];
-    expect(evaluate(input)).toBe(3);
+    expect(evaluate(input)).toBe(small);
   });
 
   it("must evaluate integer remainder", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 23],
-      [1, "Constant", 5],
+      [0, "Constant", large],
+      [1, "Constant", small],
       [2, "Remainder", 0, 1],
       [null, "Return", 2],
     ];
-    expect(evaluate(input)).toBe(3);
+    expect(evaluate(input)).toBe(large % small);
   });
 
   it("must evaluate minimum", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 23],
-      [1, "Constant", 5],
+      [0, "Constant", small],
+      [1, "Constant", large],
       [2, "Minimum", 0, 1],
       [null, "Return", 2],
     ];
-    expect(evaluate(input)).toBe(5);
+    expect(evaluate(input)).toBe(small);
   });
 
   it("must evaluate maximum", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 23],
-      [1, "Constant", 5],
+      [0, "Constant", small],
+      [1, "Constant", large],
       [2, "Maximum", 0, 1],
       [null, "Return", 2],
     ];
-    expect(evaluate(input)).toBe(23);
+    expect(evaluate(input)).toBe(large);
   });
 
   it("must evaluate negation", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
+      [0, "Constant", small],
       [1, "Negate", 0],
       [null, "Return", 1],
     ];
-    expect(evaluate(input)).toBe(-11);
+    expect(evaluate(input)).toBe(-small);
   });
 });
 
 describe("comparison operations", () => {
-  it("must evaluate 11==11 as true", () => {
+  it("must evaluate small==small as true", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
-      [1, "Constant", 11],
+      [0, "Constant", small],
+      [1, "Constant", small],
       [2, "Equal", 0, 1],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(1);
   });
 
-  it("must evaluate 11==22 as false", () => {
+  it("must evaluate small==large as false", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
-      [1, "Constant", 22],
+      [0, "Constant", small],
+      [1, "Constant", large],
       [2, "Equal", 0, 1],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(0);
   });
 
-  it("must evaluate 11!=22 as true", () => {
+  it("must evaluate small!=large as true", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
-      [1, "Constant", 22],
+      [0, "Constant", small],
+      [1, "Constant", large],
       [2, "Unequal", 0, 1],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(1);
   });
 
-  it("must evaluate 11!=11 as false", () => {
+  it("must evaluate small!=small as false", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
-      [1, "Constant", 11],
+      [0, "Constant", small],
+      [1, "Constant", small],
       [2, "Unequal", 0, 1],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(0);
   });
 
-  it("must evaluate 11<22 as true", () => {
+  it("must evaluate small<large as true", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
-      [1, "Constant", 22],
+      [0, "Constant", small],
+      [1, "Constant", large],
       [2, "Less", 0, 1],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(1);
   });
 
-  it("must evaluate 22<22 as false", () => {
+  it("must evaluate 22<large as false", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
-      [1, "Constant", 11],
+      [0, "Constant", small],
+      [1, "Constant", small],
       [2, "Less", 0, 1],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(0);
   });
 
-  it("must evaluate 22<11 as false", () => {
+  it("must evaluate 22<small as false", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 22],
-      [1, "Constant", 11],
+      [0, "Constant", large],
+      [1, "Constant", small],
       [2, "Less", 0, 1],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(0);
   });
 
-  it("must evaluate 11<=22 as true", () => {
+  it("must evaluate small<=large as true", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
-      [1, "Constant", 22],
+      [0, "Constant", small],
+      [1, "Constant", large],
       [2, "LessEqual", 0, 1],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(1);
   });
 
-  it("must evaluate 11<=11 as true", () => {
+  it("must evaluate small<=small as true", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
-      [1, "Constant", 11],
+      [0, "Constant", small],
+      [1, "Constant", small],
       [2, "LessEqual", 0, 1],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(1);
   });
 
-  it("must evaluate 22<=11 as false", () => {
+  it("must evaluate 22<=small as false", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 22],
-      [1, "Constant", 11],
+      [0, "Constant", large],
+      [1, "Constant", small],
       [2, "LessEqual", 0, 1],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(0);
   });
 
-  it("must evaluate 22>11 as true", () => {
+  it("must evaluate 22>small as true", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 22],
-      [1, "Constant", 11],
+      [0, "Constant", large],
+      [1, "Constant", small],
       [2, "Greater", 0, 1],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(1);
   });
 
-  it("must evaluate 11>11 as false", () => {
+  it("must evaluate small>small as false", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
-      [1, "Constant", 11],
+      [0, "Constant", small],
+      [1, "Constant", small],
       [2, "Greater", 0, 1],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(0);
   });
 
-  it("must evaluate 11>22 as false", () => {
+  it("must evaluate small>large as false", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
-      [1, "Constant", 22],
+      [0, "Constant", small],
+      [1, "Constant", large],
       [2, "Greater", 0, 1],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(0);
   });
 
-  it("must evaluate 22>=11 as true", () => {
+  it("must evaluate 22>=small as true", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 22],
-      [1, "Constant", 11],
+      [0, "Constant", large],
+      [1, "Constant", small],
       [2, "GreaterEqual", 0, 1],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(1);
   });
 
-  it("must evaluate 11>=11 as true", () => {
+  it("must evaluate small>=small as true", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
-      [1, "Constant", 11],
+      [0, "Constant", small],
+      [1, "Constant", small],
       [2, "GreaterEqual", 0, 1],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(1);
   });
 
-  it("must evaluate 11>=11 as false", () => {
+  it("must evaluate small>=small as false", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
-      [1, "Constant", 22],
+      [0, "Constant", small],
+      [1, "Constant", large],
       [2, "GreaterEqual", 0, 1],
       [null, "Return", 2],
     ];
@@ -410,14 +415,14 @@ describe("labels, jump, and branch", () => {
       [null, "Jump", { line: 6 }],
 
       [null, "Noop", "@main.first"],
-      [1, "Constant", 11],
+      [1, "Constant", small],
       [null, "Return", 1],
 
       [null, "Noop", "@main.second"],
-      [2, "Constant", 22],
+      [2, "Constant", large],
       [null, "Return", 2],
     ];
-    expect(evaluate(input)).toBe(22);
+    expect(evaluate(input)).toBe(large);
   });
 
   it("must execute first branch if the condition is true", () => {
@@ -444,9 +449,9 @@ describe("labels, jump, and branch", () => {
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
       [0, "Constant", 1], // true
-      [1, "Constant", 11],
-      [2, "Constant", 22],
-      [3, "Constant", 44],
+      [1, "Constant", small],
+      [2, "Constant", large],
+      [3, "Constant", huge],
       [null, "Branch", 0, [{ line: 7 }, { line: 10 }]],
       [null, "Noop", "@main.then"],
       [4, "Add", 1, 2],
@@ -457,7 +462,7 @@ describe("labels, jump, and branch", () => {
       [null, "Noop", "@main.end"],
       [null, "Return", 4],
     ];
-    expect(evaluate(input)).toBe(33);
+    expect(evaluate(input)).toBe(small + large);
   });
 
   it("must execute the second branch when condition is false", () => {
@@ -484,9 +489,9 @@ describe("labels, jump, and branch", () => {
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
       [0, "Constant", 0], // false
-      [1, "Constant", 11],
-      [2, "Constant", 22],
-      [3, "Constant", 44],
+      [1, "Constant", small],
+      [2, "Constant", large],
+      [3, "Constant", huge],
       [null, "Branch", 0, [{ line: 7 }, { line: 10 }]],
       [null, "Noop", "@main.then"],
       [4, "Add", 1, 2],
@@ -497,7 +502,7 @@ describe("labels, jump, and branch", () => {
       [null, "Noop", "@main.end"],
       [null, "Return", 4],
     ];
-    expect(evaluate(input)).toBe(66);
+    expect(evaluate(input)).toBe(large + huge);
   });
 });
 
@@ -517,15 +522,15 @@ describe("function call", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11], // @main.entry
-      [1, "Constant", 22],
+      [0, "Constant", small], // @main.entry
+      [1, "Constant", large],
       [2, "Call", { line: 6 }, [1], "@identity"],
       [null, "Return", 2],
       [null, "Noop", "fun @identity [%a, %b]"],
       [null, "Noop", "@identity.entry"],
       [null, "Return", 0],
     ];
-    expect(evaluate(input)).toBe(22);
+    expect(evaluate(input)).toBe(large);
   });
 
   it("must support calling a binary function", () => {
@@ -543,15 +548,15 @@ describe("function call", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 11],
-      [1, "Constant", 22],
+      [0, "Constant", small],
+      [1, "Constant", large],
       [2, "Call", { line: 6 }, [0, 1], "@first"],
       [null, "Return", 2],
       [null, "Noop", "fun @first [%a, %b]"],
       [null, "Noop", "@first.entry"],
       [null, "Return", 0],
     ];
-    expect(evaluate(input)).toBe(11);
+    expect(evaluate(input)).toBe(small);
   });
 
   it.skip("must evaluate tail-recursive functions", () => {
@@ -627,8 +632,8 @@ describe("function call", () => {
 //     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
-//       [0, "Constant", 11],
-//       [0, "Constant", 22], // attempt to reassign register 0
+//       [0, "Constant", small],
+//       [0, "Constant", large], // attempt to reassign register 0
 //       [null, "Exit", 1],
 //     ];
 //     expect(() => {
@@ -651,8 +656,8 @@ describe("function call", () => {
 //     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
-//       [0, "Constant", 11],
-//       [1, "Constant", 22],
+//       [0, "Constant", small],
+//       [1, "Constant", large],
 //       [2, "Call", "@first", [0, 1]],
 //       [null, "Exit", 2],
 
@@ -684,8 +689,8 @@ describe("function call", () => {
 //     const input: LIR.Program = [
 //       [null, "Function", "@main", []],
 //       [null, "Block", "@main.entry"],
-//       [0, "Constant", 11],
-//       [1, "Constant", 22],
+//       [0, "Constant", small],
+//       [1, "Constant", large],
 //       [2, "Call", "@identity", [1]],
 //       [null, "Exit", 2],
 
@@ -725,18 +730,18 @@ describe("function call", () => {
 //       [null, "Jump", "@main.second"],
 
 //       [null, "Block", "@main.first"],
-//       [1, "Constant", 11],
+//       [1, "Constant", small],
 //       [null, "Jump", "@main.end"],
 
 //       [null, "Block", "@main.second"],
-//       [2, "Constant", 22],
+//       [2, "Constant", large],
 //       [null, "Jump", "@main.end"],
 
 //       [null, "Block", "@main.end"],
 //       [3, "Phi", [["@main.first", 1], ["@main.second", 2]]],
 //       [null, "Exit", 3],
 //     ];
-//     expect(evaluate(input)).toBe(22);
+//     expect(evaluate(input)).toBe(large);
 //   });
 
 //   it("phi node must assign from the correct register when executing a loop", () => {
