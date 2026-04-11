@@ -15,7 +15,7 @@ import {
 import * as LIR from "../low/low_grammar.ts";
 import assert from "node:assert";
 
-export function evaluate(program: LIR.Program): LIR.Primitive {
+export function evaluate(program: LIR.Program): number {
   let stack: Stack = initialize_stack();
   try {
     while (is_executable(stack)) {
@@ -64,7 +64,7 @@ function noop(stack: Stack, _op: LIR.Noop): Stack {
 function constant(stack: Stack, op: LIR.Constant): Stack {
   const base: number = top(stack).base_address;
   const dest: number = base + op[LIR.Get.Dest];
-  const value: Value = { tag: "Value", value: op[LIR.Get.Left] };
+  const value: Value = { tag: "Value", value: op[LIR.Get.Left].value };
   stack.data[dest] = value;
   top(stack).pc++;
   return stack;

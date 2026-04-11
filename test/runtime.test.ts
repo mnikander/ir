@@ -23,7 +23,7 @@ describe("constants and exit", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
+      [0, "Constant", { value: small }],
     ];
     expect(() => evaluate(input)).toThrow();
   });
@@ -36,7 +36,7 @@ describe("constants and exit", () => {
 
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
-      [0, "Constant", small],
+      [0, "Constant", { value: small }],
       [null, "Return", 0],
     ];
     expect(() => evaluate(input)).toThrow();
@@ -53,7 +53,7 @@ describe("constants and exit", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
+      [0, "Constant", { value: small }],
       [1, "AddressOf", 0],
       [null, "Return", 1],
     ];
@@ -73,7 +73,7 @@ describe("memory operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
+      [0, "Constant", { value: small }],
       [null, "Return", 0],
     ];
     expect(evaluate(input)).toBe(small);
@@ -89,7 +89,7 @@ describe("memory operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
+      [0, "Constant", { value: small }],
       [1, "Copy", 0],
       [null, "Return", 1],
     ];
@@ -107,7 +107,7 @@ describe("memory operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
+      [0, "Constant", { value: small }],
       [1, "AddressOf", 0],
       [2, "Load", 1],
       [null, "Return", 2],
@@ -127,8 +127,8 @@ describe("memory operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", large],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: large }],
       [2, "AddressOf", 0],
       [2, "Store", 1],
       [null, "Return", 0],
@@ -140,7 +140,7 @@ describe("memory operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
+      [0, "Constant", { value: small }],
       [1, "Load", 0],
       [null, "Return", 1],
     ];
@@ -151,8 +151,8 @@ describe("memory operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", large],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: large }],
       [0, "Store", 1],
       [null, "Return", 1],
     ];
@@ -172,8 +172,8 @@ describe("arithmetic operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", large],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: large }],
       [2, "Add", 0, 1],
       [null, "Return", 2],
     ];
@@ -184,8 +184,8 @@ describe("arithmetic operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", large],
-      [1, "Constant", small],
+      [0, "Constant", { value: large }],
+      [1, "Constant", { value: small }],
       [2, "Subtract", 0, 1],
       [null, "Return", 2],
     ];
@@ -196,8 +196,8 @@ describe("arithmetic operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", large],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: large }],
       [2, "Multiply", 0, 1],
       [null, "Return", 2],
     ];
@@ -208,8 +208,8 @@ describe("arithmetic operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small * large],
-      [1, "Constant", large],
+      [0, "Constant", { value: small * large }],
+      [1, "Constant", { value: large }],
       [2, "Divide", 0, 1],
       [null, "Return", 2],
     ];
@@ -220,8 +220,8 @@ describe("arithmetic operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", large],
-      [1, "Constant", small],
+      [0, "Constant", { value: large }],
+      [1, "Constant", { value: small }],
       [2, "Remainder", 0, 1],
       [null, "Return", 2],
     ];
@@ -232,8 +232,8 @@ describe("arithmetic operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", large],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: large }],
       [2, "Minimum", 0, 1],
       [null, "Return", 2],
     ];
@@ -244,8 +244,8 @@ describe("arithmetic operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", large],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: large }],
       [2, "Maximum", 0, 1],
       [null, "Return", 2],
     ];
@@ -256,7 +256,7 @@ describe("arithmetic operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
+      [0, "Constant", { value: small }],
       [1, "Negate", 0],
       [null, "Return", 1],
     ];
@@ -269,8 +269,8 @@ describe("comparison operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", small],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: small }],
       [2, "Equal", 0, 1],
       [null, "Return", 2],
     ];
@@ -281,8 +281,8 @@ describe("comparison operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", large],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: large }],
       [2, "Equal", 0, 1],
       [null, "Return", 2],
     ];
@@ -293,8 +293,8 @@ describe("comparison operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", large],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: large }],
       [2, "Unequal", 0, 1],
       [null, "Return", 2],
     ];
@@ -305,8 +305,8 @@ describe("comparison operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", small],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: small }],
       [2, "Unequal", 0, 1],
       [null, "Return", 2],
     ];
@@ -317,8 +317,8 @@ describe("comparison operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", large],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: large }],
       [2, "Less", 0, 1],
       [null, "Return", 2],
     ];
@@ -329,8 +329,8 @@ describe("comparison operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", small],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: small }],
       [2, "Less", 0, 1],
       [null, "Return", 2],
     ];
@@ -341,8 +341,8 @@ describe("comparison operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", large],
-      [1, "Constant", small],
+      [0, "Constant", { value: large }],
+      [1, "Constant", { value: small }],
       [2, "Less", 0, 1],
       [null, "Return", 2],
     ];
@@ -353,8 +353,8 @@ describe("comparison operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", large],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: large }],
       [2, "LessEqual", 0, 1],
       [null, "Return", 2],
     ];
@@ -365,8 +365,8 @@ describe("comparison operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", small],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: small }],
       [2, "LessEqual", 0, 1],
       [null, "Return", 2],
     ];
@@ -377,8 +377,8 @@ describe("comparison operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", large],
-      [1, "Constant", small],
+      [0, "Constant", { value: large }],
+      [1, "Constant", { value: small }],
       [2, "LessEqual", 0, 1],
       [null, "Return", 2],
     ];
@@ -389,8 +389,8 @@ describe("comparison operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", large],
-      [1, "Constant", small],
+      [0, "Constant", { value: large }],
+      [1, "Constant", { value: small }],
       [2, "Greater", 0, 1],
       [null, "Return", 2],
     ];
@@ -401,8 +401,8 @@ describe("comparison operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", small],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: small }],
       [2, "Greater", 0, 1],
       [null, "Return", 2],
     ];
@@ -413,8 +413,8 @@ describe("comparison operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", large],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: large }],
       [2, "Greater", 0, 1],
       [null, "Return", 2],
     ];
@@ -425,8 +425,8 @@ describe("comparison operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", large],
-      [1, "Constant", small],
+      [0, "Constant", { value: large }],
+      [1, "Constant", { value: small }],
       [2, "GreaterEqual", 0, 1],
       [null, "Return", 2],
     ];
@@ -437,8 +437,8 @@ describe("comparison operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", small],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: small }],
       [2, "GreaterEqual", 0, 1],
       [null, "Return", 2],
     ];
@@ -449,8 +449,8 @@ describe("comparison operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", large],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: large }],
       [2, "GreaterEqual", 0, 1],
       [null, "Return", 2],
     ];
@@ -478,11 +478,11 @@ describe("control flow operations", () => {
       [null, "Jump", { line: 6 }],
 
       [null, "Noop", "@main.first"],
-      [1, "Constant", small],
+      [1, "Constant", { value: small }],
       [null, "Return", 1],
 
       [null, "Noop", "@main.second"],
-      [2, "Constant", large],
+      [2, "Constant", { value: large }],
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(large);
@@ -511,10 +511,10 @@ describe("control flow operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 1], // true
-      [1, "Constant", small],
-      [2, "Constant", large],
-      [3, "Constant", huge],
+      [0, "Constant", { value: 1 }], // true
+      [1, "Constant", { value: small }],
+      [2, "Constant", { value: large }],
+      [3, "Constant", { value: huge }],
       [null, "Branch", 0, [{ line: 7 }, { line: 10 }]],
       [null, "Noop", "@main.then"],
       [4, "Add", 1, 2],
@@ -551,10 +551,10 @@ describe("control flow operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 0], // false
-      [1, "Constant", small],
-      [2, "Constant", large],
-      [3, "Constant", huge],
+      [0, "Constant", { value: 0 }], // false
+      [1, "Constant", { value: small }],
+      [2, "Constant", { value: large }],
+      [3, "Constant", { value: huge }],
       [null, "Branch", 0, [{ line: 7 }, { line: 10 }]],
       [null, "Noop", "@main.then"],
       [4, "Add", 1, 2],
@@ -583,8 +583,8 @@ describe("control flow operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small], // @main.entry
-      [1, "Constant", large],
+      [0, "Constant", { value: small }], // @main.entry
+      [1, "Constant", { value: large }],
       [2, "Call", { line: 6 }, [1], "@identity"],
       [null, "Return", 2],
       [null, "Noop", "fun @identity [%a, %b]"],
@@ -609,8 +609,8 @@ describe("control flow operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", small],
-      [1, "Constant", large],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: large }],
       [2, "Call", { line: 6 }, [0, 1], "@first"],
       [null, "Return", 2],
       [null, "Noop", "fun @first [%a, %b]"],
@@ -656,14 +656,14 @@ describe("control flow operations", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
-      [0, "Constant", 5], // main
-      [1, "Constant", 1],
+      [0, "Constant", { value: 5 }], // main
+      [1, "Constant", { value: 1 }],
       [2, "Call", { line: 6 }, [0, 1], "@factorial"],
       [null, "Return", 2],
 
       [null, "Noop", "fun @factorial [%n, %acc]"],
       [null, "Noop", "@factorial.entry"],
-      [2, "Constant", 1],
+      [2, "Constant", { value: 1 }],
       [3, "Equal", 0, 2],
       [7, "Copy", 1],
       [null, "Branch", 3, [{ line: 18 }, { line: 12 }]],

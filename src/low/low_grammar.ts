@@ -44,6 +44,6 @@ export enum Get {
   Right  = 3, // alias to second argument
 }
 
-export type Primitive = number;
+export type Primitive = { value: number };
 export type Offset = number;
 export type LineNumber = { line: number };

@@ -21,7 +21,7 @@ export type Frame = {
 
 export type Data = Pointer | Value;
 export type Pointer = { tag: "Pointer"; address: number }; // TODO: add generation-counter for debugging
-export type Value = { tag: "Value"; value: Primitive; annotation?: string };
+export type Value = { tag: "Value"; value: number; annotation?: string };
 
 export function top(state: Stack): Frame {
   return valid(state.control[state.control.length - 1]);
