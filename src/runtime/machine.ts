@@ -44,7 +44,7 @@ export function evaluate(program: LIR.Program): LIR.Primitive {
         case "Jump":         stack =          jump(stack, op); break;
         case 'Branch':       stack =        branch(stack, op); break;
         case 'Call':         stack =          call(stack, op); break;
-        case "Return":       stack = ret(stack, op); break;
+        case "Return":       stack =           ret(stack, op); break;
         default: throw Error(`unhandled instruction type '${(op as LIR.Instruction)[LIR.Get.Tag]}'`);
       }
     }
