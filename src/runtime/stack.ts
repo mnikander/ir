@@ -46,3 +46,35 @@ export function to_pointer(item: Data): Pointer {
     throw Error(`Expected a Pointer, got a '${item.tag}' instead`);
   }
 }
+
+export function initialize_stack(): Stack {
+  return {
+    data: [
+      {
+        tag: "Value",
+        value: 0,
+        annotation: "placeholder for the return value of the main-function",
+      },
+    ],
+    control: [
+      {
+        tag: "Frame",
+        return_address: -1,
+        base_address: 0,
+        pc: -1,
+        note: "program return value",
+      },
+      {
+        tag: "Frame",
+        return_address: 0,
+        base_address: 1,
+        pc: 0,
+        note: "main function",
+      },
+    ],
+  };
+}
+
+export function is_executable(stack: Stack): boolean {
+  return stack.control.length > 1;
+}

@@ -3,6 +3,8 @@
 import {
   Data,
   Frame,
+  initialize_stack,
+  is_executable,
   Pointer,
   Stack,
   to_pointer,
@@ -14,34 +16,9 @@ import * as LIR from "../low/low_grammar.ts";
 import assert from "node:assert";
 
 export function evaluate(program: LIR.Program): LIR.Primitive {
-  let stack: Stack = {
-    data: [
-      {
-        tag: "Value",
-        value: 0,
-        annotation: "placeholder for the return value of the main-function",
-      },
-    ],
-    control: [
-      {
-        tag: "Frame",
-        return_address: -1,
-        base_address: 0,
-        pc: -1,
-        note: "program return value"
-      },
-      {
-        tag: "Frame",
-        return_address: 0,
-        base_address: 1,
-        pc: 0,
-        note: "main function",
-      },
-    ],
-  };
-
+  let stack: Stack = initialize_stack();
   try {
-    while (stack.control.length > 1) {
+    while (is_executable(stack)) {
       const op: LIR.Instruction = program[top(stack).pc];
       switch (op[LIR.Get.Tag]) {
         case "Noop":         stack =          noop(stack, op); break;
