@@ -1,7 +1,11 @@
+# Design Decisions
+
+Note: each line should be kept to a maximum of 260 characters. This allows viewing the table on a large screen, without any line-wrapping.
+
 | YYYY-MM-DD | Id     | Tag     | Decision                                            | Rationale |
 | ---        | ---    | ---     | ---                                                 | --- |
 | 2025-12-14 | #de5 | doc     | maintain a decision log                             | Allows revisiting and understanding decisions later. Can be read in half an hour. Written decisions are more specific. Elaborte documentation takes too much time to update.|
-| 2025-12-14 | #80e | IR      | register machine                                    | Static analysis of variable lifetimes is easier for register machines than bytecode stack machines. Register machines are closer to compilation targets such as C or LLVM IR.|
+| 2025-12-14 | #80e | IR      | register machine                                    | Static analysis of variable lifetimes is easier for register machines than bytecode stack machines. Register machines are closer to compilation targets like C or LLVM IR.|
 | 2025-12-14 | #c8d | IR      | 3-address code                                      | 3-address code is explicit and easier to read than 2-AC or 1-AC. Human-readability of IR-snippets is relevant because they are hand-written.|
 | 2025-12-14 | #b42 | IR      | static single assignment (SSA) form                 | Simplifies static analysis with respect to variables and their lifetimes. Makes it easier to reason about the code when there are no re-assignments within one stack frame.|
 | 2025-12-14 | #672 | IR      | don't use LLVM IR directly                          | More flexibility to keep things simple, but also to add those things which I need such as scope/lifetime annotations and perhaps even alloc/free operations for heap memory.|
@@ -12,10 +16,10 @@
 | 2025-12-14 | #309 | impl    | don't include a return register in the stack frame  | No necessary, since the return register can be looked up in the caller, i.e. the call instruction which called this function.|
 | 2025-12-14 | #f88 | impl    | ~~explicit stack frames instead of a stack pointer~~| ~~Easier to debug and reason about the interpreter code when call frames and the call stack are explicit. Runtime-performance is not a concern right now.~~|
 | 2025-12-14 | #cce | impl    | use exceptions for error reporting                  | Simple to implement. There is no need to recover from input errors in this project.|
-| 2025-12-14 | #9fc | impl    | rethrow-exceptions to add the line-number           | Avoids passing the program counter into every function. (1) throw where errors happen (2) catch errors in the main loop where `pc` is defined (3) pre-pend `pc`, and (4) re-throw.|
+| 2025-12-14 | #9fc | impl    | rethrow-exceptions to add the line-number           | Avoid passing the program counter into every function. (1) throw where errors occur (2) catch in the main loop where `pc` is defined (3) pre-pend `pc` and (4) re-throw.|
 | 2025-12-14 | #12d | impl    | switch-case instead of pattern matching             | Easier to step through the interpreter with a debugger. Not being able to define local variables in the switch-case clauses is a real pain though.|
 | 2026-04-06 | #022 | impl    | switch-case with function call                      | Keeps the switch-case simple, and allows creating local variables and writing clean code for each case individually.|
-| 2025-12-14 | #390 | IR      | function parameters as an array                     | All information about a function is in its declaration. Parameters can be in the `function` instruction, like LLVM IR, or in a separate instruction for each argument, like WASM.|
+| 2025-12-14 | #390 | IR      | function parameters as an array                     | All information about a function is in its declaration. The alternative would be separate instruction for each argument, like WASM, which is kind of like an `alloca`.|
 | 2025-12-14 | #e6e | IR      | register names as strings instead of numbers        | Makes the input code easier to read. Makes it easier to differentiate arguments and temporary registers and allows giving similar names to different versions of a variable.|
 | 2025-12-14 | #423 | IR      | register and argument names always start with `%`   | Makes it easy to identify what is a register and what isn't. This notation is consistent with LLVM IR.|
 | 2025-12-14 | #628 | input   | ~~do not support immediate values (yet)~~           | Simplifies interpreter. The code would always have to check if an argument is a Register or a Constant though.|
@@ -23,8 +27,8 @@
 | 2025-12-30 | #8e9 | impl    | use an object to hold the interpreter state         | Allows cleaning up the interpreter. Enables pure functions for each instruction: take a state and return a state. Allows using a match-expression in the interpreter loop.|
 | 2025-12-30 | #1ac | impl    | keep the program and the state separate             | Separation of concerns. There are functions which only need the state or only need the program.|
 | 2026-01-01 | #60c | IR      | ~~`ref` and `deref` as separate instructions~~      | ~~Keeps the grammar and implementation simple, albeit more verbose. Allowing them inline, such as `%z = ADD (deref %r) b` would complicate things.~~|
-| 2026-01-04 | #d80 | IR, impl| phi-nodes require explicit block names              | The interpreter only needs to track the predecessor block, but can merge registers from grandparent blocks. Labels can be inserted during lowering. Simpler code for the phi node.|
-| 2026-04-05 | #b66 | AST     | define entire grammar using TypeScript type-system  | Validate inputs with very low implementation effort. Since I have a linear IR with fixed-depth nesting, maximum recursion-depth of the TypeScript type-checker is not a problem.|
+| 2026-01-04 | #d80 | IR, impl| phi-nodes require explicit block names              | The interpreter only needs to track the predecessor block, but can still merge registers from grandparent blocks. Simpler code for phi nodes. Insert labels during lowering.|
+| 2026-04-05 | #b66 | AST     | define entire grammar using TypeScript type-system  | Validate inputs with very low implementation effort. For a linear IR with fixed-depth nesting, maximum recursion-depth of the TypeScript type-checker is not a problem.|
 | 2026-04-05 | #043 | input   | check validity of the input                         | Validations are a form of documentation. Avoids needless debugging due to invalid inputs. Structure the static analysis as micro-passes.|
 | 2026-04-05 | #e28 | IR      | support integers only, at first                     | Keep things simple. Booleans can be represented as 1-bit integers. Eliminates the need for boolean operations. No type mismatches to worry about.|
 | 2026-04-05 | #1e6 | IR      | support literal value arguments                     | Convenience. Makes IR programs much shorter. Avoids an uneccessary 'load constant' operation. Example: `x = add a 2` where the `2` is an immediate, i.e. literal, value.|
