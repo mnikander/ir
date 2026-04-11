@@ -81,7 +81,8 @@ function copy(stack: Stack, op: LIR.Copy): Stack {
 
 function load(stack: Stack, op: LIR.Load): Stack {
   const base: number = top(stack).base_address;
-  const source_ptr: Pointer = to_pointer(stack.data[op[LIR.Get.Left]]);
+  const source: number = base + op[LIR.Get.Left];
+  const source_ptr: Pointer = to_pointer(stack.data[source]);
   const dest: number = base + op[LIR.Get.Dest];
   stack.data[dest] = stack.data[source_ptr.address];
   top(stack).pc++;
@@ -91,7 +92,8 @@ function load(stack: Stack, op: LIR.Load): Stack {
 function store(stack: Stack, op: LIR.Store): Stack {
   const base: number = top(stack).base_address;
   const source: number = base + op[LIR.Get.Left];
-  const dest_ptr: Pointer = to_pointer(stack.data[op[LIR.Get.Dest]]);
+  const dest: number = base + op[LIR.Get.Dest];
+  const dest_ptr: Pointer = to_pointer(stack.data[dest]);
   stack.data[dest_ptr.address] = stack.data[source];
   top(stack).pc++;
   return stack;

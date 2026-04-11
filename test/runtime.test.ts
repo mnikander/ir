@@ -97,6 +97,71 @@ describe("copying of registers", () => {
   });
 });
 
+describe("memory operations", () => {
+  it("must load a value through an address produced by AddressOf", () => {
+    // function @main []:
+    // block @main.entry:
+    // %0 = constant 11
+    // %1 = address_of %0
+    // %2 = load %1
+    // exit %2
+
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", small],
+      [1, "AddressOf", 0],
+      [2, "Load", 1],
+      [null, "Return", 2],
+    ];
+    expect(evaluate(input)).toBe(small);
+  });
+
+  it("must store through an address produced by AddressOf", () => {
+    // function @main []:
+    // block @main.entry:
+    // %0 = constant 11
+    // %1 = constant 13
+    // %2 = address_of %0
+    // store %2, %1
+    // exit %0
+
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", small],
+      [1, "Constant", large],
+      [2, "AddressOf", 0],
+      [2, "Store", 1],
+      [null, "Return", 0],
+    ];
+    expect(evaluate(input)).toBe(large);
+  });
+
+  it("must throw when Load is given a non-pointer source", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", small],
+      [1, "Load", 0],
+      [null, "Return", 1],
+    ];
+    expect(() => evaluate(input)).toThrow(/Expected a Pointer/);
+  });
+
+  it("must throw when Store is given a non-pointer destination", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", small],
+      [1, "Constant", large],
+      [0, "Store", 1],
+      [null, "Return", 1],
+    ];
+    expect(() => evaluate(input)).toThrow(/Expected a Pointer/);
+  });
+});
+
 describe("arithmetic operations", () => {
   it("must evaluate integer addition", () => {
     // function @main []:
