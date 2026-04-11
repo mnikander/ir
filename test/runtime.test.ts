@@ -620,7 +620,7 @@ describe("control flow operations", () => {
     expect(evaluate(input)).toBe(small);
   });
 
-  it.skip("must evaluate tail-recursive functions", () => {
+  it("must evaluate tail-recursive functions", () => {
     // C-style:
     //
     // return factorial(5)
