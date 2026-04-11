@@ -1,14 +1,17 @@
 // Copyright (c) 2026 Marco Nikander
 
 export type Program      = readonly Instruction[];
-export type Instruction  = Memory | Arithmetic | Comparison | Control | Noop;
+
+export type Instruction  = Noop | Memory | Arithmetic | Comparison | Control;
+
+export type Noop         = [ destination: null,   tag: 'Noop',         note?: string ];
 
 export type Memory       = Constant | Copy | Load | Store | Alloc;
-export type Constant     = [ destination: Offset, tag: 'Constant',     value: Primitive ];
+export type Constant     = [ destination: Offset, tag: 'Constant',     value:  Primitive ];
 export type Copy         = [ destination: Offset, tag: 'Copy',         source: Offset ];
 export type Load         = [ destination: Offset, tag: 'Load',         source: Offset ];
 export type Store        = [ destination: Offset ,tag: 'Store',        source: Offset ];
-export type Alloc        = [ destination: Offset, tag: 'Alloc',        value: Offset ];
+export type Alloc        = [ destination: Offset, tag: 'Alloc',        value:  Offset ];
 
 export type Arithmetic   = Add | Subtract | Multiply | Divide | Remainder | Minimum | Maximum | Negative;
 export type Add          = [ destination: Offset, tag: 'Add',          left: Offset, right: Offset ];
@@ -29,18 +32,16 @@ export type Greater      = [ destination: Offset, tag: 'Greater',      left: Off
 export type GreaterEqual = [ destination: Offset, tag: 'GreaterEqual', left: Offset, right: Offset ];
 
 export type Control      = Jump | Branch | Call | Return;
-export type Jump         = [ destination: null,     tag: 'Jump',         target: LineNumber ];
-export type Branch       = [ destination: null,     tag: 'Branch',       condition: Offset, targets: [LineNumber, LineNumber] ];
-export type Call         = [ destination: Offset,   tag: 'Call',         target: LineNumber, arguments: Offset[],  note: string ];
-export type Return       = [ destination: null,     tag: 'Return',       source: Offset ];
-
-export type Noop         = [ destination: null,     tag: 'Noop',       note?: string ];
+export type Jump         = [ destination: null,   tag: 'Jump',         target: LineNumber ];
+export type Branch       = [ destination: null,   tag: 'Branch',       condition: Offset, targets: [LineNumber, LineNumber] ];
+export type Call         = [ destination: Offset, tag: 'Call',         target: LineNumber, arguments: Offset[],  note: string ];
+export type Return       = [ destination: null,   tag: 'Return',       source: Offset ];
 
 export enum Get {
-    Dest   = 0,
-    Tag    = 1,
-    Left   = 2, // alias to first argument
-    Right  = 3, // alias to second argument
+  Dest   = 0,
+  Tag    = 1,
+  Left   = 2, // alias to first argument
+  Right  = 3, // alias to second argument
 }
 
 export type Primitive = number;
