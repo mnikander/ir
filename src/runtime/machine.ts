@@ -10,6 +10,7 @@ import {
   Value,
 } from "./stack.ts";
 import * as LIR from "../low/low_grammar.ts";
+import assert from "node:assert";
 
 export function evaluate(program: LIR.Program): LIR.Primitive {
   let stack: Stack = {
@@ -69,11 +70,12 @@ export function evaluate(program: LIR.Program): LIR.Primitive {
         default: throw Error(`unhandled instruction type '${(op as LIR.Instruction)[LIR.Get.Tag]}'`);
       }
     }
-    return to_value(stack.data[0]).value;
   } catch (error) {
     // catch and then re-throw all errors, with the line-number prepended, for easier debugging
     throw Error(`Line ${top(stack).pc}: ` + (error as Error).message);
   }
+  assert(stack.data.length === 1, "Expect only the main return value to be on the stack.");
+  return to_value(stack.data[0]).value;
 }
 
 function constant(stack: Stack, op: LIR.Constant): Stack {
@@ -159,6 +161,7 @@ function ret(stack: Stack, op: LIR.Return): Stack {
   const source: number = base + op[LIR.Get.Left];
   const dest: number = top(stack).return_address;
   stack.data[dest] = stack.data[source];
+  stack.data.length = top(stack).base_address;
   stack.control.pop();
   top(stack).pc++;
   return stack;
