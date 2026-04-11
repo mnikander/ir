@@ -8,7 +8,7 @@ import { valid } from "../utility.ts";
 
 export type Stack = {
   data: Data[];
-  frames: Frame[];
+  control: Frame[];
 };
 
 export type Frame = {
@@ -23,11 +23,11 @@ export type Pointer = { tag: "Pointer"; address: number }; // TODO: add generati
 export type Value = { tag: "Value"; value: Primitive; annotation?: string };
 
 export function top(state: Stack): Frame {
-  return valid(state.frames[state.frames.length - 1]);
+  return valid(state.control[state.control.length - 1]);
 }
 
 export function peek(state: Stack): Frame {
-  return valid(state.frames[state.frames.length - 2]);
+  return valid(state.control[state.control.length - 2]);
 }
 
 export function to_value(item: Data): Value {

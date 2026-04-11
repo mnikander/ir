@@ -20,7 +20,7 @@ export function evaluate(program: LIR.Program): LIR.Primitive {
         annotation: "placeholder for the return value of the main-function",
       },
     ],
-    frames: [
+    control: [
       {
         // this is a special 'exit-frame' whose only purpose is to catch the
         // return value of the main function
@@ -40,7 +40,7 @@ export function evaluate(program: LIR.Program): LIR.Primitive {
   };
 
   try {
-    while (stack.frames.length > 1) {
+    while (stack.control.length > 1) {
       const op: LIR.Instruction = program[top(stack).pc];
       switch (op[LIR.Get.Tag]) {
         case "Constant":     stack =      constant(stack, op); break;
@@ -159,7 +159,7 @@ function ret(stack: Stack, op: LIR.Return): Stack {
   const source: number = base + op[LIR.Get.Left];
   const dest: number = top(stack).return_address;
   stack.data[dest] = stack.data[source];
-  stack.frames.pop();
+  stack.control.pop();
   top(stack).pc++;
   return stack;
 }
