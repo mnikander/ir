@@ -61,7 +61,9 @@ describe("constants and exit", () => {
       evaluate(input);
     }).toThrow();
   });
+});
 
+describe("memory operations", () => {
   it("must evaluate a constant", () => {
     // function @main []:
     // block @main.entry:
@@ -76,9 +78,7 @@ describe("constants and exit", () => {
     ];
     expect(evaluate(input)).toBe(small);
   });
-});
 
-describe("copying of registers", () => {
   it("must copy a constant", () => {
     // function @main []:
     // block @main.entry:
@@ -95,9 +95,7 @@ describe("copying of registers", () => {
     ];
     expect(evaluate(input)).toBe(small);
   });
-});
 
-describe("memory operations", () => {
   it("must load a value through an address produced by AddressOf", () => {
     // function @main []:
     // block @main.entry:
@@ -460,7 +458,7 @@ describe("comparison operations", () => {
   });
 });
 
-describe("labels, jump, and branch", () => {
+describe("control flow operations", () => {
   it("must execute the correct line of code after an unconditional jump", () => {
     // function @main []:
     // block @main.entry:
@@ -569,9 +567,7 @@ describe("labels, jump, and branch", () => {
     ];
     expect(evaluate(input)).toBe(large + huge);
   });
-});
 
-describe("function call", () => {
   it("must support calling the identity function", () => {
     // function @main []:
     // block @main.entry:
