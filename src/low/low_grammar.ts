@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Marco Nikander
 
 export type Program      = readonly Instruction[];
-export type Instruction  = Memory | Arithmetic | Comparison | Control;
+export type Instruction  = Memory | Arithmetic | Comparison | Control | Noop;
 
 export type Memory       = Constant | Copy | Load | Store | Alloc;
 export type Constant     = [ destination: Offset, tag: 'Constant',     value: Primitive ];
@@ -33,6 +33,8 @@ export type Jump         = [ destination: null,     tag: 'Jump',         target:
 export type Branch       = [ destination: null,     tag: 'Branch',       condition: Offset, targets: [LineNumber, LineNumber] ];
 export type Call         = [ destination: Offset,   tag: 'Call',         target: LineNumber, arguments: Offset[] ];
 export type Return       = [ destination: null,     tag: 'Return',       source: Offset ];
+
+export type Noop         = [ destination: null,     tag: 'Noop',       note?: string ];
 
 export enum Get {
     Dest   = 0,

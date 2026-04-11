@@ -43,6 +43,7 @@ export function evaluate(program: LIR.Program): LIR.Primitive {
     while (stack.control.length > 1) {
       const op: LIR.Instruction = program[top(stack).pc];
       switch (op[LIR.Get.Tag]) {
+        case "Noop":         stack =          noop(stack, op); break;
         case "Constant":     stack =      constant(stack, op); break;
         case "Copy":         stack =          copy(stack, op); break;
         case "Load":         stack =          load(stack, op); break;
@@ -75,6 +76,11 @@ export function evaluate(program: LIR.Program): LIR.Primitive {
   }
   assert(stack.data.length === 1, "Expect only the main return value to be on the stack.");
   return to_value(stack.data[0]).value;
+}
+
+function noop(stack: Stack, _op: LIR.Noop): Stack {
+  top(stack).pc++;
+  return stack;
 }
 
 function constant(stack: Stack, op: LIR.Constant): Stack {

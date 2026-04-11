@@ -16,6 +16,8 @@ describe("constants and exit", () => {
     // %0 = constant 11
 
     const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
       [0, "Constant", 11],
     ];
     expect(() => evaluate(input)).toThrow();
@@ -28,6 +30,7 @@ describe("constants and exit", () => {
     // exit %0
 
     const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
       [0, "Constant", 11],
       [null, "Return", 0],
     ];
@@ -43,6 +46,8 @@ describe("constants and exit", () => {
     // exit %1
 
     const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
       [0, "Constant", 0],
       [1, "Alloc", 0],
       [null, "Return", 1],
@@ -59,6 +64,8 @@ describe("constants and exit", () => {
     // exit %0
 
     const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
       [0, "Constant", 11],
       [null, "Return", 0],
     ];
@@ -75,6 +82,8 @@ describe("copying of registers", () => {
     // exit %1
 
     const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
       [0, "Constant", 11],
       [1, "Copy", 0],
       [null, "Return", 1],
@@ -93,6 +102,8 @@ describe("arithmetic operations", () => {
     // exit %2
 
     const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
       [0, "Constant", 11],
       [1, "Constant", 22],
       [2, "Add", 0, 1],
@@ -117,11 +128,15 @@ describe("labels, jump, and branch", () => {
     // exit %2
 
     const input: LIR.Program = [
-      [null, "Jump", { line: 3 }],
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [null, "Jump", { line: 6 }],
 
+      [null, "Noop", "@main.first"],
       [1, "Constant", 11],
       [null, "Return", 1],
 
+      [null, "Noop", "@main.second"],
       [2, "Constant", 22],
       [null, "Return", 2],
     ];
@@ -149,15 +164,20 @@ describe("labels, jump, and branch", () => {
     // exit %4
 
     const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
       [0, "Constant", 1], // true
       [1, "Constant", 11],
       [2, "Constant", 22],
       [3, "Constant", 44],
-      [null, "Branch", 0, [{ line: 5 }, { line: 7 }]],
+      [null, "Branch", 0, [{ line: 7 }, { line: 10 }]],
+      [null, "Noop", "@main.then"],
       [4, "Add", 1, 2],
-      [null, "Jump", { line: 9 }],
+      [null, "Jump", { line: 13 }],
+      [null, "Noop", "@main.else"],
       [4, "Add", 2, 3],
-      [null, "Jump", { line: 9 }],
+      [null, "Jump", { line: 13 }],
+      [null, "Noop", "@main.end"],
       [null, "Return", 4],
     ];
     expect(evaluate(input)).toBe(33);
@@ -184,15 +204,20 @@ describe("labels, jump, and branch", () => {
     // exit %5
 
     const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
       [0, "Constant", 0], // false
       [1, "Constant", 11],
       [2, "Constant", 22],
       [3, "Constant", 44],
-      [null, "Branch", 0, [{ line: 5 }, { line: 7 }]],
+      [null, "Branch", 0, [{ line: 7 }, { line: 10 }]],
+      [null, "Noop", "@main.then"],
       [4, "Add", 1, 2],
-      [null, "Jump", { line: 9 }],
+      [null, "Jump", { line: 13 }],
+      [null, "Noop", "@main.else"],
       [4, "Add", 2, 3],
-      [null, "Jump", { line: 9 }],
+      [null, "Jump", { line: 13 }],
+      [null, "Noop", "@main.end"],
       [null, "Return", 4],
     ];
     expect(evaluate(input)).toBe(66);
