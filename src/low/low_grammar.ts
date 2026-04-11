@@ -6,12 +6,12 @@ export type Instruction  = Noop | Memory | Arithmetic | Comparison | Control;
 
 export type Noop         = [ destination: null,   tag: 'Noop',         note?: string ];
 
-export type Memory       = Constant | Copy | Load | Store | Alloc;
+export type Memory       = Constant | Copy | Load | Store | AddressOf;
 export type Constant     = [ destination: Offset, tag: 'Constant',     value:  Primitive ];
 export type Copy         = [ destination: Offset, tag: 'Copy',         source: Offset ];
 export type Load         = [ destination: Offset, tag: 'Load',         source: Offset ];
 export type Store        = [ destination: Offset ,tag: 'Store',        source: Offset ];
-export type Alloc        = [ destination: Offset, tag: 'Alloc',        value:  Offset ];
+export type AddressOf    = [ destination: Offset, tag: 'AddressOf',    source: Offset ];
 
 export type Arithmetic   = Add | Subtract | Multiply | Divide | Remainder | Minimum | Maximum | Negative;
 export type Add          = [ destination: Offset, tag: 'Add',          left: Offset, right: Offset ];

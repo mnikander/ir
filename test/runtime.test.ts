@@ -54,7 +54,7 @@ describe("constants and exit", () => {
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
       [0, "Constant", small],
-      [1, "Alloc", 0],
+      [1, "AddressOf", 0],
       [null, "Return", 1],
     ];
     expect(() => {

@@ -26,7 +26,7 @@ export function evaluate(program: LIR.Program): LIR.Primitive {
         case "Copy":         stack =          copy(stack, op); break;
         case "Load":         stack =          load(stack, op); break;
         case "Store":        stack =         store(stack, op); break;
-        case "Alloc":        stack =         alloc(stack, op); break;
+        case "AddressOf":    stack =    address_of(stack, op); break;
         case "Add":          stack =           add(stack, op); break;
         case "Subtract":     stack =      subtract(stack, op); break;
         case "Multiply":     stack =      multiply(stack, op); break;
@@ -97,13 +97,11 @@ function store(stack: Stack, op: LIR.Store): Stack {
   return stack;
 }
 
-function alloc(stack: Stack, op: LIR.Alloc): Stack {
+function address_of(stack: Stack, op: LIR.AddressOf): Stack {
   const base: number = top(stack).base_address;
   const source: number = base + op[LIR.Get.Left];
   const dest: number = base + op[LIR.Get.Dest];
-  const data: Data = stack.data[source];
-  const ptr: number = stack.data.push(data) - 1;
-  stack.data[dest] = { tag: "Pointer", address: ptr };
+  stack.data[dest] = { tag: "Pointer", address: source };
   top(stack).pc++;
   return stack;
 }
