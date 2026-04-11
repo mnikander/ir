@@ -77,13 +77,15 @@ The repo now looks like a compiler/runtime prototype with multiple layers:
 - [low_grammar.ts](/home/marco/Documents/ir/src/low/low_grammar.ts)
   Defines the LIR consumed by the runtime.
 
-  Key traits:
+ Key traits:
   - `Program = Instruction[]`
+  - includes a lightweight `Noop` instruction used for metadata/notes in programs and tests
   - registers are replaced by numeric `Offset`s
   - control flow targets are concrete `LineNumber`s
-  - instructions are grouped into `Memory`, `Arithmetic`, `Comparison`, and `Control`
+  - instructions are grouped into `Noop`, `Memory`, `Arithmetic`, `Comparison`, and `Control`
 
   Currently visible low-level operations include:
+  - metadata: `Noop`
   - memory: `Constant`, `Copy`, `Load`, `Store`, `Alloc`
   - arithmetic/comparison families
   - control: `Jump`, `Branch`, `Call`, `Return`
@@ -95,11 +97,12 @@ The repo now looks like a compiler/runtime prototype with multiple layers:
 
   Current runtime shape:
   - initializes a special exit frame plus a main-function frame
-  - executes instructions by reading `pc` from the top frame
-  - stores runtime data in a flat stack-backed array
-  - currently implements a subset of the LIR, with `Branch` and `Call` still marked TODO
+  - executes instructions by reading `pc` from the top control frame
+  - stores runtime data in a flat data stack plus a separate control stack
+  - uses small helper operations for arithmetic/comparison families instead of open-coded repetition
 
   Implemented today:
+  - `Noop`
   - `Constant`
   - `Copy`
   - `Load`
@@ -107,14 +110,16 @@ The repo now looks like a compiler/runtime prototype with multiple layers:
   - `Alloc`
   - `Add`
   - `Jump`
+  - `Branch`
   - `Return`
+  - `Call`
 
 - [stack.ts](/home/marco/Documents/ir/src/runtime/stack.ts)
   Runtime data model and helpers.
 
   Important concepts:
-  - `Stack = { data, frames }`
-  - `Frame = { return_address, base_address, pc }`
+  - `Stack = { data, control }`
+  - `Frame = { return_address, base_address, pc, note? }`
   - runtime values are either `Value` or `Pointer`
   - helper conversions `to_value()` and `to_pointer()` enforce runtime expectations
 
@@ -128,6 +133,7 @@ There are now multiple test layers:
 - [runtime.test.ts](/home/marco/Documents/ir/test/runtime.test.ts)
   Main active runtime tests for the low-level register machine.
   These are the most important tests for current execution behavior.
+  They now cover the arithmetic and comparison instruction families, memory operations, unconditional jump, branching, and function calls in the low-level machine.
 
 - [high.test.ts](/home/marco/Documents/ir/test/high.test.ts)
   HIR-shape tests/examples.
@@ -192,7 +198,6 @@ If we are tracing older behavior:
 ## Notes For Future Work
 
 - The repo now contains multiple IR layers, but only the low-level runtime is actively executable.
-- `Branch` and `Call` support in the register machine are visibly incomplete in the current runtime implementation.
 - The biggest source of confusion for future sessions will likely be the coexistence of:
   - active runtime code in `src/runtime/`
   - active-but-not-yet-executable HIR work in `src/high/`
