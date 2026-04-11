@@ -43,7 +43,7 @@ describe("constants and exit", () => {
     // TODO: it would be nice if I could enforce 'CFG.length === 0' here
   });
 
-  it.skip("must throw a runtime-error when exiting with a Pointer instead of a Value", () => {
+  it("must throw a runtime-error when exiting with a Pointer instead of a Value", () => {
     // function @main []:
     // block @main.entry:
     // %0 = constant 0
