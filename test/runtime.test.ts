@@ -224,121 +224,120 @@ describe("labels, jump, and branch", () => {
   });
 });
 
-// describe("function call", () => {
-//   it("must support calling the identity function", () => {
-//     // function @main []:
-//     // block @main.entry:
-//     // %0 = constant 11
-//     // %1 = constant 22
-//     // %2 = call @identity [%1]
-//     // exit %2
-//     //
-//     // function @identity [%a]:
-//     // block @identity.entry:
-//     // return %a
+describe("function call", () => {
+  it("must support calling the identity function", () => {
+    // function @main []:
+    // block @main.entry:
+    // %0 = constant 11
+    // %1 = constant 22
+    // %2 = call @identity [%1]
+    // exit %2
+    //
+    // function @identity [%a]:
+    // block @identity.entry:
+    // return %a
 
-//     const input: LIR.Program = [
-//       [null, "Function", "@main", []],
-//       [null, "Block", "@main.entry"],
-//       [0, "Constant", 11],
-//       [1, "Constant", 22],
-//       [2, "Call", "@identity", [1]],
-//       [null, "Exit", 2],
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", 11], // @main.entry
+      [1, "Constant", 22],
+      [2, "Call", { line: 6 }, [1], "@identity"],
+      [null, "Return", 2],
+      [null, "Noop", "fun @identity [%a, %b]"],
+      [null, "Noop", "@identity.entry"],
+      [null, "Return", 0],
+    ];
+    expect(evaluate(input)).toBe(22);
+  });
 
-//       [null, "Function", "@identity", ["%a"]],
-//       [null, "Block", "@identity.entry"],
-//       [null, "Return", "%a"],
-//     ];
-//     expect(evaluate(input)).toBe(22);
-//   });
+  it("must support calling a binary function", () => {
+    // function @main []:
+    // block @main.entry:
+    // %0 = constant 11
+    // %1 = constant 22
+    // %2 = call @first [%0, %1]
+    // exit %2
+    //
+    // function @first [%a, %b]:
+    // block @first.entry:
+    // return %a
 
-//   it("must support calling a binary function", () => {
-//     // function @main []:
-//     // block @main.entry:
-//     // %0 = constant 11
-//     // %1 = constant 22
-//     // %2 = call @first [%0, %1]
-//     // exit %2
-//     //
-//     // function @first [%a, %b]:
-//     // block @first.entry:
-//     // return %a
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", 11],
+      [1, "Constant", 22],
+      [2, "Call", { line: 6 }, [0, 1], "@first"],
+      [null, "Return", 2],
+      [null, "Noop", "fun @first [%a, %b]"],
+      [null, "Noop", "@first.entry"],
+      [null, "Return", 0],
+    ];
+    expect(evaluate(input)).toBe(11);
+  });
 
-//     const input: LIR.Program = [
-//       [null, "Function", "@main", []],
-//       [null, "Block", "@main.entry"],
-//       [0, "Constant", 11],
-//       [1, "Constant", 22],
-//       [2, "Call", "@first", [0, 1]],
-//       [null, "Exit", 2],
+  it.skip("must evaluate tail-recursive functions", () => {
+    // C-style:
+    //
+    // return factorial(5)
+    // function factorial(n, acc = 1):
+    //     return n == 1 ? acc : factorial(n-1, n*acc);
+    //
+    //
+    // IR code:
+    //
+    // function @main []:
+    // block @main.entry:
+    // %0 = constant 5
+    // %1 = constant 1
+    // %2 = call @factorial [%0, %1]
+    // exit %2
+    //
+    // function @factorial [%n, %acc]:
+    // block @factorial.entry:
+    // %3 = constant 1
+    // %6 = equal %n, %3
+    // branch %6 @factorial.termination @factorial.body
+    //
+    // block @factorial.body:
+    // %7 = subtract %n, %3
+    // %8 = multiply %n, %acc
+    // %9 = call @factorial [%7, %8]
+    // jump @factorial.termination
+    //
+    // block @factorial.termination:
+    // %10 = phi [[@factorial.body, %9], [@factorial.entry, %acc]]
+    // return %10
 
-//       [null, "Function", "@first", ["%a", "%b"]],
-//       [null, "Block", "@first.entry"],
-//       [null, "Return", "%a"],
-//     ];
-//     expect(evaluate(input)).toBe(11);
-//   });
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", 5], // main
+      [1, "Constant", 1],
+      [2, "Call", { line: 6 }, [0, 1], "@factorial"],
+      [null, "Return", 2],
 
-//   it("must evaluate tail-recursive functions", () => {
-//     // C-style:
-//     //
-//     // return factorial(5)
-//     // function factorial(n, acc = 1):
-//     //     return n == 1 ? acc : factorial(n-1, n*acc);
-//     //
-//     //
-//     // IR code:
-//     //
-//     // function @main []:
-//     // block @main.entry:
-//     // %0 = constant 5
-//     // %1 = constant 1
-//     // %2 = call @factorial [%0, %1]
-//     // exit %2
-//     //
-//     // function @factorial [%n, %acc]:
-//     // block @factorial.entry:
-//     // %3 = constant 1
-//     // %6 = equal %n, %3
-//     // branch %6 @factorial.termination @factorial.body
-//     //
-//     // block @factorial.body:
-//     // %7 = subtract %n, %3
-//     // %8 = multiply %n, %acc
-//     // %9 = call @factorial [%7, %8]
-//     // jump @factorial.termination
-//     //
-//     // block @factorial.termination:
-//     // %10 = phi [[@factorial.body, %9], [@factorial.entry, %acc]]
-//     // return %10
+      [null, "Noop", "fun @factorial [%n, %acc]"],
+      [null, "Noop", "@factorial.entry"],
+      [2, "Constant", 1],
+      [3, "Equal", 0, 2],
+      [7, "Copy", 1],
+      [null, "Branch", 3, [{ line: 18 }, { line: 12 }]],
 
-//     const input: LIR.Program = [
-//       [null, "Function", "@main", []],
-//       [null, "Block", "@main.entry"],
-//       [0, "Constant", 5],
-//       [1, "Constant", 1],
-//       [2, "Call", "@factorial", [0, 1]],
-//       [null, "Exit", 2],
+      [null, "Noop", "@factorial.body"],
+      [4, "Subtract", 0, 2],
+      [5, "Multiply", 0, 1],
+      [6, "Call", { line: 6 }, [4, 5], "@factorial"],
+      [7, "Copy", 6],
+      [null, "Jump", { line: 18 }],
 
-//       [null, "Function", "@factorial", ["%n", "%acc"]],
-//       [null, "Block", "@factorial.entry"],
-//       [3, "Constant", 1],
-//       [6, "Equal", "%n", 3],
-//       [null, "Branch", 6, ["@factorial.termination", "@factorial.body"]],
-
-//       [null, "Block", "@factorial.body"],
-//       [7, "Subtract", "%n", 3],
-//       [8, "Multiply", "%n", "%acc"],
-//       [9, "Call", "@factorial", [7, 8]],
-//       [null, "Jump", "@factorial.termination"],
-
-//       [null, "Block", "@factorial.termination"],
-//       [10, "Phi", [["@factorial.body", 9], ["@factorial.entry", "%acc"]]],
-//       [null, "Return", 10],
-//     ];
-//     expect(evaluate(input)).toBe(120);
-//   });
-// });
+      [null, "Noop", "@factorial.termination"],
+      [null, "Return", 7],
+    ];
+    expect(evaluate(input)).toBe(120);
+  });
+});
 
 // describe("static single assignment", () => {
 //   it("must throw an error when re-assigning to a register", () => {

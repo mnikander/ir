@@ -31,7 +31,7 @@ export type GreaterEqual = [ destination: Offset, tag: 'GreaterEqual', left: Off
 export type Control      = Jump | Branch | Call | Return;
 export type Jump         = [ destination: null,     tag: 'Jump',         target: LineNumber ];
 export type Branch       = [ destination: null,     tag: 'Branch',       condition: Offset, targets: [LineNumber, LineNumber] ];
-export type Call         = [ destination: Offset,   tag: 'Call',         target: LineNumber, arguments: Offset[] ];
+export type Call         = [ destination: Offset,   tag: 'Call',         target: LineNumber, arguments: Offset[],  note: string ];
 export type Return       = [ destination: null,     tag: 'Return',       source: Offset ];
 
 export type Noop         = [ destination: null,     tag: 'Noop',       note?: string ];

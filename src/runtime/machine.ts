@@ -2,6 +2,7 @@
 
 import {
   Data,
+  Frame,
   Pointer,
   Stack,
   to_pointer,
@@ -65,7 +66,7 @@ export function evaluate(program: LIR.Program): LIR.Primitive {
         // case 'GreaterEqual': stack = greater_equal(stack, op); break;
         case "Jump":         stack =          jump(stack, op); break;
         case 'Branch':       stack =        branch(stack, op); break;
-        // case 'Call':         stack =          call(stack, op, program); break; // TODO: implement next
+        case 'Call':         stack =          call(stack, op); break;
         case "Return":       stack = ret(stack, op); break;
         default: throw Error(`unhandled instruction type '${(op as LIR.Instruction)[LIR.Get.Tag]}'`);
       }
@@ -158,7 +159,26 @@ function branch(stack: Stack, op: LIR.Branch): Stack {
   return stack;
 }
 
-// TODO: implement call
+function call(stack: Stack, op: LIR.Call): Stack {
+  const base: number = top(stack).base_address;
+  const dest: number = base + op[LIR.Get.Dest];
+  const target: number = op[LIR.Get.Left].line;
+  const args: number[] = op[LIR.Get.Right];
+  const note: string = op[4];
+  
+  stack.data.length++; // allocate space for the return value
+  const new_frame: Frame = {
+    tag: "Frame",
+    return_address: dest,
+    base_address: stack.data.length,
+    pc: target,
+    note: note,
+  };
+  const arg_values: Data[] = args.map((offset: number) => { return stack.data[base + offset] });
+  stack.data.push(...arg_values)
+  stack.control.push(new_frame);
+  return stack;
+}
 
 function ret(stack: Stack, op: LIR.Return): Stack {
   // copy return value
