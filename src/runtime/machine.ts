@@ -23,19 +23,18 @@ export function evaluate(program: LIR.Program): LIR.Primitive {
     ],
     control: [
       {
-        // this is a special 'exit-frame' whose only purpose is to catch the
-        // return value of the main function
         tag: "Frame",
         return_address: -1,
         base_address: 0,
         pc: -1,
+        note: "program return value"
       },
       {
-        // main-function frame
         tag: "Frame",
         return_address: 0,
         base_address: 1,
         pc: 0,
+        note: "main function",
       },
     ],
   };

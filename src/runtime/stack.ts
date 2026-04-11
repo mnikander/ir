@@ -16,6 +16,7 @@ export type Frame = {
   return_address: number;
   base_address: number;
   pc: number;
+  note?: string;
 };
 
 export type Data = Pointer | Value;
