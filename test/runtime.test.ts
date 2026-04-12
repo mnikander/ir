@@ -79,6 +79,18 @@ describe("memory operations", () => {
     expect(evaluate(input)).toBe(small);
   });
 
+  it("must throw when the destination of Constant is Dead", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Drop"],
+      [0, "Constant", { value: small }], // error
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
+  });
+
   it("must copy a constant", () => {
     // function @main []:
     // block @main.entry:
@@ -94,6 +106,31 @@ describe("memory operations", () => {
       [null, "Return", 1],
     ];
     expect(evaluate(input)).toBe(small);
+  });
+
+  it("must throw when Copy is given a Dead source", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Drop"],
+      [1, "Copy", 0], // error
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
+  });
+
+  it("must throw when Copy is given a Dead destination", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", { value: small }],
+      [1, "Drop"],
+      [1, "Copy", 0], // error
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
   });
 
   it("must load a value through an address produced by AddressOf", () => {
@@ -172,6 +209,32 @@ describe("memory operations", () => {
     expect(() => evaluate(input)).toThrow(/dangling pointer/);
   });
 
+  it("must throw when Load is given a Dead source", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Drop"],
+      [1, "Load", 0],
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
+  });
+
+  it("must throw when Load is given a Dead destination", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", { value: small }],
+      [1, "AddressOf", 0],
+      [2, "Drop"],
+      [2, "Load", 1],
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
+  });
+
   it("must throw when Store is given a dangling pointer destination", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
@@ -184,6 +247,56 @@ describe("memory operations", () => {
       [null, "Return", 1],
     ];
     expect(() => evaluate(input)).toThrow(/dangling pointer/);
+  });
+
+  it("must throw when Store is given a Dead source", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Drop"],
+      [1, "Store", 0],
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
+  });
+
+  it("must throw when Store is given a Dead destination", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", { value: small }],
+      [1, "Drop"],
+      [1, "Store", 0],
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
+  });
+
+  it("must throw when AddressOf is given a Dead source", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Drop"],
+      [1, "AddressOf", 0],
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
+  });
+
+  it("must throw when AddressOf is given a Dead destination", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", { value: small }],
+      [1, "Drop"],
+      [1, "AddressOf", 0],
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
   });
 });
 
@@ -288,6 +401,71 @@ describe("arithmetic operations", () => {
       [null, "Return", 1],
     ];
     expect(evaluate(input)).toBe(-small);
+  });
+
+  it("must throw when Negate is given a Dead source", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Drop"],
+      [1, "Negate", 0], // error
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
+  });
+
+  it("must throw when Negate is given a Dead destination", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", { value: small }],
+      [1, "Drop"],
+      [1, "Negate", 0], // error
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
+  });
+
+  it("must throw when an arithmetic operation is given a Dead right argument", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Drop"],
+      [1, "Constant", { value: small }],
+      [2, "Add", 0, 1],
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
+  });
+
+  it("must throw when an arithmetic operation is given a Dead left argument", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", { value: small }],
+      [1, "Drop"],
+      [2, "Add", 0, 1],
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
+  });
+
+  it("must throw when an arithmetic operation is given a Dead destination", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: large }],
+      [2, "Drop"],
+      [2, "Add", 0, 1],
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
   });
 });
 
@@ -482,6 +660,46 @@ describe("comparison operations", () => {
       [null, "Return", 2],
     ];
     expect(evaluate(input)).toBe(0);
+  });
+
+  it("must throw when a comparison operation is given a Dead right argument", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Drop"],
+      [1, "Constant", { value: small }],
+      [2, "Equal", 0, 1],
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
+  });
+
+  it("must throw when a comparison operation is given a Dead left argument", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", { value: small }],
+      [1, "Drop"],
+      [2, "Equal", 0, 1],
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
+  });
+
+  it("must throw when a comparison operation is given a Dead destination", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: large }],
+      [2, "Drop"],
+      [2, "Equal", 0, 1],
+      [42, "Constant", { value: huge }],
+      [null, "Return", 42],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
   });
 });
 
@@ -706,5 +924,15 @@ describe("control flow operations", () => {
       [null, "Return", 7],
     ];
     expect(evaluate(input)).toBe(120);
+  });
+
+  it("must throw when Return is given a Dead argument", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Drop"],
+      [null, "Return", 0],
+    ];
+    expect(() => evaluate(input)).toThrow(/Dead/);
   });
 });

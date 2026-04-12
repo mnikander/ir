@@ -1,6 +1,5 @@
 // Copyright (c) 2026 Marco Nikander
 
-import { Primitive } from "../low/low_grammar.ts";
 import { valid } from "../utility.ts";
 
 // this design allows 'living off the top of the stack', because it's easy to
@@ -21,9 +20,10 @@ export type Frame = {
   note?: string;
 };
 
-export type Data = Pointer | Value;
+export type Data = Pointer | Value | Dead;
 export type Pointer = { tag: "Pointer"; address: number; generation: number };
 export type Value = { tag: "Value"; value: number; annotation?: string };
+export type Dead = { tag: "Dead" };
 
 export function top(state: Stack): Frame {
   return valid(state.control[state.control.length - 1]);
@@ -46,6 +46,14 @@ export function to_pointer(item: Data): Pointer {
     return item;
   } else {
     throw Error(`Expected a Pointer, got a '${item.tag}' instead`);
+  }
+}
+
+export function not_dead(item: Data): Value | Pointer {
+  if (item === undefined || item.tag !== "Dead") {
+    return item;
+  } else {
+    throw Error(`Expected a live data slot, got a '${item.tag}' value instead`);
   }
 }
 
