@@ -158,6 +158,33 @@ describe("memory operations", () => {
     ];
     expect(() => evaluate(input)).toThrow(/Expected a Pointer/);
   });
+
+  it("must throw when Load is given a dangling pointer source", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", { value: small }],
+      [1, "AddressOf", 0],
+      [0, "Constant", { value: large }], // over-write the original value and invalidate pointer
+      [2, "Load", 1],
+      [null, "Return", 2],
+    ];
+    expect(() => evaluate(input)).toThrow(/dangling pointer/);
+  });
+
+  it("must throw when Store is given a dangling pointer destination", () => {
+    const input: LIR.Program = [
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@main.entry"],
+      [0, "Constant", { value: small }],
+      [1, "Constant", { value: large }],
+      [2, "AddressOf", 1],
+      [1, "Constant", { value: huge }], // over-write the original value and invalidate pointer
+      [2, "Store", 0],
+      [null, "Return", 1],
+    ];
+    expect(() => evaluate(input)).toThrow(/dangling pointer/);
+  });
 });
 
 describe("arithmetic operations", () => {
@@ -325,7 +352,7 @@ describe("comparison operations", () => {
     expect(evaluate(input)).toBe(1);
   });
 
-  it("must evaluate 22<large as false", () => {
+  it("must evaluate large<large as false", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
@@ -337,7 +364,7 @@ describe("comparison operations", () => {
     expect(evaluate(input)).toBe(0);
   });
 
-  it("must evaluate 22<small as false", () => {
+  it("must evaluate large<small as false", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
@@ -373,7 +400,7 @@ describe("comparison operations", () => {
     expect(evaluate(input)).toBe(1);
   });
 
-  it("must evaluate 22<=small as false", () => {
+  it("must evaluate large<=small as false", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
@@ -385,7 +412,7 @@ describe("comparison operations", () => {
     expect(evaluate(input)).toBe(0);
   });
 
-  it("must evaluate 22>small as true", () => {
+  it("must evaluate large>small as true", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],
@@ -421,7 +448,7 @@ describe("comparison operations", () => {
     expect(evaluate(input)).toBe(0);
   });
 
-  it("must evaluate 22>=small as true", () => {
+  it("must evaluate large>=small as true", () => {
     const input: LIR.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@main.entry"],

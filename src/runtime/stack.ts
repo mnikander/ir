@@ -9,6 +9,7 @@ import { valid } from "../utility.ts";
 export type Stack = {
   data: Data[];
   control: Frame[];
+  generation: number[];
 };
 
 export type Frame = {
@@ -16,11 +17,12 @@ export type Frame = {
   return_address: number;
   base_address: number;
   pc: number;
+  generation_counter: number;
   note?: string;
 };
 
 export type Data = Pointer | Value;
-export type Pointer = { tag: "Pointer"; address: number }; // TODO: add generation-counter for debugging
+export type Pointer = { tag: "Pointer"; address: number; generation: number };
 export type Value = { tag: "Value"; value: number; annotation?: string };
 
 export function top(state: Stack): Frame {
@@ -62,6 +64,7 @@ export function initialize_stack(): Stack {
         return_address: -1,
         base_address: 0,
         pc: -1,
+        generation_counter: 0,
         note: "program return value",
       },
       {
@@ -69,9 +72,11 @@ export function initialize_stack(): Stack {
         return_address: 0,
         base_address: 1,
         pc: 0,
+        generation_counter: 0,
         note: "main function",
       },
     ],
+    generation: [-1], // will be over-written by main-return
   };
 }
 
