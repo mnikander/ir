@@ -54,7 +54,7 @@ export function evaluate(program: LIR.Program): number {
     }
   } catch (error) {
     // catch and then re-throw all errors, with the line-number prepended, for easier debugging
-    throw Error(`Line ${top(stack).pc}: ` + (error as Error).message);
+    throw Error(`LIR line ${top(stack).pc}: ` + (error as Error).message);
   }
   assert(stack.data.length === 1, "Expect only the main return value to be on the stack.");
   assert(stack.generation.length === 1, "Expect only the main return value to be on the stack.");
