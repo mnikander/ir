@@ -11,24 +11,19 @@ The older flat interpreter has been moved aside into `old_src/` and `test/old/`.
 ## Current Shape
 
 The active codebase is no longer the old tuple-interpreter described in earlier docs.
-The repo looks like a compiler/runtime prototype with multiple layers:
+The repo looks like a compiler/runtime prototype with three active layers:
 
 1. High-level IR
    - structured by functions and blocks
    - intended to model the source-facing SSA form
    - lives in [high_grammar.ts](/home/marco/Documents/ir/src/high/high_grammar.ts)
 
-2. Refactoring / transitional high-level grammar
-   - older or alternate high-level grammar still kept in-tree
-   - useful as a comparison/reference while the design settles
-   - lives in [refactoring_grammar.ts](/home/marco/Documents/ir/src/high/refactoring_grammar.ts)
-
-3. Low-level IR
+2. Low-level IR
    - linear instruction stream
    - uses numeric stack-frame offsets and line-number jumps/calls
    - lives in [low_grammar.ts](/home/marco/Documents/ir/src/low/low_grammar.ts)
 
-4. Runtime
+3. Runtime
    - a register machine / stack machine hybrid that executes the low-level IR
    - lives in [machine.ts](/home/marco/Documents/ir/src/runtime/machine.ts)
 
@@ -64,10 +59,6 @@ The repo looks like a compiler/runtime prototype with multiple layers:
   - memory/ownership-oriented operations like `Constant`, `Copy`, `Stack`, `Heap`, `Borrow`, `Load`, `Update`, `Drop`
   - arithmetic and comparison operations over `Input`
   - explicit block terminators `Jump`, `Branch`, and `Return`
-
-- [refactoring_grammar.ts](/home/marco/Documents/ir/src/high/refactoring_grammar.ts)
-  Transitional/legacy HIR grammar that still looks closer to the older tuple-based interpreter model.
-  It is useful when comparing the old and new representations.
 
 - [factorial_example.ts](/home/marco/Documents/ir/src/high/factorial_example.ts)
   Small example HIR program for orientation.
@@ -201,7 +192,7 @@ If we are working on the active runtime:
 If we are working on the HIR design:
 
 1. Start with [high_grammar.ts](/home/marco/Documents/ir/src/high/high_grammar.ts).
-2. Compare with [refactoring_grammar.ts](/home/marco/Documents/ir/src/high/refactoring_grammar.ts) when needed.
+2. Use [high.test.ts](/home/marco/Documents/ir/test/high.test.ts) and [factorial_example.ts](/home/marco/Documents/ir/src/high/factorial_example.ts) as concrete examples of the current HIR shape.
 3. Use [design.md](/home/marco/Documents/ir/doc/design.md), [decisions.md](/home/marco/Documents/ir/doc/decisions.md), and [invariants.md](/home/marco/Documents/ir/doc/invariants.md) as the design context.
 
 If we are tracing older behavior:
