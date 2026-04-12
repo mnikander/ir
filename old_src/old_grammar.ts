@@ -9,22 +9,15 @@ export type Phi          = [ destination: Register, tag: 'Phi',           inputs
 export type Call         = [ destination: Register, tag: 'Call',          label: Label, arguments: Register[] ];
 
 export type Misc         = Const | Copy | Move | Ref | Deref ;
-export type Const        = [ destination: Register, tag: 'Const',         constant: Primitive ]; // TODO: replace with inline literals
-export type Copy         = [ destination: Register, tag: 'Copy',          source: Register ]; // TODO: remove
-export type Move        =  [ destination: Register, tag: 'Move',          source: Register ]; // TODO: replace with an inline specifier
-export type Ref          = [ destination: Register, tag: 'Ref',           source: Register ]; // TODO: replace with pointer operations
-export type Deref        = [ destination: Register, tag: 'Deref',         source: Register ]; // TODO: replace with pointer operations
+export type Const        = [ destination: Register, tag: 'Const',         constant: Primitive ];
+export type Copy         = [ destination: Register, tag: 'Copy',          source: Register ];
+export type Move        =  [ destination: Register, tag: 'Move',          source: Register ];
+export type Ref          = [ destination: Register, tag: 'Ref',           source: Register ];
+export type Deref        = [ destination: Register, tag: 'Deref',         source: Register ];
 
 export type Line         = Call | Ownership | Arithmetic | Comparison;
 
 export type Ownership    = Drop;
-// export type Ownership    = Define | Stack | Heap | Borrow | Dereference | Update | Drop;
-// export type Define       = [ destination: Register, tag: 'Define',        source: Register ];
-// export type Stack        = [ destination: Register, tag: 'Stack',         source: Register ];
-// export type Heap         = [ destination: Register, tag: 'Heap',          source: Register ];
-// export type Borrow       = [ destination: Register, tag: 'Borrow',        pointer: Register ];
-// export type Dereference  = [ destination: Register, tag: 'Dereference',   pointer: Register ];
-// export type Update       = [ destination: Register, tag: 'Update',        pointer: Register, source: Register ];
 export type Drop         = [ destination: null,     tag: 'Drop',          source: Register ];
 
 export type Arithmetic   = Add | Subtract | Multiply | Divide | Remainder | Minimum | Maximum | Negative;
