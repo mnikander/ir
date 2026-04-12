@@ -29,7 +29,7 @@ export const factorial: Program = [
         lines: [
           ["%result", "Call", "@factorial", [[5]]],
         ],
-        terminator: [null, "Exit", ["%result"]],
+        terminator: [null, "Return", ["%result"]],
       },
     ],
   },

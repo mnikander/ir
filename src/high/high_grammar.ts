@@ -10,7 +10,7 @@ export type Call         = [ destination: Register, tag: 'Call',          label:
 
 export type Memory       = Constant | Copy | Stack | Heap | Borrow | Load | Update | Drop;
 export type Constant     = [ destination: Register, tag: 'Constant',      value: Primitive ];
-export type Copy         = [ destination: Register, tag: 'Define',        value: Input ];
+export type Copy         = [ destination: Register, tag: 'Copy',          value: Input ];
 export type Stack        = [ destination: Register, tag: 'Stack',         value: Input ];
 export type Heap         = [ destination: Register, tag: 'Heap',          value: Input ];
 export type Borrow       = [ destination: Register, tag: 'Borrow',        pointer: Register ];
