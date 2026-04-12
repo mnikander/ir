@@ -35,11 +35,10 @@ export type LessEqual    = [ destination: Register, tag: 'LessEqual',     left: 
 export type Greater      = [ destination: Register, tag: 'Greater',       left: Input, right: Input ];
 export type GreaterEqual = [ destination: Register, tag: 'GreaterEqual',  left: Input, right: Input ];
 
-export type Terminator   = Jump | Branch | Return | Exit;
+export type Terminator   = Jump | Branch | Return;
 export type Jump         = [ destination: null,     tag: 'Jump',          block: Label ];
 export type Branch       = [ destination: null,     tag: 'Branch',        condition: Input, block: [Label, Label] ];
 export type Return       = [ destination: null,     tag: 'Return',        left: Input ];
-export type Exit         = [ destination: null,     tag: 'Exit',          left: Input ];
 
 export type Input        = [Primitive] | [Register] | ['Move', Register];
 export type Value        = { tag: 'Value', value: Primitive };
