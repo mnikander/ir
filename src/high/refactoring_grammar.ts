@@ -7,11 +7,11 @@ export type Block        = { block: Label,          joins: Phi[],         lines:
 export type Phi          = [ destination: Register, tag: 'Phi',           inputs: [label: Label, source: Register][] ];
 export type Call         = [ destination: Register, tag: 'Call',          label: Label, arguments: Register[] ];
 
-export type Misc         = Const | Copy | Move | Ref | Load;
+export type Misc         = Const | Copy | Move | AddressOf | Load;
 export type Const        = [ destination: Register, tag: 'Constant',      constant: Primitive ]; // TODO: replace with more flexible 'Define'
 export type Copy         = [ destination: Register, tag: 'Copy',          source: Register ]; // TODO: replace with more flexible 'Define'
 export type Move         = [ destination: Register, tag: 'Move',          source: Register ]; // TODO: replace with inline access-modifier
-export type Ref          = [ destination: Register, tag: 'Ref',           source: Register ]; // TODO: replace with pointer operations
+export type AddressOf    = [ destination: Register, tag: 'AddressOf',     source: Register ]; // TODO: replace with pointer operations
 
 export type Line         = Call | Memory | Arithmetic | Comparison | Misc;
 

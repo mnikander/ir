@@ -58,7 +58,7 @@ describe("constants and exit", () => {
             joins: [],
             lines: [
               ["%0", "Constant", 0],
-              ["%1", "Ref", "%0"],
+              ["%1", "AddressOf", "%0"],
             ],
             terminator: [null, "Exit", "%1"],
           },
@@ -1170,7 +1170,7 @@ describe("memory and ownership", () => {
             joins: [],
             lines: [
               ["%x", "Constant", 42],
-              ["%r", "Ref", "%x"],
+              ["%r", "AddressOf", "%x"],
               ["%t", "Load", "%r"],
             ],
             terminator: [null, "Exit", "%t"],
@@ -1292,7 +1292,7 @@ describe("memory and ownership", () => {
             joins: [],
             lines: [
               ["%x", "Constant", 42],
-              ["%r", "Ref", "%x"],
+              ["%r", "AddressOf", "%x"],
               [null, "Drop", "%x"],
               ["%t", "Load", "%r"],
             ],
@@ -1325,7 +1325,7 @@ describe("memory and ownership", () => {
             joins: [],
             lines: [
               ["%x", "Constant", 42],
-              ["%r", "Ref", "%x"],
+              ["%r", "AddressOf", "%x"],
               ["%y", "Move", "%x"],
               ["%t", "Load", "%r"],
             ],
