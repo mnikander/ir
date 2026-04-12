@@ -1,6 +1,6 @@
 # Repository Overview
 
-This repository is now organized around a new split between:
+This repository is organized around a new split between:
 
 - a high-level SSA-style IR in `src/high/`
 - a lower-level register/offset-based IR in `src/low/`
@@ -11,7 +11,7 @@ The older flat interpreter has been moved aside into `old_src/` and `test/old/`.
 ## Current Shape
 
 The active codebase is no longer the old tuple-interpreter described in earlier docs.
-The repo now looks like a compiler/runtime prototype with multiple layers:
+The repo looks like a compiler/runtime prototype with multiple layers:
 
 1. High-level IR
    - structured by functions and blocks
@@ -61,9 +61,9 @@ The repo now looks like a compiler/runtime prototype with multiple layers:
 
   This grammar supports:
   - SSA-style phi nodes
-  - ownership/pointer-oriented operations like `Copy`, `Stack`, `Heap`, `Borrow`, `Load`, `Update`, `Drop`
+  - memory/ownership-oriented operations like `Constant`, `Copy`, `Stack`, `Heap`, `Borrow`, `Load`, `Update`, `Drop`
   - arithmetic and comparison operations over `Input`
-  - explicit block terminators
+  - explicit block terminators `Jump`, `Branch`, and `Return`
 
 - [refactoring_grammar.ts](/home/marco/Documents/ir/src/high/refactoring_grammar.ts)
   Transitional/legacy HIR grammar that still looks closer to the older tuple-based interpreter model.
@@ -87,7 +87,7 @@ The repo now looks like a compiler/runtime prototype with multiple layers:
 
   Currently visible low-level operations include:
   - metadata: `Noop`
-  - memory: `Constant`, `Copy`, `Load`, `Store`, `AddressOf`
+  - memory: `Constant`, `Copy`, `Load`, `Store`, `AddressOf`, `Drop`
   - arithmetic/comparison families
   - control: `Jump`, `Branch`, `Call`, `Return`
 
@@ -110,6 +110,7 @@ The repo now looks like a compiler/runtime prototype with multiple layers:
   - `Load`
   - `Store`
   - `AddressOf`
+  - `Drop`
   - `Add`
   - `Subtract`
   - `Multiply`
@@ -133,24 +134,26 @@ The repo now looks like a compiler/runtime prototype with multiple layers:
   Runtime data model and helpers.
 
   Important concepts:
-  - `Stack = { data, control }`
-  - `Frame = { return_address, base_address, pc, note? }`
-  - runtime values are either `Value` or `Pointer`
+  - `Stack = { data, control, generation }`
+  - `Frame = { return_address, base_address, pc, generation_counter, note? }`
+  - runtime data can be `Value`, `Pointer`, or `Dead`
+  - pointers carry a generation number, and stack slots track their current generation
+  - `Dead` marks a stack slot whose contents have been dropped
   - `initialize_stack()` builds the initial exit frame and main-function frame
   - `is_executable()` controls the main evaluation loop
-  - helper conversions `to_value()` and `to_pointer()` enforce runtime expectations
+  - helper assertions such as `assert_value()`, `assert_pointer()`, and `assert_not_dead()` enforce runtime expectations
 
 - [utility.ts](/home/marco/Documents/ir/src/utility.ts)
   Small shared helpers such as `valid()`.
 
 ## Tests
 
-There are now multiple test layers:
+There are multiple test layers:
 
 - [runtime.test.ts](/home/marco/Documents/ir/test/runtime.test.ts)
   Main active runtime tests for the low-level register machine.
   These are the most important tests for current execution behavior.
-  They now cover the arithmetic and comparison instruction families, memory operations, unconditional jump, branching, and function calls in the low-level machine.
+  They cover the arithmetic and comparison instruction families, memory operations, pointer/address behavior, unconditional jump, branching, and function calls in the low-level machine.
 
 - [high.test.ts](/home/marco/Documents/ir/test/high.test.ts)
   HIR-shape tests/examples.
@@ -215,6 +218,7 @@ If we are tracing older behavior:
 ## Notes For Future Work
 
 - The repo now contains multiple IR layers, but only the low-level runtime is actively executable.
+- The runtime is now explicitly tracking dropped stack slots and pointer generations, which is a meaningful step toward stronger memory-safety checks in the low-level machine.
 - The biggest source of confusion for future sessions will likely be the coexistence of:
   - active runtime code in `src/runtime/`
   - active-but-not-yet-executable HIR work in `src/high/`
