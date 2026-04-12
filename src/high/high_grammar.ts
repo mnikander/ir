@@ -8,8 +8,8 @@ export type Line         = Call | Memory | Arithmetic | Comparison;
 export type Phi          = [ destination: Register, tag: 'Phi',           inputs: [label: Label, value: Input][]];
 export type Call         = [ destination: Register, tag: 'Call',          label: Label, arguments: Input[] ];
 
-export type Memory       = Define | Stack | Heap | Borrow | Load | Update | Drop;
-export type Define       = [ destination: Register, tag: 'Define',        value: Input ];
+export type Memory       = Copy | Stack | Heap | Borrow | Load | Update | Drop;
+export type Copy         = [ destination: Register, tag: 'Define',        value: Input ];
 export type Stack        = [ destination: Register, tag: 'Stack',         value: Input ];
 export type Heap         = [ destination: Register, tag: 'Heap',          value: Input ];
 export type Borrow       = [ destination: Register, tag: 'Borrow',        pointer: Register ];
