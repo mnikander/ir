@@ -1,6 +1,5 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
-// import { evaluate } from "../src/evaluate.ts";
 import * as REF from "../src/high/refactoring_grammar.ts";
 // import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
@@ -41,8 +40,6 @@ describe("constants and exit", () => {
     ];
     expect(input).toBeDefined();
     // expect(() => evaluate(analyze(input))).toThrow();
-
-    // TODO: it would be nice if I could enforce 'CFG.length === 0' here
   });
 
   it("must throw a runtime-error when exiting with a Reference instead of a Value", () => {
