@@ -81,12 +81,13 @@ The repo now looks like a compiler/runtime prototype with multiple layers:
   - `Program = Instruction[]`
   - includes a lightweight `Noop` instruction used for metadata/notes in programs and tests
   - registers are replaced by numeric `Offset`s
+  - literal numbers are wrapped as `Primitive = { value: number }`
   - control flow targets are concrete `LineNumber`s
   - instructions are grouped into `Noop`, `Memory`, `Arithmetic`, `Comparison`, and `Control`
 
   Currently visible low-level operations include:
   - metadata: `Noop`
-  - memory: `Constant`, `Copy`, `Load`, `Store`, `Alloc`
+  - memory: `Constant`, `Copy`, `Load`, `Store`, `AddressOf`
   - arithmetic/comparison families
   - control: `Jump`, `Branch`, `Call`, `Return`
 
@@ -96,10 +97,11 @@ The repo now looks like a compiler/runtime prototype with multiple layers:
   Main evaluator for the low-level IR.
 
   Current runtime shape:
-  - initializes a special exit frame plus a main-function frame
+  - initializes the runtime through helpers in `stack.ts`
   - executes instructions by reading `pc` from the top control frame
   - stores runtime data in a flat data stack plus a separate control stack
   - uses small helper operations for arithmetic/comparison families instead of open-coded repetition
+  - evaluates an LIR program down to a plain `number`
 
   Implemented today:
   - `Noop`
@@ -107,8 +109,21 @@ The repo now looks like a compiler/runtime prototype with multiple layers:
   - `Copy`
   - `Load`
   - `Store`
-  - `Alloc`
+  - `AddressOf`
   - `Add`
+  - `Subtract`
+  - `Multiply`
+  - `Divide`
+  - `Remainder`
+  - `Minimum`
+  - `Maximum`
+  - `Negate`
+  - `Equal`
+  - `Unequal`
+  - `Less`
+  - `LessEqual`
+  - `Greater`
+  - `GreaterEqual`
   - `Jump`
   - `Branch`
   - `Return`
@@ -121,6 +136,8 @@ The repo now looks like a compiler/runtime prototype with multiple layers:
   - `Stack = { data, control }`
   - `Frame = { return_address, base_address, pc, note? }`
   - runtime values are either `Value` or `Pointer`
+  - `initialize_stack()` builds the initial exit frame and main-function frame
+  - `is_executable()` controls the main evaluation loop
   - helper conversions `to_value()` and `to_pointer()` enforce runtime expectations
 
 - [utility.ts](/home/marco/Documents/ir/src/utility.ts)
