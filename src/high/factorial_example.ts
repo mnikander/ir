@@ -27,7 +27,8 @@ export const factorial: Program = [
         block: "@entry",
         joins: [],
         lines: [
-          ["%result", "Call", "@factorial", [[5]]],
+          ["%x", "Constant", { value: 5 }],
+          ["%result", "Call", "@factorial", [["%x"]]],
         ],
         terminator: [null, "Return", ["%result"]],
       },
@@ -40,17 +41,19 @@ export const factorial: Program = [
       {
         block: "@entry",
         joins: [],
-        lines: [],
+        lines: [
+          ["%one", "Constant", { value: 1 }],
+        ],
         terminator: [null, "Jump", "@gate"],
       },
       {
         block: "@gate",
         joins: [
-          ["%acc", "Phi", [["@entry", [1]], ["@body", ["%new_acc"]]]],
+          ["%acc", "Phi", [["@entry", ["%one"]], ["@body", ["%new_acc"]]]],
           ["%n", "Phi", [["@entry", ["%arg"]], ["@body", ["%new_n"]]]],
         ],
         lines: [
-          ["%continue", "Greater", ["%n"], [1]],
+          ["%continue", "Greater", ["%n"], ["%one"]],
         ],
         terminator: [null, "Branch", ["%continue"], ["@body", "@end"]],
       },
@@ -59,7 +62,7 @@ export const factorial: Program = [
         joins: [],
         lines: [
           ["%new_acc", "Multiply", ["%n"], ["%acc"]],
-          ["%new_n", "Subtract", ["%n"], [1]],
+          ["%new_n", "Subtract", ["%n"], ["%one"]],
         ],
         terminator: [null, "Jump", "@gate"],
       },
