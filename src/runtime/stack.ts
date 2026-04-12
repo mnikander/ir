@@ -33,7 +33,7 @@ export function peek(state: Stack): Frame {
   return valid(state.control[state.control.length - 2]);
 }
 
-export function to_value(item: Data): Value {
+export function assert_value(item: Data): Value {
   if (item.tag === "Value") {
     return item;
   } else {
@@ -41,7 +41,7 @@ export function to_value(item: Data): Value {
   }
 }
 
-export function to_pointer(item: Data): Pointer {
+export function assert_pointer(item: Data): Pointer {
   if (item.tag === "Pointer") {
     return item;
   } else {
@@ -49,7 +49,7 @@ export function to_pointer(item: Data): Pointer {
   }
 }
 
-export function not_dead(item: Data): Value | Pointer {
+export function assert_not_dead(item: Data): Value | Pointer {
   if (item === undefined || item.tag !== "Dead") {
     return item;
   } else {
