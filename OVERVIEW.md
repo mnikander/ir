@@ -61,7 +61,7 @@ The repo now looks like a compiler/runtime prototype with multiple layers:
 
   This grammar supports:
   - SSA-style phi nodes
-  - ownership/pointer-oriented operations like `Define`, `Stack`, `Heap`, `Borrow`, `Dereference`, `Update`, `Drop`
+  - ownership/pointer-oriented operations like `Copy`, `Stack`, `Heap`, `Borrow`, `Load`, `Update`, `Drop`
   - arithmetic and comparison operations over `Input`
   - explicit block terminators
 
