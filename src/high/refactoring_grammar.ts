@@ -1,8 +1,8 @@
 // Copyright (c) 2026 Marco Nikander
 
 export type Program      = readonly Function[];
-export type Function     = { func: Label,           params: Register[],   blocks: Block[] };
-export type Block        = { block: Label,          joins: Phi[],         lines: Line[], terminator: Terminator };
+export type Function     = { name: Label,           params: Register[],   blocks: Block[] };
+export type Block        = { name: Label,           joins: Phi[],         lines: Line[], terminator: Terminator };
 
 export type Phi          = [ destination: Register, tag: 'Phi',           inputs: [label: Label, source: Register][] ];
 export type Call         = [ destination: Register, tag: 'Call',          label: Label, arguments: Register[] ];

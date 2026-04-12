@@ -13,7 +13,7 @@ describe("constants and exit", () => {
     // (empty program)
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [],
       },
@@ -29,11 +29,11 @@ describe("constants and exit", () => {
     // exit %0
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.foo",
+            name: "@main.foo",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -55,11 +55,11 @@ describe("constants and exit", () => {
     // exit %1
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: 0 }],
@@ -82,11 +82,11 @@ describe("constants and exit", () => {
     // exit %0
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -111,11 +111,11 @@ describe("copying of registers", () => {
     // exit %1
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -142,11 +142,11 @@ describe("arithmetic operations", () => {
     // exit %2
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -218,17 +218,17 @@ describe("labels, jump, and branch", () => {
     // exit %2
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [],
             terminator: [null, "Jump", "@main.second"],
           },
           {
-            block: "@main.first",
+            name: "@main.first",
             joins: [],
             lines: [
               ["%1", "Constant", { value: small }],
@@ -236,7 +236,7 @@ describe("labels, jump, and branch", () => {
             terminator: [null, "Exit", "%1"],
           },
           {
-            block: "@main.second",
+            name: "@main.second",
             joins: [],
             lines: [
               ["%2", "Constant", { value: large }],
@@ -272,11 +272,11 @@ describe("labels, jump, and branch", () => {
     // exit %4
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: true }],
@@ -287,7 +287,7 @@ describe("labels, jump, and branch", () => {
             terminator: [null, "Branch", "%0", ["@main.then", "@main.else"]],
           },
           {
-            block: "@main.then",
+            name: "@main.then",
             joins: [],
             lines: [
               ["%4", "Add", "%1", "%2"],
@@ -295,7 +295,7 @@ describe("labels, jump, and branch", () => {
             terminator: [null, "Jump", "@main.end"],
           },
           {
-            block: "@main.else",
+            name: "@main.else",
             joins: [],
             lines: [
               ["%5", "Add", "%2", "%3"],
@@ -303,7 +303,7 @@ describe("labels, jump, and branch", () => {
             terminator: [null, "Jump", "@main.end"],
           },
           {
-            block: "@main.end",
+            name: "@main.end",
             joins: [],
             lines: [],
             terminator: [null, "Exit", "%4"],
@@ -337,11 +337,11 @@ describe("labels, jump, and branch", () => {
     // exit %5
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: false }],
@@ -352,7 +352,7 @@ describe("labels, jump, and branch", () => {
             terminator: [null, "Branch", "%0", ["@main.then", "@main.else"]],
           },
           {
-            block: "@main.then",
+            name: "@main.then",
             joins: [],
             lines: [
               ["%4", "Add", "%1", "%2"],
@@ -360,7 +360,7 @@ describe("labels, jump, and branch", () => {
             terminator: [null, "Jump", "@main.end"],
           },
           {
-            block: "@main.else",
+            name: "@main.else",
             joins: [],
             lines: [
               ["%5", "Add", "%2", "%3"],
@@ -368,7 +368,7 @@ describe("labels, jump, and branch", () => {
             terminator: [null, "Jump", "@main.end"],
           },
           {
-            block: "@main.end",
+            name: "@main.end",
             joins: [],
             lines: [],
             terminator: [null, "Exit", "%5"],
@@ -396,11 +396,11 @@ describe("function call", () => {
     // return %a
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -412,11 +412,11 @@ describe("function call", () => {
         ],
       },
       {
-        func: "@identity",
+        name: "@identity",
         params: ["%a"],
         blocks: [
           {
-            block: "@identity.entry",
+            name: "@identity.entry",
             joins: [],
             lines: [],
             terminator: [null, "Return", "%a"],
@@ -442,11 +442,11 @@ describe("function call", () => {
     // return %a
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -458,11 +458,11 @@ describe("function call", () => {
         ],
       },
       {
-        func: "@first",
+        name: "@first",
         params: ["%a", "%b"],
         blocks: [
           {
-            block: "@first.entry",
+            name: "@first.entry",
             joins: [],
             lines: [],
             terminator: [null, "Return", "%a"],
@@ -509,11 +509,11 @@ describe("function call", () => {
     // return %10
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: 5 }],
@@ -525,11 +525,11 @@ describe("function call", () => {
         ],
       },
       {
-        func: "@factorial",
+        name: "@factorial",
         params: ["%n", "%acc"],
         blocks: [
           {
-            block: "@factorial.entry",
+            name: "@factorial.entry",
             joins: [],
             lines: [
               ["%3", "Constant", { value: 1 }],
@@ -541,7 +541,7 @@ describe("function call", () => {
             ]],
           },
           {
-            block: "@factorial.body",
+            name: "@factorial.body",
             joins: [],
             lines: [
               ["%7", "Subtract", "%n", "%3"],
@@ -551,7 +551,7 @@ describe("function call", () => {
             terminator: [null, "Jump", "@factorial.termination"],
           },
           {
-            block: "@factorial.termination",
+            name: "@factorial.termination",
             joins: [
               ["%10", "Phi", [["@factorial.body", "%9"], [
                 "@factorial.entry",
@@ -579,11 +579,11 @@ describe("static single assignment", () => {
     // exit %1
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -612,11 +612,11 @@ describe("static single assignment", () => {
     // return %a
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -628,11 +628,11 @@ describe("static single assignment", () => {
         ],
       },
       {
-        func: "@first",
+        name: "@first",
         params: ["%a", "%a"],
         blocks: [
           {
-            block: "@first.entry",
+            name: "@first.entry",
             joins: [],
             lines: [],
             terminator: [null, "Return", "%a"],
@@ -662,11 +662,11 @@ describe("static single assignment", () => {
     // return %a
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -679,11 +679,11 @@ describe("static single assignment", () => {
       },
 
       {
-        func: "@identity",
+        name: "@identity",
         params: ["%a"],
         blocks: [
           {
-            block: "@identity.entry",
+            name: "@identity.entry",
             joins: [],
             lines: [],
             terminator: [null, "Return", "%a"],
@@ -692,11 +692,11 @@ describe("static single assignment", () => {
       },
 
       {
-        func: "@identity2",
+        name: "@identity2",
         params: ["%a"],
         blocks: [
           {
-            block: "@identity2.entry",
+            name: "@identity2.entry",
             joins: [],
             lines: [],
             terminator: [null, "Return", "%a"],
@@ -727,17 +727,17 @@ describe("static single assignment", () => {
     // exit %3
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [],
             terminator: [null, "Jump", "@main.second"],
           },
           {
-            block: "@main.first",
+            name: "@main.first",
             joins: [],
             lines: [
               ["%1", "Constant", { value: small }],
@@ -745,7 +745,7 @@ describe("static single assignment", () => {
             terminator: [null, "Jump", "@main.end"],
           },
           {
-            block: "@main.second",
+            name: "@main.second",
             joins: [],
             lines: [
               ["%2", "Constant", { value: large }],
@@ -753,7 +753,7 @@ describe("static single assignment", () => {
             terminator: [null, "Jump", "@main.end"],
           },
           {
-            block: "@main.end",
+            name: "@main.end",
             joins: [
               ["%3", "Phi", [["@main.first", "%1"], ["@main.second", "%2"]]],
             ],
@@ -797,11 +797,11 @@ describe("static single assignment", () => {
     // exit %3
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: 0 }],
@@ -811,7 +811,7 @@ describe("static single assignment", () => {
             terminator: [null, "Jump", "@main.loop"],
           },
           {
-            block: "@main.loop",
+            name: "@main.loop",
             joins: [
               ["%3", "Phi", [["@main.entry", "%0"], ["@main.loop", "%4"]]],
             ],
@@ -822,7 +822,7 @@ describe("static single assignment", () => {
             terminator: [null, "Branch", "%5", ["@main.loop", "@main.end"]],
           },
           {
-            block: "@main.end",
+            name: "@main.end",
             joins: [],
             lines: [],
             terminator: [null, "Exit", "%3"],
@@ -871,11 +871,11 @@ describe("static single assignment", () => {
     // exit %total
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%condition", "Constant", { value: false }],
@@ -883,7 +883,7 @@ describe("static single assignment", () => {
             terminator: [null, "Branch", "%condition", ["@main.a", "@main.b"]],
           },
           {
-            block: "@main.a",
+            name: "@main.a",
             joins: [],
             lines: [
               ["%alpha", "Constant", { value: small }],
@@ -891,7 +891,7 @@ describe("static single assignment", () => {
             terminator: [null, "Jump", "@main.d"],
           },
           {
-            block: "@main.b",
+            name: "@main.b",
             joins: [],
             lines: [
               ["%bravo", "Constant", { value: large }],
@@ -899,7 +899,7 @@ describe("static single assignment", () => {
             terminator: [null, "Jump", "@main.c"],
           },
           {
-            block: "@main.c",
+            name: "@main.c",
             joins: [],
             lines: [
               ["%charlie", "Constant", { value: huge }],
@@ -907,7 +907,7 @@ describe("static single assignment", () => {
             terminator: [null, "Jump", "@main.d"],
           },
           {
-            block: "@main.d",
+            name: "@main.d",
             joins: [
               ["%grandparent", "Phi", [["@main.a", "%alpha"], [
                 "@main.c",
@@ -960,17 +960,17 @@ describe("static single assignment", () => {
     // exit %result
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [],
             terminator: [null, "Jump", "@main.a"],
           },
           {
-            block: "@main.a",
+            name: "@main.a",
             joins: [],
             lines: [
               ["%alpha", "Constant", { value: small }],
@@ -979,7 +979,7 @@ describe("static single assignment", () => {
             terminator: [null, "Branch", "%condition", ["@main.b", "@main.c"]],
           },
           {
-            block: "@main.b",
+            name: "@main.b",
             joins: [],
             lines: [
               ["%bravo", "Constant", { value: large }],
@@ -987,7 +987,7 @@ describe("static single assignment", () => {
             terminator: [null, "Jump", "@main.c"],
           },
           {
-            block: "@main.c",
+            name: "@main.c",
             joins: [
               ["%result", "Phi", [["@main.a", "%alpha"], [
                 "@main.b",
@@ -1034,11 +1034,11 @@ describe("static single assignment", () => {
     // exit %result
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%echo", "Constant", { value: false }],
@@ -1046,7 +1046,7 @@ describe("static single assignment", () => {
             terminator: [null, "Branch", "%echo", ["@main.a", "@main.c"]],
           },
           {
-            block: "@main.a",
+            name: "@main.a",
             joins: [],
             lines: [
               ["%alpha", "Constant", { value: true }],
@@ -1054,7 +1054,7 @@ describe("static single assignment", () => {
             terminator: [null, "Branch", "%alpha", ["@main.b", "@main.c"]],
           },
           {
-            block: "@main.b",
+            name: "@main.b",
             joins: [],
             lines: [
               ["%bravo", "Constant", { value: true }],
@@ -1062,7 +1062,7 @@ describe("static single assignment", () => {
             terminator: [null, "Jump", "@main.c"],
           },
           {
-            block: "@main.c",
+            name: "@main.c",
             joins: [
               ["%result", "Phi", [["@main.entry", "%echo"], [
                 "@main.a",
@@ -1109,11 +1109,11 @@ describe("static single assignment", () => {
     // exit %result
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%echo", "Constant", { value: false }],
@@ -1121,7 +1121,7 @@ describe("static single assignment", () => {
             terminator: [null, "Branch", "%echo", ["@main.a", "@main.c"]],
           },
           {
-            block: "@main.a",
+            name: "@main.a",
             joins: [],
             lines: [
               ["%alpha", "Constant", { value: true }],
@@ -1129,7 +1129,7 @@ describe("static single assignment", () => {
             terminator: [null, "Branch", "%alpha", ["@main.b", "@main.c"]],
           },
           {
-            block: "@main.b",
+            name: "@main.b",
             joins: [],
             lines: [
               ["%bravo", "Constant", { value: true }],
@@ -1137,7 +1137,7 @@ describe("static single assignment", () => {
             terminator: [null, "Jump", "@main.c"],
           },
           {
-            block: "@main.c",
+            name: "@main.c",
             joins: [
               ["%result", "Phi", [["@main.a", "%alpha"], [
                 "@main.b",
@@ -1167,11 +1167,11 @@ describe("memory and ownership", () => {
     // exit %t
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%x", "Constant", { value: small }],
@@ -1196,11 +1196,11 @@ describe("memory and ownership", () => {
     // exit %0
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: 0 }],
@@ -1227,11 +1227,11 @@ describe("memory and ownership", () => {
     // exit %1
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: 0 }],
@@ -1258,11 +1258,11 @@ describe("memory and ownership", () => {
     // exit %0
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: 0 }],
@@ -1289,11 +1289,11 @@ describe("memory and ownership", () => {
     // exit %t
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%x", "Constant", { value: small }],
@@ -1322,11 +1322,11 @@ describe("memory and ownership", () => {
     // exit %t
     const input: REF.Program = [
       {
-        func: "@main",
+        name: "@main",
         params: [],
         blocks: [
           {
-            block: "@main.entry",
+            name: "@main.entry",
             joins: [],
             lines: [
               ["%x", "Constant", { value: small }],

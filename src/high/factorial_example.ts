@@ -20,11 +20,11 @@ import { Program } from "./high_grammar.ts";
 
 export const factorial: Program = [
   {
-    func: "@main",
+    name: "@main",
     params: [],
     blocks: [
       {
-        block: "@entry",
+        name: "@entry",
         joins: [],
         lines: [
           ["%x", "Constant", { value: 5 }],
@@ -35,11 +35,11 @@ export const factorial: Program = [
     ],
   },
   {
-    func: "@factorial",
+    name: "@factorial",
     params: [["%arg"]],
     blocks: [
       {
-        block: "@entry",
+        name: "@entry",
         joins: [],
         lines: [
           ["%one", "Constant", { value: 1 }],
@@ -47,7 +47,7 @@ export const factorial: Program = [
         terminator: [null, "Jump", "@gate"],
       },
       {
-        block: "@gate",
+        name: "@gate",
         joins: [
           ["%acc", "Phi", [["@entry", ["%one"]], ["@body", ["%new_acc"]]]],
           ["%n", "Phi", [["@entry", ["%arg"]], ["@body", ["%new_n"]]]],
@@ -58,7 +58,7 @@ export const factorial: Program = [
         terminator: [null, "Branch", ["%continue"], ["@body", "@end"]],
       },
       {
-        block: "@body",
+        name: "@body",
         joins: [],
         lines: [
           ["%new_acc", "Multiply", ["%n"], ["%acc"]],
@@ -67,7 +67,7 @@ export const factorial: Program = [
         terminator: [null, "Jump", "@gate"],
       },
       {
-        block: "@end",
+        name: "@end",
         joins: [],
         lines: [],
         terminator: [null, "Return", ["%n"]],
