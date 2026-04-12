@@ -1,13 +1,13 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 // import { evaluate } from "../src/evaluate.ts";
-import * as HIR from "../src/high/refactoring_grammar.ts";
+import * as REF from "../src/high/refactoring_grammar.ts";
 // import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
 describe("constants and exit", () => {
   it("must throw error on empty input", () => {
     // (empty program)
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -23,7 +23,7 @@ describe("constants and exit", () => {
     // (missing block @main.entry)
     // %0 = constant 11
     // exit %0
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -32,7 +32,7 @@ describe("constants and exit", () => {
             block: "@main.foo",
             joins: [],
             lines: [
-              ["%0", "Const", 11],
+              ["%0", "Constant", 11],
             ],
             terminator: [null, "Exit", "%0"],
           },
@@ -51,7 +51,7 @@ describe("constants and exit", () => {
     // %0 = constant 0
     // %1 = ref %0
     // exit %1
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -60,7 +60,7 @@ describe("constants and exit", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Const", 0],
+              ["%0", "Constant", 0],
               ["%1", "Ref", "%0"],
             ],
             terminator: [null, "Exit", "%1"],
@@ -78,7 +78,7 @@ describe("constants and exit", () => {
     // block @main.entry:
     // %0 = constant 11
     // exit %0
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -87,7 +87,7 @@ describe("constants and exit", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Const", 11],
+              ["%0", "Constant", 11],
             ],
             terminator: [null, "Exit", "%0"],
           },
@@ -107,7 +107,7 @@ describe("copying of registers", () => {
     // %0 = constant 11
     // %1 = copy %0
     // exit %1
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -116,7 +116,7 @@ describe("copying of registers", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Const", 11],
+              ["%0", "Constant", 11],
               ["%1", "Copy", "%0"],
             ],
             terminator: [null, "Exit", "%1"],
@@ -138,7 +138,7 @@ describe("arithmetic operations", () => {
     // %1 = constant 22
     // %2 = add %0, %1
     // exit %2
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -147,8 +147,8 @@ describe("arithmetic operations", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Const", 11],
-              ["%1", "Const", 22],
+              ["%0", "Constant", 11],
+              ["%1", "Constant", 22],
               ["%2", "Add", "%0", "%1"],
             ],
             terminator: [null, "Exit", "%2"],
@@ -172,7 +172,7 @@ describe("labels, jump, and branch", () => {
   //     // block @main.first:
   //     // %1 = constant 22
   //     // exit %2
-  //     const input: HIR.Program = [
+  //     const input: REF.Program = [
   //         {
   //             func: '@main',
   //             params: [],
@@ -214,7 +214,7 @@ describe("labels, jump, and branch", () => {
     // block @main.second:
     // %2 = constant 22
     // exit %2
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -229,7 +229,7 @@ describe("labels, jump, and branch", () => {
             block: "@main.first",
             joins: [],
             lines: [
-              ["%1", "Const", 11],
+              ["%1", "Constant", 11],
             ],
             terminator: [null, "Exit", "%1"],
           },
@@ -237,7 +237,7 @@ describe("labels, jump, and branch", () => {
             block: "@main.second",
             joins: [],
             lines: [
-              ["%2", "Const", 22],
+              ["%2", "Constant", 22],
             ],
             terminator: [null, "Exit", "%2"],
           },
@@ -268,7 +268,7 @@ describe("labels, jump, and branch", () => {
     //
     // block @main.end:
     // exit %4
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -277,10 +277,10 @@ describe("labels, jump, and branch", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Const", true],
-              ["%1", "Const", 11],
-              ["%2", "Const", 22],
-              ["%3", "Const", 44],
+              ["%0", "Constant", true],
+              ["%1", "Constant", 11],
+              ["%2", "Constant", 22],
+              ["%3", "Constant", 44],
             ],
             terminator: [null, "Branch", "%0", ["@main.then", "@main.else"]],
           },
@@ -333,7 +333,7 @@ describe("labels, jump, and branch", () => {
     //
     // block @main.end:
     // exit %5
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -342,10 +342,10 @@ describe("labels, jump, and branch", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Const", false],
-              ["%1", "Const", 11],
-              ["%2", "Const", 22],
-              ["%3", "Const", 44],
+              ["%0", "Constant", false],
+              ["%1", "Constant", 11],
+              ["%2", "Constant", 22],
+              ["%3", "Constant", 44],
             ],
             terminator: [null, "Branch", "%0", ["@main.then", "@main.else"]],
           },
@@ -392,7 +392,7 @@ describe("function call", () => {
     // function @identity [%a]:
     // block @identity.entry:
     // return %a
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -401,8 +401,8 @@ describe("function call", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Const", 11],
-              ["%1", "Const", 22],
+              ["%0", "Constant", 11],
+              ["%1", "Constant", 22],
               ["%2", "Call", "@identity", ["%1"]],
             ],
             terminator: [null, "Exit", "%2"],
@@ -438,7 +438,7 @@ describe("function call", () => {
     // function @first [%a, %b]:
     // block @first.entry:
     // return %a
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -447,8 +447,8 @@ describe("function call", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Const", 11],
-              ["%1", "Const", 22],
+              ["%0", "Constant", 11],
+              ["%1", "Constant", 22],
               ["%2", "Call", "@first", ["%0", "%1"]],
             ],
             terminator: [null, "Exit", "%2"],
@@ -505,7 +505,7 @@ describe("function call", () => {
     // block @factorial.termination:
     // %10 = phi [[@factorial.body, %9], [@factorial.entry, %acc]]
     // return %10
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -514,8 +514,8 @@ describe("function call", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Const", 5],
-              ["%1", "Const", 1],
+              ["%0", "Constant", 5],
+              ["%1", "Constant", 1],
               ["%2", "Call", "@factorial", ["%0", "%1"]],
             ],
             terminator: [null, "Exit", "%2"],
@@ -530,7 +530,7 @@ describe("function call", () => {
             block: "@factorial.entry",
             joins: [],
             lines: [
-              ["%3", "Const", 1],
+              ["%3", "Constant", 1],
               ["%6", "Equal", "%n", "%3"],
             ],
             terminator: [null, "Branch", "%6", [
@@ -575,7 +575,7 @@ describe("static single assignment", () => {
     // %0 = constant 11
     // %0 = constant 22
     // exit %1
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -584,8 +584,8 @@ describe("static single assignment", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Const", 11],
-              ["%0", "Const", 22], // attempt to reassign register 0
+              ["%0", "Constant", 11],
+              ["%0", "Constant", 22], // attempt to reassign register 0
             ],
             terminator: [null, "Exit", "%1"],
           },
@@ -608,7 +608,7 @@ describe("static single assignment", () => {
     // function @first [%a, %a]:
     // block @first.entry:
     // return %a
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -617,8 +617,8 @@ describe("static single assignment", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Const", 11],
-              ["%1", "Const", 22],
+              ["%0", "Constant", 11],
+              ["%1", "Constant", 22],
               ["%2", "Call", "@first", ["%0", "%1"]],
             ],
             terminator: [null, "Exit", "%2"],
@@ -658,7 +658,7 @@ describe("static single assignment", () => {
     // function @identity2 [%a]:
     // block @identity2.entry:
     // return %a
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -667,8 +667,8 @@ describe("static single assignment", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Const", 11],
-              ["%1", "Const", 22],
+              ["%0", "Constant", 11],
+              ["%1", "Constant", 22],
               ["%2", "Call", "@identity", ["%1"]],
             ],
             terminator: [null, "Exit", "%2"],
@@ -723,7 +723,7 @@ describe("static single assignment", () => {
     // block @main.end:
     // %3 = phi [[@main.first, %1], [@main.second, %2]]
     // exit %3
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -738,7 +738,7 @@ describe("static single assignment", () => {
             block: "@main.first",
             joins: [],
             lines: [
-              ["%1", "Const", 11],
+              ["%1", "Constant", 11],
             ],
             terminator: [null, "Jump", "@main.end"],
           },
@@ -746,7 +746,7 @@ describe("static single assignment", () => {
             block: "@main.second",
             joins: [],
             lines: [
-              ["%2", "Const", 22],
+              ["%2", "Constant", 22],
             ],
             terminator: [null, "Jump", "@main.end"],
           },
@@ -793,7 +793,7 @@ describe("static single assignment", () => {
     //
     // block @main.end:
     // exit %3
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -802,9 +802,9 @@ describe("static single assignment", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Const", 0],
-              ["%1", "Const", 1],
-              ["%2", "Const", 3],
+              ["%0", "Constant", 0],
+              ["%1", "Constant", 1],
+              ["%2", "Constant", 3],
             ],
             terminator: [null, "Jump", "@main.loop"],
           },
@@ -867,7 +867,7 @@ describe("static single assignment", () => {
     // %parent = phi [[@main.a, %alpha], [@main.c, %charlie]]
     // %total = add %grandparent, %parent
     // exit %total
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -876,7 +876,7 @@ describe("static single assignment", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%condition", "Const", false],
+              ["%condition", "Constant", false],
             ],
             terminator: [null, "Branch", "%condition", ["@main.a", "@main.b"]],
           },
@@ -884,7 +884,7 @@ describe("static single assignment", () => {
             block: "@main.a",
             joins: [],
             lines: [
-              ["%alpha", "Const", 10],
+              ["%alpha", "Constant", 10],
             ],
             terminator: [null, "Jump", "@main.d"],
           },
@@ -892,7 +892,7 @@ describe("static single assignment", () => {
             block: "@main.b",
             joins: [],
             lines: [
-              ["%bravo", "Const", 20],
+              ["%bravo", "Constant", 20],
             ],
             terminator: [null, "Jump", "@main.c"],
           },
@@ -900,7 +900,7 @@ describe("static single assignment", () => {
             block: "@main.c",
             joins: [],
             lines: [
-              ["%charlie", "Const", 21],
+              ["%charlie", "Constant", 21],
             ],
             terminator: [null, "Jump", "@main.d"],
           },
@@ -956,7 +956,7 @@ describe("static single assignment", () => {
     // block @main.c:
     // %result = phi [[@main.a, %alpha], [@main.b, %bravo]]
     // exit %result
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -971,8 +971,8 @@ describe("static single assignment", () => {
             block: "@main.a",
             joins: [],
             lines: [
-              ["%alpha", "Const", 10],
-              ["%condition", "Const", true],
+              ["%alpha", "Constant", 10],
+              ["%condition", "Constant", true],
             ],
             terminator: [null, "Branch", "%condition", ["@main.b", "@main.c"]],
           },
@@ -980,7 +980,7 @@ describe("static single assignment", () => {
             block: "@main.b",
             joins: [],
             lines: [
-              ["%bravo", "Const", 20],
+              ["%bravo", "Constant", 20],
             ],
             terminator: [null, "Jump", "@main.c"],
           },
@@ -1030,7 +1030,7 @@ describe("static single assignment", () => {
     // block @main.c:
     // %result = phi [[@main.entry, %echo], [@main.a, %alpha], [@main.b, %bravo]]
     // exit %result
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -1039,7 +1039,7 @@ describe("static single assignment", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%echo", "Const", false],
+              ["%echo", "Constant", false],
             ],
             terminator: [null, "Branch", "%echo", ["@main.a", "@main.c"]],
           },
@@ -1047,7 +1047,7 @@ describe("static single assignment", () => {
             block: "@main.a",
             joins: [],
             lines: [
-              ["%alpha", "Const", true],
+              ["%alpha", "Constant", true],
             ],
             terminator: [null, "Branch", "%alpha", ["@main.b", "@main.c"]],
           },
@@ -1055,7 +1055,7 @@ describe("static single assignment", () => {
             block: "@main.b",
             joins: [],
             lines: [
-              ["%bravo", "Const", true],
+              ["%bravo", "Constant", true],
             ],
             terminator: [null, "Jump", "@main.c"],
           },
@@ -1105,7 +1105,7 @@ describe("static single assignment", () => {
     // block @main.c:
     // %result = phi [[@main.a, %alpha], [@main.b, %bravo]]  // this phi-node does NOT cover all incoming edges
     // exit %result
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -1114,7 +1114,7 @@ describe("static single assignment", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%echo", "Const", false],
+              ["%echo", "Constant", false],
             ],
             terminator: [null, "Branch", "%echo", ["@main.a", "@main.c"]],
           },
@@ -1122,7 +1122,7 @@ describe("static single assignment", () => {
             block: "@main.a",
             joins: [],
             lines: [
-              ["%alpha", "Const", true],
+              ["%alpha", "Constant", true],
             ],
             terminator: [null, "Branch", "%alpha", ["@main.b", "@main.c"]],
           },
@@ -1130,7 +1130,7 @@ describe("static single assignment", () => {
             block: "@main.b",
             joins: [],
             lines: [
-              ["%bravo", "Const", true],
+              ["%bravo", "Constant", true],
             ],
             terminator: [null, "Jump", "@main.c"],
           },
@@ -1163,7 +1163,7 @@ describe("memory and ownership", () => {
     // %r = ref %x
     // %t = deref %r
     // exit %t
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -1172,7 +1172,7 @@ describe("memory and ownership", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%x", "Const", 42],
+              ["%x", "Constant", 42],
               ["%r", "Ref", "%x"],
               ["%t", "Deref", "%r"],
             ],
@@ -1192,7 +1192,7 @@ describe("memory and ownership", () => {
     // %0 = constant 0
     // drop %0
     // exit %0
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -1201,7 +1201,7 @@ describe("memory and ownership", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Const", 0],
+              ["%0", "Constant", 0],
               [null, "Drop", "%0"],
             ],
             terminator: [null, "Exit", "%0"],
@@ -1223,7 +1223,7 @@ describe("memory and ownership", () => {
     // drop %0
     // drop %0
     // exit %1
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -1232,8 +1232,8 @@ describe("memory and ownership", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Const", 0],
-              ["%1", "Const", 0],
+              ["%0", "Constant", 0],
+              ["%1", "Constant", 0],
               [null, "Drop", "%0"],
               [null, "Drop", "%0"],
             ],
@@ -1254,7 +1254,7 @@ describe("memory and ownership", () => {
     // %0 = constant 0
     // %1 = move %0
     // exit %0
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -1263,7 +1263,7 @@ describe("memory and ownership", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Const", 0],
+              ["%0", "Constant", 0],
               ["%1", "Move", "%0"],
             ],
             terminator: [null, "Exit", "%0"],
@@ -1285,7 +1285,7 @@ describe("memory and ownership", () => {
     // drop %x
     // %t = deref %r
     // exit %t
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -1294,7 +1294,7 @@ describe("memory and ownership", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%x", "Const", 42],
+              ["%x", "Constant", 42],
               ["%r", "Ref", "%x"],
               [null, "Drop", "%x"],
               ["%t", "Deref", "%r"],
@@ -1318,7 +1318,7 @@ describe("memory and ownership", () => {
     // %y = move %x
     // %t = deref %r
     // exit %t
-    const input: HIR.Program = [
+    const input: REF.Program = [
       {
         func: "@main",
         params: [],
@@ -1327,7 +1327,7 @@ describe("memory and ownership", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%x", "Const", 42],
+              ["%x", "Constant", 42],
               ["%r", "Ref", "%x"],
               ["%y", "Move", "%x"],
               ["%t", "Deref", "%r"],

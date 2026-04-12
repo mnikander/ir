@@ -8,7 +8,7 @@ export type Phi          = [ destination: Register, tag: 'Phi',           inputs
 export type Call         = [ destination: Register, tag: 'Call',          label: Label, arguments: Register[] ];
 
 export type Misc         = Const | Copy | Move | Ref | Deref ;
-export type Const        = [ destination: Register, tag: 'Const',         constant: Primitive ]; // TODO: replace with more flexible 'Define'
+export type Const        = [ destination: Register, tag: 'Constant',      constant: Primitive ]; // TODO: replace with more flexible 'Define'
 export type Copy         = [ destination: Register, tag: 'Copy',          source: Register ]; // TODO: replace with more flexible 'Define'
 export type Move         = [ destination: Register, tag: 'Move',          source: Register ]; // TODO: replace with inline access-modifier
 export type Ref          = [ destination: Register, tag: 'Ref',           source: Register ]; // TODO: replace with pointer operations
