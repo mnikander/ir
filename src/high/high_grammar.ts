@@ -3,17 +3,17 @@
 export type Program      = readonly Function[];
 export type Function     = { func: Label,           params: Input[],      blocks: Block[] };
 export type Block        = { block: Label,          joins: Phi[],         lines: Line[], terminator: Terminator };
-export type Line         = Call | Ownership | Arithmetic | Comparison;
+export type Line         = Call | Memory | Arithmetic | Comparison;
 
 export type Phi          = [ destination: Register, tag: 'Phi',           inputs: [label: Label, value: Input][]];
 export type Call         = [ destination: Register, tag: 'Call',          label: Label, arguments: Input[] ];
 
-export type Ownership    = Define | Stack | Heap | Borrow | Dereference | Update | Drop;
+export type Memory       = Define | Stack | Heap | Borrow | Load | Update | Drop;
 export type Define       = [ destination: Register, tag: 'Define',        value: Input ];
 export type Stack        = [ destination: Register, tag: 'Stack',         value: Input ];
 export type Heap         = [ destination: Register, tag: 'Heap',          value: Input ];
 export type Borrow       = [ destination: Register, tag: 'Borrow',        pointer: Register ];
-export type Dereference  = [ destination: Register, tag: 'Dereference',   pointer: Register ];
+export type Load         = [ destination: Register, tag: 'Load',          pointer: Register ];
 export type Update       = [ destination: Register, tag: 'Update',        pointer: Register, value: Register ];
 export type Drop         = [ destination: null,     tag: 'Drop',          value: Register ];
 
