@@ -45,7 +45,7 @@ export type Value        = { tag: 'Value', value: Primitive };
 export type Pointer      = { tag: 'Borrow' | 'Stack' | 'Heap', value: Register, generation: number };
 export type Register     = `%${string}`;
 export type Label        = `@${string}`;
-export type Primitive    = number;
+export type Primitive    = { value: number };
 
 export enum Get {
     Dest   = 0,

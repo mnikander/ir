@@ -51,7 +51,7 @@ export type Value        = { tag: 'Value', value: Primitive };
 export type Reference    = { tag: 'Reference', value: Register };
 export type Register     = `%${string}`;
 export type Label        = `@${string}`;
-export type Primitive    = boolean | number;
+export type Primitive    = { value: boolean | number };
 
 export enum Get {
     Dest  = 0,

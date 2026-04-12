@@ -3,6 +3,11 @@ import { expect } from "@std/expect";
 import * as REF from "../src/high/refactoring_grammar.ts";
 // import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
+// choose prime numbers for tests, to reduce chances of false-positive results for arithmetic ops
+const small: number = 11;
+const large: number = 13;
+const huge: number = 281;
+
 describe("constants and exit", () => {
   it("must throw error on empty input", () => {
     // (empty program)
@@ -31,7 +36,7 @@ describe("constants and exit", () => {
             block: "@main.foo",
             joins: [],
             lines: [
-              ["%0", "Constant", 11],
+              ["%0", "Constant", { value: small }],
             ],
             terminator: [null, "Exit", "%0"],
           },
@@ -57,7 +62,7 @@ describe("constants and exit", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Constant", 0],
+              ["%0", "Constant", { value: 0 }],
               ["%1", "AddressOf", "%0"],
             ],
             terminator: [null, "Exit", "%1"],
@@ -84,7 +89,7 @@ describe("constants and exit", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Constant", 11],
+              ["%0", "Constant", { value: small }],
             ],
             terminator: [null, "Exit", "%0"],
           },
@@ -92,7 +97,7 @@ describe("constants and exit", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(11);
+    // expect(evaluate(analyze(input))).toBe(small);
     // expect(table_of_contents(input).size).toBe(1);
   });
 });
@@ -113,7 +118,7 @@ describe("copying of registers", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Constant", 11],
+              ["%0", "Constant", { value: small }],
               ["%1", "Copy", "%0"],
             ],
             terminator: [null, "Exit", "%1"],
@@ -122,7 +127,7 @@ describe("copying of registers", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(11);
+    // expect(evaluate(analyze(input))).toBe(small);
     // expect(table_of_contents(input).size).toBe(1);
   });
 });
@@ -144,8 +149,8 @@ describe("arithmetic operations", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Constant", 11],
-              ["%1", "Constant", 22],
+              ["%0", "Constant", { value: small }],
+              ["%1", "Constant", { value: large }],
               ["%2", "Add", "%0", "%1"],
             ],
             terminator: [null, "Exit", "%2"],
@@ -154,7 +159,7 @@ describe("arithmetic operations", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(33);
+    // expect(evaluate(analyze(input))).toBe(small + large);
     // expect(table_of_contents(input).size).toBe(1);
   });
 });
@@ -226,7 +231,7 @@ describe("labels, jump, and branch", () => {
             block: "@main.first",
             joins: [],
             lines: [
-              ["%1", "Constant", 11],
+              ["%1", "Constant", { value: small }],
             ],
             terminator: [null, "Exit", "%1"],
           },
@@ -234,7 +239,7 @@ describe("labels, jump, and branch", () => {
             block: "@main.second",
             joins: [],
             lines: [
-              ["%2", "Constant", 22],
+              ["%2", "Constant", { value: large }],
             ],
             terminator: [null, "Exit", "%2"],
           },
@@ -242,7 +247,7 @@ describe("labels, jump, and branch", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(22);
+    // expect(evaluate(analyze(input))).toBe(large);
     // expect(table_of_contents(input).size).toBe(3);
   });
 
@@ -274,10 +279,10 @@ describe("labels, jump, and branch", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Constant", true],
-              ["%1", "Constant", 11],
-              ["%2", "Constant", 22],
-              ["%3", "Constant", 44],
+              ["%0", "Constant", { value: true }],
+              ["%1", "Constant", { value: small }],
+              ["%2", "Constant", { value: large }],
+              ["%3", "Constant", { value: huge }],
             ],
             terminator: [null, "Branch", "%0", ["@main.then", "@main.else"]],
           },
@@ -307,7 +312,7 @@ describe("labels, jump, and branch", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(33);
+    // expect(evaluate(analyze(input))).toBe(small + large);
     // expect(table_of_contents(input).size).toBe(4);
   });
 
@@ -339,10 +344,10 @@ describe("labels, jump, and branch", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Constant", false],
-              ["%1", "Constant", 11],
-              ["%2", "Constant", 22],
-              ["%3", "Constant", 44],
+              ["%0", "Constant", { value: false }],
+              ["%1", "Constant", { value: small }],
+              ["%2", "Constant", { value: large }],
+              ["%3", "Constant", { value: huge }],
             ],
             terminator: [null, "Branch", "%0", ["@main.then", "@main.else"]],
           },
@@ -372,7 +377,7 @@ describe("labels, jump, and branch", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(66);
+    // expect(evaluate(analyze(input))).toBe(large + huge);
     // expect(table_of_contents(input).size).toBe(4);
   });
 });
@@ -398,8 +403,8 @@ describe("function call", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Constant", 11],
-              ["%1", "Constant", 22],
+              ["%0", "Constant", { value: small }],
+              ["%1", "Constant", { value: large }],
               ["%2", "Call", "@identity", ["%1"]],
             ],
             terminator: [null, "Exit", "%2"],
@@ -420,7 +425,7 @@ describe("function call", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(22);
+    // expect(evaluate(analyze(input))).toBe(large);
     // expect(table_of_contents(input).size).toBe(2);
   });
 
@@ -444,8 +449,8 @@ describe("function call", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Constant", 11],
-              ["%1", "Constant", 22],
+              ["%0", "Constant", { value: small }],
+              ["%1", "Constant", { value: large }],
               ["%2", "Call", "@first", ["%0", "%1"]],
             ],
             terminator: [null, "Exit", "%2"],
@@ -466,7 +471,7 @@ describe("function call", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(11);
+    // expect(evaluate(analyze(input))).toBe(small);
     // expect(table_of_contents(input).size).toBe(2);
   });
 
@@ -511,8 +516,8 @@ describe("function call", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Constant", 5],
-              ["%1", "Constant", 1],
+              ["%0", "Constant", { value: 5 }],
+              ["%1", "Constant", { value: 1 }],
               ["%2", "Call", "@factorial", ["%0", "%1"]],
             ],
             terminator: [null, "Exit", "%2"],
@@ -527,7 +532,7 @@ describe("function call", () => {
             block: "@factorial.entry",
             joins: [],
             lines: [
-              ["%3", "Constant", 1],
+              ["%3", "Constant", { value: 1 }],
               ["%6", "Equal", "%n", "%3"],
             ],
             terminator: [null, "Branch", "%6", [
@@ -581,8 +586,8 @@ describe("static single assignment", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Constant", 11],
-              ["%0", "Constant", 22], // attempt to reassign register 0
+              ["%0", "Constant", { value: small }],
+              ["%0", "Constant", { value: large }], // attempt to reassign register 0
             ],
             terminator: [null, "Exit", "%1"],
           },
@@ -614,8 +619,8 @@ describe("static single assignment", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Constant", 11],
-              ["%1", "Constant", 22],
+              ["%0", "Constant", { value: small }],
+              ["%1", "Constant", { value: large }],
               ["%2", "Call", "@first", ["%0", "%1"]],
             ],
             terminator: [null, "Exit", "%2"],
@@ -664,8 +669,8 @@ describe("static single assignment", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Constant", 11],
-              ["%1", "Constant", 22],
+              ["%0", "Constant", { value: small }],
+              ["%1", "Constant", { value: large }],
               ["%2", "Call", "@identity", ["%1"]],
             ],
             terminator: [null, "Exit", "%2"],
@@ -735,7 +740,7 @@ describe("static single assignment", () => {
             block: "@main.first",
             joins: [],
             lines: [
-              ["%1", "Constant", 11],
+              ["%1", "Constant", { value: small }],
             ],
             terminator: [null, "Jump", "@main.end"],
           },
@@ -743,7 +748,7 @@ describe("static single assignment", () => {
             block: "@main.second",
             joins: [],
             lines: [
-              ["%2", "Constant", 22],
+              ["%2", "Constant", { value: large }],
             ],
             terminator: [null, "Jump", "@main.end"],
           },
@@ -759,7 +764,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(22);
+    // expect(evaluate(analyze(input))).toBe(large);
     // expect(table_of_contents(input).size).toBe(4);
   });
 
@@ -799,9 +804,9 @@ describe("static single assignment", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Constant", 0],
-              ["%1", "Constant", 1],
-              ["%2", "Constant", 3],
+              ["%0", "Constant", { value: 0 }],
+              ["%1", "Constant", { value: 1 }],
+              ["%2", "Constant", { value: 3 }],
             ],
             terminator: [null, "Jump", "@main.loop"],
           },
@@ -873,7 +878,7 @@ describe("static single assignment", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%condition", "Constant", false],
+              ["%condition", "Constant", { value: false }],
             ],
             terminator: [null, "Branch", "%condition", ["@main.a", "@main.b"]],
           },
@@ -881,7 +886,7 @@ describe("static single assignment", () => {
             block: "@main.a",
             joins: [],
             lines: [
-              ["%alpha", "Constant", 10],
+              ["%alpha", "Constant", { value: small }],
             ],
             terminator: [null, "Jump", "@main.d"],
           },
@@ -889,7 +894,7 @@ describe("static single assignment", () => {
             block: "@main.b",
             joins: [],
             lines: [
-              ["%bravo", "Constant", 20],
+              ["%bravo", "Constant", { value: large }],
             ],
             terminator: [null, "Jump", "@main.c"],
           },
@@ -897,7 +902,7 @@ describe("static single assignment", () => {
             block: "@main.c",
             joins: [],
             lines: [
-              ["%charlie", "Constant", 21],
+              ["%charlie", "Constant", { value: huge }],
             ],
             terminator: [null, "Jump", "@main.d"],
           },
@@ -922,7 +927,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(41);
+    // expect(evaluate(analyze(input))).toBe(large + huge);
     // expect(table_of_contents(input).size).toBe(5);
   });
 
@@ -968,8 +973,8 @@ describe("static single assignment", () => {
             block: "@main.a",
             joins: [],
             lines: [
-              ["%alpha", "Constant", 10],
-              ["%condition", "Constant", true],
+              ["%alpha", "Constant", { value: small }],
+              ["%condition", "Constant", { value: true }],
             ],
             terminator: [null, "Branch", "%condition", ["@main.b", "@main.c"]],
           },
@@ -977,7 +982,7 @@ describe("static single assignment", () => {
             block: "@main.b",
             joins: [],
             lines: [
-              ["%bravo", "Constant", 20],
+              ["%bravo", "Constant", { value: large }],
             ],
             terminator: [null, "Jump", "@main.c"],
           },
@@ -996,7 +1001,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(20);
+    // expect(evaluate(analyze(input))).toBe(large);
     // expect(table_of_contents(input).size).toBe(4);
   });
 
@@ -1036,7 +1041,7 @@ describe("static single assignment", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%echo", "Constant", false],
+              ["%echo", "Constant", { value: false }],
             ],
             terminator: [null, "Branch", "%echo", ["@main.a", "@main.c"]],
           },
@@ -1044,7 +1049,7 @@ describe("static single assignment", () => {
             block: "@main.a",
             joins: [],
             lines: [
-              ["%alpha", "Constant", true],
+              ["%alpha", "Constant", { value: true }],
             ],
             terminator: [null, "Branch", "%alpha", ["@main.b", "@main.c"]],
           },
@@ -1052,7 +1057,7 @@ describe("static single assignment", () => {
             block: "@main.b",
             joins: [],
             lines: [
-              ["%bravo", "Constant", true],
+              ["%bravo", "Constant", { value: true }],
             ],
             terminator: [null, "Jump", "@main.c"],
           },
@@ -1111,7 +1116,7 @@ describe("static single assignment", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%echo", "Constant", false],
+              ["%echo", "Constant", { value: false }],
             ],
             terminator: [null, "Branch", "%echo", ["@main.a", "@main.c"]],
           },
@@ -1119,7 +1124,7 @@ describe("static single assignment", () => {
             block: "@main.a",
             joins: [],
             lines: [
-              ["%alpha", "Constant", true],
+              ["%alpha", "Constant", { value: true }],
             ],
             terminator: [null, "Branch", "%alpha", ["@main.b", "@main.c"]],
           },
@@ -1127,7 +1132,7 @@ describe("static single assignment", () => {
             block: "@main.b",
             joins: [],
             lines: [
-              ["%bravo", "Constant", true],
+              ["%bravo", "Constant", { value: true }],
             ],
             terminator: [null, "Jump", "@main.c"],
           },
@@ -1169,7 +1174,7 @@ describe("memory and ownership", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%x", "Constant", 42],
+              ["%x", "Constant", { value: small }],
               ["%r", "AddressOf", "%x"],
               ["%t", "Load", "%r"],
             ],
@@ -1179,7 +1184,7 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(42);
+    // expect(evaluate(analyze(input))).toBe(small);
     // expect(table_of_contents(input).size).toBe(1);
   });
 
@@ -1198,7 +1203,7 @@ describe("memory and ownership", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Constant", 0],
+              ["%0", "Constant", { value: 0 }],
               [null, "Drop", "%0"],
             ],
             terminator: [null, "Exit", "%0"],
@@ -1229,8 +1234,8 @@ describe("memory and ownership", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Constant", 0],
-              ["%1", "Constant", 0],
+              ["%0", "Constant", { value: 0 }],
+              ["%1", "Constant", { value: 0 }],
               [null, "Drop", "%0"],
               [null, "Drop", "%0"],
             ],
@@ -1260,7 +1265,7 @@ describe("memory and ownership", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%0", "Constant", 0],
+              ["%0", "Constant", { value: 0 }],
               ["%1", "Move", "%0"],
             ],
             terminator: [null, "Exit", "%0"],
@@ -1291,7 +1296,7 @@ describe("memory and ownership", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%x", "Constant", 42],
+              ["%x", "Constant", { value: small }],
               ["%r", "AddressOf", "%x"],
               [null, "Drop", "%x"],
               ["%t", "Load", "%r"],
@@ -1324,7 +1329,7 @@ describe("memory and ownership", () => {
             block: "@main.entry",
             joins: [],
             lines: [
-              ["%x", "Constant", 42],
+              ["%x", "Constant", { value: small }],
               ["%r", "AddressOf", "%x"],
               ["%y", "Move", "%x"],
               ["%t", "Load", "%r"],
