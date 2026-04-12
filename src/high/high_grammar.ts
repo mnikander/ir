@@ -8,7 +8,8 @@ export type Line         = Call | Memory | Arithmetic | Comparison;
 export type Phi          = [ destination: Register, tag: 'Phi',           inputs: [label: Label, value: Input][]];
 export type Call         = [ destination: Register, tag: 'Call',          label: Label, arguments: Input[] ];
 
-export type Memory       = Copy | Stack | Heap | Borrow | Load | Update | Drop;
+export type Memory       = Constant | Copy | Stack | Heap | Borrow | Load | Update | Drop;
+export type Constant     = [ destination: Register, tag: 'Constant',      value: Primitive ];
 export type Copy         = [ destination: Register, tag: 'Define',        value: Input ];
 export type Stack        = [ destination: Register, tag: 'Stack',         value: Input ];
 export type Heap         = [ destination: Register, tag: 'Heap',          value: Input ];
@@ -40,7 +41,7 @@ export type Jump         = [ destination: null,     tag: 'Jump',          block:
 export type Branch       = [ destination: null,     tag: 'Branch',        condition: Input, block: [Label, Label] ];
 export type Return       = [ destination: null,     tag: 'Return',        left: Input ];
 
-export type Input        = [Primitive] | [Register] | ['Move', Register];
+export type Input        = [Register] | ['Move', Register]; // could add support for immediate values later
 export type Register     = `%${string}`;
 export type Label        = `@${string}`;
 export type Primitive    = { value: number };
