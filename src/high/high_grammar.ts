@@ -41,8 +41,6 @@ export type Branch       = [ destination: null,     tag: 'Branch',        condit
 export type Return       = [ destination: null,     tag: 'Return',        left: Input ];
 
 export type Input        = [Primitive] | [Register] | ['Move', Register];
-export type Value        = { tag: 'Value', value: Primitive };
-export type Pointer      = { tag: 'Borrow' | 'Stack' | 'Heap', value: Register, generation: number };
 export type Register     = `%${string}`;
 export type Label        = `@${string}`;
 export type Primitive    = { value: number };
