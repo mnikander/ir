@@ -77,7 +77,6 @@ describe("constants and exit", () => {
     expect(input).toBeDefined();
     // Lowering/runtime do not currently reject non-unique parameter registers across functions.
     // expect(() => evaluate(analyze(input))).toThrow();
-    // expect(table_of_contents(input).size).toBe(1);
   });
 
   it("must evaluate a constant", () => {
@@ -103,7 +102,6 @@ describe("constants and exit", () => {
     ];
     expect(input).toBeDefined();
     expect(evaluate(lower(input))).toBe(small);
-    // expect(table_of_contents(input).size).toBe(1);
   });
 });
 
@@ -133,7 +131,6 @@ describe("copying of registers", () => {
     ];
     expect(input).toBeDefined();
     expect(evaluate(lower(input))).toBe(small);
-    // expect(table_of_contents(input).size).toBe(1);
   });
 });
 
@@ -165,7 +162,6 @@ describe("arithmetic operations", () => {
     ];
     expect(input).toBeDefined();
     expect(evaluate(lower(input))).toBe(small + large);
-    // expect(table_of_contents(input).size).toBe(1);
   });
 });
 
@@ -253,7 +249,6 @@ describe("labels, jump, and branch", () => {
     ];
     expect(input).toBeDefined();
     expect(evaluate(lower(input))).toBe(large);
-    // expect(table_of_contents(input).size).toBe(3);
   });
 
   it("must execute first branch if the condition is true", () => {
@@ -318,7 +313,6 @@ describe("labels, jump, and branch", () => {
     ];
     expect(input).toBeDefined();
     expect(evaluate(lower(input))).toBe(small + large);
-    // expect(table_of_contents(input).size).toBe(4);
   });
 
   it("must execute the second branch when condition is false", () => {
@@ -383,7 +377,6 @@ describe("labels, jump, and branch", () => {
     ];
     expect(input).toBeDefined();
     expect(evaluate(lower(input))).toBe(large + huge);
-    // expect(table_of_contents(input).size).toBe(4);
   });
 });
 
@@ -431,7 +424,6 @@ describe("function call", () => {
     ];
     expect(input).toBeDefined();
     expect(evaluate(lower(input))).toBe(large);
-    // expect(table_of_contents(input).size).toBe(2);
   });
 
   it("must support calling a binary function", () => {
@@ -477,7 +469,6 @@ describe("function call", () => {
     ];
     expect(input).toBeDefined();
     expect(evaluate(lower(input))).toBe(small);
-    // expect(table_of_contents(input).size).toBe(2);
   });
 
   it("must evaluate tail-recursive functions", () => {
@@ -571,7 +562,6 @@ describe("function call", () => {
     ];
     expect(input).toBeDefined();
     expect(evaluate(lower(input))).toBe(120);
-    // expect(table_of_contents(input).size).toBe(4);
   });
 });
 
@@ -602,7 +592,6 @@ describe("static single assignment", () => {
     expect(input).toBeDefined();
     // Lowering/runtime do not currently reject duplicate parameter names.
     // expect(() => {evaluate(analyze(input))}).toThrow();
-    // expect(table_of_contents(input).size).toBe(1);
   });
 
   it("must throw an error when function parameters have the same name", () => {
@@ -649,7 +638,6 @@ describe("static single assignment", () => {
     expect(input).toBeDefined();
     // Lowering/runtime do not currently reject non-unique parameter registers across functions.
     // expect(() => {evaluate(analyze(input))}).toThrow();
-    // expect(table_of_contents(input).size).toBe(2);
   });
 
   it("must throw an error when function parameter registers are not unique", () => {
@@ -714,7 +702,6 @@ describe("static single assignment", () => {
     expect(input).toBeDefined();
     // Lowering/runtime do not currently reject non-unique parameter registers across functions.
     // expect(() => {evaluate(analyze(input))}).toThrow();
-    // expect(table_of_contents(input).size).toBe(3);
   });
 
   it("phi node must assign from the correct register after an unconditional jump", () => {
@@ -775,7 +762,6 @@ describe("static single assignment", () => {
     ];
     expect(input).toBeDefined();
     expect(evaluate(lower(input))).toBe(large);
-    // expect(table_of_contents(input).size).toBe(4);
   });
 
   it("phi node must assign from the correct register when executing a loop", () => {
@@ -842,7 +828,6 @@ describe("static single assignment", () => {
     ];
     expect(input).toBeDefined();
     expect(evaluate(lower(input))).toBe(3);
-    // expect(table_of_contents(input).size).toBe(3);
   });
 
   it("phi node must allow assignment from dominator blocks which are not the immediate dominator", () => {
@@ -941,7 +926,6 @@ describe("static single assignment", () => {
     ];
     expect(input).toBeDefined();
     expect(evaluate(lower(input))).toBe(large + huge);
-    // expect(table_of_contents(input).size).toBe(5);
   });
 
   it("phi node must allow assignment when both inputs are available", () => {
@@ -1018,7 +1002,6 @@ describe("static single assignment", () => {
     ];
     expect(input).toBeDefined();
     expect(evaluate(lower(input))).toBe(large);
-    // expect(table_of_contents(input).size).toBe(4);
   });
 
   it("must allow assignment when three inputs are available", () => {
@@ -1093,7 +1076,6 @@ describe("static single assignment", () => {
     ];
     expect(input).toBeDefined();
     expect(evaluate(lower(input))).toBe(0);
-    // expect(table_of_contents(input).size).toBe(4);
   });
 
   it("must throw an error when a phi node is non-exhaustive", () => {
@@ -1169,7 +1151,6 @@ describe("static single assignment", () => {
     expect(input).toBeDefined();
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
-    // expect(table_of_contents(input).size).toBe(4);
   });
 });
 
@@ -1202,7 +1183,6 @@ describe("memory and ownership", () => {
     expect(input).toBeDefined();
     // Lowering does not support Borrow yet.
     // expect(evaluate(analyze(input))).toBe(small);
-    // expect(table_of_contents(input).size).toBe(1);
   });
 
   it("must detect a use-after-drop", () => {
@@ -1231,7 +1211,6 @@ describe("memory and ownership", () => {
     expect(input).toBeDefined();
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
-    // expect(table_of_contents(input).size).toBe(1);
   });
 
   it("must detect a double-drop", () => {
@@ -1264,7 +1243,6 @@ describe("memory and ownership", () => {
     expect(input).toBeDefined();
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
-    // expect(table_of_contents(input).size).toBe(1);
   });
 
   it("must detect a use-after-move", () => {
@@ -1296,7 +1274,6 @@ describe("memory and ownership", () => {
     expect(input).toBeDefined();
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
-    // expect(table_of_contents(input).size).toBe(1);
   });
 
   it("must detect a dangling reference when the source register is dropped", () => {
@@ -1329,7 +1306,6 @@ describe("memory and ownership", () => {
     expect(input).toBeDefined();
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
-    // expect(table_of_contents(input).size).toBe(1);
   });
 
   it("must detect a dangling reference when the source register is moved", () => {
