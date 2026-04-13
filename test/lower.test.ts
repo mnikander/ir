@@ -8,7 +8,7 @@ const small: number = 11;
 const large: number = 13;
 const huge: number = 281;
 
-describe.skip("lowering from HIR to LIR", () => {
+describe("lowering from HIR to LIR", () => {
   it("lowers a constant-returning main function", () => {
     const input: HIR.Program = [
       {
@@ -209,7 +209,7 @@ describe.skip("lowering from HIR to LIR", () => {
 
     const expected: LIR.Program = [
       [null, "Noop", "fun @main []"],
-      [null, "Noop", "@main.entry"],
+      [null, "Noop", "@entry"],
       [0, "Constant", { value: 5 }],
       [1, "Call", { line: 5 }, [0], "@factorial"],
       [null, "Return", 1],
@@ -217,23 +217,33 @@ describe.skip("lowering from HIR to LIR", () => {
       [null, "Noop", "fun @factorial [%arg]"],
       [null, "Noop", "@entry"],
       [1, "Constant", { value: 1 }],
+      [null, "Jump", { line: 9 }],
+
+      [null, "Noop", "@phi.gate.from.entry"],
       [2, "Copy", 1],
       [3, "Copy", 0],
-      [null, "Jump", { line: 11 }],
+      [4, "Copy", 2],
+      [5, "Copy", 3],
+      [null, "Jump", { line: 21 }],
+
+      [null, "Noop", "@phi.gate.from.body"],
+      [6, "Copy", 9],
+      [7, "Copy", 10],
+      [4, "Copy", 6],
+      [5, "Copy", 7],
+      [null, "Jump", { line: 21 }],
 
       [null, "Noop", "@gate"],
-      [4, "Greater", 3, 1],
-      [null, "Branch", 4, [{ line: 14 }, { line: 20 }]],
+      [8, "Greater", 5, 1],
+      [null, "Branch", 8, [{ line: 24 }, { line: 28 }]],
 
       [null, "Noop", "@body"],
-      [5, "Multiply", 3, 2],
-      [6, "Subtract", 3, 1],
-      [2, "Copy", 5],
-      [3, "Copy", 6],
-      [null, "Jump", { line: 11 }],
+      [9, "Multiply", 5, 4],
+      [10, "Subtract", 5, 1],
+      [null, "Jump", { line: 15 }],
 
       [null, "Noop", "@end"],
-      [null, "Return", 3],
+      [null, "Return", 5],
     ];
 
     expect(lower(input)).toEqual(expected);
