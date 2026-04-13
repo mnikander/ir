@@ -1,6 +1,8 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 import * as HIGH from "../src/high/high_grammar.ts";
+import { lower } from "../src/passes/lower.ts";
+import { evaluate } from "../src/runtime/machine.ts";
 // import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
 // choose prime numbers for tests, to reduce chances of false-positive results for arithmetic ops
@@ -19,6 +21,7 @@ describe("constants and exit", () => {
       },
     ];
     expect(input).toBeDefined();
+    // Lowering/runtime do not currently reject a missing @main.entry block.
     // expect(() => evaluate(analyze(input))).toThrow();
   });
 
@@ -44,6 +47,7 @@ describe("constants and exit", () => {
       },
     ];
     expect(input).toBeDefined();
+    // Lowering/runtime do not currently reject duplicate parameter names.
     // expect(() => evaluate(analyze(input))).toThrow();
   });
 
@@ -71,7 +75,8 @@ describe("constants and exit", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(() => {evaluate(analyze(input))}).toThrow();
+    // Lowering/runtime do not currently reject non-unique parameter registers across functions.
+    // expect(() => evaluate(analyze(input))).toThrow();
     // expect(table_of_contents(input).size).toBe(1);
   });
 
@@ -97,7 +102,7 @@ describe("constants and exit", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(small);
+    expect(evaluate(lower(input))).toBe(small);
     // expect(table_of_contents(input).size).toBe(1);
   });
 });
@@ -127,7 +132,7 @@ describe("copying of registers", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(small);
+    expect(evaluate(lower(input))).toBe(small);
     // expect(table_of_contents(input).size).toBe(1);
   });
 });
@@ -159,7 +164,7 @@ describe("arithmetic operations", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(small + large);
+    expect(evaluate(lower(input))).toBe(small + large);
     // expect(table_of_contents(input).size).toBe(1);
   });
 });
@@ -247,7 +252,7 @@ describe("labels, jump, and branch", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(large);
+    expect(evaluate(lower(input))).toBe(large);
     // expect(table_of_contents(input).size).toBe(3);
   });
 
@@ -312,7 +317,7 @@ describe("labels, jump, and branch", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(small + large);
+    expect(evaluate(lower(input))).toBe(small + large);
     // expect(table_of_contents(input).size).toBe(4);
   });
 
@@ -377,7 +382,7 @@ describe("labels, jump, and branch", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(large + huge);
+    expect(evaluate(lower(input))).toBe(large + huge);
     // expect(table_of_contents(input).size).toBe(4);
   });
 });
@@ -425,7 +430,7 @@ describe("function call", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(large);
+    expect(evaluate(lower(input))).toBe(large);
     // expect(table_of_contents(input).size).toBe(2);
   });
 
@@ -471,7 +476,7 @@ describe("function call", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(small);
+    expect(evaluate(lower(input))).toBe(small);
     // expect(table_of_contents(input).size).toBe(2);
   });
 
@@ -565,7 +570,7 @@ describe("function call", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(120);
+    expect(evaluate(lower(input))).toBe(120);
     // expect(table_of_contents(input).size).toBe(4);
   });
 });
@@ -595,6 +600,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    // Lowering/runtime do not currently reject duplicate parameter names.
     // expect(() => {evaluate(analyze(input))}).toThrow();
     // expect(table_of_contents(input).size).toBe(1);
   });
@@ -641,6 +647,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    // Lowering/runtime do not currently reject non-unique parameter registers across functions.
     // expect(() => {evaluate(analyze(input))}).toThrow();
     // expect(table_of_contents(input).size).toBe(2);
   });
@@ -705,6 +712,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    // Lowering/runtime do not currently reject non-unique parameter registers across functions.
     // expect(() => {evaluate(analyze(input))}).toThrow();
     // expect(table_of_contents(input).size).toBe(3);
   });
@@ -766,7 +774,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(large);
+    expect(evaluate(lower(input))).toBe(large);
     // expect(table_of_contents(input).size).toBe(4);
   });
 
@@ -833,7 +841,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(3);
+    expect(evaluate(lower(input))).toBe(3);
     // expect(table_of_contents(input).size).toBe(3);
   });
 
@@ -932,7 +940,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(large + huge);
+    expect(evaluate(lower(input))).toBe(large + huge);
     // expect(table_of_contents(input).size).toBe(5);
   });
 
@@ -1009,7 +1017,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(large);
+    expect(evaluate(lower(input))).toBe(large);
     // expect(table_of_contents(input).size).toBe(4);
   });
 
@@ -1084,7 +1092,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(evaluate(analyze(input))).toBe(false);
+    expect(evaluate(lower(input))).toBe(0);
     // expect(table_of_contents(input).size).toBe(4);
   });
 
@@ -1160,13 +1168,13 @@ describe("static single assignment", () => {
     ];
     expect(input).toBeDefined();
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
-    // expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
     // expect(table_of_contents(input).size).toBe(4);
   });
 });
 
 describe("memory and ownership", () => {
-  it("must reference and dereference a register", () => {
+  it.skip("must reference and dereference a register", () => {
     // function @main []:
     // block @main.entry:
     // %x = constant 42
@@ -1192,6 +1200,7 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    // Lowering does not support Borrow yet.
     // expect(evaluate(analyze(input))).toBe(small);
     // expect(table_of_contents(input).size).toBe(1);
   });
@@ -1221,7 +1230,7 @@ describe("memory and ownership", () => {
     ];
     expect(input).toBeDefined();
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
-    // expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
     // expect(table_of_contents(input).size).toBe(1);
   });
 
@@ -1254,7 +1263,7 @@ describe("memory and ownership", () => {
     ];
     expect(input).toBeDefined();
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
-    // expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
     // expect(table_of_contents(input).size).toBe(1);
   });
 
@@ -1286,7 +1295,7 @@ describe("memory and ownership", () => {
     ];
     expect(input).toBeDefined();
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
-    // expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
     // expect(table_of_contents(input).size).toBe(1);
   });
 
@@ -1319,7 +1328,7 @@ describe("memory and ownership", () => {
     ];
     expect(input).toBeDefined();
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
-    // expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
     // expect(table_of_contents(input).size).toBe(1);
   });
 
@@ -1355,7 +1364,7 @@ describe("memory and ownership", () => {
     ];
     expect(input).toBeDefined();
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
-    // expect(() => {evaluate(input)}).toThrow(); // runtime must flag this as an error
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
     // expect(count_cfg_nodes(input)).toBe(1);// expect(table_of_contents(input).size).toBe(1);
   });
 });
