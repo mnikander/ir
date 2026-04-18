@@ -40,7 +40,6 @@ describe("constants and exit", () => {
       [null, "Return", 0],
     ];
     expect(() => evaluate(input)).toThrow();
-    // TODO: it would be nice if I could enforce 'CFG.length === 0' here
   });
 
   it("must throw a runtime-error when exiting with a Pointer instead of a Value", () => {
