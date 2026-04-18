@@ -1,39 +1,32 @@
 # Repository Overview
 
-This repository is organized around a new split between:
+This repository is organized around three active layers:
 
 - a high-level SSA-style IR in `src/high/`
-- a lower-level register/offset-based IR in `src/low/`
-- a register-machine runtime in `src/runtime/`
+- a lowering pipeline in `src/passes/`
+- a low-level stack/register-oriented IR plus runtime in `src/low/` and `src/runtime/`
 
-The older flat interpreter has been moved aside into `old_src/` and `test/old/`.
+The older `old_src/` implementation has been removed, so the active codebase is the only architecture described here.
 
 ## Current Shape
 
-The active codebase is no longer the old tuple-interpreter described in earlier docs.
-The repo looks like a compiler/runtime prototype with three active layers:
+The main execution path is:
 
-1. High-level IR
-   - structured by functions and blocks
-   - intended to model the source-facing SSA form
-   - lives in [high_grammar.ts](/home/marco/Documents/ir/src/high/high_grammar.ts)
+1. build a program in HIR
+2. eliminate phi nodes
+3. rename HIR registers into numeric stack slots
+4. linearize blocks/functions into flat LIR
+5. execute the resulting LIR in the runtime
 
-2. Low-level IR
-   - linear instruction stream
-   - uses numeric stack-frame offsets and line-number jumps/calls
-   - lives in [low_grammar.ts](/home/marco/Documents/ir/src/low/low_grammar.ts)
-
-3. Runtime
-   - a register machine / stack machine hybrid that executes the low-level IR
-   - lives in [machine.ts](/home/marco/Documents/ir/src/runtime/machine.ts)
+The entry point for that pipeline is [lower.ts](/home/marco/Documents/ir/src/passes/lower.ts).
 
 ## Important Files
 
 - [README.md](/home/marco/Documents/ir/README.md)
-  Short project intro and Deno commands. It still gives the project-level entry point, but the internal structure has evolved beyond the older interpreter layout.
+  Short project intro and common Deno commands.
 
 - [design.md](/home/marco/Documents/ir/doc/design.md)
-  High-level design goals for the IR family.
+  High-level design goals for the IR.
 
 - [decisions.md](/home/marco/Documents/ir/doc/decisions.md)
   Decision log. This is the best place to understand why the architecture keeps shifting.
@@ -42,59 +35,68 @@ The repo looks like a compiler/runtime prototype with three active layers:
   Human-readable instruction reference.
 
 - [invariants.md](/home/marco/Documents/ir/doc/invariants.md)
-  Intended invariants for valid IR programs.
+  Intended invariants for valid programs.
 
 ## Source Layout
 
 ### High-Level IR
 
 - [high_grammar.ts](/home/marco/Documents/ir/src/high/high_grammar.ts)
-  Defines the main structured HIR:
+  Defines the structured HIR:
   - `Program = Function[]`
-  - `Function = { func, params, blocks }`
-  - `Block = { block, joins, lines, terminator }`
+  - `Function = { name, params, blocks }`
+  - `Block = { name, joins, lines, terminator }`
 
-  This grammar supports:
-  - SSA-style phi nodes
-  - memory/ownership-oriented operations like `Constant`, `Copy`, `Stack`, `Heap`, `Borrow`, `Load`, `Update`, `Drop`
-  - arithmetic and comparison operations over `Input`
-  - explicit block terminators `Jump`, `Branch`, and `Return`
+  Current HIR features:
+  - SSA-style phi nodes in `joins`
+  - line instructions including `Call`, `Constant`, `Assign`, arithmetic, and comparisons
+  - memory-oriented forms `Stack`, `Heap`, `Borrow`, `Load`, and `Drop`
+  - terminators `Jump`, `Branch`, and `Return`
+  - inputs modeled as either `[register]` or `['consume', register]`
 
-- [factorial_example.ts](/home/marco/Documents/ir/src/high/factorial_example.ts)
-  Small example HIR program for orientation.
+### Lowering Pipeline
+
+- [lower.ts](/home/marco/Documents/ir/src/passes/lower.ts)
+  Runs phi elimination, register renaming, and linearization.
+
+- [phi_elimination/mod.gen.ts](/home/marco/Documents/ir/src/passes/phi_elimination/mod.gen.ts)
+  Eliminates phi nodes by inserting edge-splitting blocks and `Assign` instructions.
+
+- [lowering/rename.gen.ts](/home/marco/Documents/ir/src/passes/lowering/rename.gen.ts)
+  Maps HIR registers to numeric LIR offsets.
+  It preserves `consume` on inputs and currently rejects unsupported HIR memory instructions during lowering.
+
+- [lowering/linearize.gen.ts](/home/marco/Documents/ir/src/passes/lowering/linearize.gen.ts)
+  Emits flat LIR with concrete line-number targets.
+  `consume` lowering is implemented here:
+  - consumed `Assign`, arithmetic operands, and call arguments become `Copy` plus `Drop`
+  - consumed `Branch` and `Return` inputs are first materialized into temporaries so control-flow targets remain correct
+
+- [lowering/types.gen.ts](/home/marco/Documents/ir/src/passes/lowering/types.gen.ts)
+  Intermediate numbered representation used between renaming and final LIR emission.
 
 ### Low-Level IR
 
 - [low_grammar.ts](/home/marco/Documents/ir/src/low/low_grammar.ts)
-  Defines the LIR consumed by the runtime.
+  Defines the flat LIR consumed by the runtime.
 
- Key traits:
+  Key traits:
   - `Program = Instruction[]`
-  - includes a lightweight `Noop` instruction used for metadata/notes in programs and tests
-  - registers are replaced by numeric `Offset`s
-  - literal numbers are wrapped as `Primitive = { value: number }`
-  - control flow targets are concrete `LineNumber`s
-  - instructions are grouped into `Noop`, `Memory`, `Arithmetic`, `Comparison`, and `Control`
+  - instructions use numeric `Offset`s instead of named registers
+  - control flow uses concrete `LineNumber`s
+  - includes metadata `Noop` instructions used for function/block notes
 
-  Currently visible low-level operations include:
-  - metadata: `Noop`
+  Current LIR groups:
   - memory: `Constant`, `Copy`, `Load`, `Store`, `AddressOf`, `Drop`
-  - arithmetic/comparison families
+  - arithmetic and comparison families
   - control: `Jump`, `Branch`, `Call`, `Return`
 
-## Runtime
+### Runtime
 
 - [machine.ts](/home/marco/Documents/ir/src/runtime/machine.ts)
-  Main evaluator for the low-level IR.
+  Executes LIR programs and returns a plain `number`.
 
-  Current runtime shape:
-  - initializes the runtime through helpers in `stack.ts`
-  - executes instructions by reading `pc` from the top control frame
-  - stores runtime data in a flat data stack plus a separate control stack
-  - uses small helper operations for arithmetic/comparison families instead of open-coded repetition
-  - evaluates an LIR program down to a plain `number`
-
-  Implemented today:
+  Implemented runtime operations:
   - `Noop`
   - `Constant`
   - `Copy`
@@ -118,99 +120,79 @@ The repo looks like a compiler/runtime prototype with three active layers:
   - `GreaterEqual`
   - `Jump`
   - `Branch`
-  - `Return`
   - `Call`
+  - `Return`
 
 - [stack.ts](/home/marco/Documents/ir/src/runtime/stack.ts)
   Runtime data model and helpers.
-
-  Important concepts:
-  - `Stack = { data, control, generation }`
-  - `Frame = { return_address, base_address, pc, generation_counter, note? }`
-  - runtime data can be `Value`, `Pointer`, or `Dead`
-  - pointers carry a generation number, and stack slots track their current generation
-  - `Dead` marks a stack slot whose contents have been dropped
-  - `initialize_stack()` builds the initial exit frame and main-function frame
-  - `is_executable()` controls the main evaluation loop
-  - helper assertions such as `assert_value()`, `assert_pointer()`, and `assert_not_dead()` enforce runtime expectations
+  It tracks values, pointers, dead slots, and pointer generations.
 
 - [utility.ts](/home/marco/Documents/ir/src/utility.ts)
-  Small shared helpers such as `valid()`.
+  Shared helpers such as `valid()`.
 
 ## Tests
 
-There are multiple test layers:
-
-- [runtime.test.ts](/home/marco/Documents/ir/test/runtime.test.ts)
-  Main active runtime tests for the low-level register machine.
-  These are the most important tests for current execution behavior.
-  They cover the arithmetic and comparison instruction families, memory operations, pointer/address behavior, unconditional jump, branching, and function calls in the low-level machine.
+The current test suite is split by layer:
 
 - [high.test.ts](/home/marco/Documents/ir/test/high.test.ts)
-  HIR-shape tests/examples.
-  Many assertions are currently placeholders or commented out, which suggests this area is still under construction.
+  End-to-end HIR examples that lower and execute through the runtime.
 
-- [evaluate.test.ts](/home/marco/Documents/ir/test/old/evaluate.test.ts)
-  Old interpreter tests preserved under `test/old/`.
+- [runtime.test.ts](/home/marco/Documents/ir/test/runtime.test.ts)
+  Direct LIR runtime tests covering memory operations, arithmetic/comparison behavior, control flow, and calls.
 
-Practical takeaway:
-If you are changing the active evaluator, start with [runtime.test.ts](/home/marco/Documents/ir/test/runtime.test.ts), not the archived tests.
+- [lower.gen.test.ts](/home/marco/Documents/ir/test/passes/lower.gen.test.ts)
+  Tests the full HIR-to-LIR lowering pipeline.
 
-## Legacy / Archive
+- [passes.gen.test.ts](/home/marco/Documents/ir/test/passes/passes.gen.test.ts)
+  Tests register renaming and linearization in isolation.
 
-- `old_src/`
-  Archived implementation of the earlier interpreter architecture.
+- [phi.gen.test.ts](/home/marco/Documents/ir/test/passes/phi.gen.test.ts)
+  Tests predecessor collection and phi elimination.
 
-  Notable files:
-  - [analysis.ts](/home/marco/Documents/ir/old_src/analysis.ts)
-  - [evaluate.ts](/home/marco/Documents/ir/old_src/evaluate.ts)
-  - [state.ts](/home/marco/Documents/ir/old_src/state.ts)
-  - [to_string.ts](/home/marco/Documents/ir/old_src/to_string.ts)
-
-This folder is useful for reference and migration work, but it is no longer the primary implementation path.
+Several test files were renamed compared with earlier repo states, so these are the current names to use.
 
 ## Other Repo Areas
 
 - `doc/`
-  Design docs, invariants, grammar notes, and instruction signatures.
+  Design docs, invariants, grammar notes, and signatures.
 
 - `id/`
   Small utility area for ID generation experiments.
 
-- `notes.ignore.md`
-  Scratch notes outside the main tracked architecture docs.
-
 ## Suggested Workflow
 
-If we are working on the active runtime:
+If we are working on HIR design or semantics:
 
-1. Read [low_grammar.ts](/home/marco/Documents/ir/src/low/low_grammar.ts) to confirm the exact instruction format.
-2. Inspect [stack.ts](/home/marco/Documents/ir/src/runtime/stack.ts) to understand addressing and frame layout.
-3. Implement runtime behavior in [machine.ts](/home/marco/Documents/ir/src/runtime/machine.ts).
-4. Verify behavior in [runtime.test.ts](/home/marco/Documents/ir/test/runtime.test.ts).
+1. Read [high_grammar.ts](/home/marco/Documents/ir/src/high/high_grammar.ts).
+2. Check [high.test.ts](/home/marco/Documents/ir/test/high.test.ts) for concrete examples.
+3. Use the docs in [doc/](/home/marco/Documents/ir/doc/design.md) for design context.
 
-If we are working on the HIR design:
+If we are working on lowering:
 
-1. Start with [high_grammar.ts](/home/marco/Documents/ir/src/high/high_grammar.ts).
-2. Use [high.test.ts](/home/marco/Documents/ir/test/high.test.ts) and [factorial_example.ts](/home/marco/Documents/ir/src/high/factorial_example.ts) as concrete examples of the current HIR shape.
-3. Use [design.md](/home/marco/Documents/ir/doc/design.md), [decisions.md](/home/marco/Documents/ir/doc/decisions.md), and [invariants.md](/home/marco/Documents/ir/doc/invariants.md) as the design context.
+1. Start at [lower.ts](/home/marco/Documents/ir/src/passes/lower.ts).
+2. Inspect phi elimination in [mod.gen.ts](/home/marco/Documents/ir/src/passes/phi_elimination/mod.gen.ts).
+3. Inspect slot assignment in [rename.gen.ts](/home/marco/Documents/ir/src/passes/lowering/rename.gen.ts).
+4. Inspect final emission in [linearize.gen.ts](/home/marco/Documents/ir/src/passes/lowering/linearize.gen.ts).
+5. Verify behavior in [lower.gen.test.ts](/home/marco/Documents/ir/test/passes/lower.gen.test.ts), [passes.gen.test.ts](/home/marco/Documents/ir/test/passes/passes.gen.test.ts), and [phi.gen.test.ts](/home/marco/Documents/ir/test/passes/phi.gen.test.ts).
 
-If we are tracing older behavior:
+If we are working on execution behavior:
 
-1. Check `old_src/` and `test/old/`.
-2. Treat that code as reference material unless the task is explicitly about migration/cleanup.
+1. Read [low_grammar.ts](/home/marco/Documents/ir/src/low/low_grammar.ts).
+2. Inspect [stack.ts](/home/marco/Documents/ir/src/runtime/stack.ts).
+3. Implement or adjust behavior in [machine.ts](/home/marco/Documents/ir/src/runtime/machine.ts).
+4. Verify it in [runtime.test.ts](/home/marco/Documents/ir/test/runtime.test.ts).
 
 ## Commands
 
 - Run all tests: `deno test`
+- Run only HIR examples: `deno test test/high.test.ts`
 - Run only runtime tests: `deno test test/runtime.test.ts`
-- Run only HIR tests: `deno test test/high.test.ts`
+- Run only lowering tests: `deno test test/passes/lower.gen.test.ts`
+- Run only pass-level tests: `deno test test/passes/passes.gen.test.ts`
+- Run only phi-elimination tests: `deno test test/passes/phi.gen.test.ts`
 
-## Notes For Future Work
+## Notes
 
-- The repo now contains multiple IR layers, but only the low-level runtime is actively executable.
-- The runtime is now explicitly tracking dropped stack slots and pointer generations, which is a meaningful step toward stronger memory-safety checks in the low-level machine.
-- The biggest source of confusion for future sessions will likely be the coexistence of:
-  - active runtime code in `src/runtime/`
-  - active-but-not-yet-executable HIR work in `src/high/`
-  - archived interpreter code in `old_src/`
+- The active executable path is HIR -> lowering passes -> LIR -> runtime.
+- `consume` is part of the HIR input model and is lowered explicitly.
+- Lowering does not yet support every HIR memory instruction even though those instructions exist in the grammar.
