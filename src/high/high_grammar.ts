@@ -13,7 +13,7 @@ export type Constant     = [ destination: Register, tag: 'Constant',      value:
 export type Assign       = [ destination: Register, tag: 'Assign',        value: Input ];
 export type Stack        = [ destination: Register, tag: 'Stack',         value: Input ];
 export type Heap         = [ destination: Register, tag: 'Heap',          value: Input ];
-export type Borrow       = [ destination: Register, tag: 'Borrow',        pointer: Register ];
+export type Borrow       = [ destination: Register, tag: 'Borrow',        value: Register ];
 export type Load         = [ destination: Register, tag: 'Load',          pointer: Register ];
 export type Drop         = [ destination: null,     tag: 'Drop',          value: Register ];
 
