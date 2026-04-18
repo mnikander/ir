@@ -97,6 +97,10 @@ function lower_line(line: NumberedLine): UnresolvedInstruction[] {
         "Copy",
         offset_of(line[2]),
       ], [line[2]]);
+    case "Borrow":
+      return [[line[0], "AddressOf", line[2]]];
+    case "Load":
+      return [[line[0], "Load", line[2]]];
     case "Call": {
       const lowered: UnresolvedCall = [
         line[0],

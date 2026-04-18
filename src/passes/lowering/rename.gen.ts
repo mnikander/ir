@@ -4,12 +4,14 @@ import * as HIR from "../../high/high_grammar.ts";
 import * as LIR from "../../low/low_grammar.ts";
 import {
   NumberedBlock,
+  NumberedBorrow,
   NumberedBranch,
   NumberedCall,
   NumberedAssign,
   NumberedFunction,
   NumberedInput,
   NumberedLine,
+  NumberedLoad,
   NumberedProgram,
   NumberedReturn,
   NumberedTerminator,
@@ -144,6 +146,22 @@ function rename_line(
       ];
       return renamed;
     }
+    case "Borrow": {
+      const renamed: NumberedBorrow = [
+        get_destination_slot(function_name, block_name, line, slots),
+        "Borrow",
+        get_slot(slots, line[2], context),
+      ];
+      return renamed;
+    }
+    case "Load": {
+      const renamed: NumberedLoad = [
+        get_destination_slot(function_name, block_name, line, slots),
+        "Load",
+        get_slot(slots, line[2], context),
+      ];
+      return renamed;
+    }
     case "Add":
     case "Subtract":
     case "Multiply":
@@ -171,8 +189,6 @@ function rename_line(
       ];
     case "Stack":
     case "Heap":
-    case "Borrow":
-    case "Load":
     case "Drop":
       throw Error(
         `Lowering does not support HIR instruction '${
@@ -256,6 +272,8 @@ function get_destination_register(
     case "Constant":
     case "Assign":
     case "Call":
+    case "Borrow":
+    case "Load":
     case "Add":
     case "Subtract":
     case "Multiply":
@@ -273,8 +291,6 @@ function get_destination_register(
       return line[0];
     case "Stack":
     case "Heap":
-    case "Borrow":
-    case "Load":
     case "Drop":
       throw Error(
         `Lowering does not support HIR instruction '${

@@ -41,7 +41,11 @@ export type NumberedCall = [
   arguments: NumberedInput[],
 ];
 
-export type NumberedMemory = NumberedConstant | NumberedAssign;
+export type NumberedMemory =
+  | NumberedConstant
+  | NumberedAssign
+  | NumberedBorrow
+  | NumberedLoad;
 export type NumberedConstant = [
   destination: LIR.Offset,
   tag: "Constant",
@@ -51,6 +55,16 @@ export type NumberedAssign = [
   destination: LIR.Offset,
   tag: "Assign",
   value: NumberedInput,
+];
+export type NumberedBorrow = [
+  destination: LIR.Offset,
+  tag: "Borrow",
+  source: LIR.Offset,
+];
+export type NumberedLoad = [
+  destination: LIR.Offset,
+  tag: "Load",
+  source: LIR.Offset,
 ];
 
 export type NumberedArithmetic =
@@ -172,6 +186,8 @@ export type ResolvedInstruction =
   | LIR.Noop
   | LIR.Constant
   | LIR.Copy
+  | LIR.Load
+  | LIR.AddressOf
   | LIR.Drop
   | LIR.Add
   | LIR.Subtract

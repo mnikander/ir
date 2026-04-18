@@ -130,6 +130,36 @@ describe("lowering from HIR to LIR", () => {
     ]);
   });
 
+  it("lowers borrow and load into address_of and load without extra temporaries", () => {
+    const input: HIR.Program = [
+      {
+        name: "@main",
+        params: [],
+        blocks: [
+          {
+            name: "@entry",
+            joins: [],
+            lines: [
+              ["%x", "Constant", { value: small }],
+              ["%r", "Borrow", "%x"],
+              ["%t", "Load", "%r"],
+            ],
+            terminator: [null, "Return", ["%t"]],
+          },
+        ],
+      },
+    ];
+
+    expect(lower(input)).toEqual([
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@entry"],
+      [0, "Constant", { value: small }],
+      [1, "AddressOf", 0],
+      [2, "Load", 1],
+      [null, "Return", 2],
+    ]);
+  });
+
   it("lowers consumed control-flow inputs while keeping block targets correct", () => {
     const input: HIR.Program = [
       {

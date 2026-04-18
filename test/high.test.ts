@@ -1236,7 +1236,7 @@ describe("memory and ownership", () => {
     expect(evaluate(lower(input))).toBe(small);
   });
 
-  it.skip("must reference and dereference a register", () => {
+  it("must reference and dereference a register", () => {
     // function @main []:
     // block @entry:
     // %x = constant 42
@@ -1262,8 +1262,7 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
-    // Lowering does not support Borrow yet.
-    // expect(evaluate(analyze(input))).toBe(small);
+    expect(evaluate(lower(input))).toBe(small);
   });
 
   it("must detect a use-after-drop", () => {
