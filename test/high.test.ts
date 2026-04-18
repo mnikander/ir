@@ -1211,6 +1211,31 @@ describe("memory and ownership", () => {
     expect(evaluate(lower(input))).toBe(small + large);
   });
 
+  it("must allow consuming the return operand", () => {
+    // function @main []:
+    // block @entry:
+    // %0 = constant 11
+    // exit (move %0)
+    const input: HIGH.Program = [
+      {
+        name: "@main",
+        params: [],
+        blocks: [
+          {
+            name: "@entry",
+            joins: [],
+            lines: [
+              ["%0", "Constant", { value: small }],
+            ],
+            terminator: [null, "Return", ["consume", "%0"]],
+          },
+        ],
+      },
+    ];
+    expect(input).toBeDefined();
+    expect(evaluate(lower(input))).toBe(small);
+  });
+
   it.skip("must reference and dereference a register", () => {
     // function @main []:
     // block @entry:
