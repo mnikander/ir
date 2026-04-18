@@ -244,7 +244,7 @@ function create_name_generator<Name extends string>(
 }
 
 function get_input_register(input: HIGH.Input): HIGH.Register {
-  return input[0] === "Move" ? input[1] : input[0];
+  return input[0] === "consume" ? input[1] : input[0];
 }
 
 function strip_sigils(name: HIGH.Label | HIGH.Register): string {

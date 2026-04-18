@@ -41,7 +41,7 @@ export type Jump         = [ destination: null,     tag: 'Jump',          block:
 export type Branch       = [ destination: null,     tag: 'Branch',        condition: Input, block: [Label, Label] ];
 export type Return       = [ destination: null,     tag: 'Return',        left: Input ];
 
-export type Input        = [Register] | ['Move', Register]; // could add support for immediate values later
+export type Input        = [Register] | ['consume', Register]; // could add support for immediate values later
 export type Register     = `%${string}`;
 export type Label        = `@${string}`;
 export type Primitive    = { value: number };

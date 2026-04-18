@@ -1264,7 +1264,7 @@ describe("memory and ownership", () => {
               // TODO: this copy-move looks weird, it's not really what I had in mind. Do I need
               // a standalone move instruction, _in addition_ to the access modifier? Or is there
               // a cleaner way to do this?
-              ["%1", "Copy", ["Move", "%0"]],
+              ["%1", "Copy", ["consume", "%0"]],
             ],
             terminator: [null, "Return", ["%0"]],
           },
@@ -1330,7 +1330,7 @@ describe("memory and ownership", () => {
               // TODO: this copy-move looks weird, it's not really what I had in mind. Do I need
               // a standalone move instruction, _in addition_ to the access modifier? Or is there
               // a cleaner way to do this?
-              ["%y", "Copy", ["Move", "%x"]],
+              ["%y", "Copy", ["consume", "%x"]],
               ["%t", "Load", "%r"],
             ],
             terminator: [null, "Return", ["%t"]],

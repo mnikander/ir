@@ -281,7 +281,7 @@ function get_plain_register(
   input: HIR.Input,
   context: string,
 ): HIR.Register {
-  if (input[0] === "Move") {
+  if (input[0] === "consume") {
     throw Error(`Lowering does not support move inputs in ${context}`);
   }
 
