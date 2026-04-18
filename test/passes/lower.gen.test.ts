@@ -16,7 +16,7 @@ describe("lowering from HIR to LIR", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -29,7 +29,7 @@ describe("lowering from HIR to LIR", () => {
 
     const expected: LIR.Program = [
       [null, "Noop", "fun @main []"],
-      [null, "Noop", "@main.entry"],
+      [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
       [null, "Return", 0],
     ];
@@ -44,7 +44,7 @@ describe("lowering from HIR to LIR", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: 1 }],
@@ -52,26 +52,26 @@ describe("lowering from HIR to LIR", () => {
               ["%2", "Constant", { value: large }],
               ["%3", "Constant", { value: huge }],
             ],
-            terminator: [null, "Branch", ["%0"], ["@main.then", "@main.else"]],
+            terminator: [null, "Branch", ["%0"], ["@then", "@else"]],
           },
           {
-            name: "@main.then",
+            name: "@then",
             joins: [],
             lines: [
               ["%4", "Add", ["%1"], ["%2"]],
             ],
-            terminator: [null, "Jump", "@main.end"],
+            terminator: [null, "Jump", "@end"],
           },
           {
-            name: "@main.else",
+            name: "@else",
             joins: [],
             lines: [
               ["%5", "Add", ["%2"], ["%3"]],
             ],
-            terminator: [null, "Jump", "@main.end"],
+            terminator: [null, "Jump", "@end"],
           },
           {
-            name: "@main.end",
+            name: "@end",
             joins: [],
             lines: [],
             terminator: [null, "Return", ["%4"]],
@@ -82,19 +82,19 @@ describe("lowering from HIR to LIR", () => {
 
     const expected: LIR.Program = [
       [null, "Noop", "fun @main []"],
-      [null, "Noop", "@main.entry"],
+      [null, "Noop", "@entry"],
       [0, "Constant", { value: 1 }],
       [1, "Constant", { value: small }],
       [2, "Constant", { value: large }],
       [3, "Constant", { value: huge }],
       [null, "Branch", 0, [{ line: 7 }, { line: 10 }]],
-      [null, "Noop", "@main.then"],
+      [null, "Noop", "@then"],
       [4, "Add", 1, 2],
       [null, "Jump", { line: 13 }],
-      [null, "Noop", "@main.else"],
+      [null, "Noop", "@else"],
       [5, "Add", 2, 3],
       [null, "Jump", { line: 13 }],
-      [null, "Noop", "@main.end"],
+      [null, "Noop", "@end"],
       [null, "Return", 4],
     ];
 
@@ -108,7 +108,7 @@ describe("lowering from HIR to LIR", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -124,7 +124,7 @@ describe("lowering from HIR to LIR", () => {
         params: [["%a"]],
         blocks: [
           {
-            name: "@identity.entry",
+            name: "@entry",
             joins: [],
             lines: [],
             terminator: [null, "Return", ["%a"]],
@@ -135,13 +135,13 @@ describe("lowering from HIR to LIR", () => {
 
     const expected: LIR.Program = [
       [null, "Noop", "fun @main []"],
-      [null, "Noop", "@main.entry"],
+      [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
       [1, "Constant", { value: large }],
       [2, "Call", { line: 6 }, [1], "@identity"],
       [null, "Return", 2],
       [null, "Noop", "fun @identity [%a]"],
-      [null, "Noop", "@identity.entry"],
+      [null, "Noop", "@entry"],
       [null, "Return", 0],
     ];
 

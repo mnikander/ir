@@ -21,13 +21,13 @@ describe("constants and exit", () => {
       },
     ];
     expect(input).toBeDefined();
-    // Lowering/runtime do not currently reject a missing @main.entry block.
+    // Lowering/runtime do not currently reject a missing @entry block.
     // expect(() => evaluate(analyze(input))).toThrow();
   });
 
   it("must throw error if there is no Entry block", () => {
     // function @main []:
-    // (missing block @main.entry)
+    // (missing block @entry)
     // %0 = constant 11
     // exit %0
     const input: HIGH.Program = [
@@ -36,7 +36,7 @@ describe("constants and exit", () => {
         params: [],
         blocks: [
           {
-            name: "@main.foo",
+            name: "@foo",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -53,7 +53,7 @@ describe("constants and exit", () => {
 
   it("must throw a runtime-error when exiting with a Reference instead of a Value", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %0 = constant 0
     // %1 = ref %0
     // exit %1
@@ -63,7 +63,7 @@ describe("constants and exit", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: 0 }],
@@ -81,7 +81,7 @@ describe("constants and exit", () => {
 
   it("must evaluate a constant", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %0 = constant 11
     // exit %0
     const input: HIGH.Program = [
@@ -90,7 +90,7 @@ describe("constants and exit", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -108,7 +108,7 @@ describe("constants and exit", () => {
 describe("copying of registers", () => {
   it("must copy a constant", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %0 = constant 11
     // %1 = copy %0
     // exit %1
@@ -118,7 +118,7 @@ describe("copying of registers", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -137,7 +137,7 @@ describe("copying of registers", () => {
 describe("arithmetic operations", () => {
   it("must evaluate integer addition", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %0 = constant 11
     // %1 = constant 22
     // %2 = add %0, %1
@@ -148,7 +148,7 @@ describe("arithmetic operations", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -168,11 +168,11 @@ describe("arithmetic operations", () => {
 describe("labels, jump, and branch", () => {
   // it('must report an error if a block falls through into the next label', () => {
   //     // function @main []:
-  //     // block @main.entry:
+  //     // block @entry:
   //     // %0 = constant 11
   //     // (missing terminator)
   //     //
-  //     // block @main.first:
+  //     // block @first:
   //     // %1 = constant 22
   //     // exit %2
   //     const input: HIGH.Program = [
@@ -182,7 +182,7 @@ describe("labels, jump, and branch", () => {
   //             blocks:
   //             [
   //                 {
-  //                     block: '@main.entry',
+  //                     block: '@entry',
   //                     joins: [],
   //                     lines: [
   //                         [ '%0', 'Const', 11 ],
@@ -190,7 +190,7 @@ describe("labels, jump, and branch", () => {
   //                     terminator: [] // the missing Terminator statement here, should cause an error
   //                 },
   //                 {
-  //                     block: '@main.first',
+  //                     block: '@first',
   //                     joins: [],
   //                     lines: [
   //                         [ '%1', 'Const', 22 ],
@@ -207,14 +207,14 @@ describe("labels, jump, and branch", () => {
 
   it("must execute the correct line of code after an unconditional jump", () => {
     // function @main []:
-    // block @main.entry:
-    // jump @main.second
+    // block @entry:
+    // jump @second
     //
-    // block @main.first:
+    // block @first:
     // %1 = constant 11
     // exit %1
     //
-    // block @main.second:
+    // block @second:
     // %2 = constant 22
     // exit %2
     const input: HIGH.Program = [
@@ -223,13 +223,13 @@ describe("labels, jump, and branch", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [],
-            terminator: [null, "Jump", "@main.second"],
+            terminator: [null, "Jump", "@second"],
           },
           {
-            name: "@main.first",
+            name: "@first",
             joins: [],
             lines: [
               ["%1", "Constant", { value: small }],
@@ -237,7 +237,7 @@ describe("labels, jump, and branch", () => {
             terminator: [null, "Return", ["%1"]],
           },
           {
-            name: "@main.second",
+            name: "@second",
             joins: [],
             lines: [
               ["%2", "Constant", { value: large }],
@@ -253,22 +253,22 @@ describe("labels, jump, and branch", () => {
 
   it("must execute first branch if the condition is true", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %0 = constant true
     // %1 = constant 11
     // %2 = constant 22
     // %3 = constant 44
-    // branch %0 @main.then @main.else
+    // branch %0 @then @else
     //
-    // block @main.then:
+    // block @then:
     // %4 = add %1, %2
-    // jump @main.end
+    // jump @end
     //
-    // block @main.else:
+    // block @else:
     // %5 = add %2, %3
-    // jump @main.end
+    // jump @end
     //
-    // block @main.end:
+    // block @end:
     // exit %4
     const input: HIGH.Program = [
       {
@@ -276,7 +276,7 @@ describe("labels, jump, and branch", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: 1 }],
@@ -284,26 +284,26 @@ describe("labels, jump, and branch", () => {
               ["%2", "Constant", { value: large }],
               ["%3", "Constant", { value: huge }],
             ],
-            terminator: [null, "Branch", ["%0"], ["@main.then", "@main.else"]],
+            terminator: [null, "Branch", ["%0"], ["@then", "@else"]],
           },
           {
-            name: "@main.then",
+            name: "@then",
             joins: [],
             lines: [
               ["%4", "Add", ["%1"], ["%2"]],
             ],
-            terminator: [null, "Jump", "@main.end"],
+            terminator: [null, "Jump", "@end"],
           },
           {
-            name: "@main.else",
+            name: "@else",
             joins: [],
             lines: [
               ["%5", "Add", ["%2"], ["%3"]],
             ],
-            terminator: [null, "Jump", "@main.end"],
+            terminator: [null, "Jump", "@end"],
           },
           {
-            name: "@main.end",
+            name: "@end",
             joins: [],
             lines: [],
             terminator: [null, "Return", ["%4"]],
@@ -317,22 +317,22 @@ describe("labels, jump, and branch", () => {
 
   it("must execute the second branch when condition is false", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %0 = constant false
     // %1 = constant 11
     // %2 = constant 22
     // %3 = constant 44
-    // branch %0 @main.then @main.else
+    // branch %0 @then @else
     //
-    // block @main.then:
+    // block @then:
     // %4 = add %1, %2
-    // jump @main.end
+    // jump @end
     //
-    // block @main.else:
+    // block @else:
     // %5 = add %2, %3
-    // jump @main.end
+    // jump @end
     //
-    // block @main.end:
+    // block @end:
     // exit %5
     const input: HIGH.Program = [
       {
@@ -340,7 +340,7 @@ describe("labels, jump, and branch", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: 0 }],
@@ -348,26 +348,26 @@ describe("labels, jump, and branch", () => {
               ["%2", "Constant", { value: large }],
               ["%3", "Constant", { value: huge }],
             ],
-            terminator: [null, "Branch", ["%0"], ["@main.then", "@main.else"]],
+            terminator: [null, "Branch", ["%0"], ["@then", "@else"]],
           },
           {
-            name: "@main.then",
+            name: "@then",
             joins: [],
             lines: [
               ["%4", "Add", ["%1"], ["%2"]],
             ],
-            terminator: [null, "Jump", "@main.end"],
+            terminator: [null, "Jump", "@end"],
           },
           {
-            name: "@main.else",
+            name: "@else",
             joins: [],
             lines: [
               ["%5", "Add", ["%2"], ["%3"]],
             ],
-            terminator: [null, "Jump", "@main.end"],
+            terminator: [null, "Jump", "@end"],
           },
           {
-            name: "@main.end",
+            name: "@end",
             joins: [],
             lines: [],
             terminator: [null, "Return", ["%5"]],
@@ -383,14 +383,14 @@ describe("labels, jump, and branch", () => {
 describe("function call", () => {
   it("must support calling the identity function", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %0 = constant 11
     // %1 = constant 22
     // %2 = call @identity [%1]
     // exit %2
     //
     // function @identity [%a]:
-    // block @identity.entry:
+    // block @entry:
     // return %a
     const input: HIGH.Program = [
       {
@@ -398,7 +398,7 @@ describe("function call", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -414,7 +414,7 @@ describe("function call", () => {
         params: [["%a"]],
         blocks: [
           {
-            name: "@identity.entry",
+            name: "@entry",
             joins: [],
             lines: [],
             terminator: [null, "Return", ["%a"]],
@@ -428,14 +428,14 @@ describe("function call", () => {
 
   it("must support calling a binary function", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %0 = constant 11
     // %1 = constant 22
     // %2 = call @first [%0, %1]
     // exit %2
     //
     // function @first [%a, %b]:
-    // block @first.entry:
+    // block @entry:
     // return %a
     const input: HIGH.Program = [
       {
@@ -443,7 +443,7 @@ describe("function call", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -459,7 +459,7 @@ describe("function call", () => {
         params: [["%a"], ["%b"]],
         blocks: [
           {
-            name: "@first.entry",
+            name: "@entry",
             joins: [],
             lines: [],
             terminator: [null, "Return", ["%a"]],
@@ -482,26 +482,26 @@ describe("function call", () => {
     // IR code:
     //
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %0 = constant 5
     // %1 = constant 1
     // %2 = call @factorial [%0, %1]
     // exit %2
     //
     // function @factorial [%n, %acc]:
-    // block @factorial.entry:
+    // block @entry:
     // %3 = constant 1
     // %6 = equal %n, %3
-    // branch %6 @factorial.termination @factorial.body
+    // branch %6 @termination @body
     //
-    // block @factorial.body:
+    // block @body:
     // %7 = subtract %n, %3
     // %8 = multiply %n, %acc
     // %9 = call @factorial [%7, %8]
-    // jump @factorial.termination
+    // jump @termination
     //
-    // block @factorial.termination:
-    // %10 = phi [[@factorial.body, %9], [@factorial.entry, %acc]]
+    // block @termination:
+    // %10 = phi [[@body, %9], [@entry, %acc]]
     // return %10
     const input: HIGH.Program = [
       {
@@ -509,7 +509,7 @@ describe("function call", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: 5 }],
@@ -525,32 +525,32 @@ describe("function call", () => {
         params: [["%n"], ["%acc"]],
         blocks: [
           {
-            name: "@factorial.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%3", "Constant", { value: 1 }],
               ["%6", "Equal", ["%n"], ["%3"]],
             ],
             terminator: [null, "Branch", ["%6"], [
-              "@factorial.termination",
-              "@factorial.body",
+              "@termination",
+              "@body",
             ]],
           },
           {
-            name: "@factorial.body",
+            name: "@body",
             joins: [],
             lines: [
               ["%7", "Subtract", ["%n"], ["%3"]],
               ["%8", "Multiply", ["%n"], ["%acc"]],
               ["%9", "Call", "@factorial", [["%7"], ["%8"]]],
             ],
-            terminator: [null, "Jump", "@factorial.termination"],
+            terminator: [null, "Jump", "@termination"],
           },
           {
-            name: "@factorial.termination",
+            name: "@termination",
             joins: [
-              ["%10", "Phi", [["@factorial.body", ["%9"]], [
-                "@factorial.entry",
+              ["%10", "Phi", [["@body", ["%9"]], [
+                "@entry",
                 ["%acc"],
               ]]],
             ],
@@ -568,7 +568,7 @@ describe("function call", () => {
 describe("static single assignment", () => {
   it("must throw an error when re-assigning to a register", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %0 = constant 11
     // %0 = constant 22
     // exit %1
@@ -578,7 +578,7 @@ describe("static single assignment", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -596,14 +596,14 @@ describe("static single assignment", () => {
 
   it("must throw an error when function parameters have the same name", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %0 = constant 11
     // %1 = constant 22
     // %2 = call @first [%0, %1]
     // exit %2
     //
     // function @first [%a, %a]:
-    // block @first.entry:
+    // block @entry:
     // return %a
     const input: HIGH.Program = [
       {
@@ -611,7 +611,7 @@ describe("static single assignment", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -627,7 +627,7 @@ describe("static single assignment", () => {
         params: [["%a"], ["%a"]],
         blocks: [
           {
-            name: "@first.entry",
+            name: "@entry",
             joins: [],
             lines: [],
             terminator: [null, "Return", ["%a"]],
@@ -642,18 +642,18 @@ describe("static single assignment", () => {
 
   it("must throw an error when function parameter registers are not unique", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %0 = constant 11
     // %1 = constant 22
     // %2 = call @identity [%1]
     // exit %2
     //
     // function @identity [%a]:
-    // block @identity.entry:
+    // block @entry:
     // return %a
     //
     // function @identity2 [%a]:
-    // block @identity2.entry:
+    // block @entry:
     // return %a
     const input: HIGH.Program = [
       {
@@ -661,7 +661,7 @@ describe("static single assignment", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
@@ -678,7 +678,7 @@ describe("static single assignment", () => {
         params: [["%a"]],
         blocks: [
           {
-            name: "@identity.entry",
+            name: "@entry",
             joins: [],
             lines: [],
             terminator: [null, "Return", ["%a"]],
@@ -691,7 +691,7 @@ describe("static single assignment", () => {
         params: [["%a"]],
         blocks: [
           {
-            name: "@identity2.entry",
+            name: "@entry",
             joins: [],
             lines: [],
             terminator: [null, "Return", ["%a"]],
@@ -706,19 +706,19 @@ describe("static single assignment", () => {
 
   it("phi node must assign from the correct register after an unconditional jump", () => {
     // function @main []:
-    // block @main.entry:
-    // jump @main.second
+    // block @entry:
+    // jump @second
     //
-    // block @main.first:
+    // block @first:
     // %1 = constant 11
-    // jump @main.end
+    // jump @end
     //
-    // block @main.second:
+    // block @second:
     // %2 = constant 22
-    // jump @main.end
+    // jump @end
     //
-    // block @main.end:
-    // %3 = phi [[@main.first, %1], [@main.second, %2]]
+    // block @end:
+    // %3 = phi [[@first, %1], [@second, %2]]
     // exit %3
     const input: HIGH.Program = [
       {
@@ -726,31 +726,31 @@ describe("static single assignment", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [],
-            terminator: [null, "Jump", "@main.second"],
+            terminator: [null, "Jump", "@second"],
           },
           {
-            name: "@main.first",
+            name: "@first",
             joins: [],
             lines: [
               ["%1", "Constant", { value: small }],
             ],
-            terminator: [null, "Jump", "@main.end"],
+            terminator: [null, "Jump", "@end"],
           },
           {
-            name: "@main.second",
+            name: "@second",
             joins: [],
             lines: [
               ["%2", "Constant", { value: large }],
             ],
-            terminator: [null, "Jump", "@main.end"],
+            terminator: [null, "Jump", "@end"],
           },
           {
-            name: "@main.end",
+            name: "@end",
             joins: [
-              ["%3", "Phi", [["@main.first", ["%1"]], ["@main.second", [
+              ["%3", "Phi", [["@first", ["%1"]], ["@second", [
                 "%2",
               ]]]],
             ],
@@ -777,19 +777,19 @@ describe("static single assignment", () => {
     // IR-code:
     //
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %0 = constant 0
     // %1 = constant 1
     // %2 = constant 3
-    // jump @main.loop
+    // jump @loop
     //
-    // block @main.loop:
-    // %3 = phi [[@main.entry, %0], [@main.loop, %4]]
+    // block @loop:
+    // %3 = phi [[@entry, %0], [@loop, %4]]
     // %4 = add %1, %3
     // %5 = unequal %3, %2
-    // branch %5 @main.loop @main.end
+    // branch %5 @loop @end
     //
-    // block @main.end:
+    // block @end:
     // exit %3
     const input: HIGH.Program = [
       {
@@ -797,28 +797,28 @@ describe("static single assignment", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: 0 }],
               ["%1", "Constant", { value: 1 }],
               ["%2", "Constant", { value: 3 }],
             ],
-            terminator: [null, "Jump", "@main.loop"],
+            terminator: [null, "Jump", "@loop"],
           },
           {
-            name: "@main.loop",
+            name: "@loop",
             joins: [
-              ["%3", "Phi", [["@main.entry", ["%0"]], ["@main.loop", ["%4"]]]],
+              ["%3", "Phi", [["@entry", ["%0"]], ["@loop", ["%4"]]]],
             ],
             lines: [
               ["%4", "Add", ["%1"], ["%3"]],
               ["%5", "Unequal", ["%3"], ["%2"]],
             ],
-            terminator: [null, "Branch", ["%5"], ["@main.loop", "@main.end"]],
+            terminator: [null, "Branch", ["%5"], ["@loop", "@end"]],
           },
           {
-            name: "@main.end",
+            name: "@end",
             joins: [],
             lines: [],
             terminator: [null, "Return", ["%3"]],
@@ -843,25 +843,25 @@ describe("static single assignment", () => {
     //
     //
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %condition = constant false
-    // branch %condition @main.a @main.b
+    // branch %condition @a @b
     //
-    // block @main.a:
+    // block @a:
     // %alpha = constant 10
-    // jump @main.d
+    // jump @d
     //
-    // block @main.b:
+    // block @b:
     // %bravo = constant 20
-    // jump @main.c
+    // jump @c
     //
-    // block @main.c:
+    // block @c:
     // %charlie = constant 21
-    // jump @main.d
+    // jump @d
     //
-    // block @main.d:
-    // %grandparent = phi [[@main.a, %alpha], [@main.c, %bravo]]
-    // %parent = phi [[@main.a, %alpha], [@main.c, %charlie]]
+    // block @d:
+    // %grandparent = phi [[@a, %alpha], [@c, %bravo]]
+    // %parent = phi [[@a, %alpha], [@c, %charlie]]
     // %total = add %grandparent, %parent
     // exit %total
     const input: HIGH.Program = [
@@ -870,49 +870,49 @@ describe("static single assignment", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%condition", "Constant", { value: 0 }],
             ],
             terminator: [null, "Branch", ["%condition"], [
-              "@main.a",
-              "@main.b",
+              "@a",
+              "@b",
             ]],
           },
           {
-            name: "@main.a",
+            name: "@a",
             joins: [],
             lines: [
               ["%alpha", "Constant", { value: small }],
             ],
-            terminator: [null, "Jump", "@main.d"],
+            terminator: [null, "Jump", "@d"],
           },
           {
-            name: "@main.b",
+            name: "@b",
             joins: [],
             lines: [
               ["%bravo", "Constant", { value: large }],
             ],
-            terminator: [null, "Jump", "@main.c"],
+            terminator: [null, "Jump", "@c"],
           },
           {
-            name: "@main.c",
+            name: "@c",
             joins: [],
             lines: [
               ["%charlie", "Constant", { value: huge }],
             ],
-            terminator: [null, "Jump", "@main.d"],
+            terminator: [null, "Jump", "@d"],
           },
           {
-            name: "@main.d",
+            name: "@d",
             joins: [
-              ["%grandparent", "Phi", [["@main.a", ["%alpha"]], [
-                "@main.c",
+              ["%grandparent", "Phi", [["@a", ["%alpha"]], [
+                "@c",
                 ["%bravo"],
               ]]],
-              ["%parent", "Phi", [["@main.a", ["%alpha"]], [
-                "@main.c",
+              ["%parent", "Phi", [["@a", ["%alpha"]], [
+                "@c",
                 ["%charlie"],
               ]]],
             ],
@@ -940,20 +940,20 @@ describe("static single assignment", () => {
     //
     //
     // function @main []:
-    // block @main.entry:
-    // jump @main.a
+    // block @entry:
+    // jump @a
     //
-    // block @main.a:
+    // block @a:
     // %alpha = constant 10
     // %condition = constant true
-    // branch %condition @main.b @main.c
+    // branch %condition @b @c
     //
-    // block @main.b:
+    // block @b:
     // %bravo = constant 20
-    // jump @main.c
+    // jump @c
     //
-    // block @main.c:
-    // %result = phi [[@main.a, %alpha], [@main.b, %bravo]]
+    // block @c:
+    // %result = phi [[@a, %alpha], [@b, %bravo]]
     // exit %result
     const input: HIGH.Program = [
       {
@@ -961,36 +961,36 @@ describe("static single assignment", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [],
-            terminator: [null, "Jump", "@main.a"],
+            terminator: [null, "Jump", "@a"],
           },
           {
-            name: "@main.a",
+            name: "@a",
             joins: [],
             lines: [
               ["%alpha", "Constant", { value: small }],
               ["%condition", "Constant", { value: 1 }],
             ],
             terminator: [null, "Branch", ["%condition"], [
-              "@main.b",
-              "@main.c",
+              "@b",
+              "@c",
             ]],
           },
           {
-            name: "@main.b",
+            name: "@b",
             joins: [],
             lines: [
               ["%bravo", "Constant", { value: large }],
             ],
-            terminator: [null, "Jump", "@main.c"],
+            terminator: [null, "Jump", "@c"],
           },
           {
-            name: "@main.c",
+            name: "@c",
             joins: [
-              ["%result", "Phi", [["@main.a", ["%alpha"]], [
-                "@main.b",
+              ["%result", "Phi", [["@a", ["%alpha"]], [
+                "@b",
                 ["%bravo"],
               ]]],
             ],
@@ -1016,20 +1016,20 @@ describe("static single assignment", () => {
     //
     //
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %echo = constant false
-    // branch %echo @main.a @main.c
+    // branch %echo @a @c
     //
-    // block @main.a:
+    // block @a:
     // %alpha = constant true
-    // branch %alpha @main.b @main.c
+    // branch %alpha @b @c
     //
-    // block @main.b:
+    // block @b:
     // %bravo = constant true
-    // jump @main.c
+    // jump @c
     //
-    // block @main.c:
-    // %result = phi [[@main.entry, %echo], [@main.a, %alpha], [@main.b, %bravo]]
+    // block @c:
+    // %result = phi [[@entry, %echo], [@a, %alpha], [@b, %bravo]]
     // exit %result
     const input: HIGH.Program = [
       {
@@ -1037,36 +1037,36 @@ describe("static single assignment", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%echo", "Constant", { value: 0 }],
             ],
-            terminator: [null, "Branch", ["%echo"], ["@main.a", "@main.c"]],
+            terminator: [null, "Branch", ["%echo"], ["@a", "@c"]],
           },
           {
-            name: "@main.a",
+            name: "@a",
             joins: [],
             lines: [
               ["%alpha", "Constant", { value: 1 }],
             ],
-            terminator: [null, "Branch", ["%alpha"], ["@main.b", "@main.c"]],
+            terminator: [null, "Branch", ["%alpha"], ["@b", "@c"]],
           },
           {
-            name: "@main.b",
+            name: "@b",
             joins: [],
             lines: [
               ["%bravo", "Constant", { value: 1 }],
             ],
-            terminator: [null, "Jump", "@main.c"],
+            terminator: [null, "Jump", "@c"],
           },
           {
-            name: "@main.c",
+            name: "@c",
             joins: [
-              ["%result", "Phi", [["@main.entry", ["%echo"]], [
-                "@main.a",
+              ["%result", "Phi", [["@entry", ["%echo"]], [
+                "@a",
                 ["%alpha"],
-              ], ["@main.b", ["%bravo"]]]],
+              ], ["@b", ["%bravo"]]]],
             ],
             lines: [],
             terminator: [null, "Return", ["%result"]],
@@ -1090,20 +1090,20 @@ describe("static single assignment", () => {
     //
     //
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %echo = constant false
-    // branch %echo @main.a @main.c
+    // branch %echo @a @c
     //
-    // block @main.a:
+    // block @a:
     // %alpha = constant true
-    // branch %alpha @main.b @main.c
+    // branch %alpha @b @c
     //
-    // block @main.b:
+    // block @b:
     // %bravo = constant true
-    // jump @main.c
+    // jump @c
     //
-    // block @main.c:
-    // %result = phi [[@main.a, %alpha], [@main.b, %bravo]]  // this phi-node does NOT cover all incoming edges
+    // block @c:
+    // %result = phi [[@a, %alpha], [@b, %bravo]]  // this phi-node does NOT cover all incoming edges
     // exit %result
     const input: HIGH.Program = [
       {
@@ -1111,34 +1111,34 @@ describe("static single assignment", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%echo", "Constant", { value: 0 }],
             ],
-            terminator: [null, "Branch", ["%echo"], ["@main.a", "@main.c"]],
+            terminator: [null, "Branch", ["%echo"], ["@a", "@c"]],
           },
           {
-            name: "@main.a",
+            name: "@a",
             joins: [],
             lines: [
               ["%alpha", "Constant", { value: 1 }],
             ],
-            terminator: [null, "Branch", ["%alpha"], ["@main.b", "@main.c"]],
+            terminator: [null, "Branch", ["%alpha"], ["@b", "@c"]],
           },
           {
-            name: "@main.b",
+            name: "@b",
             joins: [],
             lines: [
               ["%bravo", "Constant", { value: 1 }],
             ],
-            terminator: [null, "Jump", "@main.c"],
+            terminator: [null, "Jump", "@c"],
           },
           {
-            name: "@main.c",
+            name: "@c",
             joins: [
-              ["%result", "Phi", [["@main.a", ["%alpha"]], [
-                "@main.b",
+              ["%result", "Phi", [["@a", ["%alpha"]], [
+                "@b",
                 ["%bravo"],
               ]]],
             ],
@@ -1157,7 +1157,7 @@ describe("static single assignment", () => {
 describe("memory and ownership", () => {
   it.skip("must reference and dereference a register", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %x = constant 42
     // %r = ref %x
     // %t = deref %r
@@ -1168,7 +1168,7 @@ describe("memory and ownership", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%x", "Constant", { value: small }],
@@ -1187,7 +1187,7 @@ describe("memory and ownership", () => {
 
   it("must detect a use-after-drop", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %0 = constant 0
     // drop %0
     // exit %0
@@ -1197,7 +1197,7 @@ describe("memory and ownership", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: 0 }],
@@ -1215,7 +1215,7 @@ describe("memory and ownership", () => {
 
   it("must detect a double-drop", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %0 = constant 0
     // %1 = constant 0
     // drop %0
@@ -1227,7 +1227,7 @@ describe("memory and ownership", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: 0 }],
@@ -1247,7 +1247,7 @@ describe("memory and ownership", () => {
 
   it("must detect a use-after-move", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %0 = constant 0
     // %1 = move %0
     // exit %0
@@ -1257,7 +1257,7 @@ describe("memory and ownership", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%0", "Constant", { value: 0 }],
@@ -1275,7 +1275,7 @@ describe("memory and ownership", () => {
 
   it("must detect a dangling reference when the source register is dropped", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %x = constant 42
     // %r = ref %x
     // drop %x
@@ -1287,7 +1287,7 @@ describe("memory and ownership", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%x", "Constant", { value: small }],
@@ -1307,7 +1307,7 @@ describe("memory and ownership", () => {
 
   it("must detect a dangling reference when the source register is moved", () => {
     // function @main []:
-    // block @main.entry:
+    // block @entry:
     // %x = constant 42
     // %r = ref %x
     // %y = move %x
@@ -1319,7 +1319,7 @@ describe("memory and ownership", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%x", "Constant", { value: small }],

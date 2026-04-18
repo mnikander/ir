@@ -10,24 +10,24 @@ describe("collect_predecessors", () => {
   it("records incoming blocks for jump and branch targets", () => {
     const blocks: HIGH.Block[] = [
       {
-        name: "@main.entry",
+        name: "@entry",
         joins: [],
         lines: [
           ["%condition", "Constant", { value: 1 }],
         ],
         terminator: [null, "Branch", ["%condition"], [
-          "@main.left",
-          "@main.join",
+          "@left",
+          "@join",
         ]],
       },
       {
-        name: "@main.left",
+        name: "@left",
         joins: [],
         lines: [],
-        terminator: [null, "Jump", "@main.join"],
+        terminator: [null, "Jump", "@join"],
       },
       {
-        name: "@main.join",
+        name: "@join",
         joins: [],
         lines: [],
         terminator: [null, "Return", ["%condition"]],
@@ -37,9 +37,9 @@ describe("collect_predecessors", () => {
     const predecessors = collect_predecessors(blocks);
 
     expect([...predecessors.entries()]).toEqual([
-      ["@main.entry", []],
-      ["@main.left", ["@main.entry"]],
-      ["@main.join", ["@main.entry", "@main.left"]],
+      ["@entry", []],
+      ["@left", ["@entry"]],
+      ["@join", ["@entry", "@left"]],
     ]);
   });
 });
@@ -52,29 +52,29 @@ describe("eliminate_phi_nodes", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%condition", "Constant", { value: 1 }],
             ],
             terminator: [null, "Branch", ["%condition"], [
-              "@main.left",
-              "@main.join",
+              "@left",
+              "@join",
             ]],
           },
           {
-            name: "@main.left",
+            name: "@left",
             joins: [],
             lines: [
               ["%left", "Constant", { value: 11 }],
             ],
-            terminator: [null, "Jump", "@main.join"],
+            terminator: [null, "Jump", "@join"],
           },
           {
-            name: "@main.join",
+            name: "@join",
             joins: [
-              ["%result", "Phi", [["@main.entry", ["%condition"]], [
-                "@main.left",
+              ["%result", "Phi", [["@entry", ["%condition"]], [
+                "@left",
                 ["%left"],
               ]]],
             ],
@@ -93,44 +93,44 @@ describe("eliminate_phi_nodes", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%condition", "Constant", { value: 1 }],
             ],
             terminator: [null, "Branch", ["%condition"], [
-              "@main.left",
-              "@phi.main.join.from.main.entry",
+              "@left",
+              "@phi.join.from.entry",
             ]],
           },
           {
-            name: "@main.left",
+            name: "@left",
             joins: [],
             lines: [
               ["%left", "Constant", { value: 11 }],
             ],
-            terminator: [null, "Jump", "@phi.main.join.from.main.left"],
+            terminator: [null, "Jump", "@phi.join.from.left"],
           },
           {
-            name: "@phi.main.join.from.main.entry",
+            name: "@phi.join.from.entry",
             joins: [],
             lines: [
-              ["%phi.main.join.from.main.entry.result", "Assign", ["%condition"]],
-              ["%result", "Assign", ["%phi.main.join.from.main.entry.result"]],
+              ["%phi.join.from.entry.result", "Assign", ["%condition"]],
+              ["%result", "Assign", ["%phi.join.from.entry.result"]],
             ],
-            terminator: [null, "Jump", "@main.join"],
+            terminator: [null, "Jump", "@join"],
           },
           {
-            name: "@phi.main.join.from.main.left",
+            name: "@phi.join.from.left",
             joins: [],
             lines: [
-              ["%phi.main.join.from.main.left.result", "Assign", ["%left"]],
-              ["%result", "Assign", ["%phi.main.join.from.main.left.result"]],
+              ["%phi.join.from.left.result", "Assign", ["%left"]],
+              ["%result", "Assign", ["%phi.join.from.left.result"]],
             ],
-            terminator: [null, "Jump", "@main.join"],
+            terminator: [null, "Jump", "@join"],
           },
           {
-            name: "@main.join",
+            name: "@join",
             joins: [],
             lines: [],
             terminator: [null, "Return", ["%result"]],
@@ -147,19 +147,19 @@ describe("eliminate_phi_nodes", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%left", "Constant", { value: 11 }],
               ["%right", "Constant", { value: 13 }],
             ],
-            terminator: [null, "Jump", "@main.join"],
+            terminator: [null, "Jump", "@join"],
           },
           {
-            name: "@main.join",
+            name: "@join",
             joins: [
-              ["%x", "Phi", [["@main.entry", ["%right"]]]],
-              ["%y", "Phi", [["@main.entry", ["%left"]]]],
+              ["%x", "Phi", [["@entry", ["%right"]]]],
+              ["%y", "Phi", [["@entry", ["%left"]]]],
             ],
             lines: [
               ["%sum", "Add", ["%x"], ["%y"]],
@@ -178,27 +178,27 @@ describe("eliminate_phi_nodes", () => {
         params: [],
         blocks: [
           {
-            name: "@main.entry",
+            name: "@entry",
             joins: [],
             lines: [
               ["%left", "Constant", { value: 11 }],
               ["%right", "Constant", { value: 13 }],
             ],
-            terminator: [null, "Jump", "@phi.main.join.from.main.entry"],
+            terminator: [null, "Jump", "@phi.join.from.entry"],
           },
           {
-            name: "@phi.main.join.from.main.entry",
+            name: "@phi.join.from.entry",
             joins: [],
             lines: [
-              ["%phi.main.join.from.main.entry.x", "Assign", ["%right"]],
-              ["%phi.main.join.from.main.entry.y", "Assign", ["%left"]],
-              ["%x", "Assign", ["%phi.main.join.from.main.entry.x"]],
-              ["%y", "Assign", ["%phi.main.join.from.main.entry.y"]],
+              ["%phi.join.from.entry.x", "Assign", ["%right"]],
+              ["%phi.join.from.entry.y", "Assign", ["%left"]],
+              ["%x", "Assign", ["%phi.join.from.entry.x"]],
+              ["%y", "Assign", ["%phi.join.from.entry.y"]],
             ],
-            terminator: [null, "Jump", "@main.join"],
+            terminator: [null, "Jump", "@join"],
           },
           {
-            name: "@main.join",
+            name: "@join",
             joins: [],
             lines: [
               ["%sum", "Add", ["%x"], ["%y"]],

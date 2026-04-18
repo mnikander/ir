@@ -6,7 +6,6 @@
 | 2026-04-06 | #53a | $\forall$ Registers: names are globally unique                                   | SSA     |       |         |
 | 2026-04-06 | #259 | $\forall$ Functions: names is globally unique                                    | SSA     |       |         |
 | 2026-04-06 | #95d | $\neg\exists$ a control flow edge into the `entry` Block                         | SSA     |       |         |
-| 2026-04-06 | #aba | $\forall$ Blocks: name is scoped to its Function name                            |         |       |         |
 | 2026-04-06 | #51d | $\forall$ Blocks: name is unique in a Function                                   |         |       |         |
 | 2026-04-06 | #1c6 | $\exists$ `main` Function                                                        |         |       |         |
 | 2026-04-06 | #0e0 | $\neg\exists$ a Function before the `main` Function                              |         |       |         |
