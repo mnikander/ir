@@ -173,7 +173,6 @@ function rename_line(
     case "Heap":
     case "Borrow":
     case "Load":
-    case "Update":
     case "Drop":
       throw Error(
         `Lowering does not support HIR instruction '${
@@ -267,7 +266,6 @@ function get_destination_register(
     case "Heap":
     case "Borrow":
     case "Load":
-    case "Update":
     case "Drop":
       throw Error(
         `Lowering does not support HIR instruction '${
