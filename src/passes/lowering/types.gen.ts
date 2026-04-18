@@ -29,7 +29,10 @@ export type NumberedLine =
   | NumberedArithmetic
   | NumberedComparison;
 
-export type NumberedInput = [LIR.Offset];
+export type NumberedInput = {
+  offset: LIR.Offset;
+  consume: boolean;
+};
 
 export type NumberedCall = [
   destination: LIR.Offset,
@@ -169,6 +172,7 @@ export type ResolvedInstruction =
   | LIR.Noop
   | LIR.Constant
   | LIR.Copy
+  | LIR.Drop
   | LIR.Add
   | LIR.Subtract
   | LIR.Multiply

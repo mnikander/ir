@@ -220,8 +220,17 @@ function rename_input(
   slots: Map<HIR.Register, LIR.Offset>,
   context: string,
 ): NumberedInput {
-  const register = get_plain_register(input, context);
-  return [get_slot(slots, register, context)];
+  if (input[0] === "consume") {
+    return {
+      offset: get_slot(slots, input[1], context),
+      consume: true,
+    };
+  }
+
+  return {
+    offset: get_slot(slots, input[0], context),
+    consume: false,
+  };
 }
 
 function get_destination_slot(
@@ -279,11 +288,7 @@ function get_plain_register(
   input: HIR.Input,
   context: string,
 ): HIR.Register {
-  if (input[0] === "consume") {
-    throw Error(`Lowering does not support move inputs in ${context}`);
-  }
-
-  return input[0];
+  return input[0] === "consume" ? input[1] : input[0];
 }
 
 function get_slot(

@@ -101,6 +101,87 @@ describe("lowering from HIR to LIR", () => {
     expect(lower(input)).toEqual(expected);
   });
 
+  it("lowers a consumed assign into copy then drop", () => {
+    const input: HIR.Program = [
+      {
+        name: "@main",
+        params: [],
+        blocks: [
+          {
+            name: "@entry",
+            joins: [],
+            lines: [
+              ["%x", "Constant", { value: small }],
+              ["%y", "Assign", ["consume", "%x"]],
+            ],
+            terminator: [null, "Return", ["%y"]],
+          },
+        ],
+      },
+    ];
+
+    expect(lower(input)).toEqual([
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@entry"],
+      [0, "Constant", { value: small }],
+      [1, "Copy", 0],
+      [0, "Drop"],
+      [null, "Return", 1],
+    ]);
+  });
+
+  it("lowers consumed control-flow inputs while keeping block targets correct", () => {
+    const input: HIR.Program = [
+      {
+        name: "@main",
+        params: [],
+        blocks: [
+          {
+            name: "@entry",
+            joins: [],
+            lines: [
+              ["%condition", "Constant", { value: 1 }],
+            ],
+            terminator: [null, "Branch", ["consume", "%condition"], ["@then", "@else"]],
+          },
+          {
+            name: "@then",
+            joins: [],
+            lines: [
+              ["%value", "Constant", { value: small }],
+            ],
+            terminator: [null, "Return", ["consume", "%value"]],
+          },
+          {
+            name: "@else",
+            joins: [],
+            lines: [
+              ["%fallback", "Constant", { value: large }],
+            ],
+            terminator: [null, "Return", ["%fallback"]],
+          },
+        ],
+      },
+    ];
+
+    expect(lower(input)).toEqual([
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@entry"],
+      [0, "Constant", { value: 1 }],
+      [3, "Copy", 0],
+      [0, "Drop"],
+      [null, "Branch", 3, [{ line: 6 }, { line: 11 }]],
+      [null, "Noop", "@then"],
+      [1, "Constant", { value: small }],
+      [4, "Copy", 1],
+      [1, "Drop"],
+      [null, "Return", 4],
+      [null, "Noop", "@else"],
+      [2, "Constant", { value: large }],
+      [null, "Return", 2],
+    ]);
+  });
+
   it("lowers function calls using function entry line numbers and argument offsets", () => {
     const input: HIR.Program = [
       {

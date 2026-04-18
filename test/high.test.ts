@@ -1155,6 +1155,62 @@ describe("static single assignment", () => {
 });
 
 describe("memory and ownership", () => {
+  it("must allow consuming a register with Assign", () => {
+    // function @main []:
+    // block @entry:
+    // %0 = constant 11
+    // %1 = move %0
+    // exit %1
+    const input: HIGH.Program = [
+      {
+        name: "@main",
+        params: [],
+        blocks: [
+          {
+            name: "@entry",
+            joins: [],
+            lines: [
+              ["%0", "Constant", { value: small }],
+              ["%1", "Assign", ["consume", "%0"]],
+            ],
+            terminator: [null, "Return", ["%1"]],
+          },
+        ],
+      },
+    ];
+    expect(input).toBeDefined();
+    expect(evaluate(lower(input))).toBe(small);
+  });
+
+  it("must allow consuming an Add operand when the source is not used again", () => {
+    // function @main []:
+    // block @entry:
+    // %x = constant 11
+    // %y = constant 13
+    // %sum = add (move %x) %y
+    // exit %sum
+    const input: HIGH.Program = [
+      {
+        name: "@main",
+        params: [],
+        blocks: [
+          {
+            name: "@entry",
+            joins: [],
+            lines: [
+              ["%x", "Constant", { value: small }],
+              ["%y", "Constant", { value: large }],
+              ["%sum", "Add", ["consume", "%x"], ["%y"]],
+            ],
+            terminator: [null, "Return", ["%sum"]],
+          },
+        ],
+      },
+    ];
+    expect(input).toBeDefined();
+    expect(evaluate(lower(input))).toBe(small + large);
+  });
+
   it.skip("must reference and dereference a register", () => {
     // function @main []:
     // block @entry:

@@ -25,16 +25,19 @@ export function linearize_to_lir(program: NumberedProgram): LIR.Program {
   for (const func of program) {
     register_function_line(function_lines, func, emitted.length);
     emitted.push([null, "Noop", format_function_note(func)]);
+    let next_temporary = first_temporary_offset(func);
 
     for (const block of func.blocks) {
       register_block_line(block_lines, func, block, emitted.length);
       emitted.push([null, "Noop", block.name]);
 
       for (const line of block.lines) {
-        emitted.push(lower_line(line));
+        emitted.push(...lower_line(line));
       }
 
-      emitted.push(lower_terminator(func.name, block.terminator));
+      const lowered = lower_terminator(func.name, block.terminator, next_temporary);
+      emitted.push(...lowered.instructions);
+      next_temporary = lowered.next_temporary;
     }
   }
 
@@ -84,12 +87,16 @@ function format_function_note(func: NumberedFunction): string {
   return `fun ${func.name} [${params}]`;
 }
 
-function lower_line(line: NumberedLine): UnresolvedInstruction {
+function lower_line(line: NumberedLine): UnresolvedInstruction[] {
   switch (line[1]) {
     case "Constant":
-      return [line[0], "Constant", line[2]];
+      return [[line[0], "Constant", line[2]]];
     case "Assign":
-      return [line[0], "Copy", offset_of(line[2])];
+      return with_consumed_drops([
+        line[0],
+        "Copy",
+        offset_of(line[2]),
+      ], [line[2]]);
     case "Call": {
       const lowered: UnresolvedCall = [
         line[0],
@@ -98,7 +105,7 @@ function lower_line(line: NumberedLine): UnresolvedInstruction {
         line[3].map(offset_of),
         line[2],
       ];
-      return lowered;
+      return with_consumed_drops(lowered, line[3]);
     }
     case "Add":
     case "Subtract":
@@ -113,16 +120,26 @@ function lower_line(line: NumberedLine): UnresolvedInstruction {
     case "LessEqual":
     case "Greater":
     case "GreaterEqual":
-      return [line[0], line[1], offset_of(line[2]), offset_of(line[3])];
+      return with_consumed_drops([
+        line[0],
+        line[1],
+        offset_of(line[2]),
+        offset_of(line[3]),
+      ], [line[2], line[3]]);
     case "Negate":
-      return [line[0], "Negate", offset_of(line[2])];
+      return with_consumed_drops([
+        line[0],
+        "Negate",
+        offset_of(line[2]),
+      ], [line[2]]);
   }
 }
 
 function lower_terminator(
   function_name: HIR.Label,
   terminator: NumberedTerminator,
-): UnresolvedInstruction {
+  next_temporary: LIR.Offset,
+): { instructions: UnresolvedInstruction[]; next_temporary: LIR.Offset } {
   switch (terminator[1]) {
     case "Jump": {
       const lowered: UnresolvedJump = [
@@ -130,22 +147,34 @@ function lower_terminator(
         "Jump",
         block_target(function_name, terminator[2]),
       ];
-      return lowered;
+      return { instructions: [lowered], next_temporary };
     }
     case "Branch": {
+      const prepared = materialize_consumed_inputs([terminator[2]], next_temporary);
       const lowered: UnresolvedBranch = [
         null,
         "Branch",
-        offset_of(terminator[2]),
+        offset_of(prepared.inputs[0]),
         [
           block_target(function_name, terminator[3][0]),
           block_target(function_name, terminator[3][1]),
         ],
       ];
-      return lowered;
+      return {
+        instructions: [...prepared.instructions, lowered],
+        next_temporary: prepared.next_temporary,
+      };
     }
-    case "Return":
-      return [null, "Return", offset_of(terminator[2])];
+    case "Return": {
+      const prepared = materialize_consumed_inputs([terminator[2]], next_temporary);
+      return {
+        instructions: [
+          ...prepared.instructions,
+          [null, "Return", offset_of(prepared.inputs[0])],
+        ],
+        next_temporary: prepared.next_temporary,
+      };
+    }
   }
 }
 
@@ -183,7 +212,65 @@ function resolve_instruction(
 }
 
 function offset_of(input: NumberedInput): LIR.Offset {
-  return input[0];
+  return input.offset;
+}
+
+function consumed_offsets(inputs: NumberedInput[]): LIR.Offset[] {
+  return inputs.filter((input) => input.consume).map((input) => input.offset);
+}
+
+function with_consumed_drops(
+  instruction: UnresolvedInstruction,
+  inputs: NumberedInput[],
+): UnresolvedInstruction[] {
+  return [instruction, ...consumed_offsets(inputs).map(drop_instruction)];
+}
+
+function materialize_consumed_inputs(
+  inputs: NumberedInput[],
+  next_temporary: LIR.Offset,
+): {
+  inputs: NumberedInput[];
+  instructions: UnresolvedInstruction[];
+  next_temporary: LIR.Offset;
+} {
+  const instructions: UnresolvedInstruction[] = [];
+  const materialized = inputs.map((input) => {
+    if (!input.consume) {
+      return input;
+    }
+
+    const temporary = next_temporary++;
+    instructions.push([temporary, "Copy", input.offset]);
+    instructions.push(drop_instruction(input.offset));
+    return { offset: temporary, consume: false };
+  });
+
+  return {
+    inputs: materialized,
+    instructions,
+    next_temporary,
+  };
+}
+
+function drop_instruction(offset: LIR.Offset): LIR.Drop {
+  return [offset, "Drop"];
+}
+
+function first_temporary_offset(func: NumberedFunction): LIR.Offset {
+  let maximum = -1;
+
+  for (const param of func.params) {
+    maximum = Math.max(maximum, param.offset);
+  }
+
+  for (const block of func.blocks) {
+    for (const line of block.lines) {
+      maximum = Math.max(maximum, line[0]);
+    }
+  }
+
+  return maximum + 1;
 }
 
 function block_target(
