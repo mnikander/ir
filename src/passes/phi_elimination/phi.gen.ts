@@ -168,8 +168,8 @@ function lower_phi_nodes(
       }`,
     );
 
-    reads.push([temporary, "Copy", source]);
-    writes.push([phi[0], "Copy", [temporary]]);
+    reads.push([temporary, "Assign", source]);
+    writes.push([phi[0], "Assign", [temporary]]);
   }
 
   return [...reads, ...writes];

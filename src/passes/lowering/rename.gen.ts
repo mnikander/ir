@@ -6,7 +6,7 @@ import {
   NumberedBlock,
   NumberedBranch,
   NumberedCall,
-  NumberedCopy,
+  NumberedAssign,
   NumberedFunction,
   NumberedInput,
   NumberedLine,
@@ -127,10 +127,10 @@ function rename_line(
         "Constant",
         line[2],
       ];
-    case "Copy": {
-      const renamed: NumberedCopy = [
+    case "Assign": {
+      const renamed: NumberedAssign = [
         get_destination_slot(function_name, block_name, line, slots),
-        "Copy",
+        "Assign",
         rename_input(line[2], slots, context),
       ];
       return renamed;
@@ -246,7 +246,7 @@ function get_destination_register(
 ): HIR.Register {
   switch (line[1]) {
     case "Constant":
-    case "Copy":
+    case "Assign":
     case "Call":
     case "Add":
     case "Subtract":

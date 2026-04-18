@@ -38,15 +38,15 @@ export type NumberedCall = [
   arguments: NumberedInput[],
 ];
 
-export type NumberedMemory = NumberedConstant | NumberedCopy;
+export type NumberedMemory = NumberedConstant | NumberedAssign;
 export type NumberedConstant = [
   destination: LIR.Offset,
   tag: "Constant",
   value: HIR.Primitive,
 ];
-export type NumberedCopy = [
+export type NumberedAssign = [
   destination: LIR.Offset,
-  tag: "Copy",
+  tag: "Assign",
   value: NumberedInput,
 ];
 

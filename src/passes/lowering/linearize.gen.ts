@@ -88,7 +88,7 @@ function lower_line(line: NumberedLine): UnresolvedInstruction {
   switch (line[1]) {
     case "Constant":
       return [line[0], "Constant", line[2]];
-    case "Copy":
+    case "Assign":
       return [line[0], "Copy", offset_of(line[2])];
     case "Call": {
       const lowered: UnresolvedCall = [

@@ -122,7 +122,7 @@ describe("copying of registers", () => {
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
-              ["%1", "Copy", ["%0"]],
+              ["%1", "Assign", ["%0"]],
             ],
             terminator: [null, "Return", ["%1"]],
           },
@@ -1261,10 +1261,7 @@ describe("memory and ownership", () => {
             joins: [],
             lines: [
               ["%0", "Constant", { value: 0 }],
-              // TODO: this copy-move looks weird, it's not really what I had in mind. Do I need
-              // a standalone move instruction, _in addition_ to the access modifier? Or is there
-              // a cleaner way to do this?
-              ["%1", "Copy", ["consume", "%0"]],
+              ["%1", "Assign", ["consume", "%0"]],
             ],
             terminator: [null, "Return", ["%0"]],
           },
@@ -1327,10 +1324,7 @@ describe("memory and ownership", () => {
             lines: [
               ["%x", "Constant", { value: small }],
               ["%r", "Borrow", "%x"],
-              // TODO: this copy-move looks weird, it's not really what I had in mind. Do I need
-              // a standalone move instruction, _in addition_ to the access modifier? Or is there
-              // a cleaner way to do this?
-              ["%y", "Copy", ["consume", "%x"]],
+              ["%y", "Assign", ["consume", "%x"]],
               ["%t", "Load", "%r"],
             ],
             terminator: [null, "Return", ["%t"]],
