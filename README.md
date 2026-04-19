@@ -27,12 +27,14 @@ deno test
 This repo includes a tracked `commit-msg` hook in `.githooks/` that enforces
 commit messages to start with one of these tags:
 
-- `feat`
+- `impl` for implementations of features
+- `gen` for AI-generated features
 - `fix`
+- `ref` for refactoring
+- `test`
 - `doc`
-- `ref`
-- `tool`
-- `proto`
+- `tool` for linters, git config, CI/CD etc
+- `proto` for prototyping (could also use impl/gen instead)
 
 Enable it once per clone with:
 
@@ -44,7 +46,7 @@ chmod +x .githooks/commit-msg
 Accepted examples:
 
 ```text
-feat: add stack underflow check
+impl: stack underflow check
 fix(runtime): correct program counter update
 doc: clarify SSA invariants
 ```
