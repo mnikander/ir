@@ -1,7 +1,28 @@
 // Copyright (c) 2026 Marco Nikander
 
-import * as HIR from "../../high/high_grammar.ts";
-import * as LIR from "../../low/low_grammar.ts";
+import * as HIR from "../high/high_grammar.ts";
+import * as LIR from "../low/low_grammar.ts";
+
+export type PhiEdge = {
+  target: HIR.Label;
+  predecessor: HIR.Label;
+};
+
+export type SplitProgram = readonly SplitFunction[];
+
+export type SplitFunction = {
+  name: HIR.Label;
+  params: HIR.Input[];
+  blocks: SplitBlock[];
+};
+
+export type SplitBlock = {
+  name: HIR.Label;
+  joins: HIR.Phi[];
+  lines: HIR.Line[];
+  terminator: HIR.Terminator;
+  edge?: PhiEdge;
+};
 
 // The slot-numbered form still uses named HIR instructions, but every register
 // already has a stable stack offset assigned.
@@ -211,16 +232,12 @@ export type NumberedReturn = [
   source: NumberedInput,
 ];
 
-// The reserved form keeps numbered CFG structure and records where fresh
-// temporaries may start for each function.
 export type ReservedProgram = readonly ReservedFunction[];
 
 export type ReservedFunction = NumberedFunction & {
   first_temporary: LIR.Offset;
 };
 
-// The expanded form removes consume markers and rewrites each block into plain
-// LIR-like instructions plus symbolic control-flow labels.
 export type ExpandedProgram = readonly ExpandedFunction[];
 
 export type ExpandedFunction = {
@@ -282,8 +299,6 @@ export type ExpandedBranch = [
   targets: [HIR.Label, HIR.Label],
 ];
 
-// The unresolved flat form is almost final LIR, except control-flow targets are
-// symbolic until the last pass resolves them to line numbers.
 export type BlockTarget = {
   kind: "block";
   function_name: HIR.Label;

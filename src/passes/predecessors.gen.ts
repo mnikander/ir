@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Marco Nikander
 
-import * as HIGH from "../../high/high_grammar.ts";
-import { valid } from "../../utility.ts";
+import * as HIGH from "../high/high_grammar.ts";
+import { valid } from "../utility.ts";
 
 export type PredecessorMap = Map<HIGH.Label, HIGH.Label[]>;
 

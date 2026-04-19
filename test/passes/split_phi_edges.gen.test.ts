@@ -1,7 +1,7 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 import * as HIGH from "../../src/high/high_grammar.ts";
-import { split_phi_edges } from "../../src/passes/phi_elimination/mod.gen.ts";
+import { split_phi_edges } from "../../src/passes/mod.gen.ts";
 
 describe("split_phi_edges", () => {
   it("inserts edge blocks but keeps phi nodes on the join block", () => {

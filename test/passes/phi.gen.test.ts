@@ -5,7 +5,7 @@ import {
   collect_predecessors,
   lower_phi_moves,
   split_phi_edges,
-} from "../../src/passes/phi_elimination/mod.gen.ts";
+} from "../../src/passes/mod.gen.ts";
 
 describe("collect_predecessors", () => {
   it("records incoming blocks for jump and branch targets", () => {

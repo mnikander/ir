@@ -4,7 +4,7 @@ import * as LIR from "../../src/low/low_grammar.ts";
 import {
   resolve_labels,
   type UnresolvedProgram,
-} from "../../src/passes/lowering/mod.gen.ts";
+} from "../../src/passes/mod.gen.ts";
 
 describe("resolve_labels", () => {
   it("resolves function and block targets from symbolic notes", () => {

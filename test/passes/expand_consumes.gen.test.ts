@@ -4,7 +4,7 @@ import {
   expand_consumes,
   type NumberedProgram,
   reserve_temporaries,
-} from "../../src/passes/lowering/mod.gen.ts";
+} from "../../src/passes/mod.gen.ts";
 
 describe("expand_consumes", () => {
   it("rewrites consumed returns with a temporary copy and drop", () => {

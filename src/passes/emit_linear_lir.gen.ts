@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Marco Nikander
 
-import * as HIR from "../../high/high_grammar.ts";
+import * as HIR from "../high/high_grammar.ts";
 import {
   type BlockTarget,
   type ExpandedFunction,

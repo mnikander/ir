@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Marco Nikander
 
-import * as LIR from "../../low/low_grammar.ts";
+import * as LIR from "../low/low_grammar.ts";
 import type {
   ExpandedBlock,
   ExpandedCall,

@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Marco Nikander
 
-import * as HIGH from "../../high/high_grammar.ts";
-import { valid } from "../../utility.ts";
+import * as HIGH from "../high/high_grammar.ts";
+import { valid } from "../utility.ts";
 import { collect_predecessors } from "./predecessors.gen.ts";
 import type { SplitBlock, SplitFunction, SplitProgram } from "./types.gen.ts";
 
