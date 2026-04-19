@@ -29,7 +29,7 @@ describe("constants and exit", () => {
     // function @main []:
     // (missing block @entry)
     // %0 = constant 11
-    // exit %0
+    // return %0
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -51,12 +51,12 @@ describe("constants and exit", () => {
     // expect(() => evaluate(analyze(input))).toThrow();
   });
 
-  it("must throw a runtime-error when exiting with a Reference instead of a Value", () => {
+  it("must throw a runtime-error when exiting with a pointer instead of a Value", () => {
     // function @main []:
     // block @entry:
     // %0 = constant 0
     // %1 = ref %0
-    // exit %1
+    // return %1
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -83,7 +83,7 @@ describe("constants and exit", () => {
     // function @main []:
     // block @entry:
     // %0 = constant 11
-    // exit %0
+    // return %0
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -111,7 +111,7 @@ describe("copying of registers", () => {
     // block @entry:
     // %0 = constant 11
     // %1 = copy %0
-    // exit %1
+    // return %1
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -141,7 +141,7 @@ describe("arithmetic operations", () => {
     // %0 = constant 11
     // %1 = constant 22
     // %2 = add %0, %1
-    // exit %2
+    // return %2
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -174,7 +174,7 @@ describe("labels, jump, and branch", () => {
   //     //
   //     // block @first:
   //     // %1 = constant 22
-  //     // exit %2
+  //     // return %2
   //     const input: HIGH.Program = [
   //         {
   //             func: '@main',
@@ -212,11 +212,11 @@ describe("labels, jump, and branch", () => {
     //
     // block @first:
     // %1 = constant 11
-    // exit %1
+    // return %1
     //
     // block @second:
     // %2 = constant 22
-    // exit %2
+    // return %2
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -269,7 +269,7 @@ describe("labels, jump, and branch", () => {
     // jump @end
     //
     // block @end:
-    // exit %4
+    // return %4
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -333,7 +333,7 @@ describe("labels, jump, and branch", () => {
     // jump @end
     //
     // block @end:
-    // exit %5
+    // return %5
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -387,7 +387,7 @@ describe("function call", () => {
     // %0 = constant 11
     // %1 = constant 22
     // %2 = call @identity [%1]
-    // exit %2
+    // return %2
     //
     // function @identity [%a]:
     // block @entry:
@@ -432,7 +432,7 @@ describe("function call", () => {
     // %0 = constant 11
     // %1 = constant 22
     // %2 = call @first [%0, %1]
-    // exit %2
+    // return %2
     //
     // function @first [%a, %b]:
     // block @entry:
@@ -486,7 +486,7 @@ describe("function call", () => {
     // %0 = constant 5
     // %1 = constant 1
     // %2 = call @factorial [%0, %1]
-    // exit %2
+    // return %2
     //
     // function @factorial [%n, %acc]:
     // block @entry:
@@ -571,7 +571,7 @@ describe("static single assignment", () => {
     // block @entry:
     // %0 = constant 11
     // %0 = constant 22
-    // exit %1
+    // return %1
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -600,7 +600,7 @@ describe("static single assignment", () => {
     // %0 = constant 11
     // %1 = constant 22
     // %2 = call @first [%0, %1]
-    // exit %2
+    // return %2
     //
     // function @first [%a, %a]:
     // block @entry:
@@ -646,7 +646,7 @@ describe("static single assignment", () => {
     // %0 = constant 11
     // %1 = constant 22
     // %2 = call @identity [%1]
-    // exit %2
+    // return %2
     //
     // function @identity [%a]:
     // block @entry:
@@ -719,7 +719,7 @@ describe("static single assignment", () => {
     //
     // block @end:
     // %3 = phi [[@first, %1], [@second, %2]]
-    // exit %3
+    // return %3
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -790,7 +790,7 @@ describe("static single assignment", () => {
     // branch %5 @loop @end
     //
     // block @end:
-    // exit %3
+    // return %3
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -863,7 +863,7 @@ describe("static single assignment", () => {
     // %grandparent = phi [[@a, %alpha], [@c, %bravo]]
     // %parent = phi [[@a, %alpha], [@c, %charlie]]
     // %total = add %grandparent, %parent
-    // exit %total
+    // return %total
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -954,7 +954,7 @@ describe("static single assignment", () => {
     //
     // block @c:
     // %result = phi [[@a, %alpha], [@b, %bravo]]
-    // exit %result
+    // return %result
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1030,7 +1030,7 @@ describe("static single assignment", () => {
     //
     // block @c:
     // %result = phi [[@entry, %echo], [@a, %alpha], [@b, %bravo]]
-    // exit %result
+    // return %result
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1104,7 +1104,7 @@ describe("static single assignment", () => {
     //
     // block @c:
     // %result = phi [[@a, %alpha], [@b, %bravo]]  // this phi-node does NOT cover all incoming edges
-    // exit %result
+    // return %result
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1155,12 +1155,12 @@ describe("static single assignment", () => {
 });
 
 describe("memory and ownership", () => {
-  it("must allow consuming a register with Assign", () => {
+  it("must allow consuming the Assign operand", () => {
     // function @main []:
     // block @entry:
     // %0 = constant 11
     // %1 = move %0
-    // exit %1
+    // return %1
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1182,13 +1182,13 @@ describe("memory and ownership", () => {
     expect(evaluate(lower(input))).toBe(small);
   });
 
-  it("must allow consuming an Add operand when the source is not used again", () => {
+  it("must allow consuming an Add operand", () => {
     // function @main []:
     // block @entry:
     // %x = constant 11
     // %y = constant 13
     // %sum = add (move %x) %y
-    // exit %sum
+    // return %sum
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1215,7 +1215,7 @@ describe("memory and ownership", () => {
     // function @main []:
     // block @entry:
     // %0 = constant 11
-    // exit (move %0)
+    // return (move %0)
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1236,13 +1236,13 @@ describe("memory and ownership", () => {
     expect(evaluate(lower(input))).toBe(small);
   });
 
-  it("must reference and dereference a register", () => {
+  it("must create and load from a pointer", () => {
     // function @main []:
     // block @entry:
     // %x = constant 42
-    // %r = ref %x
-    // %t = deref %r
-    // exit %t
+    // %r = borrow %x
+    // %t = load %r
+    // return %t
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1265,12 +1265,12 @@ describe("memory and ownership", () => {
     expect(evaluate(lower(input))).toBe(small);
   });
 
-  it("must detect a use-after-drop", () => {
+  it("must detect a use-after-free", () => {
     // function @main []:
     // block @entry:
     // %0 = constant 0
     // drop %0
-    // exit %0
+    // return %0
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1293,14 +1293,14 @@ describe("memory and ownership", () => {
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
-  it("must detect a double-drop", () => {
+  it("must detect a double-free", () => {
     // function @main []:
     // block @entry:
     // %0 = constant 0
     // %1 = constant 0
     // drop %0
     // drop %0
-    // exit %1
+    // return %1
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1330,7 +1330,7 @@ describe("memory and ownership", () => {
     // block @entry:
     // %0 = constant 0
     // %1 = move %0
-    // exit %0
+    // return %0
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1353,14 +1353,14 @@ describe("memory and ownership", () => {
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
-  it("must detect a dangling reference when the source register is dropped", () => {
+  it("must detect a dangling pointer when the source register is dropped", () => {
     // function @main []:
     // block @entry:
     // %x = constant 42
-    // %r = ref %x
+    // %r = borrow %x
     // drop %x
-    // %t = deref %r
-    // exit %t
+    // %t = load %r
+    // return %t
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1385,14 +1385,14 @@ describe("memory and ownership", () => {
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
-  it("must detect a dangling reference when the source register is moved", () => {
+  it("must detect a dangling pointer when the source register is moved", () => {
     // function @main []:
     // block @entry:
     // %x = constant 42
-    // %r = ref %x
+    // %r = borrow %x
     // %y = move %x
-    // %t = deref %r
-    // exit %t
+    // %t = load %r
+    // return %t
     const input: HIGH.Program = [
       {
         name: "@main",
