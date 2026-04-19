@@ -9,6 +9,7 @@ import {
   NumberedBranch,
   NumberedCall,
   NumberedFunction,
+  NumberedDrop,
   NumberedInput,
   NumberedLine,
   NumberedLoad,
@@ -171,6 +172,13 @@ function rename_line(
       ];
       return renamed;
     }
+    case "Drop": {
+      const renamed: NumberedDrop = [
+        get_destination_slot(function_name, block_name, line, slots),
+        "Drop",
+      ];
+      return renamed;
+    }
     case "Add":
     case "Subtract":
     case "Multiply":
@@ -197,7 +205,6 @@ function rename_line(
         rename_input(line[2], slots, context),
       ];
     case "Own":
-    case "Drop":
       throw Error(
         `Lowering does not support HIR instruction '${
           line[1]
@@ -297,13 +304,8 @@ function get_destination_register(
     case "GreaterEqual":
     case "Negate":
     case "Own":
-      return line[0];
     case "Drop":
-      throw Error(
-        `Lowering does not support HIR instruction '${
-          line[1]
-        }' in block '${block_name}' of function '${function_name}' yet`,
-      );
+      return line[0];
   }
 }
 

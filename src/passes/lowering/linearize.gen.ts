@@ -131,6 +131,11 @@ function lower_line(
         instructions: [[line[0], "Load", line[2]]],
         next_temporary,
       };
+    case "Drop":
+      return {
+        instructions: [drop_instruction(line[0])],
+        next_temporary,
+      };
     case "Call": {
       const lowered: UnresolvedCall = [
         line[0],

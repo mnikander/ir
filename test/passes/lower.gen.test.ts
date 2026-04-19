@@ -130,6 +130,65 @@ describe("lowering from HIR to LIR", () => {
     ]);
   });
 
+  it("lowers an explicit hir drop directly to lir drop", () => {
+    const input: HIR.Program = [
+      {
+        name: "@main",
+        params: [],
+        blocks: [
+          {
+            name: "@entry",
+            joins: [],
+            lines: [
+              ["%x", "Constant", { value: small }],
+              ["%x", "Drop"],
+            ],
+            terminator: [null, "Return", ["%x"]],
+          },
+        ],
+      },
+    ];
+
+    expect(lower(input)).toEqual([
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@entry"],
+      [0, "Constant", { value: small }],
+      [0, "Drop"],
+      [null, "Return", 0],
+    ]);
+  });
+
+  it("lowers explicit and consume-driven drops together", () => {
+    const input: HIR.Program = [
+      {
+        name: "@main",
+        params: [],
+        blocks: [
+          {
+            name: "@entry",
+            joins: [],
+            lines: [
+              ["%x", "Constant", { value: small }],
+              ["%y", "Assign", ["consume", "%x"]],
+              ["%y", "Drop"],
+            ],
+            terminator: [null, "Return", ["%y"]],
+          },
+        ],
+      },
+    ];
+
+    expect(lower(input)).toEqual([
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@entry"],
+      [0, "Constant", { value: small }],
+      [1, "Copy", 0],
+      [0, "Drop"],
+      [1, "Drop"],
+      [null, "Return", 1],
+    ]);
+  });
+
   it("lowers borrow and load into address_of and load without extra temporaries", () => {
     const input: HIR.Program = [
       {

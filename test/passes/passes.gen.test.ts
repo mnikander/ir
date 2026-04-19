@@ -91,6 +91,44 @@ describe("rename_registers", () => {
       },
     ]);
   });
+
+  it("renames explicit drops to the dropped register's stack slot", () => {
+    const input: HIR.Program = [
+      {
+        name: "@main",
+        params: [["%x"]],
+        blocks: [
+          {
+            name: "@entry",
+            joins: [],
+            lines: [
+              ["%x", "Drop"],
+            ],
+            terminator: [null, "Return", ["%x"]],
+          },
+        ],
+      },
+    ];
+
+    expect(rename_registers(input)).toEqual([
+      {
+        name: "@main",
+        params: [
+          { name: "%x", offset: 0 },
+        ],
+        blocks: [
+          {
+            name: "@entry",
+            joins: [],
+            lines: [
+              [0, "Drop"],
+            ],
+            terminator: [null, "Return", { offset: 0, consume: false }],
+          },
+        ],
+      },
+    ]);
+  });
 });
 
 describe("linearize_to_lir", () => {
@@ -226,6 +264,61 @@ describe("linearize_to_lir", () => {
       [null, "Noop", "@entry"],
       [1, "Copy", 0],
       [0, "Drop"],
+      [null, "Return", 1],
+    ]);
+  });
+
+  it("linearizes an explicit drop directly to lir", () => {
+    const input: NumberedProgram = [
+      {
+        name: "@main",
+        params: [{ name: "%x", offset: 0 }],
+        blocks: [
+          {
+            name: "@entry",
+            joins: [],
+            lines: [
+              [0, "Drop"],
+            ],
+            terminator: [null, "Return", { offset: 0, consume: false }],
+          },
+        ],
+      },
+    ];
+
+    expect(linearize_to_lir(input)).toEqual([
+      [null, "Noop", "fun @main [%x]"],
+      [null, "Noop", "@entry"],
+      [0, "Drop"],
+      [null, "Return", 0],
+    ]);
+  });
+
+  it("keeps explicit and consume-driven drops in order", () => {
+    const input: NumberedProgram = [
+      {
+        name: "@main",
+        params: [{ name: "%x", offset: 0 }],
+        blocks: [
+          {
+            name: "@entry",
+            joins: [],
+            lines: [
+              [1, "Assign", { offset: 0, consume: true }],
+              [1, "Drop"],
+            ],
+            terminator: [null, "Return", { offset: 1, consume: false }],
+          },
+        ],
+      },
+    ];
+
+    expect(linearize_to_lir(input)).toEqual([
+      [null, "Noop", "fun @main [%x]"],
+      [null, "Noop", "@entry"],
+      [1, "Copy", 0],
+      [0, "Drop"],
+      [1, "Drop"],
       [null, "Return", 1],
     ]);
   });

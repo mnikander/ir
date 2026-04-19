@@ -46,7 +46,8 @@ export type NumberedMemory =
   | NumberedAssign
   | NumberedOwn
   | NumberedBorrow
-  | NumberedLoad;
+  | NumberedLoad
+  | NumberedDrop;
 export type NumberedConstant = [
   destination: LIR.Offset,
   tag: "Constant",
@@ -71,6 +72,10 @@ export type NumberedLoad = [
   destination: LIR.Offset,
   tag: "Load",
   source: LIR.Offset,
+];
+export type NumberedDrop = [
+  destination: LIR.Offset,
+  tag: "Drop",
 ];
 
 export type NumberedArithmetic =
