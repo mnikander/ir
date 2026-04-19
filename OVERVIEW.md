@@ -50,7 +50,7 @@ The entry point for that pipeline is [lower.ts](/home/marco/Documents/ir/src/pas
   Current HIR features:
   - SSA-style phi nodes in `joins`
   - line instructions including `Call`, `Constant`, `Assign`, arithmetic, and comparisons
-  - memory-oriented forms `Stack`, `Heap`, `Borrow`, `Load`, and `Drop`
+  - memory-oriented forms `Constant`, `Assign`, `Own`, `Borrow`, `Load`, and `Drop`
   - terminators `Jump`, `Branch`, and `Return`
   - inputs modeled as either `[register]` or `['consume', register]`
 
@@ -64,7 +64,7 @@ The entry point for that pipeline is [lower.ts](/home/marco/Documents/ir/src/pas
 
 - [lowering/rename.gen.ts](/home/marco/Documents/ir/src/passes/lowering/rename.gen.ts)
   Maps HIR registers to numeric LIR offsets.
-  It preserves `consume` on inputs and currently rejects unsupported HIR memory instructions during lowering.
+  It preserves `consume` on inputs for later lowering.
 
 - [lowering/linearize.gen.ts](/home/marco/Documents/ir/src/passes/lowering/linearize.gen.ts)
   Emits flat LIR with concrete line-number targets.
@@ -195,4 +195,4 @@ If we are working on execution behavior:
 
 - The active executable path is HIR -> lowering passes -> LIR -> runtime.
 - `consume` is part of the HIR input model and is lowered explicitly.
-- Lowering does not yet support every HIR memory instruction even though those instructions exist in the grammar.
+- Every current HIR line instruction and terminator is lowered to LIR.
