@@ -31,14 +31,9 @@ Several important features are:
 | Feature                             | Why? |
 | :--                                 | :--  |
 | static single-assignment (SSA) form | variables are easy to reason about and optimize |
-| `drop` instruction                  | 'undefining' a variable allows modelling the lifetime |
-| `move` instruction                  | allows transfering unique ownership of a resource to another variable |
-| destructive `update` instruction    | allows the immutable data paradigm AND in-place modification of large data structures |
-| `copy` is a deep copy               | no shared ownership, keeps lifetimes and ownership semantics clear |
 | call-by-value                       | keeps the language implementation relatively simple |
 | storage is on the stack by default  | good runtime performance, lifetimes tied to lexical scope are easy to reason about |
 | heap storage, i.e. `box` is explicit| heap storage is vital for persistent data, but must be freed at the end of its lifetime |
-
 
 ## Life-Cycle of a Variable
 
