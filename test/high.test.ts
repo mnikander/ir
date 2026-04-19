@@ -3,6 +3,7 @@ import { expect } from "@std/expect";
 import * as HIGH from "../src/high/high_grammar.ts";
 import { lower } from "../src/passes/lower.ts";
 import { evaluate } from "../src/runtime/machine.ts";
+import { validate } from "../src/analysis/validate.ts";
 // import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
 // choose prime numbers for tests, to reduce chances of false-positive results for arithmetic ops
@@ -21,6 +22,7 @@ describe("constants and exit", () => {
       },
     ];
     expect(input).toBeDefined();
+    // expect(validate(input)).toBe(false);
     // Lowering/runtime do not currently reject a missing @entry block.
     // expect(() => evaluate(analyze(input))).toThrow();
   });
@@ -47,11 +49,12 @@ describe("constants and exit", () => {
       },
     ];
     expect(input).toBeDefined();
+    // expect(validate(input)).toBe(false);
     // Lowering/runtime do not currently reject duplicate parameter names.
     // expect(() => evaluate(analyze(input))).toThrow();
   });
 
-  it("must throw a runtime-error when exiting with a pointer instead of a Value", () => {
+  it("must throw an error when exiting with a pointer instead of a Value", () => {
     // function @main []:
     // block @entry:
     // %0 = constant 0
@@ -75,6 +78,7 @@ describe("constants and exit", () => {
       },
     ];
     expect(input).toBeDefined();
+    // expect(validate(input)).toBe(false);
     // Lowering/runtime do not currently reject non-unique parameter registers across functions.
     // expect(() => evaluate(analyze(input))).toThrow();
   });
@@ -101,6 +105,7 @@ describe("constants and exit", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
 });
@@ -130,6 +135,7 @@ describe("copying of registers", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
 });
@@ -161,6 +167,7 @@ describe("arithmetic operations", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small + large);
   });
 });
@@ -248,6 +255,7 @@ describe("labels, jump, and branch", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(large);
   });
 
@@ -312,6 +320,7 @@ describe("labels, jump, and branch", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small + large);
   });
 
@@ -376,6 +385,7 @@ describe("labels, jump, and branch", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(large + huge);
   });
 });
@@ -423,6 +433,7 @@ describe("function call", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(large);
   });
 
@@ -468,6 +479,7 @@ describe("function call", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
 
@@ -561,6 +573,7 @@ describe("function call", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(120);
   });
 });
@@ -590,6 +603,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(false);
     // Lowering/runtime do not currently reject duplicate parameter names.
     // expect(() => {evaluate(analyze(input))}).toThrow();
   });
@@ -624,7 +638,7 @@ describe("static single assignment", () => {
       },
       {
         name: "@first",
-        params: [["%a"], ["%a"]],
+        params: [["%a"], ["%a"]], // error
         blocks: [
           {
             name: "@entry",
@@ -636,6 +650,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(false);
     // Lowering/runtime do not currently reject non-unique parameter registers across functions.
     // expect(() => {evaluate(analyze(input))}).toThrow();
   });
@@ -688,7 +703,7 @@ describe("static single assignment", () => {
 
       {
         name: "@identity2",
-        params: [["%a"]],
+        params: [["%a"]], // error: same parameter name used again
         blocks: [
           {
             name: "@entry",
@@ -700,6 +715,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(false);
     // Lowering/runtime do not currently reject non-unique parameter registers across functions.
     // expect(() => {evaluate(analyze(input))}).toThrow();
   });
@@ -761,6 +777,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(large);
   });
 
@@ -827,6 +844,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(3);
   });
 
@@ -925,6 +943,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(large + huge);
   });
 
@@ -1001,6 +1020,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(large);
   });
 
@@ -1075,6 +1095,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(0);
   });
 
@@ -1149,7 +1170,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
-    // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
+    // expect(validate(input)).toBe(false);
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 });
@@ -1179,6 +1200,7 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
 
@@ -1208,6 +1230,7 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small + large);
   });
 
@@ -1233,6 +1256,7 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
 
@@ -1262,6 +1286,7 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
 
@@ -1291,6 +1316,7 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
 
@@ -1347,6 +1373,7 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
@@ -1379,6 +1406,7 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
@@ -1407,6 +1435,7 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
@@ -1439,6 +1468,7 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
@@ -1471,6 +1501,7 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
     // expect(count_cfg_nodes(input)).toBe(1);// expect(table_of_contents(input).size).toBe(1);
