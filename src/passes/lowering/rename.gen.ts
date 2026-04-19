@@ -187,7 +187,7 @@ function rename_line(
         "Negate",
         rename_input(line[2], slots, context),
       ];
-    case "Stack":
+    case "Own":
     case "Drop":
       throw Error(
         `Lowering does not support HIR instruction '${
@@ -288,7 +288,7 @@ function get_destination_register(
     case "GreaterEqual":
     case "Negate":
       return line[0];
-    case "Stack":
+    case "Own":
     case "Drop":
       throw Error(
         `Lowering does not support HIR instruction '${
