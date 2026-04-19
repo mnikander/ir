@@ -1299,7 +1299,7 @@ describe("memory and ownership", () => {
     // block @entry:
     // %x = constant 42
     // %r = owner %x
-    // %y = assign %x
+    // %t = assign %x
     // return %t
     const input: HIGH.Program = [
       {
@@ -1312,9 +1312,9 @@ describe("memory and ownership", () => {
             lines: [
               ["%x", "Constant", { value: small }],
               ["%r", "Own", ["%x"]],
-              ["%y", "Assign", ["%x"]],
+              ["%t", "Assign", ["%x"]],
             ],
-            terminator: [null, "Return", ["%y"]],
+            terminator: [null, "Return", ["%t"]],
           },
         ],
       },
