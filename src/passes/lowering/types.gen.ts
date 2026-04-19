@@ -3,6 +3,24 @@
 import * as HIR from "../../high/high_grammar.ts";
 import * as LIR from "../../low/low_grammar.ts";
 
+// The slot-numbered form still uses named HIR instructions, but every register
+// already has a stable stack offset assigned.
+export type SlotAssignment = {
+  name: HIR.Register;
+  offset: LIR.Offset;
+};
+
+export type SlottedProgram = readonly SlottedFunction[];
+
+export type SlottedFunction = {
+  name: HIR.Label;
+  params: NumberedParam[];
+  blocks: HIR.Block[];
+  slots: SlotAssignment[];
+};
+
+// The numbered form removes named registers from instructions, but still keeps
+// block structure and consume markers.
 export type NumberedProgram = readonly NumberedFunction[];
 
 export type NumberedFunction = {
@@ -193,8 +211,35 @@ export type NumberedReturn = [
   source: NumberedInput,
 ];
 
-export type ResolvedInstruction =
-  | LIR.Noop
+// The reserved form keeps numbered CFG structure and records where fresh
+// temporaries may start for each function.
+export type ReservedProgram = readonly ReservedFunction[];
+
+export type ReservedFunction = NumberedFunction & {
+  first_temporary: LIR.Offset;
+};
+
+// The expanded form removes consume markers and rewrites each block into plain
+// LIR-like instructions plus symbolic control-flow labels.
+export type ExpandedProgram = readonly ExpandedFunction[];
+
+export type ExpandedFunction = {
+  name: HIR.Label;
+  params: NumberedParam[];
+  blocks: ExpandedBlock[];
+};
+
+export type ExpandedBlock = {
+  name: HIR.Label;
+  lines: ExpandedLine[];
+  terminator: ExpandedTerminator;
+};
+
+export type ExpandedLine =
+  | ExpandedResolvedInstruction
+  | ExpandedCall;
+
+export type ExpandedResolvedInstruction =
   | LIR.Constant
   | LIR.Copy
   | LIR.Load
@@ -213,9 +258,32 @@ export type ResolvedInstruction =
   | LIR.Less
   | LIR.LessEqual
   | LIR.Greater
-  | LIR.GreaterEqual
-  | LIR.Return;
+  | LIR.GreaterEqual;
 
+export type ExpandedCall = [
+  destination: LIR.Offset,
+  tag: "Call",
+  target: HIR.Label,
+  arguments: LIR.Offset[],
+];
+
+export type ExpandedTerminator = ExpandedJump | ExpandedBranch | LIR.Return;
+
+export type ExpandedJump = [
+  destination: null,
+  tag: "Jump",
+  target: HIR.Label,
+];
+
+export type ExpandedBranch = [
+  destination: null,
+  tag: "Branch",
+  condition: LIR.Offset,
+  targets: [HIR.Label, HIR.Label],
+];
+
+// The unresolved flat form is almost final LIR, except control-flow targets are
+// symbolic until the last pass resolves them to line numbers.
 export type BlockTarget = {
   kind: "block";
   function_name: HIR.Label;
@@ -226,6 +294,8 @@ export type FunctionTarget = {
   kind: "function";
   function_name: HIR.Label;
 };
+
+export type UnresolvedProgram = readonly UnresolvedInstruction[];
 
 export type UnresolvedJump = [
   destination: null,
@@ -249,7 +319,9 @@ export type UnresolvedCall = [
 ];
 
 export type UnresolvedInstruction =
-  | ResolvedInstruction
+  | LIR.Noop
+  | ExpandedResolvedInstruction
+  | LIR.Return
   | UnresolvedJump
   | UnresolvedBranch
   | UnresolvedCall;

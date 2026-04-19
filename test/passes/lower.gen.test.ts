@@ -261,7 +261,10 @@ describe("lowering from HIR to LIR", () => {
             lines: [
               ["%condition", "Constant", { value: 1 }],
             ],
-            terminator: [null, "Branch", ["consume", "%condition"], ["@then", "@else"]],
+            terminator: [null, "Branch", ["consume", "%condition"], [
+              "@then",
+              "@else",
+            ]],
           },
           {
             name: "@then",

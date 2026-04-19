@@ -3,7 +3,8 @@ import { expect } from "@std/expect";
 import * as HIGH from "../../src/high/high_grammar.ts";
 import {
   collect_predecessors,
-  eliminate_phi_nodes,
+  lower_phi_moves,
+  split_phi_edges,
 } from "../../src/passes/phi_elimination/mod.gen.ts";
 
 describe("collect_predecessors", () => {
@@ -44,7 +45,11 @@ describe("collect_predecessors", () => {
   });
 });
 
-describe("eliminate_phi_nodes", () => {
+function eliminate_phi_nodes(input: HIGH.Program): HIGH.Program {
+  return lower_phi_moves(split_phi_edges(input));
+}
+
+describe("phi elimination pipeline", () => {
   it("splits every incoming edge to a phi block", () => {
     const input: HIGH.Program = [
       {

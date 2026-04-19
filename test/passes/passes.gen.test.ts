@@ -3,16 +3,34 @@ import { expect } from "@std/expect";
 import * as HIR from "../../src/high/high_grammar.ts";
 import * as LIR from "../../src/low/low_grammar.ts";
 import {
-  linearize_to_lir,
+  emit_linear_lir,
+  expand_consumes,
+  number_slots,
   type NumberedProgram,
-  rename_registers,
+  reserve_temporaries,
+  resolve_labels,
+  rewrite_named_to_numbered,
 } from "../../src/passes/lowering/mod.gen.ts";
 
 const small: number = 11;
 const large: number = 13;
 const huge: number = 281;
 
-describe("rename_registers", () => {
+function rename_registers(input: HIR.Program): NumberedProgram {
+  return rewrite_named_to_numbered(number_slots(input));
+}
+
+function linearize_to_lir(input: NumberedProgram): LIR.Program {
+  return resolve_labels(
+    emit_linear_lir(
+      expand_consumes(
+        reserve_temporaries(input),
+      ),
+    ),
+  );
+}
+
+describe("numbering pipeline", () => {
   it("assigns params first and then enumerates later registers deterministically", () => {
     const input: HIR.Program = [
       {
@@ -44,8 +62,14 @@ describe("rename_registers", () => {
             name: "@entry",
             joins: [],
             lines: [
-              [2, "Add", { offset: 0, consume: false }, { offset: 1, consume: false }],
-              [3, "Multiply", { offset: 2, consume: false }, { offset: 0, consume: false }],
+              [2, "Add", { offset: 0, consume: false }, {
+                offset: 1,
+                consume: false,
+              }],
+              [3, "Multiply", { offset: 2, consume: false }, {
+                offset: 0,
+                consume: false,
+              }],
             ],
             terminator: [null, "Return", { offset: 3, consume: false }],
           },
@@ -147,13 +171,19 @@ describe("linearize_to_lir", () => {
               [2, "Constant", { value: large }],
               [3, "Constant", { value: huge }],
             ],
-            terminator: [null, "Branch", { offset: 0, consume: false }, ["@then", "@else"]],
+            terminator: [null, "Branch", { offset: 0, consume: false }, [
+              "@then",
+              "@else",
+            ]],
           },
           {
             name: "@then",
             joins: [],
             lines: [
-              [4, "Add", { offset: 1, consume: false }, { offset: 2, consume: false }],
+              [4, "Add", { offset: 1, consume: false }, {
+                offset: 2,
+                consume: false,
+              }],
             ],
             terminator: [null, "Jump", "@end"],
           },
@@ -161,7 +191,10 @@ describe("linearize_to_lir", () => {
             name: "@else",
             joins: [],
             lines: [
-              [5, "Add", { offset: 2, consume: false }, { offset: 3, consume: false }],
+              [5, "Add", { offset: 2, consume: false }, {
+                offset: 3,
+                consume: false,
+              }],
             ],
             terminator: [null, "Jump", "@end"],
           },
@@ -333,7 +366,10 @@ describe("linearize_to_lir", () => {
             name: "@entry",
             joins: [],
             lines: [
-              [2, "Add", { offset: 0, consume: true }, { offset: 1, consume: false }],
+              [2, "Add", { offset: 0, consume: true }, {
+                offset: 1,
+                consume: false,
+              }],
               [3, "Call", "@identity", [{ offset: 2, consume: true }]],
             ],
             terminator: [null, "Return", { offset: 3, consume: false }],
@@ -378,7 +414,10 @@ describe("linearize_to_lir", () => {
             name: "@entry",
             joins: [],
             lines: [],
-            terminator: [null, "Branch", { offset: 0, consume: true }, ["@then", "@else"]],
+            terminator: [null, "Branch", { offset: 0, consume: true }, [
+              "@then",
+              "@else",
+            ]],
           },
           {
             name: "@then",

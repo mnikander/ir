@@ -60,20 +60,31 @@ The entry point for that pipeline is [lower.ts](/home/marco/Documents/ir/src/pas
   Runs phi elimination, register renaming, and linearization.
 
 - [phi_elimination/mod.gen.ts](/home/marco/Documents/ir/src/passes/phi_elimination/mod.gen.ts)
-  Eliminates phi nodes by inserting edge-splitting blocks and `Assign` instructions.
+  Re-exports the phi-elimination micro-passes.
 
-- [lowering/rename.gen.ts](/home/marco/Documents/ir/src/passes/lowering/rename.gen.ts)
-  Maps HIR registers to numeric LIR offsets.
-  It preserves `consume` on inputs for later lowering.
+- [phi_elimination/split_phi_edges.gen.ts](/home/marco/Documents/ir/src/passes/phi_elimination/split_phi_edges.gen.ts)
+  Inserts edge blocks so each phi input arrives through its own predecessor edge.
 
-- [lowering/linearize.gen.ts](/home/marco/Documents/ir/src/passes/lowering/linearize.gen.ts)
-  Emits flat LIR with concrete line-number targets.
-  `consume` lowering is implemented here:
-  - consumed `Assign`, arithmetic operands, and call arguments become `Copy` plus `Drop`
-  - consumed `Branch` and `Return` inputs are first materialized into temporaries so control-flow targets remain correct
+- [phi_elimination/lower_phi_moves.gen.ts](/home/marco/Documents/ir/src/passes/phi_elimination/lower_phi_moves.gen.ts)
+  Replaces phi nodes with explicit `Assign` reads and writes in the edge blocks.
+
+- [lowering/number_slots.gen.ts](/home/marco/Documents/ir/src/passes/lowering/number_slots.gen.ts)
+  Assigns stable numeric stack slots to HIR registers.
+
+- [lowering/rewrite_named_to_numbered.gen.ts](/home/marco/Documents/ir/src/passes/lowering/rewrite_named_to_numbered.gen.ts)
+  Rewrites named HIR instructions into numbered form while preserving `consume`.
+
+- [lowering/expand_consumes.gen.ts](/home/marco/Documents/ir/src/passes/lowering/expand_consumes.gen.ts)
+  Lowers consumed inputs into explicit `Copy` and `Drop` instructions.
+
+- [lowering/emit_linear_lir.gen.ts](/home/marco/Documents/ir/src/passes/lowering/emit_linear_lir.gen.ts)
+  Emits flat LIR with symbolic block and function targets.
+
+- [lowering/resolve_labels.gen.ts](/home/marco/Documents/ir/src/passes/lowering/resolve_labels.gen.ts)
+  Resolves symbolic control-flow targets to concrete line numbers.
 
 - [lowering/types.gen.ts](/home/marco/Documents/ir/src/passes/lowering/types.gen.ts)
-  Intermediate numbered representation used between renaming and final LIR emission.
+  Intermediate forms used between numbering, consume expansion, emission, and final label resolution.
 
 ### Low-Level IR
 
@@ -171,8 +182,8 @@ If we are working on lowering:
 
 1. Start at [lower.ts](/home/marco/Documents/ir/src/passes/lower.ts).
 2. Inspect phi elimination in [mod.gen.ts](/home/marco/Documents/ir/src/passes/phi_elimination/mod.gen.ts).
-3. Inspect slot assignment in [rename.gen.ts](/home/marco/Documents/ir/src/passes/lowering/rename.gen.ts).
-4. Inspect final emission in [linearize.gen.ts](/home/marco/Documents/ir/src/passes/lowering/linearize.gen.ts).
+3. Inspect slot numbering in [number_slots.gen.ts](/home/marco/Documents/ir/src/passes/lowering/number_slots.gen.ts) and [rewrite_named_to_numbered.gen.ts](/home/marco/Documents/ir/src/passes/lowering/rewrite_named_to_numbered.gen.ts).
+4. Inspect consume lowering in [expand_consumes.gen.ts](/home/marco/Documents/ir/src/passes/lowering/expand_consumes.gen.ts), flat emission in [emit_linear_lir.gen.ts](/home/marco/Documents/ir/src/passes/lowering/emit_linear_lir.gen.ts), and target resolution in [resolve_labels.gen.ts](/home/marco/Documents/ir/src/passes/lowering/resolve_labels.gen.ts).
 5. Verify behavior in [lower.gen.test.ts](/home/marco/Documents/ir/test/passes/lower.gen.test.ts), [passes.gen.test.ts](/home/marco/Documents/ir/test/passes/passes.gen.test.ts), and [phi.gen.test.ts](/home/marco/Documents/ir/test/passes/phi.gen.test.ts).
 
 If we are working on execution behavior:
