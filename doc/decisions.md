@@ -43,4 +43,5 @@ Note: each line should be kept to a maximum of 260 characters. This allows viewi
 | 2026-04-11 | #7ee | LIR     | include a `Noop` instruction in the LIR             | With an optional 'note' field, the noop can be used to document function and block labels in the LIR code, for readability and debugging.|
 | 2026-04-11 | #bc5 |         | object types for primitive values and line numbers  | Reduces confusion. Variable offsets are passed as plain numbers, since they are the most common. Primitives and LineNumbers introduce some type-safely.|
 | 2026-04-18 | #526 | HIR     | remove the `Update` instruction for now             | Not needed for now. Only makes sense for aggregates such as array, product, and sum-types. Those will be implemented much later.|
+| 2026-04-19 | #844 | HIR     | remove the `Heap` pointer and heap memory, for now  | Less implementation work for a proof of concept. Basic memory safety can be shown on stack memory. Avoids having to implement alloc and free right now.|
 |            |        |         |                                                     | |

@@ -3,11 +3,11 @@
 import * as HIR from "../../high/high_grammar.ts";
 import * as LIR from "../../low/low_grammar.ts";
 import {
+  NumberedAssign,
   NumberedBlock,
   NumberedBorrow,
   NumberedBranch,
   NumberedCall,
-  NumberedAssign,
   NumberedFunction,
   NumberedInput,
   NumberedLine,
@@ -188,7 +188,6 @@ function rename_line(
         rename_input(line[2], slots, context),
       ];
     case "Stack":
-    case "Heap":
     case "Drop":
       throw Error(
         `Lowering does not support HIR instruction '${
@@ -290,7 +289,6 @@ function get_destination_register(
     case "Negate":
       return line[0];
     case "Stack":
-    case "Heap":
     case "Drop":
       throw Error(
         `Lowering does not support HIR instruction '${
