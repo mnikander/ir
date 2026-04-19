@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Marco Nikander
 
 export type Program      = readonly Function[];
-export type Function     = { name: Label,           params: Input[],      blocks: Block[] };
+export type Function     = { name: Label,           params: Input[],      blocks: Block[] }; // TODO: should params just be Register[], or can a function require a move?
 export type Block        = { name: Label,           joins: Phi[],         lines: Line[], terminator: Terminator };
 export type Line         = Call | Memory | Arithmetic | Comparison;
 
