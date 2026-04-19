@@ -15,7 +15,7 @@ export type Own          = [ destination: Register, tag: 'Own',           value:
 // export type Heap         = [ destination: Register, tag: 'Heap',          value: Input ];
 export type Borrow       = [ destination: Register, tag: 'Borrow',        value: Register ];
 export type Load         = [ destination: Register, tag: 'Load',          pointer: Register ];
-export type Drop         = [ destination: null,     tag: 'Drop',          value: Register ];
+export type Drop         = [ destination: Register, tag: 'Drop' ];
 
 export type Arithmetic   = Add | Subtract | Multiply | Divide | Remainder | Minimum | Maximum | Negative;
 export type Add          = [ destination: Register, tag: 'Add',           left: Input, right: Input ];

@@ -1339,7 +1339,7 @@ describe("memory and ownership", () => {
             joins: [],
             lines: [
               ["%0", "Constant", { value: 0 }],
-              [null, "Drop", "%0"],
+              ["%0", "Drop"],
             ],
             terminator: [null, "Return", ["%0"]],
           },
@@ -1370,8 +1370,8 @@ describe("memory and ownership", () => {
             lines: [
               ["%0", "Constant", { value: 0 }],
               ["%1", "Constant", { value: 0 }],
-              [null, "Drop", "%0"],
-              [null, "Drop", "%0"],
+              ["%0", "Drop"],
+              ["%0", "Drop"],
             ],
             terminator: [null, "Return", ["%1"]],
           },
@@ -1430,7 +1430,7 @@ describe("memory and ownership", () => {
             lines: [
               ["%x", "Constant", { value: small }],
               ["%r", "Borrow", "%x"],
-              [null, "Drop", "%x"],
+              ["%x", "Drop"],
               ["%t", "Load", "%r"],
             ],
             terminator: [null, "Return", ["%t"]],
