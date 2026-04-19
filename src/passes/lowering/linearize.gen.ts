@@ -32,7 +32,9 @@ export function linearize_to_lir(program: NumberedProgram): LIR.Program {
       emitted.push([null, "Noop", block.name]);
 
       for (const line of block.lines) {
-        emitted.push(...lower_line(line));
+        const lowered = lower_line(line, next_temporary);
+        emitted.push(...lowered.instructions);
+        next_temporary = lowered.next_temporary;
       }
 
       const lowered = lower_terminator(func.name, block.terminator, next_temporary);
@@ -87,20 +89,48 @@ function format_function_note(func: NumberedFunction): string {
   return `fun ${func.name} [${params}]`;
 }
 
-function lower_line(line: NumberedLine): UnresolvedInstruction[] {
+function lower_line(
+  line: NumberedLine,
+  next_temporary: LIR.Offset,
+): { instructions: UnresolvedInstruction[]; next_temporary: LIR.Offset } {
   switch (line[1]) {
     case "Constant":
-      return [[line[0], "Constant", line[2]]];
+      return {
+        instructions: [[line[0], "Constant", line[2]]],
+        next_temporary,
+      };
     case "Assign":
-      return with_consumed_drops([
-        line[0],
-        "Copy",
-        offset_of(line[2]),
-      ], [line[2]]);
+      return {
+        instructions: with_consumed_drops([
+          line[0],
+          "Copy",
+          offset_of(line[2]),
+        ], [line[2]]),
+        next_temporary,
+      };
+    case "Own": {
+      const prepared = materialize_consumed_inputs([line[2]], next_temporary);
+      const owned_offset = prepared.next_temporary++;
+      return {
+        instructions: [
+          ...prepared.instructions,
+          [owned_offset, "Copy", offset_of(prepared.inputs[0])],
+          [line[0], "AddressOf", owned_offset],
+          drop_instruction(offset_of(prepared.inputs[0])),
+        ],
+        next_temporary: prepared.next_temporary,
+      };
+    }
     case "Borrow":
-      return [[line[0], "AddressOf", line[2]]];
+      return {
+        instructions: [[line[0], "AddressOf", line[2]]],
+        next_temporary,
+      };
     case "Load":
-      return [[line[0], "Load", line[2]]];
+      return {
+        instructions: [[line[0], "Load", line[2]]],
+        next_temporary,
+      };
     case "Call": {
       const lowered: UnresolvedCall = [
         line[0],
@@ -109,7 +139,10 @@ function lower_line(line: NumberedLine): UnresolvedInstruction[] {
         line[3].map(offset_of),
         line[2],
       ];
-      return with_consumed_drops(lowered, line[3]);
+      return {
+        instructions: with_consumed_drops(lowered, line[3]),
+        next_temporary,
+      };
     }
     case "Add":
     case "Subtract":
@@ -124,18 +157,24 @@ function lower_line(line: NumberedLine): UnresolvedInstruction[] {
     case "LessEqual":
     case "Greater":
     case "GreaterEqual":
-      return with_consumed_drops([
-        line[0],
-        line[1],
-        offset_of(line[2]),
-        offset_of(line[3]),
-      ], [line[2], line[3]]);
+      return {
+        instructions: with_consumed_drops([
+          line[0],
+          line[1],
+          offset_of(line[2]),
+          offset_of(line[3]),
+        ], [line[2], line[3]]),
+        next_temporary,
+      };
     case "Negate":
-      return with_consumed_drops([
-        line[0],
-        "Negate",
-        offset_of(line[2]),
-      ], [line[2]]);
+      return {
+        instructions: with_consumed_drops([
+          line[0],
+          "Negate",
+          offset_of(line[2]),
+        ], [line[2]]),
+        next_temporary,
+      };
   }
 }
 

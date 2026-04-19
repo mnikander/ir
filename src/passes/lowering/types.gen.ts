@@ -44,6 +44,7 @@ export type NumberedCall = [
 export type NumberedMemory =
   | NumberedConstant
   | NumberedAssign
+  | NumberedOwn
   | NumberedBorrow
   | NumberedLoad;
 export type NumberedConstant = [
@@ -54,6 +55,11 @@ export type NumberedConstant = [
 export type NumberedAssign = [
   destination: LIR.Offset,
   tag: "Assign",
+  value: NumberedInput,
+];
+export type NumberedOwn = [
+  destination: LIR.Offset,
+  tag: "Own",
   value: NumberedInput,
 ];
 export type NumberedBorrow = [

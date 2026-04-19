@@ -1265,7 +1265,7 @@ describe("memory and ownership", () => {
     expect(evaluate(lower(input))).toBe(small);
   });
 
-  it.skip("must allow a register to be owned by a pointer", () => {
+  it("must allow a register to be owned by a pointer", () => {
     // function @main []:
     // block @entry:
     // %x = constant 42
@@ -1294,7 +1294,7 @@ describe("memory and ownership", () => {
     expect(evaluate(lower(input))).toBe(small);
   });
 
-  it.skip("must detect use of a register owned by a pointer", () => {
+  it("must detect use of a register owned by a pointer", () => {
     // function @main []:
     // block @entry:
     // %x = constant 42
@@ -1314,7 +1314,7 @@ describe("memory and ownership", () => {
               ["%r", "Own", ["%x"]],
               ["%y", "Assign", ["%x"]],
             ],
-            terminator: [null, "Return", ["%t"]],
+            terminator: [null, "Return", ["%y"]],
           },
         ],
       },

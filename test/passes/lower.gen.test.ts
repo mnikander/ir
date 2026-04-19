@@ -160,6 +160,36 @@ describe("lowering from HIR to LIR", () => {
     ]);
   });
 
+  it("lowers own into copy address_of and drop", () => {
+    const input: HIR.Program = [
+      {
+        name: "@main",
+        params: [],
+        blocks: [
+          {
+            name: "@entry",
+            joins: [],
+            lines: [
+              ["%x", "Constant", { value: small }],
+              ["%r", "Own", ["%x"]],
+            ],
+            terminator: [null, "Return", ["%r"]],
+          },
+        ],
+      },
+    ];
+
+    expect(lower(input)).toEqual([
+      [null, "Noop", "fun @main []"],
+      [null, "Noop", "@entry"],
+      [0, "Constant", { value: small }],
+      [2, "Copy", 0],
+      [1, "AddressOf", 2],
+      [0, "Drop"],
+      [null, "Return", 1],
+    ]);
+  });
+
   it("lowers consumed control-flow inputs while keeping block targets correct", () => {
     const input: HIR.Program = [
       {

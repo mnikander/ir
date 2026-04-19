@@ -12,6 +12,7 @@ import {
   NumberedInput,
   NumberedLine,
   NumberedLoad,
+  NumberedOwn,
   NumberedProgram,
   NumberedReturn,
   NumberedTerminator,
@@ -133,6 +134,14 @@ function rename_line(
       const renamed: NumberedAssign = [
         get_destination_slot(function_name, block_name, line, slots),
         "Assign",
+        rename_input(line[2], slots, context),
+      ];
+      return renamed;
+    }
+    case "Own": {
+      const renamed: NumberedOwn = [
+        get_destination_slot(function_name, block_name, line, slots),
+        "Own",
         rename_input(line[2], slots, context),
       ];
       return renamed;
@@ -287,8 +296,8 @@ function get_destination_register(
     case "Greater":
     case "GreaterEqual":
     case "Negate":
-      return line[0];
     case "Own":
+      return line[0];
     case "Drop":
       throw Error(
         `Lowering does not support HIR instruction '${
