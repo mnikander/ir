@@ -1265,6 +1265,64 @@ describe("memory and ownership", () => {
     expect(evaluate(lower(input))).toBe(small);
   });
 
+  it.skip("must allow a register to be owned by a pointer", () => {
+    // function @main []:
+    // block @entry:
+    // %x = constant 42
+    // %r = owner %x
+    // %t = load %r
+    // return %t
+    const input: HIGH.Program = [
+      {
+        name: "@main",
+        params: [],
+        blocks: [
+          {
+            name: "@entry",
+            joins: [],
+            lines: [
+              ["%x", "Constant", { value: small }],
+              ["%r", "Own", ["%x"]],
+              ["%t", "Load", "%r"],
+            ],
+            terminator: [null, "Return", ["%t"]],
+          },
+        ],
+      },
+    ];
+    expect(input).toBeDefined();
+    expect(evaluate(lower(input))).toBe(small);
+  });
+
+  it.skip("must detect use of a register owned by a pointer", () => {
+    // function @main []:
+    // block @entry:
+    // %x = constant 42
+    // %r = owner %x
+    // %y = assign %x
+    // return %t
+    const input: HIGH.Program = [
+      {
+        name: "@main",
+        params: [],
+        blocks: [
+          {
+            name: "@entry",
+            joins: [],
+            lines: [
+              ["%x", "Constant", { value: small }],
+              ["%r", "Own", ["%x"]],
+              ["%y", "Assign", ["%x"]],
+            ],
+            terminator: [null, "Return", ["%t"]],
+          },
+        ],
+      },
+    ];
+    expect(input).toBeDefined();
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
+  });
+
   it("must detect a use-after-free", () => {
     // function @main []:
     // block @entry:
