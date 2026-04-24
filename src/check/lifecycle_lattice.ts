@@ -2,7 +2,7 @@
 
 import * as HIR from "../high/high_grammar.ts";
 
-// TODO: cound add 'moved' as it's own state for better diagnostics
+// TODO: could add 'moved' as it's own state for better diagnostics
 export type ULD = [undef: boolean, live: boolean, dead: boolean];
 export type OutSet = Map<HIR.Register, ULD>;
 
@@ -14,47 +14,35 @@ export function meet(left: ULD, right: ULD): ULD {
   return [left[0] && right[0], left[1] && right[1], left[2] && right[2]];
 }
 
-export function define(line: HIR.Line, input: ULD): ULD {
+export function define(input: ULD, line: HIR.Line): ULD {
   if (input[0] && !input[1] && !input[2]) {
     return [false, true, false];
   } else {
-    throw Error(
-      `Attempted to define variable ${line[HIR.Get.Dest]} which is ` +
-        `${uld_to_string(input)} in line '${line.toString()}'`,
-    );
+    throw Error("invalid define");
   }
 }
 
-export function use(line: HIR.Line, input: ULD): ULD {
+export function use(input: ULD, line: HIR.Line): ULD {
   if (!input[0] && input[1] && !input[2]) {
     return input;
   } else {
-    throw Error(
-      `Attempted to use variable ${line[HIR.Get.Dest]} which is ` +
-        `${uld_to_string(input)} in line '${line.toString()}'`,
-    );
+    throw Error("invalid use");
   }
 }
 
-export function drop(line: HIR.Line, input: ULD): ULD {
+export function drop(input: ULD, line: HIR.Line): ULD {
   if (!input[0] && input[1] && !input[2]) {
     return [false, false, true];
   } else {
-    throw Error(
-      `Attempted to drop variable ${line[HIR.Get.Dest]} which is ` +
-        `${uld_to_string(input)} in line '${line.toString()}'`,
-    );
+    throw Error("invalid drop");
   }
 }
 
-export function move(line: HIR.Line, input: ULD): ULD {
+export function move(input: ULD, line: HIR.Line): ULD {
   if (!input[0] && input[1] && !input[2]) {
     return [false, false, true];
   } else {
-    throw Error(
-      `Attempted to move variable ${line[HIR.Get.Dest]} which is ` +
-        `${uld_to_string(input)} in line '${line.toString()}'`,
-    );
+    throw Error("invalid move");
   }
 }
 
