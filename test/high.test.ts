@@ -1,7 +1,7 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 import * as HIGH from "../src/high/high_grammar.ts";
-import { lower } from "../src/passes/lower.ts";
+import { lower } from "../src/passes/lower.gen.ts";
 import { evaluate } from "../src/runtime/machine.ts";
 import { validate } from "../src/analysis/validate.ts";
 // import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
