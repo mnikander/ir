@@ -15,15 +15,15 @@ import {
   top,
   Value,
 } from "./stack.ts";
-import * as LIR from "../low/low_grammar.ts";
+import * as LOW from "../low/low_grammar.ts";
 import assert from "node:assert";
 
-export function evaluate(program: LIR.Program): number {
+export function evaluate(program: LOW.Program): number {
   let stack: Stack = initialize_stack();
   try {
     while (is_executable(stack)) {
-      const op: LIR.Instruction = program[top(stack).pc];
-      switch (op[LIR.Get.Tag]) {
+      const op: LOW.Instruction = program[top(stack).pc];
+      switch (op[LOW.Get.Tag]) {
         case "Noop":         stack =          noop(stack, op); break;
         case "Constant":     stack =      constant(stack, op); break;
         case "Copy":         stack =          copy(stack, op); break;
@@ -49,27 +49,27 @@ export function evaluate(program: LIR.Program): number {
         case 'Branch':       stack =        branch(stack, op); break;
         case 'Call':         stack =          call(stack, op); break;
         case "Return":       stack =           ret(stack, op); break;
-        default: throw Error(`unhandled instruction type '${(op as LIR.Instruction)[LIR.Get.Tag]}'`);
+        default: throw Error(`unhandled instruction type '${(op as LOW.Instruction)[LOW.Get.Tag]}'`);
       }
     }
   } catch (error) {
     // catch and then re-throw all errors, with the line-number prepended, for easier debugging
-    throw Error(`LIR line ${top(stack).pc}: ` + (error as Error).message);
+    throw Error(`LOW line ${top(stack).pc}: ` + (error as Error).message);
   }
   assert(stack.data.length === 1, "Expect only the main return value to be on the stack.");
   assert(stack.generation.length === 1, "Expect only the main return value to be on the stack.");
   return assert_value(stack.data[0]).value;
 }
 
-function noop(stack: Stack, _op: LIR.Noop): Stack {
+function noop(stack: Stack, _op: LOW.Noop): Stack {
   top(stack).pc++;
   return stack;
 }
 
-function constant(stack: Stack, op: LIR.Constant): Stack {
+function constant(stack: Stack, op: LOW.Constant): Stack {
   const base: number = top(stack).base_address;
-  const dest: number = base + op[LIR.Get.Dest];
-  const value: Value = { tag: "Value", value: op[LIR.Get.Left].value };
+  const dest: number = base + op[LOW.Get.Dest];
+  const value: Value = { tag: "Value", value: op[LOW.Get.Left].value };
   assert_not_dead(stack.data[dest]);
   stack.data[dest] = value;
   stack.generation[dest] = top(stack).generation_counter++;
@@ -77,10 +77,10 @@ function constant(stack: Stack, op: LIR.Constant): Stack {
   return stack;
 }
 
-function copy(stack: Stack, op: LIR.Copy): Stack {
+function copy(stack: Stack, op: LOW.Copy): Stack {
   const base: number = top(stack).base_address;
-  const dest: number = base + op[LIR.Get.Dest];
-  const source: number = base + op[LIR.Get.Left];
+  const dest: number = base + op[LOW.Get.Dest];
+  const source: number = base + op[LOW.Get.Left];
   assert_not_dead(stack.data[source]);
   assert_not_dead(stack.data[dest]);
   stack.data[dest] = stack.data[source];
@@ -89,11 +89,11 @@ function copy(stack: Stack, op: LIR.Copy): Stack {
   return stack;
 }
 
-function load(stack: Stack, op: LIR.Load): Stack {
+function load(stack: Stack, op: LOW.Load): Stack {
   const base: number = top(stack).base_address;
-  const source: number = base + op[LIR.Get.Left];
+  const source: number = base + op[LOW.Get.Left];
   const source_ptr: Pointer = assert_pointer(stack.data[source]);
-  const dest: number = base + op[LIR.Get.Dest];
+  const dest: number = base + op[LOW.Get.Dest];
   assert_not_dead(stack.data[source_ptr.address]);
   assert_not_dead(stack.data[dest]);
   assert(source_ptr.generation === stack.generation[source_ptr.address], "Attempted 'load' from a dangling pointer.");
@@ -103,10 +103,10 @@ function load(stack: Stack, op: LIR.Load): Stack {
   return stack;
 }
 
-function store(stack: Stack, op: LIR.Store): Stack {
+function store(stack: Stack, op: LOW.Store): Stack {
   const base: number = top(stack).base_address;
-  const source: number = base + op[LIR.Get.Left];
-  const dest: number = base + op[LIR.Get.Dest];
+  const source: number = base + op[LOW.Get.Left];
+  const dest: number = base + op[LOW.Get.Dest];
   assert_not_dead(stack.data[source]);
   assert_not_dead(stack.data[dest]);
   const dest_ptr: Pointer = assert_pointer(stack.data[dest]);
@@ -117,10 +117,10 @@ function store(stack: Stack, op: LIR.Store): Stack {
   return stack;
 }
 
-function address_of(stack: Stack, op: LIR.AddressOf): Stack {
+function address_of(stack: Stack, op: LOW.AddressOf): Stack {
   const base: number = top(stack).base_address;
-  const target: number = base + op[LIR.Get.Left];
-  const dest: number = base + op[LIR.Get.Dest];
+  const target: number = base + op[LOW.Get.Left];
+  const dest: number = base + op[LOW.Get.Dest];
   const target_generation: number = stack.generation[target];
   assert_not_dead(stack.data[dest]);
   assert_not_dead(stack.data[target]);
@@ -130,9 +130,9 @@ function address_of(stack: Stack, op: LIR.AddressOf): Stack {
   return stack;
 }
 
-function drop(stack: Stack, op: LIR.Drop): Stack {
+function drop(stack: Stack, op: LOW.Drop): Stack {
   const base: number = top(stack).base_address;
-  const dest: number = base + op[LIR.Get.Dest];
+  const dest: number = base + op[LOW.Get.Dest];
   const value: Dead = { tag: "Dead" };
   assert_not_dead(stack.data[dest]);
   stack.data[dest] = value;
@@ -141,38 +141,38 @@ function drop(stack: Stack, op: LIR.Drop): Stack {
   return stack;
 }
 
-function add(stack: Stack, op: LIR.Add): Stack {
+function add(stack: Stack, op: LOW.Add): Stack {
   return binary_operation(stack, op, (left, right) => left + right);
 }
 
-function subtract(stack: Stack, op: LIR.Subtract): Stack {
+function subtract(stack: Stack, op: LOW.Subtract): Stack {
   return binary_operation(stack, op, (left, right) => left - right);
 }
 
-function multiply(stack: Stack, op: LIR.Multiply): Stack {
+function multiply(stack: Stack, op: LOW.Multiply): Stack {
   return binary_operation(stack, op, (left, right) => left * right);
 }
 
-function divide(stack: Stack, op: LIR.Divide): Stack {
+function divide(stack: Stack, op: LOW.Divide): Stack {
   return binary_operation(stack, op, (left, right) => left / right);
 }
 
-function remainder(stack: Stack, op: LIR.Remainder): Stack {
+function remainder(stack: Stack, op: LOW.Remainder): Stack {
   return binary_operation(stack, op, (left, right) => left % right);
 }
 
-function minimum(stack: Stack, op: LIR.Minimum): Stack {
+function minimum(stack: Stack, op: LOW.Minimum): Stack {
   return binary_operation(stack, op, (left, right) => Math.min(left, right));
 }
 
-function maximum(stack: Stack, op: LIR.Maximum): Stack {
+function maximum(stack: Stack, op: LOW.Maximum): Stack {
   return binary_operation(stack, op, (left, right) => Math.max(left, right));
 }
 
-function negate(stack: Stack, op: LIR.Negative): Stack {
+function negate(stack: Stack, op: LOW.Negative): Stack {
   const base: number = top(stack).base_address;
-  const dest: number = base + op[LIR.Get.Dest];
-  const left: number = base + op[LIR.Get.Left];
+  const dest: number = base + op[LOW.Get.Dest];
+  const left: number = base + op[LOW.Get.Left];
   const l: Value = assert_value(stack.data[left]);
   assert_not_dead(stack.data[dest]);
   assert_not_dead(stack.data[left]);
@@ -182,51 +182,51 @@ function negate(stack: Stack, op: LIR.Negative): Stack {
   return stack;
 }
 
-function equal(stack: Stack, op: LIR.Equal): Stack {
+function equal(stack: Stack, op: LOW.Equal): Stack {
   return comparison_operation(stack, op, (left, right) => left === right);
 }
 
-function unequal(stack: Stack, op: LIR.Unequal): Stack {
+function unequal(stack: Stack, op: LOW.Unequal): Stack {
   return comparison_operation(stack, op, (left, right) => left !== right);
 }
 
-function less(stack: Stack, op: LIR.Less): Stack {
+function less(stack: Stack, op: LOW.Less): Stack {
   return comparison_operation(stack, op, (left, right) => left < right);
 }
 
-function less_equal(stack: Stack, op: LIR.LessEqual): Stack {
+function less_equal(stack: Stack, op: LOW.LessEqual): Stack {
   return comparison_operation(stack, op, (left, right) => left <= right);
 }
 
-function greater(stack: Stack, op: LIR.Greater): Stack {
+function greater(stack: Stack, op: LOW.Greater): Stack {
   return comparison_operation(stack, op, (left, right) => left > right);
 }
 
-function greater_equal(stack: Stack, op: LIR.GreaterEqual): Stack {
+function greater_equal(stack: Stack, op: LOW.GreaterEqual): Stack {
   return comparison_operation(stack, op, (left, right) => left >= right);
 }
 
-function jump(stack: Stack, op: LIR.Jump): Stack {
-  const target: LIR.LineNumber = op[LIR.Get.Left];
+function jump(stack: Stack, op: LOW.Jump): Stack {
+  const target: LOW.LineNumber = op[LOW.Get.Left];
   top(stack).pc = target.line;
   return stack;
 }
 
-function branch(stack: Stack, op: LIR.Branch): Stack {
+function branch(stack: Stack, op: LOW.Branch): Stack {
   const base: number = top(stack).base_address;
-  const condition: number = base + op[LIR.Get.Left];
-  const left: LIR.LineNumber = op[LIR.Get.Right][0];
-  const right: LIR.LineNumber = op[LIR.Get.Right][1];
+  const condition: number = base + op[LOW.Get.Left];
+  const left: LOW.LineNumber = op[LOW.Get.Right][0];
+  const right: LOW.LineNumber = op[LOW.Get.Right][1];
   const c: Value = assert_value(stack.data[condition]);
   top(stack).pc = (c.value !== 0) ? left.line : right.line;
   return stack;
 }
 
-function call(stack: Stack, op: LIR.Call): Stack {
+function call(stack: Stack, op: LOW.Call): Stack {
   const base: number = top(stack).base_address;
-  const dest: number = base + op[LIR.Get.Dest];
-  const target: number = op[LIR.Get.Left].line;
-  const args: number[] = op[LIR.Get.Right];
+  const dest: number = base + op[LOW.Get.Dest];
+  const target: number = op[LOW.Get.Left].line;
+  const args: number[] = op[LOW.Get.Right];
   const note: string = op[4];
   assert_not_dead(stack.data[dest]);
   
@@ -245,10 +245,10 @@ function call(stack: Stack, op: LIR.Call): Stack {
   return stack;
 }
 
-function ret(stack: Stack, op: LIR.Return): Stack {
+function ret(stack: Stack, op: LOW.Return): Stack {
   // copy return value
   const base: number = top(stack).base_address;
-  const source: number = base + op[LIR.Get.Left];
+  const source: number = base + op[LOW.Get.Left];
   const dest: number = top(stack).return_address;
   assert_not_dead(stack.data[source]);
   assert_not_dead(stack.data[dest]);
@@ -264,25 +264,25 @@ function ret(stack: Stack, op: LIR.Return): Stack {
 function binary_operation(
   stack: Stack,
   op:
-    | LIR.Add
-    | LIR.Subtract
-    | LIR.Multiply
-    | LIR.Divide
-    | LIR.Remainder
-    | LIR.Minimum
-    | LIR.Maximum
-    | LIR.Equal
-    | LIR.Unequal
-    | LIR.Less
-    | LIR.LessEqual
-    | LIR.Greater
-    | LIR.GreaterEqual,
+    | LOW.Add
+    | LOW.Subtract
+    | LOW.Multiply
+    | LOW.Divide
+    | LOW.Remainder
+    | LOW.Minimum
+    | LOW.Maximum
+    | LOW.Equal
+    | LOW.Unequal
+    | LOW.Less
+    | LOW.LessEqual
+    | LOW.Greater
+    | LOW.GreaterEqual,
   operation: (left: number, right: number) => number,
 ): Stack {
   const base: number = top(stack).base_address;
-  const dest: number = base + op[LIR.Get.Dest];
-  const left: number = base + op[LIR.Get.Left];
-  const right: number = base + op[LIR.Get.Right];
+  const dest: number = base + op[LOW.Get.Dest];
+  const left: number = base + op[LOW.Get.Left];
+  const right: number = base + op[LOW.Get.Right];
   assert_not_dead(stack.data[left]);
   assert_not_dead(stack.data[right]);
   assert_not_dead(stack.data[dest]);
@@ -296,7 +296,7 @@ function binary_operation(
 
 function comparison_operation(
   stack: Stack,
-  op: LIR.Equal | LIR.Unequal | LIR.Less | LIR.LessEqual | LIR.Greater | LIR.GreaterEqual,
+  op: LOW.Equal | LOW.Unequal | LOW.Less | LOW.LessEqual | LOW.Greater | LOW.GreaterEqual,
   comparison: (left: number, right: number) => boolean,
 ): Stack {
   return binary_operation(stack, op, (left, right) => comparison(left, right) ? 1 : 0);

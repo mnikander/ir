@@ -1,6 +1,6 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
-import * as LIR from "../src/low/low_grammar.ts";
+import * as LOW from "../src/low/low_grammar.ts";
 import { evaluate } from "../src/runtime/machine.ts";
 
 // choose prime numbers for tests, to reduce chances of false-positive results for arithmetic ops
@@ -11,7 +11,7 @@ const huge: number = 281;
 describe("constants and exit", () => {
   it.skip("must throw error on empty input", () => {
     // (empty program)
-    const input: LIR.Program = [];
+    const input: LOW.Program = [];
     expect(() => evaluate(input)).toThrow();
   });
 
@@ -20,7 +20,7 @@ describe("constants and exit", () => {
     // block @entry:
     // %0 = constant 11
 
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -34,7 +34,7 @@ describe("constants and exit", () => {
     // %0 = constant 11
     // exit %0
 
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [0, "Constant", { value: small }],
       [null, "Return", 0],
@@ -49,7 +49,7 @@ describe("constants and exit", () => {
     // %1 = ref %0
     // exit %1
 
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -69,7 +69,7 @@ describe("memory operations", () => {
     // %0 = constant 11
     // exit %0
 
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -79,7 +79,7 @@ describe("memory operations", () => {
   });
 
   it("must throw when the destination of Constant is Dead", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Drop"],
@@ -97,7 +97,7 @@ describe("memory operations", () => {
     // %1 = copy %0
     // exit %1
 
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -108,7 +108,7 @@ describe("memory operations", () => {
   });
 
   it("must throw when Copy is given a Dead source", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Drop"],
@@ -120,7 +120,7 @@ describe("memory operations", () => {
   });
 
   it("must throw when Copy is given a Dead destination", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -140,7 +140,7 @@ describe("memory operations", () => {
     // %2 = load %1
     // exit %2
 
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -160,7 +160,7 @@ describe("memory operations", () => {
     // store %2, %1
     // exit %0
 
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -173,7 +173,7 @@ describe("memory operations", () => {
   });
 
   it("must throw when Load is given a non-pointer source", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -184,7 +184,7 @@ describe("memory operations", () => {
   });
 
   it("must throw when Store is given a non-pointer destination", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -196,7 +196,7 @@ describe("memory operations", () => {
   });
 
   it("must throw when Load is given a dangling pointer source", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -209,7 +209,7 @@ describe("memory operations", () => {
   });
 
   it("must throw when Load is given a Dead source", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Drop"],
@@ -221,7 +221,7 @@ describe("memory operations", () => {
   });
 
   it("must throw when Load is given a Dead destination", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -235,7 +235,7 @@ describe("memory operations", () => {
   });
 
   it("must throw when Store is given a dangling pointer destination", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -249,7 +249,7 @@ describe("memory operations", () => {
   });
 
   it("must throw when Store is given a Dead source", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Drop"],
@@ -261,7 +261,7 @@ describe("memory operations", () => {
   });
 
   it("must throw when Store is given a Dead destination", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -274,7 +274,7 @@ describe("memory operations", () => {
   });
 
   it("must throw when AddressOf is given a Dead source", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Drop"],
@@ -286,7 +286,7 @@ describe("memory operations", () => {
   });
 
   it("must throw when AddressOf is given a Dead destination", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -308,7 +308,7 @@ describe("arithmetic operations", () => {
     // %2 = add %0, %1
     // exit %2
 
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -320,7 +320,7 @@ describe("arithmetic operations", () => {
   });
 
   it("must evaluate integer subtraction", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: large }],
@@ -332,7 +332,7 @@ describe("arithmetic operations", () => {
   });
 
   it("must evaluate integer multiplication", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -344,7 +344,7 @@ describe("arithmetic operations", () => {
   });
 
   it("must evaluate integer division", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small * large }],
@@ -356,7 +356,7 @@ describe("arithmetic operations", () => {
   });
 
   it("must evaluate integer remainder", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: large }],
@@ -368,7 +368,7 @@ describe("arithmetic operations", () => {
   });
 
   it("must evaluate minimum", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -380,7 +380,7 @@ describe("arithmetic operations", () => {
   });
 
   it("must evaluate maximum", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -392,7 +392,7 @@ describe("arithmetic operations", () => {
   });
 
   it("must evaluate negation", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -403,7 +403,7 @@ describe("arithmetic operations", () => {
   });
 
   it("must throw when Negate is given a Dead source", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Drop"],
@@ -415,7 +415,7 @@ describe("arithmetic operations", () => {
   });
 
   it("must throw when Negate is given a Dead destination", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -428,7 +428,7 @@ describe("arithmetic operations", () => {
   });
 
   it("must throw when an arithmetic operation is given a Dead right argument", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Drop"],
@@ -441,7 +441,7 @@ describe("arithmetic operations", () => {
   });
 
   it("must throw when an arithmetic operation is given a Dead left argument", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -454,7 +454,7 @@ describe("arithmetic operations", () => {
   });
 
   it("must throw when an arithmetic operation is given a Dead destination", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -470,7 +470,7 @@ describe("arithmetic operations", () => {
 
 describe("comparison operations", () => {
   it("must evaluate small==small as true", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -482,7 +482,7 @@ describe("comparison operations", () => {
   });
 
   it("must evaluate small==large as false", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -494,7 +494,7 @@ describe("comparison operations", () => {
   });
 
   it("must evaluate small!=large as true", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -506,7 +506,7 @@ describe("comparison operations", () => {
   });
 
   it("must evaluate small!=small as false", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -518,7 +518,7 @@ describe("comparison operations", () => {
   });
 
   it("must evaluate small<large as true", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -530,7 +530,7 @@ describe("comparison operations", () => {
   });
 
   it("must evaluate large<large as false", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -542,7 +542,7 @@ describe("comparison operations", () => {
   });
 
   it("must evaluate large<small as false", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: large }],
@@ -554,7 +554,7 @@ describe("comparison operations", () => {
   });
 
   it("must evaluate small<=large as true", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -566,7 +566,7 @@ describe("comparison operations", () => {
   });
 
   it("must evaluate small<=small as true", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -578,7 +578,7 @@ describe("comparison operations", () => {
   });
 
   it("must evaluate large<=small as false", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: large }],
@@ -590,7 +590,7 @@ describe("comparison operations", () => {
   });
 
   it("must evaluate large>small as true", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: large }],
@@ -602,7 +602,7 @@ describe("comparison operations", () => {
   });
 
   it("must evaluate small>small as false", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -614,7 +614,7 @@ describe("comparison operations", () => {
   });
 
   it("must evaluate small>large as false", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -626,7 +626,7 @@ describe("comparison operations", () => {
   });
 
   it("must evaluate large>=small as true", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: large }],
@@ -638,7 +638,7 @@ describe("comparison operations", () => {
   });
 
   it("must evaluate small>=small as true", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -650,7 +650,7 @@ describe("comparison operations", () => {
   });
 
   it("must evaluate small>=small as false", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -662,7 +662,7 @@ describe("comparison operations", () => {
   });
 
   it("must throw when a comparison operation is given a Dead right argument", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Drop"],
@@ -675,7 +675,7 @@ describe("comparison operations", () => {
   });
 
   it("must throw when a comparison operation is given a Dead left argument", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -688,7 +688,7 @@ describe("comparison operations", () => {
   });
 
   it("must throw when a comparison operation is given a Dead destination", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -716,7 +716,7 @@ describe("control flow operations", () => {
     // %2 = constant 22
     // exit %2
 
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [null, "Jump", { line: 6 }],
@@ -752,7 +752,7 @@ describe("control flow operations", () => {
     // block @end:
     // exit %4
 
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: 1 }], // true
@@ -792,7 +792,7 @@ describe("control flow operations", () => {
     // block @end:
     // exit %5
 
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: 0 }], // false
@@ -824,7 +824,7 @@ describe("control flow operations", () => {
     // block @entry:
     // return %a
 
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }], // @entry
@@ -850,7 +850,7 @@ describe("control flow operations", () => {
     // block @entry:
     // return %a
 
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: small }],
@@ -897,7 +897,7 @@ describe("control flow operations", () => {
     // %10 = phi [[@body, %9], [@entry, %acc]]
     // return %10
 
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Constant", { value: 5 }], // main
@@ -926,7 +926,7 @@ describe("control flow operations", () => {
   });
 
   it("must throw when Return is given a Dead argument", () => {
-    const input: LIR.Program = [
+    const input: LOW.Program = [
       [null, "Noop", "fun @main []"],
       [null, "Noop", "@entry"],
       [0, "Drop"],
