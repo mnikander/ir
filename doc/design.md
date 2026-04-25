@@ -40,8 +40,8 @@ Several important features are:
 At a given source-location, a variable can be in one of several valid states:
 
 1. undefined
-2. defined
-3. destroyed (dropped, moved, or updated)
+2. live
+3. dead (dropped, moved, or updated)
 
 It could also be in one of the following error states:
 
@@ -77,7 +77,7 @@ flowchart LR;
     C -->|access| CU;
 ```
 
-Note that stack-allocated variables are automatically freed when the stack-frame is popped.
+Note that stack-allocated variables are automatically freed on return, i.e. when the stack-frame is popped.
 This means there is no need to explicitly free a stack-allocated variable.
 A heap-allocated variable *must* be freed explicitly.
 This means heap variables are not allowed to be in the 'Defined' state, when the enclosing function returns.

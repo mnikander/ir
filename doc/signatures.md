@@ -10,6 +10,7 @@
 |                          |                              |                                         |                                |         | |
 | **Arithmetic and Logic** |                              |                                         |                                |         | |
 | Constant                 | `const`                      | `%x = const 42`                         | Literal                        | Value   | |
+| Copy                     | `copy`                       | `%x = copy %a`                          | Value                          | Value   | |
 | Equality                 | `equal` <br> `unequal`       | `%x = equal %a %b`                      | Value, Value                   | Boolean | |
 | Negation                 | `negate`                     | `%x = negate %a`                        | Number                         | Number  | _not available yet_ |
 | Arithmetic               | `add` <br> `subtract` <br> `multiply` <br> `divide` <br> `remainder`| `%x = add %a %b` | Number, Number | Number  | |
@@ -18,12 +19,11 @@
 | Logical                  | `and` <br> `or`              | `%x = and %a %b`                        | Boolean, Boolean               | Boolean | _not available yet_ |
 |                          |                              |                                         |                                |         | |
 | **Control Flow**         |                              |                                         |                                |         | |
-| Basic block              | `block`                      | `block @entry`:                         | Label                          |         | |
-| Function definition      | `function`                   | `function @identity [%arg]`:            | Label, Tuple Value*            |         | |
+| Function definition      | `function`                   | `function @identity [%arg]:`            | Label, Tuple Value*            |         | |
+| Basic block              | `block`                      | `block @entry:`                         | Label                          |         | |
 | Jump                     | `jump`                       | `jump @end`                             | Label                          |         | unconditional branch |
 | Branch                   | `branch`                     | `branch @left @right %c`                | Label, Label, Boolean          |         | conditional branch |
 | Return                   | `return`                     | `return %x`                             | Value                          |         | |
-| Exit                     | `exit`                       | `exit %x`                               | Value                          |         | _will hopefully be replaced by `return`_ |
 |                          |                              |                                         |                                |         | |
 
 ## Notes
