@@ -1,48 +1,50 @@
-# Table of Instructions
+# Table of Instructions and Type Signatures
 
-| name                  | symbols        | example                             | inputs                         | outputs    | comments |
-| :---                  | :---           | :---                                | :---                           | :---       | :--- |
-|                       |                |                                     |                                |            | |
-| **Special Forms**     |                |                                     |                                |            | |
-| Function              | `function`     | `function @identity [%arg]:`        | `Label`, `Input[]`, `Block[]`  |            | function definition |
-| Block                 | `block`        | `block @entry:`                     | `Label`, `Phi[]`, `Line[]`, `Terminator` |  | basic block definition |
-| Phi                   | `phi`          | `%x = phi [[@left %l] [@right %r]]` | `[Label, Input][]`             | `Register` | SSA-style join |
-| Call                  | `call`         | `%x = call @f [%a (consume %b)]`    | `Label`, `Input[]`             | `Register` | function call |
-|                       |                |                                     |                                |            | |
-| **Memory**            |                |                                     |                                |            | |
-| Constant              | `constant`     | `%x = constant 42`                  | `Primitive`                    | `Register` | load a constant value |
-| Copy                  | `copy`         | `%x = copy (consume %a)`            | `Input`                        | `Register` | copy another register |
-| Own                   | `own`          | `%x = own %a`                       | `Input`                        | `Register` | create a pointer which takes exclusive ownership of a register |
-| Borrow                | `borrow`       | `%x = borrow %a`                    | `Register`                     | `Register` | create a pointer which is non-owning, i.e. read-only access |
-| Load                  | `load`         | `%x = load %ptr`                    | `Register`                     | `Register` | load a value via a pointer |
-| Drop                  | `drop`         | `%x = drop`                         |                                | `Register` | destroy a register |
-|                       |                |                                     |                                |            | |
-| **Arithmetic**        |                |                                     |                                |            | |
-| Add                   | `add`          | `%x = add %a %b`                    | `Input`, `Input`               | `Register` | |
-| Subtract              | `subtract`     | `%x = subtract %a %b`               | `Input`, `Input`               | `Register` | |
-| Multiply              | `multiply`     | `%x = multiply %a %b`               | `Input`, `Input`               | `Register` | |
-| Divide                | `divide`       | `%x = divide %a %b`                 | `Input`, `Input`               | `Register` | |
-| Remainder             | `remainder`    | `%x = remainder %a %b`              | `Input`, `Input`               | `Register` | |
-| Minimum               | `minimum`      | `%x = minimum %a %b`                | `Input`, `Input`               | `Register` | |
-| Maximum               | `maximum`      | `%x = maximum %a %b`                | `Input`, `Input`               | `Register` | |
-| Negate                | `negate`       | `%x = negate %a`                    | `Input`                        | `Register` | |
-|                       |                |                                     |                                |            | |
-| **Comparison**        |                |                                     |                                |            | |
-| Equal                 | `equal`        | `%x = equal %a %b`                  | `Input`, `Input`               | `Register` | |
-| Unequal               | `unequal`      | `%x = unequal %a %b`                | `Input`, `Input`               | `Register` | |
-| Less                  | `less`         | `%x = less %a %b`                   | `Input`, `Input`               | `Register` | |
-| LessEqual             | `lessequal`    | `%x = lessequal %a %b`              | `Input`, `Input`               | `Register` | |
-| Greater               | `greater`      | `%x = greater %a %b`                | `Input`, `Input`               | `Register` | |
-| GreaterEqual          | `greaterequal` | `%x = greaterequal %a %b`           | `Input`, `Input`               | `Register` | |
-|                       |                |                                     |                                |            | |
-| **Terminator**        |                |                                     |                                |            | |
-| Jump                  | `jump`         | `jump @end`                         | `Label`                        |            | unconditional branch |
-| Branch                | `branch`       | `branch (consume %c) @left @right`  | `Input`, `[Label, Label]`      |            | conditional branch |
-| Return                | `return`       | `return (consume %x)`               | `Input`                        |            | |
-|                       |                |                                     |                                |            | |
+| name                  | symbols        | example                             | input type             |output type| comments |
+| :---                  | :---           | :---                                | :---                   | :---      | :--- |
+|                       |                |                                     |                        |           | |
+| **Special Forms**     |                |                                     |                        |           | |
+| Function              | `function`     | `function @identity [%arg]:`        |                        |           | function definition |
+| Block                 | `block`        | `block @entry:`                     |                        |           | basic block definition |
+| Phi                   | `phi`          | `%x = phi [[@left %l] [@right %r]]` | Array<[Label Value]>   | Value     | SSA-style join |
+| Call                  | `call`         | `%x = call @f [%a (consume %b)]`    | Label, Array<Value>    | Value     | function call |
+|                       |                |                                     |                        |           | |
+| **Memory**            |                |                                     |                        |           | |
+| Constant              | `constant`     | `%x = constant 42`                  | Literal                | Integer   | load a constant value |
+| Copy                  | `copy`         | `%x = copy (consume %a)`            | Value                  | Value     | copy another register |
+| Own                   | `own`          | `%x = own %a`                       | Value                  | Pointer   | create a pointer which takes exclusive ownership of a register |
+| Borrow                | `borrow`       | `%x = borrow %a`                    | Value                  | Pointer   | create a pointer which is non-owning, i.e. read-only access |
+| Load                  | `load`         | `%x = load %ptr`                    | Pointer                | Value     | load a value via a pointer |
+| Drop                  | `drop`         | `%x = drop`                         | Unit                   |           | destroy a register |
+|                       |                |                                     |                        |           | |
+| **Arithmetic**        |                |                                     |                        |           | |
+| Add                   | `add`          | `%x = add %a %b`                    | Integer, Integer       | Integer   | |
+| Subtract              | `subtract`     | `%x = subtract %a %b`               | Integer, Integer       | Integer   | |
+| Multiply              | `multiply`     | `%x = multiply %a %b`               | Integer, Integer       | Integer   | |
+| Divide                | `divide`       | `%x = divide %a %b`                 | Integer, Integer       | Integer   | |
+| Remainder             | `remainder`    | `%x = remainder %a %b`              | Integer, Integer       | Integer   | |
+| Minimum               | `minimum`      | `%x = minimum %a %b`                | Integer, Integer       | Integer   | |
+| Maximum               | `maximum`      | `%x = maximum %a %b`                | Integer, Integer       | Integer   | |
+| Negate                | `negate`       | `%x = negate %a`                    | Integer                | Integer   | |
+|                       |                |                                     |                        |           | |
+| **Comparison**        |                |                                     |                        |           | |
+| Equal                 | `equal`        | `%x = equal %a %b`                  | Integer, Integer       | Boolean   | |
+| Unequal               | `unequal`      | `%x = unequal %a %b`                | Integer, Integer       | Boolean   | |
+| Less                  | `less`         | `%x = less %a %b`                   | Integer, Integer       | Boolean   | |
+| LessEqual             | `lessequal`    | `%x = lessequal %a %b`              | Integer, Integer       | Boolean   | |
+| Greater               | `greater`      | `%x = greater %a %b`                | Integer, Integer       | Boolean   | |
+| GreaterEqual          | `greaterequal` | `%x = greaterequal %a %b`           | Integer, Integer       | Boolean   | |
+|                       |                |                                     |                        |           | |
+| **Terminator**        |                |                                     |                        |           | |
+| Jump                  | `jump`         | `jump @end`                         | Label                  |           | unconditional branch |
+| Branch                | `branch`       | `branch (consume %c) @left @right`  | Boolean, [Label Label] |           | conditional branch |
+| Return                | `return`       | `return (consume %x)`               | Value                  |           | |
+|                       |                |                                     |                        |           | |
 
 ## Notes
-- `Input` is either a register read, such as `%x`, or a consumed register read, such as `(consume %x)`.
+- `Boolean` is currently only an alias for an `Integer` with the value 0 or 1
+- `Value` is either `Integer` or `Pointer`
+- Arguments can be passed via read, such as `%x`, or consuming read, such as `(consume %x)`.
 
 ---
 **Copyright (c) 2026 Marco Nikander**
