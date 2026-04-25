@@ -14,7 +14,12 @@ const huge: number = 281;
 
 describe("constants and exit", () => {
   it("must throw error on empty input", () => {
-    // (empty program)
+    const text: string = `
+function @main []:
+
+
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -23,16 +28,21 @@ describe("constants and exit", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     // expect(validate(input)).toBe(false);
     // Lowering/runtime do not currently reject a missing @entry block.
     // expect(() => evaluate(analyze(input))).toThrow();
   });
 
   it("must throw error if there is no Entry block", () => {
-    // function @main []:
-    // block @foo:
-    // %0 = constant 11
-    // return %0
+    const text: string = `
+function @main []:
+
+  block @foo:
+    %0 = constant ${small}
+    return %0
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -50,17 +60,22 @@ describe("constants and exit", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     // expect(validate(input)).toBe(false);
     // Lowering/runtime do not currently reject duplicate parameter names.
     // expect(() => evaluate(analyze(input))).toThrow();
   });
 
   it("must throw an error when exiting with a pointer instead of a Value", () => {
-    // function @main []:
-    // block @entry:
-    // %0 = constant 0
-    // %1 = own %0
-    // return %1
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant 0
+    %1 = borrow %0
+    return %1
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -79,16 +94,21 @@ describe("constants and exit", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     // expect(validate(input)).toBe(false);
     // Lowering/runtime do not currently reject non-unique parameter registers across functions.
     // expect(() => evaluate(analyze(input))).toThrow();
   });
 
   it("must evaluate a constant", () => {
-    // function @main []:
-    // block @entry:
-    // %0 = constant 11
-    // return %0
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant ${small}
+    return %0
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -106,6 +126,7 @@ describe("constants and exit", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
@@ -113,11 +134,15 @@ describe("constants and exit", () => {
 
 describe("copying of registers", () => {
   it("must copy a constant", () => {
-    // function @main []:
-    // block @entry:
-    // %0 = constant 11
-    // %1 = copy %0
-    // return %1
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant ${small}
+    %1 = assign %0
+    return %1
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -136,6 +161,7 @@ describe("copying of registers", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
@@ -143,12 +169,16 @@ describe("copying of registers", () => {
 
 describe("arithmetic operations", () => {
   it("must evaluate integer addition", () => {
-    // function @main []:
-    // block @entry:
-    // %0 = constant 11
-    // %1 = constant 22
-    // %2 = add %0, %1
-    // return %2
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant ${small}
+    %1 = constant ${large}
+    %2 = add %0 %1
+    return %2
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -168,6 +198,7 @@ describe("arithmetic operations", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small + large);
   });
@@ -214,17 +245,21 @@ describe("labels, jump, and branch", () => {
   // });
 
   it("must execute the correct line of code after an unconditional jump", () => {
-    // function @main []:
-    // block @entry:
-    // jump @second
-    //
-    // block @first:
-    // %1 = constant 11
-    // return %1
-    //
-    // block @second:
-    // %2 = constant 22
-    // return %2
+    const text: string = `
+function @main []:
+
+  block @entry:
+    jump @second
+
+  block @first:
+    %1 = constant ${small}
+    return %1
+
+  block @second:
+    %2 = constant ${large}
+    return %2
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -256,6 +291,7 @@ describe("labels, jump, and branch", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(large);
   });
@@ -324,31 +360,35 @@ function @main []:
         ],
       },
     ];
-    expect(print(input)).toEqual(text);
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small + large);
   });
 
   it("must execute the second branch when condition is false", () => {
-    // function @main []:
-    // block @entry:
-    // %0 = constant false
-    // %1 = constant 11
-    // %2 = constant 22
-    // %3 = constant 44
-    // branch %0 @then @else
-    //
-    // block @then:
-    // %4 = add %1, %2
-    // jump @end
-    //
-    // block @else:
-    // %5 = add %2, %3
-    // jump @end
-    //
-    // block @end:
-    // return %5
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant 0
+    %1 = constant ${small}
+    %2 = constant ${large}
+    %3 = constant ${huge}
+    branch %0 @then @else
+
+  block @then:
+    %4 = add %1 %2
+    jump @end
+
+  block @else:
+    %5 = add %2 %3
+    jump @end
+
+  block @end:
+    return %5
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -391,6 +431,7 @@ function @main []:
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(large + huge);
   });
@@ -398,16 +439,21 @@ function @main []:
 
 describe("function call", () => {
   it("must support calling the identity function", () => {
-    // function @main []:
-    // block @entry:
-    // %0 = constant 11
-    // %1 = constant 22
-    // %2 = call @identity [%1]
-    // return %2
-    //
-    // function @identity [%a]:
-    // block @entry:
-    // return %a
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant ${small}
+    %1 = constant ${large}
+    %2 = call @identity [%1]
+    return %2
+
+function @identity [%a]:
+
+  block @entry:
+    return %a
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -439,21 +485,27 @@ describe("function call", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(large);
   });
 
   it("must support calling a binary function", () => {
-    // function @main []:
-    // block @entry:
-    // %0 = constant 11
-    // %1 = constant 22
-    // %2 = call @first [%0, %1]
-    // return %2
-    //
-    // function @first [%a, %b]:
-    // block @entry:
-    // return %a
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant ${small}
+    %1 = constant ${large}
+    %2 = call @first [%0 %1]
+    return %2
+
+function @first [%a %b]:
+
+  block @entry:
+    return %a
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -485,6 +537,7 @@ describe("function call", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
@@ -579,8 +632,8 @@ function @factorial [%n %acc]:
         ],
       },
     ];
-    expect(print(input)).toEqual(text);
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(120);
   });
@@ -588,11 +641,15 @@ function @factorial [%n %acc]:
 
 describe("static single assignment", () => {
   it("must throw an error when re-assigning to a register", () => {
-    // function @main []:
-    // block @entry:
-    // %0 = constant 11
-    // %0 = constant 22
-    // return %1
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant ${small}
+    %0 = constant ${large}
+    return %1
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -611,22 +668,28 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(false);
     // Lowering/runtime do not currently reject duplicate parameter names.
     // expect(() => {evaluate(analyze(input))}).toThrow();
   });
 
   it("must throw an error when function parameters have the same name", () => {
-    // function @main []:
-    // block @entry:
-    // %0 = constant 11
-    // %1 = constant 22
-    // %2 = call @first [%0, %1]
-    // return %2
-    //
-    // function @first [%a, %a]:
-    // block @entry:
-    // return %a
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant ${small}
+    %1 = constant ${large}
+    %2 = call @first [%0 %1]
+    return %2
+
+function @first [%a %a]:
+
+  block @entry:
+    return %a
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -658,26 +721,33 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(false);
     // Lowering/runtime do not currently reject non-unique parameter registers across functions.
     // expect(() => {evaluate(analyze(input))}).toThrow();
   });
 
   it("must throw an error when function parameter registers are not unique", () => {
-    // function @main []:
-    // block @entry:
-    // %0 = constant 11
-    // %1 = constant 22
-    // %2 = call @identity [%1]
-    // return %2
-    //
-    // function @identity [%a]:
-    // block @entry:
-    // return %a
-    //
-    // function @identity2 [%a]:
-    // block @entry:
-    // return %a
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant ${small}
+    %1 = constant ${large}
+    %2 = call @identity [%1]
+    return %2
+
+function @identity [%a]:
+
+  block @entry:
+    return %a
+
+function @identity2 [%a]:
+
+  block @entry:
+    return %a
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -723,27 +793,32 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(false);
     // Lowering/runtime do not currently reject non-unique parameter registers across functions.
     // expect(() => {evaluate(analyze(input))}).toThrow();
   });
 
   it("phi node must assign from the correct register after an unconditional jump", () => {
-    // function @main []:
-    // block @entry:
-    // jump @second
-    //
-    // block @first:
-    // %1 = constant 11
-    // jump @end
-    //
-    // block @second:
-    // %2 = constant 22
-    // jump @end
-    //
-    // block @end:
-    // %3 = phi [[@first, %1], [@second, %2]]
-    // return %3
+    const text: string = `
+function @main []:
+
+  block @entry:
+    jump @second
+
+  block @first:
+    %1 = constant ${small}
+    jump @end
+
+  block @second:
+    %2 = constant ${large}
+    jump @end
+
+  block @end:
+    %3 = phi [[@first %1] [@second %2]]
+    return %3
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -785,6 +860,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(large);
   });
@@ -801,21 +877,25 @@ describe("static single assignment", () => {
     //
     // IR-code:
     //
-    // function @main []:
-    // block @entry:
-    // %0 = constant 0
-    // %1 = constant 1
-    // %2 = constant 3
-    // jump @loop
-    //
-    // block @loop:
-    // %3 = phi [[@entry, %0], [@loop, %4]]
-    // %4 = add %1, %3
-    // %5 = unequal %3, %2
-    // branch %5 @loop @end
-    //
-    // block @end:
-    // return %3
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant 0
+    %1 = constant 1
+    %2 = constant 3
+    jump @loop
+
+  block @loop:
+    %3 = phi [[@entry %0] [@loop %4]]
+    %4 = add %1 %3
+    %5 = unequal %3 %2
+    branch %5 @loop @end
+
+  block @end:
+    return %3
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -852,6 +932,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(3);
   });
@@ -868,28 +949,32 @@ describe("static single assignment", () => {
     //         D
     //
     //
-    // function @main []:
-    // block @entry:
-    // %condition = constant false
-    // branch %condition @a @b
-    //
-    // block @a:
-    // %alpha = constant 10
-    // jump @d
-    //
-    // block @b:
-    // %bravo = constant 20
-    // jump @c
-    //
-    // block @c:
-    // %charlie = constant 21
-    // jump @d
-    //
-    // block @d:
-    // %grandparent = phi [[@a, %alpha], [@c, %bravo]]
-    // %parent = phi [[@a, %alpha], [@c, %charlie]]
-    // %total = add %grandparent, %parent
-    // return %total
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %condition = constant 0
+    branch %condition @a @b
+
+  block @a:
+    %alpha = constant ${small}
+    jump @d
+
+  block @b:
+    %bravo = constant ${large}
+    jump @c
+
+  block @c:
+    %charlie = constant ${huge}
+    jump @d
+
+  block @d:
+    %grandparent = phi [[@a %alpha] [@c %bravo]]
+    %parent = phi [[@a %alpha] [@c %charlie]]
+    %total = add %grandparent %parent
+    return %total
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -951,6 +1036,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(large + huge);
   });
@@ -966,22 +1052,26 @@ describe("static single assignment", () => {
     //        C
     //
     //
-    // function @main []:
-    // block @entry:
-    // jump @a
-    //
-    // block @a:
-    // %alpha = constant 10
-    // %condition = constant true
-    // branch %condition @b @c
-    //
-    // block @b:
-    // %bravo = constant 20
-    // jump @c
-    //
-    // block @c:
-    // %result = phi [[@a, %alpha], [@b, %bravo]]
-    // return %result
+    const text: string = `
+function @main []:
+
+  block @entry:
+    jump @a
+
+  block @a:
+    %alpha = constant ${small}
+    %condition = constant 1
+    branch %condition @b @c
+
+  block @b:
+    %bravo = constant ${large}
+    jump @c
+
+  block @c:
+    %result = phi [[@a %alpha] [@b %bravo]]
+    return %result
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1028,6 +1118,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(large);
   });
@@ -1043,22 +1134,26 @@ describe("static single assignment", () => {
     //        C
     //
     //
-    // function @main []:
-    // block @entry:
-    // %echo = constant false
-    // branch %echo @a @c
-    //
-    // block @a:
-    // %alpha = constant true
-    // branch %alpha @b @c
-    //
-    // block @b:
-    // %bravo = constant true
-    // jump @c
-    //
-    // block @c:
-    // %result = phi [[@entry, %echo], [@a, %alpha], [@b, %bravo]]
-    // return %result
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %echo = constant 0
+    branch %echo @a @c
+
+  block @a:
+    %alpha = constant 1
+    branch %alpha @b @c
+
+  block @b:
+    %bravo = constant 1
+    jump @c
+
+  block @c:
+    %result = phi [[@entry %echo] [@a %alpha] [@b %bravo]]
+    return %result
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1103,6 +1198,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(0);
   });
@@ -1118,22 +1214,26 @@ describe("static single assignment", () => {
     //        C
     //
     //
-    // function @main []:
-    // block @entry:
-    // %echo = constant false
-    // branch %echo @a @c
-    //
-    // block @a:
-    // %alpha = constant true
-    // branch %alpha @b @c
-    //
-    // block @b:
-    // %bravo = constant true
-    // jump @c
-    //
-    // block @c:
-    // %result = phi [[@a, %alpha], [@b, %bravo]]  // this phi-node does NOT cover all incoming edges
-    // return %result
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %echo = constant 0
+    branch %echo @a @c
+
+  block @a:
+    %alpha = constant 1
+    branch %alpha @b @c
+
+  block @b:
+    %bravo = constant 1
+    jump @c
+
+  block @c:
+    %result = phi [[@a %alpha] [@b %bravo]]
+    return %result
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1178,6 +1278,7 @@ describe("static single assignment", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     // expect(validate(input)).toBe(false);
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
@@ -1185,11 +1286,15 @@ describe("static single assignment", () => {
 
 describe("memory and ownership", () => {
   it("must allow consuming the Assign operand", () => {
-    // function @main []:
-    // block @entry:
-    // %0 = constant 11
-    // %1 = assign (consume %0)
-    // return %1
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant ${small}
+    %1 = assign (consume %0)
+    return %1
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1208,17 +1313,22 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
 
   it("must allow consuming an Add operand", () => {
-    // function @main []:
-    // block @entry:
-    // %x = constant 11
-    // %y = constant 13
-    // %sum = add (consume %x) %y
-    // return %sum
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %x = constant ${small}
+    %y = constant ${large}
+    %sum = add (consume %x) %y
+    return %sum
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1238,15 +1348,20 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small + large);
   });
 
   it("must allow consuming the return operand", () => {
-    // function @main []:
-    // block @entry:
-    // %0 = constant 11
-    // return (consume %0)
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant ${small}
+    return (consume %0)
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1264,17 +1379,22 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
 
   it("must create and load from a pointer", () => {
-    // function @main []:
-    // block @entry:
-    // %x = constant 42
-    // %r = borrow %x
-    // %t = load %r
-    // return %t
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %x = constant ${small}
+    %r = borrow %x
+    %t = load %r
+    return %t
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1294,17 +1414,22 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
 
   it("must allow a register to be owned by a pointer", () => {
-    // function @main []:
-    // block @entry:
-    // %x = constant 42
-    // %r = owner %x
-    // %t = load %r
-    // return %t
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %x = constant ${small}
+    %r = own %x
+    %t = load %r
+    return %t
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1324,17 +1449,22 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
 
   it("must detect use of a register owned by a pointer", () => {
-    // function @main []:
-    // block @entry:
-    // %x = constant 42
-    // %r = owner %x
-    // %t = assign %x
-    // return %t
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %x = constant ${small}
+    %r = own %x
+    %t = assign %x
+    return %t
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1354,15 +1484,20 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
   it("must detect a use-after-free", () => {
-    // function @main []:
-    // block @entry:
-    // %0 = constant 0
-    // drop %0
-    // return %0
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant 0
+    %0 = drop
+    return %0
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1381,19 +1516,24 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
   it("must detect a double-free", () => {
-    // function @main []:
-    // block @entry:
-    // %0 = constant 0
-    // %1 = constant 0
-    // drop %0
-    // drop %0
-    // return %1
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant 0
+    %1 = constant 0
+    %0 = drop
+    %0 = drop
+    return %1
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1414,17 +1554,22 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
   it("must detect a use-after-move", () => {
-    // function @main []:
-    // block @entry:
-    // %0 = constant 0
-    // %1 = assign (consume %0)
-    // return %0
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant 0
+    %1 = assign (consume %0)
+    return %0
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1443,19 +1588,24 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
   it("must detect a dangling pointer when the source register is dropped", () => {
-    // function @main []:
-    // block @entry:
-    // %x = constant 42
-    // %r = borrow %x
-    // drop %x
-    // %t = load %r
-    // return %t
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %x = constant ${small}
+    %r = borrow %x
+    %x = drop
+    %t = load %r
+    return %t
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1476,19 +1626,24 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
   it("must detect a dangling pointer when the source register is moved", () => {
-    // function @main []:
-    // block @entry:
-    // %x = constant 42
-    // %r = borrow %x
-    // %y = assign (consume %x)
-    // %t = load %r
-    // return %t
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %x = constant ${small}
+    %r = borrow %x
+    %y = assign (consume %x)
+    %t = load %r
+    return %t
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1509,6 +1664,7 @@ describe("memory and ownership", () => {
       },
     ];
     expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
