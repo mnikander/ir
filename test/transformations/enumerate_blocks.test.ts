@@ -1,7 +1,7 @@
 import * as HIGH from "../../src/high/high_grammar.ts";
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
-import { enumerate_all_blocks } from "../../src/check/enumerate_blocks.ts";
+import { enumerate_all_blocks } from "../../src/transformations/enumerate_blocks.ts";
 
 // choose prime numbers for tests, to reduce chances of false-positive results for arithmetic ops
 const small: number = 11;
