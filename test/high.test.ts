@@ -29,7 +29,7 @@ describe("constants and exit", () => {
 
   it("must throw error if there is no Entry block", () => {
     // function @main []:
-    // (missing block @entry)
+    // block @foo:
     // %0 = constant 11
     // return %0
     const input: HIGH.Program = [
@@ -58,7 +58,7 @@ describe("constants and exit", () => {
     // function @main []:
     // block @entry:
     // %0 = constant 0
-    // %1 = ref %0
+    // %1 = own %0
     // return %1
     const input: HIGH.Program = [
       {
@@ -1180,7 +1180,7 @@ describe("memory and ownership", () => {
     // function @main []:
     // block @entry:
     // %0 = constant 11
-    // %1 = move %0
+    // %1 = assign (consume %0)
     // return %1
     const input: HIGH.Program = [
       {
@@ -1209,7 +1209,7 @@ describe("memory and ownership", () => {
     // block @entry:
     // %x = constant 11
     // %y = constant 13
-    // %sum = add (move %x) %y
+    // %sum = add (consume %x) %y
     // return %sum
     const input: HIGH.Program = [
       {
@@ -1238,7 +1238,7 @@ describe("memory and ownership", () => {
     // function @main []:
     // block @entry:
     // %0 = constant 11
-    // return (move %0)
+    // return (consume %0)
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -1415,7 +1415,7 @@ describe("memory and ownership", () => {
     // function @main []:
     // block @entry:
     // %0 = constant 0
-    // %1 = move %0
+    // %1 = assign (consume %0)
     // return %0
     const input: HIGH.Program = [
       {
@@ -1478,7 +1478,7 @@ describe("memory and ownership", () => {
     // block @entry:
     // %x = constant 42
     // %r = borrow %x
-    // %y = move %x
+    // %y = assign (consume %x)
     // %t = load %r
     // return %t
     const input: HIGH.Program = [
