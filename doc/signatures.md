@@ -12,7 +12,7 @@
 | Constant                 | `const`                      | `%x = const 42`                         | Literal                        | Value   | |
 | Copy                     | `copy`                       | `%x = copy %a`                          | Value                          | Value   | |
 | Equality                 | `equal` <br> `unequal`       | `%x = equal %a %b`                      | Value, Value                   | Boolean | |
-| Negation                 | `negate`                     | `%x = negate %a`                        | Number                         | Number  | _not available yet_ |
+| Negation                 | `negate`                     | `%x = negate %a`                        | Number                         | Number  | |
 | Arithmetic               | `add` <br> `subtract` <br> `multiply` <br> `divide` <br> `remainder`| `%x = add %a %b` | Number, Number | Number  | |
 | Comparison               | `less` <br> `less_equal` <br> `greater` <br> `greater_equal` | `%c = less %a %b` | Number, Number       | Boolean | _not available yet_ |
 | Not                      | `not`                        | `%x = not %a`                           | Boolean                        | Boolean | _not available yet_ |
