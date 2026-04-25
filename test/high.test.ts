@@ -4,6 +4,7 @@ import * as HIGH from "../src/high/high_grammar.ts";
 import { lower } from "../src/passes/lower.gen.ts";
 import { evaluate } from "../src/runtime/machine.ts";
 import { validate } from "../src/analysis/validate.ts";
+import { print } from "../src/high/print.gen.ts";
 // import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
 // choose prime numbers for tests, to reduce chances of false-positive results for arithmetic ops
@@ -260,24 +261,28 @@ describe("labels, jump, and branch", () => {
   });
 
   it("must execute first branch if the condition is true", () => {
-    // function @main []:
-    // block @entry:
-    // %0 = constant true
-    // %1 = constant 11
-    // %2 = constant 22
-    // %3 = constant 44
-    // branch %0 @then @else
-    //
-    // block @then:
-    // %4 = add %1, %2
-    // jump @end
-    //
-    // block @else:
-    // %5 = add %2, %3
-    // jump @end
-    //
-    // block @end:
-    // return %4
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant 1
+    %1 = constant ${small}
+    %2 = constant ${large}
+    %3 = constant ${huge}
+    branch %0 @then @else
+
+  block @then:
+    %4 = add %1 %2
+    jump @end
+
+  block @else:
+    %5 = add %2 %3
+    jump @end
+
+  block @end:
+    return %4
+`;
+
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -319,6 +324,7 @@ describe("labels, jump, and branch", () => {
         ],
       },
     ];
+    expect(print(input)).toEqual(text);
     expect(input).toBeDefined();
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small + large);
@@ -489,32 +495,33 @@ describe("function call", () => {
     // return factorial(5)
     // function factorial(n, acc = 1):
     //     return n == 1 ? acc : factorial(n-1, n*acc);
-    //
-    //
-    // IR code:
-    //
-    // function @main []:
-    // block @entry:
-    // %0 = constant 5
-    // %1 = constant 1
-    // %2 = call @factorial [%0, %1]
-    // return %2
-    //
-    // function @factorial [%n, %acc]:
-    // block @entry:
-    // %3 = constant 1
-    // %6 = equal %n, %3
-    // branch %6 @termination @body
-    //
-    // block @body:
-    // %7 = subtract %n, %3
-    // %8 = multiply %n, %acc
-    // %9 = call @factorial [%7, %8]
-    // jump @termination
-    //
-    // block @termination:
-    // %10 = phi [[@body, %9], [@entry, %acc]]
-    // return %10
+
+    const text: string = `
+function @main []:
+
+  block @entry:
+    %0 = constant 5
+    %1 = constant 1
+    %2 = call @factorial [%0 %1]
+    return %2
+
+function @factorial [%n %acc]:
+
+  block @entry:
+    %3 = constant 1
+    %6 = equal %n %3
+    branch %6 @termination @body
+
+  block @body:
+    %7 = subtract %n %3
+    %8 = multiply %n %acc
+    %9 = call @factorial [%7 %8]
+    jump @termination
+
+  block @termination:
+    %10 = phi [[@body %9] [@entry %acc]]
+    return %10
+`;
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -572,6 +579,7 @@ describe("function call", () => {
         ],
       },
     ];
+    expect(print(input)).toEqual(text);
     expect(input).toBeDefined();
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(120);
