@@ -5,7 +5,7 @@ This IR is intended as a compilation target, on which borrow-checking can be per
 It combines ideas from LLVM IR and Rust MIR.
 The interpreter serves as a prototype to validate the language semantics.
 
-The [instruction set](signatures.md) is deliberately kept small and close to LLVM IR, so that lowering is easy.
+The [instruction set](instructions.md) is deliberately kept small and close to LLVM IR, so that lowering is easy.
 The ownership and borrowing model is greatly simplified compared to that of Rust MIR.
 Certain language features are omitted entirely, to simplify the semantics and reduce the need for annotations.
 
@@ -82,10 +82,6 @@ This means there is no need to explicitly free a stack-allocated variable.
 A heap-allocated variable *must* be freed explicitly.
 This means heap variables are not allowed to be in the 'Defined' state, when the enclosing function returns.
 That would be a memory leak.
-
-## Resources
-- [instruction set](signatures.md)
-- [design decisions]decisions.md)
 
 ---
 **Copyright (c) 2026 Marco Nikander**

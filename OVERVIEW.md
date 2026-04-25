@@ -14,7 +14,7 @@ Files which are completely AI-generated end with `*.gen.ts` file extensions.
 - [decisions.md](/home/marco/Documents/ir/doc/decisions.md)
   Decision log for architectural changes.
 
-- [signatures.md](/home/marco/Documents/ir/doc/signatures.md)
+- [instructions.md](/home/marco/Documents/ir/doc/instructions.md)
   Human-readable instruction reference.
 
 - [invariants.md](/home/marco/Documents/ir/doc/invariants.md)
@@ -126,7 +126,7 @@ Other pass files:
 ## Other Repo Areas
 
 - `doc/`
-  Design docs, invariants, grammar notes, and signatures.
+  Design docs, invariants, grammar notes, and table of instructions.
 
 - `id/`
   Generation of unique IDs for design decisions and invariants.
