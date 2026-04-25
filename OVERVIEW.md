@@ -45,7 +45,7 @@ The pipeline entry point is [lower.gen.ts](/home/marco/Documents/ir/src/passes/l
 1. [split_phi_edges.gen.ts](/home/marco/Documents/ir/src/passes/split_phi_edges.gen.ts)
    Inserts edge blocks so each phi input arrives through its own predecessor edge.
 2. [lower_phi_moves.gen.ts](/home/marco/Documents/ir/src/passes/lower_phi_moves.gen.ts)
-   Replaces phi nodes with explicit `Assign` reads and writes in edge blocks.
+   Replaces phi nodes with explicit `Copy` reads and writes in edge blocks.
 3. [number_slots.gen.ts](/home/marco/Documents/ir/src/passes/number_slots.gen.ts)
    Assigns stable numeric stack slots to HIR registers.
 4. [rewrite_named_to_numbered.gen.ts](/home/marco/Documents/ir/src/passes/rewrite_named_to_numbered.gen.ts)

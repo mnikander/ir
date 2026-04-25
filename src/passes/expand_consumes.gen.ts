@@ -60,7 +60,7 @@ function expand_line(
         lines: [[line[0], "Constant", line[2]]],
         next_temporary,
       };
-    case "Assign":
+    case "Copy":
       return {
         lines: with_consumed_drops([[line[0], "Copy", offset_of(line[2])]], [
           line[2],

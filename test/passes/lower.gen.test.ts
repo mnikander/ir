@@ -101,7 +101,7 @@ describe("lowering from HIR to LIR", () => {
     expect(lower(input)).toEqual(expected);
   });
 
-  it("lowers a consumed assign into copy then drop", () => {
+  it("lowers a consumed copy into copy then drop", () => {
     const input: HIR.Program = [
       {
         name: "@main",
@@ -112,7 +112,7 @@ describe("lowering from HIR to LIR", () => {
             joins: [],
             lines: [
               ["%x", "Constant", { value: small }],
-              ["%y", "Assign", ["consume", "%x"]],
+              ["%y", "Copy", ["consume", "%x"]],
             ],
             terminator: [null, "Return", ["%y"]],
           },
@@ -169,7 +169,7 @@ describe("lowering from HIR to LIR", () => {
             joins: [],
             lines: [
               ["%x", "Constant", { value: small }],
-              ["%y", "Assign", ["consume", "%x"]],
+              ["%y", "Copy", ["consume", "%x"]],
               ["%y", "Drop"],
             ],
             terminator: [null, "Return", ["%y"]],

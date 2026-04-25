@@ -70,8 +70,8 @@ function rewrite_line(
   switch (line[1]) {
     case "Constant":
       return [destination, "Constant", line[2]];
-    case "Assign":
-      return [destination, "Assign", rewrite_input(line[2], slots, context)];
+    case "Copy":
+      return [destination, "Copy", rewrite_input(line[2], slots, context)];
     case "Own":
       return [destination, "Own", rewrite_input(line[2], slots, context)];
     case "Call":

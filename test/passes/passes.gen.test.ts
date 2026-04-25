@@ -88,7 +88,7 @@ describe("numbering pipeline", () => {
             name: "@entry",
             joins: [],
             lines: [
-              ["%y", "Assign", ["consume", "%x"]],
+              ["%y", "Copy", ["consume", "%x"]],
             ],
             terminator: [null, "Return", ["consume", "%y"]],
           },
@@ -107,7 +107,7 @@ describe("numbering pipeline", () => {
             name: "@entry",
             joins: [],
             lines: [
-              [1, "Assign", { offset: 0, consume: true }],
+              [1, "Copy", { offset: 0, consume: true }],
             ],
             terminator: [null, "Return", { offset: 1, consume: true }],
           },
@@ -274,7 +274,7 @@ describe("linearize_to_lir", () => {
     expect(linearize_to_lir(input)).toEqual(expected);
   });
 
-  it("emits a drop after a consumed assign", () => {
+  it("emits a drop after a consumed copy", () => {
     const input: NumberedProgram = [
       {
         name: "@main",
@@ -284,7 +284,7 @@ describe("linearize_to_lir", () => {
             name: "@entry",
             joins: [],
             lines: [
-              [1, "Assign", { offset: 0, consume: true }],
+              [1, "Copy", { offset: 0, consume: true }],
             ],
             terminator: [null, "Return", { offset: 1, consume: false }],
           },
@@ -337,7 +337,7 @@ describe("linearize_to_lir", () => {
             name: "@entry",
             joins: [],
             lines: [
-              [1, "Assign", { offset: 0, consume: true }],
+              [1, "Copy", { offset: 0, consume: true }],
               [1, "Drop"],
             ],
             terminator: [null, "Return", { offset: 1, consume: false }],

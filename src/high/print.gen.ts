@@ -37,7 +37,7 @@ function print_line(line: HIGH.Line): string {
       }`;
     case "Constant":
       return `${line[0]} = ${print_tag(line[1])} ${print_primitive(line[2])}`;
-    case "Assign":
+    case "Copy":
     case "Own":
       return `${line[0]} = ${print_tag(line[1])} ${print_input(line[2])}`;
     case "Borrow":

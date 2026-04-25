@@ -82,7 +82,7 @@ export type NumberedCall = [
 
 export type NumberedMemory =
   | NumberedConstant
-  | NumberedAssign
+  | NumberedCopy
   | NumberedOwn
   | NumberedBorrow
   | NumberedLoad
@@ -92,9 +92,9 @@ export type NumberedConstant = [
   tag: "Constant",
   value: HIR.Primitive,
 ];
-export type NumberedAssign = [
+export type NumberedCopy = [
   destination: LIR.Offset,
-  tag: "Assign",
+  tag: "Copy",
   value: NumberedInput,
 ];
 export type NumberedOwn = [

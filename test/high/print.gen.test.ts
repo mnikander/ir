@@ -173,7 +173,7 @@ describe("HIR printer", () => {
             lines: [
               ["%x", "Constant", { value: 11 }],
               ["%y", "Constant", { value: 13 }],
-              ["%copy", "Assign", ["consume", "%x"]],
+              ["%copy", "Copy", ["consume", "%x"]],
               ["%sum", "Add", ["consume", "%copy"], ["%y"]],
             ],
             terminator: [null, "Branch", ["consume", "%sum"], [
@@ -204,7 +204,7 @@ describe("HIR printer", () => {
         "  block @entry:\n" +
         "    %x = constant 11\n" +
         "    %y = constant 13\n" +
-        "    %copy = assign (consume %x)\n" +
+        "    %copy = copy (consume %x)\n" +
         "    %sum = add (consume %copy) %y\n" +
         "    branch (consume %sum) @then @else\n" +
         "\n" +

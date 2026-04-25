@@ -139,7 +139,7 @@ function @main []:
 
   block @entry:
     %0 = constant ${small}
-    %1 = assign %0
+    %1 = copy %0
     return %1
 `;
 
@@ -153,7 +153,7 @@ function @main []:
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
-              ["%1", "Assign", ["%0"]],
+              ["%1", "Copy", ["%0"]],
             ],
             terminator: [null, "Return", ["%1"]],
           },
@@ -1246,13 +1246,13 @@ function @main []:
 });
 
 describe("memory and ownership", () => {
-  it("must allow consuming the Assign operand", () => {
+  it("must allow consuming the Copy operand", () => {
     const text: string = `
 function @main []:
 
   block @entry:
     %0 = constant ${small}
-    %1 = assign (consume %0)
+    %1 = copy (consume %0)
     return %1
 `;
 
@@ -1266,7 +1266,7 @@ function @main []:
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
-              ["%1", "Assign", ["consume", "%0"]],
+              ["%1", "Copy", ["consume", "%0"]],
             ],
             terminator: [null, "Return", ["%1"]],
           },
@@ -1422,7 +1422,7 @@ function @main []:
   block @entry:
     %x = constant ${small}
     %r = own %x
-    %t = assign %x
+    %t = copy %x
     return %t
 `;
 
@@ -1437,7 +1437,7 @@ function @main []:
             lines: [
               ["%x", "Constant", { value: small }],
               ["%r", "Own", ["%x"]],
-              ["%t", "Assign", ["%x"]],
+              ["%t", "Copy", ["%x"]],
             ],
             terminator: [null, "Return", ["%t"]],
           },
@@ -1527,7 +1527,7 @@ function @main []:
 
   block @entry:
     %0 = constant ${small}
-    %1 = assign (consume %0)
+    %1 = copy (consume %0)
     return %0
 `;
 
@@ -1541,7 +1541,7 @@ function @main []:
             joins: [],
             lines: [
               ["%0", "Constant", { value: small }],
-              ["%1", "Assign", ["consume", "%0"]],
+              ["%1", "Copy", ["consume", "%0"]],
             ],
             terminator: [null, "Return", ["%0"]],
           },
@@ -1600,7 +1600,7 @@ function @main []:
   block @entry:
     %x = constant ${small}
     %r = borrow %x
-    %y = assign (consume %x)
+    %y = copy (consume %x)
     %t = load %r
     return %t
 `;
@@ -1616,7 +1616,7 @@ function @main []:
             lines: [
               ["%x", "Constant", { value: small }],
               ["%r", "Borrow", "%x"],
-              ["%y", "Assign", ["consume", "%x"]],
+              ["%y", "Copy", ["consume", "%x"]],
               ["%t", "Load", "%r"],
             ],
             terminator: [null, "Return", ["%t"]],

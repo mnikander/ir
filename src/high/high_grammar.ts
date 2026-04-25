@@ -8,9 +8,9 @@ export type Line         = Call | Memory | Arithmetic | Comparison;
 export type Phi          = [ destination: Register, tag: 'Phi',           inputs: [label: Label, value: Input][]];
 export type Call         = [ destination: Register, tag: 'Call',          label: Label, arguments: Input[] ];
 
-export type Memory       = Constant | Assign | Own | Borrow | Load | Drop;
+export type Memory       = Constant | Copy | Own | Borrow | Load | Drop;
 export type Constant     = [ destination: Register, tag: 'Constant',      value: Primitive ];
-export type Assign       = [ destination: Register, tag: 'Assign',        value: Input ];
+export type Copy         = [ destination: Register, tag: 'Copy',          value: Input ];
 export type Own          = [ destination: Register, tag: 'Own',           value: Input ];
 // export type Heap         = [ destination: Register, tag: 'Heap',          value: Input ];
 export type Borrow       = [ destination: Register, tag: 'Borrow',        value: Register ];
