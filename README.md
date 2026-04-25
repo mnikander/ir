@@ -55,6 +55,7 @@ doc: clarify SSA invariants
 
 - [IR design](./doc/design.md)
 - [Log of design decisions for the interpreter and IR](./doc/decisions.md)
+- [Overview](./OVERVIEW.md) which outlines the architecture and files
 
 ---
 
