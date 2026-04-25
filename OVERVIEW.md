@@ -1,6 +1,6 @@
 # Repository Overview
 
-This repository contains a TypeScript/Deno interpreter for a small intermediate representation. The active architecture is HIR -> lowering passes -> LIR -> runtime; the older `old_src/` implementation has been removed.
+This repository contains a TypeScript/Deno interpreter for a small intermediate representation. The active architecture is HIR -> lowering passes -> LIR -> runtime.
 
 ## Important Files
 
@@ -128,7 +128,7 @@ Other pass files:
   Design docs, invariants, grammar notes, and signatures.
 
 - `id/`
-  Small utility area for ID generation experiments.
+  Generation of unique IDs for design decisions and invariants.
 
 ## Suggested Workflow
 
