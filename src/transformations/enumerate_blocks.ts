@@ -62,7 +62,7 @@ function number_to_label(index: number): HIGH.Label {
   return `@${index.toString()}`;
 }
 
-function label_to_number(label: HIGH.Label): number {
+function _label_to_number(label: HIGH.Label): number {
   const name: string = label.toString().slice(1); // strip the preceding '@'
   return parseInt(name);
 }

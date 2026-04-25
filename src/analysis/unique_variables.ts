@@ -48,7 +48,7 @@ function extract_variables(program: HIGH.Program): HIGH.Register[] {
   }
 }
 
-function extract_variables_via_loop(program: HIGH.Program): HIGH.Register[] {
+function _extract_variables_via_loop(program: HIGH.Program): HIGH.Register[] {
   const variables: HIGH.Register[] = [];
   for (let f = 0; f < program.length; ++f) {
     const func: HIGH.Function = program[f];

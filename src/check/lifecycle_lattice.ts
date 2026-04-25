@@ -46,7 +46,7 @@ export function move(input: ULD): ULD {
   }
 }
 
-function uld_to_string(input: ULD): string {
+export function uld_to_string(input: ULD): string {
   let result: string = "";
   result += "{";
   result += input[0] ? "undefined, " : "";
