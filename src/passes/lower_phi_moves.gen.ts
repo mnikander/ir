@@ -33,7 +33,7 @@ function lower_block(
   if (block.edge === undefined) {
     return {
       name: block.name,
-      joins: [],
+      phis: [],
       lines: [...block.lines],
       terminator: block.terminator,
     };
@@ -42,7 +42,7 @@ function lower_block(
   const target = valid(block_by_name.get(block.edge.target));
   return {
     name: block.name,
-    joins: [],
+    phis: [],
     lines: lower_phi_nodes(target, block.edge.predecessor, fresh_register),
     terminator: block.terminator,
   };
@@ -53,7 +53,7 @@ function lower_phi_nodes(
   predecessor: HIGH.Label,
   fresh_register: (seed: string) => HIGH.Register,
 ): HIGH.Line[] {
-  const reads = target.joins.map((phi) => {
+  const reads = target.phis.map((phi) => {
     const source = find_phi_input(phi, predecessor);
     const temporary = fresh_register(
       `phi.${strip_sigils(target.name)}.from.${strip_sigils(predecessor)}.${
@@ -63,7 +63,7 @@ function lower_phi_nodes(
     return [temporary, "Copy", source] satisfies HIGH.Copy;
   });
 
-  const writes = target.joins.map((phi, index) =>
+  const writes = target.phis.map((phi, index) =>
     [phi[0], "Copy", [reads[index][0]]] satisfies HIGH.Copy
   );
 
@@ -92,7 +92,7 @@ function create_register_generator(
   const used = new Set<HIGH.Register>(func.params.map(get_input_register));
 
   for (const block of func.blocks) {
-    for (const phi of block.joins) {
+    for (const phi of block.phis) {
       used.add(phi[0]);
     }
 

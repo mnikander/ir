@@ -23,7 +23,7 @@ function enumerate_blocks(blocks: HIGH.Block[]): HIGH.Block[] {
   const results: HIGH.Block[] = blocks.map((b: HIGH.Block, i: number) => {
     return {
       name: number_to_label(i),
-      joins: b.joins,
+      phis: b.phis,
       lines: b.lines,
       terminator: replace_successors(b.terminator, name_to_index),
     };

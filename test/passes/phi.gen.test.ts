@@ -12,7 +12,7 @@ describe("collect_predecessors", () => {
     const blocks: HIGH.Block[] = [
       {
         name: "@entry",
-        joins: [],
+        phis: [],
         lines: [
           ["%condition", "Constant", { value: 1 }],
         ],
@@ -23,13 +23,13 @@ describe("collect_predecessors", () => {
       },
       {
         name: "@left",
-        joins: [],
+        phis: [],
         lines: [],
         terminator: [null, "Jump", "@join"],
       },
       {
         name: "@join",
-        joins: [],
+        phis: [],
         lines: [],
         terminator: [null, "Return", ["%condition"]],
       },
@@ -58,7 +58,7 @@ describe("phi elimination pipeline", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%condition", "Constant", { value: 1 }],
             ],
@@ -69,7 +69,7 @@ describe("phi elimination pipeline", () => {
           },
           {
             name: "@left",
-            joins: [],
+            phis: [],
             lines: [
               ["%left", "Constant", { value: 11 }],
             ],
@@ -77,7 +77,7 @@ describe("phi elimination pipeline", () => {
           },
           {
             name: "@join",
-            joins: [
+            phis: [
               ["%result", "Phi", [["@entry", ["%condition"]], [
                 "@left",
                 ["%left"],
@@ -99,7 +99,7 @@ describe("phi elimination pipeline", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%condition", "Constant", { value: 1 }],
             ],
@@ -110,7 +110,7 @@ describe("phi elimination pipeline", () => {
           },
           {
             name: "@left",
-            joins: [],
+            phis: [],
             lines: [
               ["%left", "Constant", { value: 11 }],
             ],
@@ -118,7 +118,7 @@ describe("phi elimination pipeline", () => {
           },
           {
             name: "@phi.join.from.entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%phi.join.from.entry.result", "Copy", ["%condition"]],
               ["%result", "Copy", ["%phi.join.from.entry.result"]],
@@ -127,7 +127,7 @@ describe("phi elimination pipeline", () => {
           },
           {
             name: "@phi.join.from.left",
-            joins: [],
+            phis: [],
             lines: [
               ["%phi.join.from.left.result", "Copy", ["%left"]],
               ["%result", "Copy", ["%phi.join.from.left.result"]],
@@ -136,7 +136,7 @@ describe("phi elimination pipeline", () => {
           },
           {
             name: "@join",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%result"]],
           },
@@ -153,7 +153,7 @@ describe("phi elimination pipeline", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%left", "Constant", { value: 11 }],
               ["%right", "Constant", { value: 13 }],
@@ -162,7 +162,7 @@ describe("phi elimination pipeline", () => {
           },
           {
             name: "@join",
-            joins: [
+            phis: [
               ["%x", "Phi", [["@entry", ["%right"]]]],
               ["%y", "Phi", [["@entry", ["%left"]]]],
             ],
@@ -184,7 +184,7 @@ describe("phi elimination pipeline", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%left", "Constant", { value: 11 }],
               ["%right", "Constant", { value: 13 }],
@@ -193,7 +193,7 @@ describe("phi elimination pipeline", () => {
           },
           {
             name: "@phi.join.from.entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%phi.join.from.entry.x", "Copy", ["%right"]],
               ["%phi.join.from.entry.y", "Copy", ["%left"]],
@@ -204,7 +204,7 @@ describe("phi elimination pipeline", () => {
           },
           {
             name: "@join",
-            joins: [],
+            phis: [],
             lines: [
               ["%sum", "Add", ["%x"], ["%y"]],
             ],

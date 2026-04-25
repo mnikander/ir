@@ -50,7 +50,7 @@ function @main []:
         blocks: [
           {
             name: "@foo",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
             ],
@@ -83,7 +83,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
               ["%1", "Borrow", "%0"],
@@ -116,7 +116,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
             ],
@@ -150,7 +150,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
               ["%1", "Copy", ["%0"]],
@@ -186,7 +186,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
               ["%1", "Constant", { value: large }],
@@ -228,13 +228,13 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Jump", "@second"],
           },
           {
             name: "@first",
-            joins: [],
+            phis: [],
             lines: [
               ["%1", "Constant", { value: small }],
             ],
@@ -242,7 +242,7 @@ function @main []:
           },
           {
             name: "@second",
-            joins: [],
+            phis: [],
             lines: [
               ["%2", "Constant", { value: large }],
             ],
@@ -287,7 +287,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: 1 }],
               ["%1", "Constant", { value: small }],
@@ -298,7 +298,7 @@ function @main []:
           },
           {
             name: "@then",
-            joins: [],
+            phis: [],
             lines: [
               ["%4", "Add", ["%1"], ["%2"]],
             ],
@@ -306,7 +306,7 @@ function @main []:
           },
           {
             name: "@else",
-            joins: [],
+            phis: [],
             lines: [
               ["%5", "Add", ["%2"], ["%3"]],
             ],
@@ -314,7 +314,7 @@ function @main []:
           },
           {
             name: "@end",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%4"]],
           },
@@ -357,7 +357,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: 0 }],
               ["%1", "Constant", { value: small }],
@@ -368,7 +368,7 @@ function @main []:
           },
           {
             name: "@then",
-            joins: [],
+            phis: [],
             lines: [
               ["%4", "Add", ["%1"], ["%2"]],
             ],
@@ -376,7 +376,7 @@ function @main []:
           },
           {
             name: "@else",
-            joins: [],
+            phis: [],
             lines: [
               ["%5", "Add", ["%2"], ["%3"]],
             ],
@@ -384,7 +384,7 @@ function @main []:
           },
           {
             name: "@end",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%5"]],
           },
@@ -422,7 +422,7 @@ function @identity [%a]:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
               ["%1", "Constant", { value: large }],
@@ -438,7 +438,7 @@ function @identity [%a]:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%a"]],
           },
@@ -474,7 +474,7 @@ function @first [%a %b]:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
               ["%1", "Constant", { value: large }],
@@ -490,7 +490,7 @@ function @first [%a %b]:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%a"]],
           },
@@ -543,7 +543,7 @@ function @factorial [%n %acc]:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: 5 }],
               ["%1", "Constant", { value: 1 }],
@@ -559,7 +559,7 @@ function @factorial [%n %acc]:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%3", "Constant", { value: 1 }],
               ["%6", "Equal", ["%n"], ["%3"]],
@@ -571,7 +571,7 @@ function @factorial [%n %acc]:
           },
           {
             name: "@body",
-            joins: [],
+            phis: [],
             lines: [
               ["%7", "Subtract", ["%n"], ["%3"]],
               ["%8", "Multiply", ["%n"], ["%acc"]],
@@ -581,7 +581,7 @@ function @factorial [%n %acc]:
           },
           {
             name: "@termination",
-            joins: [
+            phis: [
               ["%10", "Phi", [["@body", ["%9"]], [
                 "@entry",
                 ["%acc"],
@@ -618,7 +618,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
               ["%0", "Constant", { value: large }], // attempt to reassign register 0
@@ -658,7 +658,7 @@ function @first [%a %a]:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
               ["%1", "Constant", { value: large }],
@@ -674,7 +674,7 @@ function @first [%a %a]:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%a"]],
           },
@@ -716,7 +716,7 @@ function @identity2 [%a]:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
               ["%1", "Constant", { value: large }],
@@ -733,7 +733,7 @@ function @identity2 [%a]:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%a"]],
           },
@@ -746,7 +746,7 @@ function @identity2 [%a]:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%a"]],
           },
@@ -787,13 +787,13 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Jump", "@second"],
           },
           {
             name: "@first",
-            joins: [],
+            phis: [],
             lines: [
               ["%1", "Constant", { value: small }],
             ],
@@ -801,7 +801,7 @@ function @main []:
           },
           {
             name: "@second",
-            joins: [],
+            phis: [],
             lines: [
               ["%2", "Constant", { value: large }],
             ],
@@ -809,7 +809,7 @@ function @main []:
           },
           {
             name: "@end",
-            joins: [
+            phis: [
               ["%3", "Phi", [["@first", ["%1"]], ["@second", [
                 "%2",
               ]]]],
@@ -864,7 +864,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: 0 }],
               ["%1", "Constant", { value: 1 }],
@@ -874,7 +874,7 @@ function @main []:
           },
           {
             name: "@loop",
-            joins: [
+            phis: [
               ["%3", "Phi", [["@entry", ["%0"]], ["@loop", ["%4"]]]],
             ],
             lines: [
@@ -885,7 +885,7 @@ function @main []:
           },
           {
             name: "@end",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%3"]],
           },
@@ -943,7 +943,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%condition", "Constant", { value: 0 }],
             ],
@@ -954,7 +954,7 @@ function @main []:
           },
           {
             name: "@a",
-            joins: [],
+            phis: [],
             lines: [
               ["%alpha", "Constant", { value: small }],
             ],
@@ -962,7 +962,7 @@ function @main []:
           },
           {
             name: "@b",
-            joins: [],
+            phis: [],
             lines: [
               ["%bravo", "Constant", { value: large }],
             ],
@@ -970,7 +970,7 @@ function @main []:
           },
           {
             name: "@c",
-            joins: [],
+            phis: [],
             lines: [
               ["%charlie", "Constant", { value: huge }],
             ],
@@ -978,7 +978,7 @@ function @main []:
           },
           {
             name: "@d",
-            joins: [
+            phis: [
               ["%grandparent", "Phi", [["@a", ["%alpha"]], [
                 "@c",
                 ["%bravo"],
@@ -1040,13 +1040,13 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Jump", "@a"],
           },
           {
             name: "@a",
-            joins: [],
+            phis: [],
             lines: [
               ["%alpha", "Constant", { value: small }],
               ["%condition", "Constant", { value: 1 }],
@@ -1058,7 +1058,7 @@ function @main []:
           },
           {
             name: "@b",
-            joins: [],
+            phis: [],
             lines: [
               ["%bravo", "Constant", { value: large }],
             ],
@@ -1066,7 +1066,7 @@ function @main []:
           },
           {
             name: "@c",
-            joins: [
+            phis: [
               ["%result", "Phi", [["@a", ["%alpha"]], [
                 "@b",
                 ["%bravo"],
@@ -1122,7 +1122,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%echo", "Constant", { value: 0 }],
             ],
@@ -1130,7 +1130,7 @@ function @main []:
           },
           {
             name: "@a",
-            joins: [],
+            phis: [],
             lines: [
               ["%alpha", "Constant", { value: 1 }],
             ],
@@ -1138,7 +1138,7 @@ function @main []:
           },
           {
             name: "@b",
-            joins: [],
+            phis: [],
             lines: [
               ["%bravo", "Constant", { value: 1 }],
             ],
@@ -1146,7 +1146,7 @@ function @main []:
           },
           {
             name: "@c",
-            joins: [
+            phis: [
               ["%result", "Phi", [["@entry", ["%echo"]], [
                 "@a",
                 ["%alpha"],
@@ -1202,7 +1202,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%echo", "Constant", { value: 0 }],
             ],
@@ -1210,7 +1210,7 @@ function @main []:
           },
           {
             name: "@a",
-            joins: [],
+            phis: [],
             lines: [
               ["%alpha", "Constant", { value: 1 }],
             ],
@@ -1218,7 +1218,7 @@ function @main []:
           },
           {
             name: "@b",
-            joins: [],
+            phis: [],
             lines: [
               ["%bravo", "Constant", { value: 1 }],
             ],
@@ -1226,7 +1226,7 @@ function @main []:
           },
           {
             name: "@c",
-            joins: [
+            phis: [
               ["%result", "Phi", [["@a", ["%alpha"]], [
                 "@b",
                 ["%bravo"],
@@ -1263,7 +1263,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
               ["%1", "Copy", ["consume", "%0"]],
@@ -1297,7 +1297,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%x", "Constant", { value: small }],
               ["%y", "Constant", { value: large }],
@@ -1330,7 +1330,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
             ],
@@ -1363,7 +1363,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%x", "Constant", { value: small }],
               ["%r", "Borrow", "%x"],
@@ -1398,7 +1398,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%x", "Constant", { value: small }],
               ["%r", "Own", ["%x"]],
@@ -1433,7 +1433,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%x", "Constant", { value: small }],
               ["%r", "Own", ["%x"]],
@@ -1466,7 +1466,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: 0 }],
               ["%0", "Drop"],
@@ -1502,7 +1502,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
               ["%0", "Drop"],
@@ -1538,7 +1538,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
               ["%1", "Copy", ["consume", "%0"]],
@@ -1574,7 +1574,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%x", "Constant", { value: small }],
               ["%r", "Borrow", "%x"],
@@ -1612,7 +1612,7 @@ function @main []:
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%x", "Constant", { value: small }],
               ["%r", "Borrow", "%x"],

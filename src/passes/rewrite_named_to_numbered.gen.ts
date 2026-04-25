@@ -38,7 +38,7 @@ function rewrite_block(
 ): NumberedBlock {
   return {
     name: block.name,
-    joins: [],
+    phis: [],
     lines: block.lines.map((line) =>
       rewrite_line(function_name, block.name, line, slots)
     ),

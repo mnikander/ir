@@ -29,7 +29,7 @@ function extract_variables(program: HIGH.Program): HIGH.Register[] {
   }
 
   function extract_block_variables(block: HIGH.Block): HIGH.Register[] {
-    const variables_from_phi: HIGH.Register[] = block.joins.map((i) =>
+    const variables_from_phi: HIGH.Register[] = block.phis.map((i) =>
       i[HIGH.Get.Dest]
     );
     const lines_without_drop: HIGH.Line[] = block.lines.filter((
@@ -57,8 +57,8 @@ function _extract_variables_via_loop(program: HIGH.Program): HIGH.Register[] {
     }
     for (let b = 0; b < func.blocks.length; ++b) {
       const block: HIGH.Block = func.blocks[b];
-      for (let j = 0; j < block.joins.length; ++j) {
-        const phi: HIGH.Phi = block.joins[j];
+      for (let j = 0; j < block.phis.length; ++j) {
+        const phi: HIGH.Phi = block.phis[j];
         variables.push(phi[HIGH.Get.Dest]);
       }
       for (let l = 0; l < block.lines.length; ++l) {

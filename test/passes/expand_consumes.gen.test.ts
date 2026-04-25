@@ -15,7 +15,7 @@ describe("expand_consumes", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", { offset: 0, consume: true }],
           },

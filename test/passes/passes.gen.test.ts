@@ -39,7 +39,7 @@ describe("numbering pipeline", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%sum", "Add", ["%a"], ["%b"]],
               ["%product", "Multiply", ["%sum"], ["%a"]],
@@ -60,7 +60,7 @@ describe("numbering pipeline", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               [2, "Add", { offset: 0, consume: false }, {
                 offset: 1,
@@ -86,7 +86,7 @@ describe("numbering pipeline", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%y", "Copy", ["consume", "%x"]],
             ],
@@ -105,7 +105,7 @@ describe("numbering pipeline", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               [1, "Copy", { offset: 0, consume: true }],
             ],
@@ -124,7 +124,7 @@ describe("numbering pipeline", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%x", "Drop"],
             ],
@@ -143,7 +143,7 @@ describe("numbering pipeline", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               [0, "Drop"],
             ],
@@ -164,7 +164,7 @@ describe("linearize_to_lir", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               [0, "Constant", { value: 1 }],
               [1, "Constant", { value: small }],
@@ -178,7 +178,7 @@ describe("linearize_to_lir", () => {
           },
           {
             name: "@then",
-            joins: [],
+            phis: [],
             lines: [
               [4, "Add", { offset: 1, consume: false }, {
                 offset: 2,
@@ -189,7 +189,7 @@ describe("linearize_to_lir", () => {
           },
           {
             name: "@else",
-            joins: [],
+            phis: [],
             lines: [
               [5, "Add", { offset: 2, consume: false }, {
                 offset: 3,
@@ -200,7 +200,7 @@ describe("linearize_to_lir", () => {
           },
           {
             name: "@end",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", { offset: 4, consume: false }],
           },
@@ -237,7 +237,7 @@ describe("linearize_to_lir", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               [0, "Constant", { value: large }],
               [1, "Call", "@identity", [{ offset: 0, consume: false }]],
@@ -252,7 +252,7 @@ describe("linearize_to_lir", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", { offset: 0, consume: false }],
           },
@@ -282,7 +282,7 @@ describe("linearize_to_lir", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               [1, "Copy", { offset: 0, consume: true }],
             ],
@@ -309,7 +309,7 @@ describe("linearize_to_lir", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               [0, "Drop"],
             ],
@@ -335,7 +335,7 @@ describe("linearize_to_lir", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               [1, "Copy", { offset: 0, consume: true }],
               [1, "Drop"],
@@ -364,7 +364,7 @@ describe("linearize_to_lir", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               [2, "Add", { offset: 0, consume: true }, {
                 offset: 1,
@@ -382,7 +382,7 @@ describe("linearize_to_lir", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", { offset: 0, consume: false }],
           },
@@ -412,7 +412,7 @@ describe("linearize_to_lir", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Branch", { offset: 0, consume: true }, [
               "@then",
@@ -421,7 +421,7 @@ describe("linearize_to_lir", () => {
           },
           {
             name: "@then",
-            joins: [],
+            phis: [],
             lines: [
               [1, "Constant", { value: small }],
             ],
@@ -429,7 +429,7 @@ describe("linearize_to_lir", () => {
           },
           {
             name: "@else",
-            joins: [],
+            phis: [],
             lines: [
               [2, "Constant", { value: large }],
             ],

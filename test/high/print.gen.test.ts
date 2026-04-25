@@ -12,7 +12,7 @@ describe("HIR printer", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [["%0", "Constant", { value: 11 }]],
             terminator: [null, "Return", ["%0"]],
           },
@@ -38,7 +38,7 @@ describe("HIR printer", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: 11 }],
               ["%1", "Call", "@identity", [["%0"], ["consume", "%0"]]],
@@ -53,7 +53,7 @@ describe("HIR printer", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%value"]],
           },
@@ -85,25 +85,25 @@ describe("HIR printer", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [["%condition", "Constant", { value: 1 }]],
             terminator: [null, "Branch", ["%condition"], ["@then", "@else"]],
           },
           {
             name: "@then",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Jump", "@end"],
           },
           {
             name: "@else",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Jump", "@end"],
           },
           {
             name: "@end",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%condition"]],
           },
@@ -130,7 +130,7 @@ describe("HIR printer", () => {
     );
   });
 
-  it("prints phi joins before block lines", () => {
+  it("prints phis before block lines", () => {
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -138,7 +138,7 @@ describe("HIR printer", () => {
         blocks: [
           {
             name: "@join",
-            joins: [
+            phis: [
               ["%x", "Phi", [["@left", ["%a"]], ["@right", ["consume", "%b"]]]],
               ["%y", "Phi", [["@left", ["%c"]], ["@right", ["%d"]]]],
             ],
@@ -169,7 +169,7 @@ describe("HIR printer", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%x", "Constant", { value: 11 }],
               ["%y", "Constant", { value: 13 }],
@@ -183,13 +183,13 @@ describe("HIR printer", () => {
           },
           {
             name: "@then",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["consume", "%y"]],
           },
           {
             name: "@else",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%y"]],
           },
@@ -224,7 +224,7 @@ describe("HIR printer", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%x", "Constant", { value: 42 }],
               ["%owned", "Own", ["%x"]],
@@ -260,7 +260,7 @@ describe("HIR printer", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%a", "Constant", { value: 11 }],
               ["%b", "Constant", { value: 13 }],

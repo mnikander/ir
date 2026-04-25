@@ -17,7 +17,7 @@ describe("lowering from HIR to LIR", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
             ],
@@ -45,7 +45,7 @@ describe("lowering from HIR to LIR", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: 1 }],
               ["%1", "Constant", { value: small }],
@@ -56,7 +56,7 @@ describe("lowering from HIR to LIR", () => {
           },
           {
             name: "@then",
-            joins: [],
+            phis: [],
             lines: [
               ["%4", "Add", ["%1"], ["%2"]],
             ],
@@ -64,7 +64,7 @@ describe("lowering from HIR to LIR", () => {
           },
           {
             name: "@else",
-            joins: [],
+            phis: [],
             lines: [
               ["%5", "Add", ["%2"], ["%3"]],
             ],
@@ -72,7 +72,7 @@ describe("lowering from HIR to LIR", () => {
           },
           {
             name: "@end",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%4"]],
           },
@@ -109,7 +109,7 @@ describe("lowering from HIR to LIR", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%x", "Constant", { value: small }],
               ["%y", "Copy", ["consume", "%x"]],
@@ -138,7 +138,7 @@ describe("lowering from HIR to LIR", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%x", "Constant", { value: small }],
               ["%x", "Drop"],
@@ -166,7 +166,7 @@ describe("lowering from HIR to LIR", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%x", "Constant", { value: small }],
               ["%y", "Copy", ["consume", "%x"]],
@@ -197,7 +197,7 @@ describe("lowering from HIR to LIR", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%x", "Constant", { value: small }],
               ["%r", "Borrow", "%x"],
@@ -227,7 +227,7 @@ describe("lowering from HIR to LIR", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%x", "Constant", { value: small }],
               ["%r", "Own", ["%x"]],
@@ -257,7 +257,7 @@ describe("lowering from HIR to LIR", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%condition", "Constant", { value: 1 }],
             ],
@@ -268,7 +268,7 @@ describe("lowering from HIR to LIR", () => {
           },
           {
             name: "@then",
-            joins: [],
+            phis: [],
             lines: [
               ["%value", "Constant", { value: small }],
             ],
@@ -276,7 +276,7 @@ describe("lowering from HIR to LIR", () => {
           },
           {
             name: "@else",
-            joins: [],
+            phis: [],
             lines: [
               ["%fallback", "Constant", { value: large }],
             ],
@@ -312,7 +312,7 @@ describe("lowering from HIR to LIR", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
               ["%1", "Constant", { value: large }],
@@ -328,7 +328,7 @@ describe("lowering from HIR to LIR", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%a"]],
           },
@@ -359,7 +359,7 @@ describe("lowering from HIR to LIR", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%x", "Constant", { value: 5 }],
               ["%result", "Call", "@factorial", [["%x"]]],
@@ -374,7 +374,7 @@ describe("lowering from HIR to LIR", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%one", "Constant", { value: 1 }],
             ],
@@ -382,7 +382,7 @@ describe("lowering from HIR to LIR", () => {
           },
           {
             name: "@gate",
-            joins: [
+            phis: [
               ["%acc", "Phi", [["@entry", ["%one"]], ["@body", ["%new_acc"]]]],
               ["%n", "Phi", [["@entry", ["%arg"]], ["@body", ["%new_n"]]]],
             ],
@@ -393,7 +393,7 @@ describe("lowering from HIR to LIR", () => {
           },
           {
             name: "@body",
-            joins: [],
+            phis: [],
             lines: [
               ["%new_acc", "Multiply", ["%n"], ["%acc"]],
               ["%new_n", "Subtract", ["%n"], ["%one"]],
@@ -402,7 +402,7 @@ describe("lowering from HIR to LIR", () => {
           },
           {
             name: "@end",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%n"]],
           },

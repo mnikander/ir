@@ -14,7 +14,7 @@ function print_function(fun: HIGH.Function): string {
 
 function print_block(block: HIGH.Block): string {
   const body = [
-    ...block.joins.map(print_phi),
+    ...block.phis.map(print_phi),
     ...block.lines.map(print_line),
     print_terminator(block.terminator),
   ].map((line) => `    ${line}`);

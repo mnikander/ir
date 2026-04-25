@@ -21,7 +21,7 @@ describe("constants and exit", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
             ],
@@ -37,7 +37,7 @@ describe("constants and exit", () => {
         blocks: [
           {
             name: "@0",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
             ],
@@ -69,13 +69,13 @@ describe("constants and exit", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Jump", "@second"],
           },
           {
             name: "@first",
-            joins: [],
+            phis: [],
             lines: [
               ["%1", "Constant", { value: small }],
             ],
@@ -83,7 +83,7 @@ describe("constants and exit", () => {
           },
           {
             name: "@second",
-            joins: [],
+            phis: [],
             lines: [
               ["%2", "Constant", { value: large }],
             ],
@@ -99,13 +99,13 @@ describe("constants and exit", () => {
         blocks: [
           {
             name: "@0",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Jump", "@2"],
           },
           {
             name: "@1",
-            joins: [],
+            phis: [],
             lines: [
               ["%1", "Constant", { value: small }],
             ],
@@ -113,7 +113,7 @@ describe("constants and exit", () => {
           },
           {
             name: "@2",
-            joins: [],
+            phis: [],
             lines: [
               ["%2", "Constant", { value: large }],
             ],
@@ -152,7 +152,7 @@ describe("constants and exit", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: 1 }],
               ["%1", "Constant", { value: small }],
@@ -163,7 +163,7 @@ describe("constants and exit", () => {
           },
           {
             name: "@then",
-            joins: [],
+            phis: [],
             lines: [
               ["%4", "Add", ["%1"], ["%2"]],
             ],
@@ -171,7 +171,7 @@ describe("constants and exit", () => {
           },
           {
             name: "@else",
-            joins: [],
+            phis: [],
             lines: [
               ["%5", "Add", ["%2"], ["%3"]],
             ],
@@ -179,7 +179,7 @@ describe("constants and exit", () => {
           },
           {
             name: "@end",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%4"]],
           },
@@ -193,7 +193,7 @@ describe("constants and exit", () => {
         blocks: [
           {
             name: "@0",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: 1 }],
               ["%1", "Constant", { value: small }],
@@ -204,7 +204,7 @@ describe("constants and exit", () => {
           },
           {
             name: "@1",
-            joins: [],
+            phis: [],
             lines: [
               ["%4", "Add", ["%1"], ["%2"]],
             ],
@@ -212,7 +212,7 @@ describe("constants and exit", () => {
           },
           {
             name: "@2",
-            joins: [],
+            phis: [],
             lines: [
               ["%5", "Add", ["%2"], ["%3"]],
             ],
@@ -220,7 +220,7 @@ describe("constants and exit", () => {
           },
           {
             name: "@3",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%4"]],
           },
@@ -253,7 +253,7 @@ describe("constants and exit", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
               ["%1", "Constant", { value: large }],
@@ -269,7 +269,7 @@ describe("constants and exit", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%a"]],
           },
@@ -281,7 +281,7 @@ describe("constants and exit", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%b"]],
           },
@@ -295,7 +295,7 @@ describe("constants and exit", () => {
         blocks: [
           {
             name: "@0",
-            joins: [],
+            phis: [],
             lines: [
               ["%0", "Constant", { value: small }],
               ["%1", "Constant", { value: large }],
@@ -311,7 +311,7 @@ describe("constants and exit", () => {
         blocks: [
           {
             name: "@0",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%a"]],
           },
@@ -323,7 +323,7 @@ describe("constants and exit", () => {
         blocks: [
           {
             name: "@0",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Return", ["%b"]],
           },
@@ -357,13 +357,13 @@ describe("constants and exit", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Jump", "@second"],
           },
           {
             name: "@first",
-            joins: [],
+            phis: [],
             lines: [
               ["%1", "Constant", { value: small }],
             ],
@@ -371,7 +371,7 @@ describe("constants and exit", () => {
           },
           {
             name: "@second",
-            joins: [],
+            phis: [],
             lines: [
               ["%2", "Constant", { value: large }],
             ],
@@ -379,7 +379,7 @@ describe("constants and exit", () => {
           },
           {
             name: "@end",
-            joins: [
+            phis: [
               ["%3", "Phi", [["@first", ["%1"]], ["@second", [
                 "%2",
               ]]]],
@@ -397,13 +397,13 @@ describe("constants and exit", () => {
         blocks: [
           {
             name: "@0",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Jump", "@2"],
           },
           {
             name: "@1",
-            joins: [],
+            phis: [],
             lines: [
               ["%1", "Constant", { value: small }],
             ],
@@ -411,7 +411,7 @@ describe("constants and exit", () => {
           },
           {
             name: "@2",
-            joins: [],
+            phis: [],
             lines: [
               ["%2", "Constant", { value: large }],
             ],
@@ -419,7 +419,7 @@ describe("constants and exit", () => {
           },
           {
             name: "@3",
-            joins: [
+            phis: [
               ["%3", "Phi", [["@first", ["%1"]], ["@second", [
                 "%2",
               ]]]],

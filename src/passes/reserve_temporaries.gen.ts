@@ -20,7 +20,7 @@ export function reserve_temporaries_in_function(
     params: func.params.map((param) => ({ ...param })),
     blocks: func.blocks.map((block) => ({
       name: block.name,
-      joins: [],
+      phis: [],
       lines: [...block.lines],
       terminator: block.terminator,
     })),

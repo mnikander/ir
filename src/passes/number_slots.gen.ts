@@ -58,7 +58,7 @@ export function number_slots_in_function(func: HIR.Function): SlottedFunction {
 function clone_block(block: HIR.Block): HIR.Block {
   return {
     name: block.name,
-    joins: [...block.joins],
+    phis: [...block.phis],
     lines: [...block.lines],
     terminator: clone_terminator(block.terminator),
   };

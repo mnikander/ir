@@ -4,7 +4,7 @@ import { lower_phi_moves, split_phi_edges } from "../../src/passes/mod.gen.ts";
 import * as HIGH from "../../src/high/high_grammar.ts";
 
 describe("lower_phi_moves", () => {
-  it("fills split edge blocks with read-then-write copies and clears joins", () => {
+  it("fills split edge blocks with read-then-write copies and clears phis", () => {
     const input: HIGH.Program = [
       {
         name: "@main",
@@ -12,7 +12,7 @@ describe("lower_phi_moves", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [["%left", "Constant", { value: 11 }], [
               "%right",
               "Constant",
@@ -22,7 +22,7 @@ describe("lower_phi_moves", () => {
           },
           {
             name: "@join",
-            joins: [
+            phis: [
               ["%x", "Phi", [["@entry", ["%right"]]]],
               ["%y", "Phi", [["@entry", ["%left"]]]],
             ],
@@ -40,7 +40,7 @@ describe("lower_phi_moves", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [["%left", "Constant", { value: 11 }], [
               "%right",
               "Constant",
@@ -50,7 +50,7 @@ describe("lower_phi_moves", () => {
           },
           {
             name: "@phi.join.from.entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%phi.join.from.entry.x", "Copy", ["%right"]],
               ["%phi.join.from.entry.y", "Copy", ["%left"]],
@@ -61,7 +61,7 @@ describe("lower_phi_moves", () => {
           },
           {
             name: "@join",
-            joins: [],
+            phis: [],
             lines: [["%sum", "Add", ["%x"], ["%y"]]],
             terminator: [null, "Return", ["%sum"]],
           },

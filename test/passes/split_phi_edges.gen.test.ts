@@ -12,19 +12,19 @@ describe("split_phi_edges", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [["%condition", "Constant", { value: 1 }]],
             terminator: [null, "Branch", ["%condition"], ["@left", "@join"]],
           },
           {
             name: "@left",
-            joins: [],
+            phis: [],
             lines: [["%left", "Constant", { value: 11 }]],
             terminator: [null, "Jump", "@join"],
           },
           {
             name: "@join",
-            joins: [
+            phis: [
               ["%result", "Phi", [["@entry", ["%condition"]], ["@left", [
                 "%left",
               ]]]],
@@ -43,7 +43,7 @@ describe("split_phi_edges", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [["%condition", "Constant", { value: 1 }]],
             terminator: [null, "Branch", ["%condition"], [
               "@left",
@@ -52,27 +52,27 @@ describe("split_phi_edges", () => {
           },
           {
             name: "@left",
-            joins: [],
+            phis: [],
             lines: [["%left", "Constant", { value: 11 }]],
             terminator: [null, "Jump", "@phi.join.from.left"],
           },
           {
             name: "@phi.join.from.entry",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Jump", "@join"],
             edge: { target: "@join", predecessor: "@entry" },
           },
           {
             name: "@phi.join.from.left",
-            joins: [],
+            phis: [],
             lines: [],
             terminator: [null, "Jump", "@join"],
             edge: { target: "@join", predecessor: "@left" },
           },
           {
             name: "@join",
-            joins: [
+            phis: [
               ["%result", "Phi", [["@entry", ["%condition"]], ["@left", [
                 "%left",
               ]]]],

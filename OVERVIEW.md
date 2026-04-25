@@ -28,7 +28,7 @@ Files which are completely AI-generated end with `*.gen.ts` file extensions.
   Defines structured HIR:
   - programs, functions, and blocks
   - named registers and labels
-  - SSA-style phi joins
+  - SSA-style phi nodes
   - consumed inputs
   - call instructions
   - memory instructions

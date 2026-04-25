@@ -18,7 +18,7 @@ export type SplitFunction = {
 
 export type SplitBlock = {
   name: HIR.Label;
-  joins: HIR.Phi[];
+  phis: HIR.Phi[];
   lines: HIR.Line[];
   terminator: HIR.Terminator;
   edge?: PhiEdge;
@@ -57,7 +57,7 @@ export type NumberedParam = {
 
 export type NumberedBlock = {
   name: HIR.Label;
-  joins: [];
+  phis: [];
   lines: NumberedLine[];
   terminator: NumberedTerminator;
 };

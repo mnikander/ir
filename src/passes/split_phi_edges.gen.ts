@@ -21,7 +21,7 @@ export function split_phi_edges_in_function(
   const rewritten: SplitBlock[] = [];
 
   for (const block of blocks) {
-    if (block.joins.length === 0) {
+    if (block.phis.length === 0) {
       rewritten.push(block);
       continue;
     }
@@ -59,7 +59,7 @@ export function split_phi_edges_in_function(
 function clone_block(block: HIGH.Block): SplitBlock {
   return {
     name: block.name,
-    joins: [...block.joins],
+    phis: [...block.phis],
     lines: [...block.lines],
     terminator: clone_terminator(block.terminator),
   };
@@ -129,7 +129,7 @@ function create_edge_block(
     name: fresh_label(
       `phi.${strip_sigils(target)}.from.${strip_sigils(predecessor)}`,
     ),
-    joins: [],
+    phis: [],
     lines: [],
     terminator: [null, "Jump", target],
     edge: { target, predecessor },

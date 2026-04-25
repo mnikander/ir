@@ -12,7 +12,7 @@ describe("number_slots", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%sum", "Add", ["%a"], ["%b"]],
               ["%product", "Multiply", ["%sum"], ["%a"]],
@@ -33,7 +33,7 @@ describe("number_slots", () => {
         blocks: [
           {
             name: "@entry",
-            joins: [],
+            phis: [],
             lines: [
               ["%sum", "Add", ["%a"], ["%b"]],
               ["%product", "Multiply", ["%sum"], ["%a"]],
