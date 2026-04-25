@@ -205,45 +205,6 @@ function @main []:
 });
 
 describe("labels, jump, and branch", () => {
-  // it('must report an error if a block falls through into the next label', () => {
-  //     // function @main []:
-  //     // block @entry:
-  //     // %0 = constant 11
-  //     // (missing terminator)
-  //     //
-  //     // block @first:
-  //     // %1 = constant 22
-  //     // return %2
-  //     const input: HIGH.Program = [
-  //         {
-  //             func: '@main',
-  //             params: [],
-  //             blocks:
-  //             [
-  //                 {
-  //                     block: '@entry',
-  //                     joins: [],
-  //                     lines: [
-  //                         [ '%0', 'Const', 11 ],
-  //                     ],
-  //                     terminator: [] // the missing Terminator statement here, should cause an error
-  //                 },
-  //                 {
-  //                     block: '@first',
-  //                     joins: [],
-  //                     lines: [
-  //                         [ '%1', 'Const', 22 ],
-  //                     ],
-  //                     terminator: [ null, 'Exit',  '%2' ],
-  //                 },
-  //             ]
-  //         },
-  //     ];
-  //     expect(input).toBeDefined();
-  //     // expect(() => {evaluate(analyze(input))}).toThrow();
-  //     // expect(table_of_contents(input).size).toBeGreaterThanOrEqual(1);
-  // });
-
   it("must execute the correct line of code after an unconditional jump", () => {
     const text: string = `
 function @main []:
