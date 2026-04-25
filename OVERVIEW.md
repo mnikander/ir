@@ -1,6 +1,7 @@
 # Repository Overview
 
 This repository contains a TypeScript/Deno interpreter for a small intermediate representation. The active architecture is HIR -> lowering passes -> LIR -> runtime.
+Files which are completely AI-generated end with `*.gen.ts` file extensions.
 
 ## Important Files
 
