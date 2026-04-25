@@ -45,4 +45,5 @@ Note: each line should be kept to a maximum of 260 characters. This allows viewi
 | 2026-04-18 | #526 | HIR     | remove the `Update` instruction for now             | Not needed for now. Only makes sense for aggregates such as array, product, and sum-types. Those will be implemented much later.|
 | 2026-04-19 | #844 | HIR     | remove the `Heap` pointer and heap memory, for now  | Less implementation work for a proof of concept. Basic memory safety can be shown on stack memory. Avoids having to implement alloc and free right now.|
 | 2026-04-24 | #615 |         | use HIR pretty-printer to validate JSON input       | Allows writing plain HIR code in test-cases and then AI-generating the JSON confidently, since every unit test can check that `pretty_print(high_program) === input_code`.|
+| 2026-04-24 | #4b4 | HIR,impl| avoid lowering before analysis, tweak HIR instead   | Keep the code simple. Avoid extra lowering passes before analysis, since those make reasoning and error-reporting more difficult. If it makes analysis easier, modify HIR.|
 |            |        |         |                                                     | |
