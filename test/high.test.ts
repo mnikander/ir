@@ -71,7 +71,7 @@ function @main []:
 function @main []:
 
   block @entry:
-    %0 = constant 0
+    %0 = constant ${small}
     %1 = borrow %0
     return %1
 `;
@@ -85,7 +85,7 @@ function @main []:
             name: "@entry",
             joins: [],
             lines: [
-              ["%0", "Constant", { value: 0 }],
+              ["%0", "Constant", { value: small }],
               ["%1", "Borrow", "%0"],
             ],
             terminator: [null, "Return", ["%1"]],
@@ -1488,10 +1488,10 @@ function @main []:
 function @main []:
 
   block @entry:
-    %0 = constant 0
-    %1 = constant 0
+    %0 = constant ${small}
     %0 = drop
     %0 = drop
+    %1 = constant ${small}
     return %1
 `;
 
@@ -1504,10 +1504,10 @@ function @main []:
             name: "@entry",
             joins: [],
             lines: [
-              ["%0", "Constant", { value: 0 }],
-              ["%1", "Constant", { value: 0 }],
+              ["%0", "Constant", { value: small }],
               ["%0", "Drop"],
               ["%0", "Drop"],
+              ["%1", "Constant", { value: small }],
             ],
             terminator: [null, "Return", ["%1"]],
           },
@@ -1526,7 +1526,7 @@ function @main []:
 function @main []:
 
   block @entry:
-    %0 = constant 0
+    %0 = constant ${small}
     %1 = assign (consume %0)
     return %0
 `;
@@ -1540,7 +1540,7 @@ function @main []:
             name: "@entry",
             joins: [],
             lines: [
-              ["%0", "Constant", { value: 0 }],
+              ["%0", "Constant", { value: small }],
               ["%1", "Assign", ["consume", "%0"]],
             ],
             terminator: [null, "Return", ["%0"]],
