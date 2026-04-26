@@ -69,22 +69,22 @@ function rewrite_line(
 
   switch (line[1]) {
     case "constant":
-      return [destination, "constant", line[2]];
+      return [destination, "constant", line[3]];
     case "copy":
-      return [destination, "copy", rewrite_input(line[2], slots, context)];
+      return [destination, "copy", rewrite_input(line[3], slots, context)];
     case "own":
-      return [destination, "own", rewrite_input(line[2], slots, context)];
+      return [destination, "own", rewrite_input(line[3], slots, context)];
     case "call":
       return [
         destination,
         "call",
-        line[2],
-        line[3].map((input) => rewrite_input(input, slots, context)),
+        line[3],
+        line[4].map((input) => rewrite_input(input, slots, context)),
       ];
     case "borrow":
-      return [destination, "borrow", get_slot(slots, line[2], context)];
+      return [destination, "borrow", get_slot(slots, line[3], context)];
     case "load":
-      return [destination, "load", get_slot(slots, line[2], context)];
+      return [destination, "load", get_slot(slots, line[3], context)];
     case "drop":
       return [destination, "drop"];
     case "add":
@@ -103,11 +103,11 @@ function rewrite_line(
       return [
         destination,
         line[1],
-        rewrite_input(line[2], slots, context),
         rewrite_input(line[3], slots, context),
+        rewrite_input(line[4], slots, context),
       ];
     case "negate":
-      return [destination, "negate", rewrite_input(line[2], slots, context)];
+      return [destination, "negate", rewrite_input(line[3], slots, context)];
   }
 }
 
@@ -123,16 +123,16 @@ function rewrite_terminator(
 
   switch (terminator[1]) {
     case "jump":
-      return [null, "jump", terminator[2]];
+      return [null, "jump", terminator[3]];
     case "branch":
       return [
         null,
         "branch",
-        rewrite_input(terminator[2], slots, context),
-        [terminator[3][0], terminator[3][1]],
+        rewrite_input(terminator[3], slots, context),
+        [terminator[4][0], terminator[4][1]],
       ];
     case "return":
-      return [null, "return", rewrite_input(terminator[2], slots, context)];
+      return [null, "return", rewrite_input(terminator[3], slots, context)];
   }
 }
 

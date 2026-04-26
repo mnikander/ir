@@ -14,14 +14,15 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
+              ["%0", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "return", ["%0"]],
+            terminator: [null, "return", ["Int"], ["%0"]],
           },
         ],
       },
@@ -42,39 +43,40 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: 1 }],
-              ["%1", "constant", { value: small }],
-              ["%2", "constant", { value: large }],
-              ["%3", "constant", { value: huge }],
+              ["%0", "constant", ["Int"], { value: 1 }],
+              ["%1", "constant", ["Int"], { value: small }],
+              ["%2", "constant", ["Int"], { value: large }],
+              ["%3", "constant", ["Int"], { value: huge }],
             ],
-            terminator: [null, "branch", ["%0"], ["@then", "@else"]],
+            terminator: [null, "branch", null, ["%0"], ["@then", "@else"]],
           },
           {
             name: "@then",
             phis: [],
             lines: [
-              ["%4", "add", ["%1"], ["%2"]],
+              ["%4", "add", ["Int"], ["%1"], ["%2"]],
             ],
-            terminator: [null, "jump", "@end"],
+            terminator: [null, "jump", null, "@end"],
           },
           {
             name: "@else",
             phis: [],
             lines: [
-              ["%5", "add", ["%2"], ["%3"]],
+              ["%5", "add", ["Int"], ["%2"], ["%3"]],
             ],
-            terminator: [null, "jump", "@end"],
+            terminator: [null, "jump", null, "@end"],
           },
           {
             name: "@end",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%4"]],
+            terminator: [null, "return", ["Int"], ["%4"]],
           },
         ],
       },
@@ -106,15 +108,16 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", { value: small }],
-              ["%y", "copy", ["consume", "%x"]],
+              ["%x", "constant", ["Int"], { value: small }],
+              ["%y", "copy", ["Int"], ["consume", "%x"]],
             ],
-            terminator: [null, "return", ["%y"]],
+            terminator: [null, "return", ["Int"], ["%y"]],
           },
         ],
       },
@@ -135,15 +138,16 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", { value: small }],
-              ["%x", "drop"],
+              ["%x", "constant", ["Int"], { value: small }],
+              ["%x", "drop", null],
             ],
-            terminator: [null, "return", ["%x"]],
+            terminator: [null, "return", ["Int"], ["%x"]],
           },
         ],
       },
@@ -163,16 +167,17 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", { value: small }],
-              ["%y", "copy", ["consume", "%x"]],
-              ["%y", "drop"],
+              ["%x", "constant", ["Int"], { value: small }],
+              ["%y", "copy", ["Int"], ["consume", "%x"]],
+              ["%y", "drop", null],
             ],
-            terminator: [null, "return", ["%y"]],
+            terminator: [null, "return", ["Int"], ["%y"]],
           },
         ],
       },
@@ -194,16 +199,17 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", { value: small }],
-              ["%r", "borrow", "%x"],
-              ["%t", "load", "%r"],
+              ["%x", "constant", ["Int"], { value: small }],
+              ["%r", "borrow", ["Borrowed", ["Int"]], "%x"],
+              ["%t", "load", ["Int"], "%r"],
             ],
-            terminator: [null, "return", ["%t"]],
+            terminator: [null, "return", ["Int"], ["%t"]],
           },
         ],
       },
@@ -224,15 +230,16 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", { value: small }],
-              ["%r", "own", ["%x"]],
+              ["%x", "constant", ["Int"], { value: small }],
+              ["%r", "own", ["Owned", ["Int"]], ["%x"]],
             ],
-            terminator: [null, "return", ["%r"]],
+            terminator: [null, "return", ["Owned", ["Int"]], ["%r"]],
           },
         ],
       },
@@ -254,14 +261,15 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%condition", "constant", { value: 1 }],
+              ["%condition", "constant", ["Int"], { value: 1 }],
             ],
-            terminator: [null, "branch", ["consume", "%condition"], [
+            terminator: [null, "branch", null, ["consume", "%condition"], [
               "@then",
               "@else",
             ]],
@@ -270,17 +278,17 @@ describe("lowering from HIR to LIR", () => {
             name: "@then",
             phis: [],
             lines: [
-              ["%value", "constant", { value: small }],
+              ["%value", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "return", ["consume", "%value"]],
+            terminator: [null, "return", ["Int"], ["consume", "%value"]],
           },
           {
             name: "@else",
             phis: [],
             lines: [
-              ["%fallback", "constant", { value: large }],
+              ["%fallback", "constant", ["Int"], { value: large }],
             ],
-            terminator: [null, "return", ["%fallback"]],
+            terminator: [null, "return", ["Int"], ["%fallback"]],
           },
         ],
       },
@@ -309,28 +317,30 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
-              ["%1", "constant", { value: large }],
-              ["%2", "call", "@identity", [["%1"]]],
+              ["%0", "constant", ["Int"], { value: small }],
+              ["%1", "constant", ["Int"], { value: large }],
+              ["%2", "call", ["Int"], "@identity", [["%1"]]],
             ],
-            terminator: [null, "return", ["%2"]],
+            terminator: [null, "return", ["Int"], ["%2"]],
           },
         ],
       },
       {
         name: "@identity",
-        params: [["%a"]],
+        params: [[["Int"], ["%a"]]],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%a"]],
+            terminator: [null, "return", ["Int"], ["%a"]],
           },
         ],
       },
@@ -356,55 +366,66 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", { value: 5 }],
-              ["%result", "call", "@factorial", [["%x"]]],
+              ["%x", "constant", ["Int"], { value: 5 }],
+              ["%result", "call", ["Int"], "@factorial", [["%x"]]],
             ],
-            terminator: [null, "return", ["%result"]],
+            terminator: [null, "return", ["Int"], ["%result"]],
           },
         ],
       },
       {
         name: "@factorial",
-        params: [["%arg"]],
+        params: [[["Int"], ["%arg"]]],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%one", "constant", { value: 1 }],
+              ["%one", "constant", ["Int"], { value: 1 }],
             ],
-            terminator: [null, "jump", "@gate"],
+            terminator: [null, "jump", null, "@gate"],
           },
           {
             name: "@gate",
             phis: [
-              ["%acc", "phi", [["@entry", ["%one"]], ["@body", ["%new_acc"]]]],
-              ["%n", "phi", [["@entry", ["%arg"]], ["@body", ["%new_n"]]]],
+              ["%acc", "phi", ["Int"], [["@entry", ["%one"]], [
+                "@body",
+                ["%new_acc"],
+              ]]],
+              ["%n", "phi", ["Int"], [["@entry", ["%arg"]], [
+                "@body",
+                ["%new_n"],
+              ]]],
             ],
             lines: [
-              ["%continue", "greater", ["%n"], ["%one"]],
+              ["%continue", "greater", ["Int"], ["%n"], ["%one"]],
             ],
-            terminator: [null, "branch", ["%continue"], ["@body", "@end"]],
+            terminator: [null, "branch", null, ["%continue"], [
+              "@body",
+              "@end",
+            ]],
           },
           {
             name: "@body",
             phis: [],
             lines: [
-              ["%new_acc", "multiply", ["%n"], ["%acc"]],
-              ["%new_n", "subtract", ["%n"], ["%one"]],
+              ["%new_acc", "multiply", ["Int"], ["%n"], ["%acc"]],
+              ["%new_n", "subtract", ["Int"], ["%n"], ["%one"]],
             ],
-            terminator: [null, "jump", "@gate"],
+            terminator: [null, "jump", null, "@gate"],
           },
           {
             name: "@end",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%n"]],
+            terminator: [null, "return", ["Int"], ["%n"]],
           },
         ],
       },

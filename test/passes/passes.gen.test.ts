@@ -35,16 +35,17 @@ describe("numbering pipeline", () => {
     const input: HIR.Program = [
       {
         name: "@combine",
-        params: [["%a"], ["%b"]],
+        params: [[["Int"], ["%a"]], [["Int"], ["%b"]]],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%sum", "add", ["%a"], ["%b"]],
-              ["%product", "multiply", ["%sum"], ["%a"]],
+              ["%sum", "add", ["Int"], ["%a"], ["%b"]],
+              ["%product", "multiply", ["Int"], ["%sum"], ["%a"]],
             ],
-            terminator: [null, "return", ["%product"]],
+            terminator: [null, "return", ["Int"], ["%product"]],
           },
         ],
       },
@@ -82,15 +83,16 @@ describe("numbering pipeline", () => {
     const input: HIR.Program = [
       {
         name: "@main",
-        params: [["%x"]],
+        params: [[["Int"], ["%x"]]],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%y", "copy", ["consume", "%x"]],
+              ["%y", "copy", ["Int"], ["consume", "%x"]],
             ],
-            terminator: [null, "return", ["consume", "%y"]],
+            terminator: [null, "return", ["Int"], ["consume", "%y"]],
           },
         ],
       },
@@ -120,15 +122,16 @@ describe("numbering pipeline", () => {
     const input: HIR.Program = [
       {
         name: "@main",
-        params: [["%x"]],
+        params: [[["Int"], ["%x"]]],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "drop"],
+              ["%x", "drop", null],
             ],
-            terminator: [null, "return", ["%x"]],
+            terminator: [null, "return", ["Int"], ["%x"]],
           },
         ],
       },

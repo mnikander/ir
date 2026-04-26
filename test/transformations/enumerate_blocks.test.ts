@@ -18,14 +18,15 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
+              ["%0", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "return", ["%0"]],
+            terminator: [null, "return", ["Int"], ["%0"]],
           },
         ],
       },
@@ -34,14 +35,15 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@0",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
+              ["%0", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "return", ["%0"]],
+            terminator: [null, "return", ["Int"], ["%0"]],
           },
         ],
       },
@@ -66,28 +68,29 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "jump", "@second"],
+            terminator: [null, "jump", null, "@second"],
           },
           {
             name: "@first",
             phis: [],
             lines: [
-              ["%1", "constant", { value: small }],
+              ["%1", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "return", ["%1"]],
+            terminator: [null, "return", ["Int"], ["%1"]],
           },
           {
             name: "@second",
             phis: [],
             lines: [
-              ["%2", "constant", { value: large }],
+              ["%2", "constant", ["Int"], { value: large }],
             ],
-            terminator: [null, "return", ["%2"]],
+            terminator: [null, "return", ["Int"], ["%2"]],
           },
         ],
       },
@@ -96,28 +99,29 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@0",
             phis: [],
             lines: [],
-            terminator: [null, "jump", "@2"],
+            terminator: [null, "jump", null, "@2"],
           },
           {
             name: "@1",
             phis: [],
             lines: [
-              ["%1", "constant", { value: small }],
+              ["%1", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "return", ["%1"]],
+            terminator: [null, "return", ["Int"], ["%1"]],
           },
           {
             name: "@2",
             phis: [],
             lines: [
-              ["%2", "constant", { value: large }],
+              ["%2", "constant", ["Int"], { value: large }],
             ],
-            terminator: [null, "return", ["%2"]],
+            terminator: [null, "return", ["Int"], ["%2"]],
           },
         ],
       },
@@ -149,39 +153,40 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: 1 }],
-              ["%1", "constant", { value: small }],
-              ["%2", "constant", { value: large }],
-              ["%3", "constant", { value: huge }],
+              ["%0", "constant", ["Int"], { value: 1 }],
+              ["%1", "constant", ["Int"], { value: small }],
+              ["%2", "constant", ["Int"], { value: large }],
+              ["%3", "constant", ["Int"], { value: huge }],
             ],
-            terminator: [null, "branch", ["%0"], ["@then", "@else"]],
+            terminator: [null, "branch", null, ["%0"], ["@then", "@else"]],
           },
           {
             name: "@then",
             phis: [],
             lines: [
-              ["%4", "add", ["%1"], ["%2"]],
+              ["%4", "add", ["Int"], ["%1"], ["%2"]],
             ],
-            terminator: [null, "jump", "@end"],
+            terminator: [null, "jump", null, "@end"],
           },
           {
             name: "@else",
             phis: [],
             lines: [
-              ["%5", "add", ["%2"], ["%3"]],
+              ["%5", "add", ["Int"], ["%2"], ["%3"]],
             ],
-            terminator: [null, "jump", "@end"],
+            terminator: [null, "jump", null, "@end"],
           },
           {
             name: "@end",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%4"]],
+            terminator: [null, "return", ["Int"], ["%4"]],
           },
         ],
       },
@@ -190,39 +195,40 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@0",
             phis: [],
             lines: [
-              ["%0", "constant", { value: 1 }],
-              ["%1", "constant", { value: small }],
-              ["%2", "constant", { value: large }],
-              ["%3", "constant", { value: huge }],
+              ["%0", "constant", ["Int"], { value: 1 }],
+              ["%1", "constant", ["Int"], { value: small }],
+              ["%2", "constant", ["Int"], { value: large }],
+              ["%3", "constant", ["Int"], { value: huge }],
             ],
-            terminator: [null, "branch", ["%0"], ["@1", "@2"]],
+            terminator: [null, "branch", null, ["%0"], ["@1", "@2"]],
           },
           {
             name: "@1",
             phis: [],
             lines: [
-              ["%4", "add", ["%1"], ["%2"]],
+              ["%4", "add", ["Int"], ["%1"], ["%2"]],
             ],
-            terminator: [null, "jump", "@3"],
+            terminator: [null, "jump", null, "@3"],
           },
           {
             name: "@2",
             phis: [],
             lines: [
-              ["%5", "add", ["%2"], ["%3"]],
+              ["%5", "add", ["Int"], ["%2"], ["%3"]],
             ],
-            terminator: [null, "jump", "@3"],
+            terminator: [null, "jump", null, "@3"],
           },
           {
             name: "@3",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%4"]],
+            terminator: [null, "return", ["Int"], ["%4"]],
           },
         ],
       },
@@ -250,40 +256,43 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
-              ["%1", "constant", { value: large }],
-              ["%2", "call", "@identityA", [["%1"]]],
+              ["%0", "constant", ["Int"], { value: small }],
+              ["%1", "constant", ["Int"], { value: large }],
+              ["%2", "call", ["Int"], "@identityA", [["%1"]]],
             ],
-            terminator: [null, "return", ["%2"]],
+            terminator: [null, "return", ["Int"], ["%2"]],
           },
         ],
       },
       {
         name: "@identityA",
-        params: [["%a"]],
+        params: [[["Int"], ["%a"]]],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%a"]],
+            terminator: [null, "return", ["Int"], ["%a"]],
           },
         ],
       },
       {
         name: "@identityB",
-        params: [["%b"]], // error: same parameter name used again
+        params: [[["Int"], ["%b"]]], // error: same parameter name used again
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%b"]],
+            terminator: [null, "return", ["Int"], ["%b"]],
           },
         ],
       },
@@ -292,40 +301,43 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@0",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
-              ["%1", "constant", { value: large }],
-              ["%2", "call", "@identityA", [["%1"]]],
+              ["%0", "constant", ["Int"], { value: small }],
+              ["%1", "constant", ["Int"], { value: large }],
+              ["%2", "call", ["Int"], "@identityA", [["%1"]]],
             ],
-            terminator: [null, "return", ["%2"]],
+            terminator: [null, "return", ["Int"], ["%2"]],
           },
         ],
       },
       {
         name: "@identityA",
-        params: [["%a"]],
+        params: [[["Int"], ["%a"]]],
+        type: ["Int"],
         blocks: [
           {
             name: "@0",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%a"]],
+            terminator: [null, "return", ["Int"], ["%a"]],
           },
         ],
       },
       {
         name: "@identityB",
-        params: [["%b"]], // error: same parameter name used again
+        params: [[["Int"], ["%b"]]], // error: same parameter name used again
+        type: ["Int"],
         blocks: [
           {
             name: "@0",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%b"]],
+            terminator: [null, "return", ["Int"], ["%b"]],
           },
         ],
       },
@@ -354,38 +366,39 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "jump", "@second"],
+            terminator: [null, "jump", null, "@second"],
           },
           {
             name: "@first",
             phis: [],
             lines: [
-              ["%1", "constant", { value: small }],
+              ["%1", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "jump", "@end"],
+            terminator: [null, "jump", null, "@end"],
           },
           {
             name: "@second",
             phis: [],
             lines: [
-              ["%2", "constant", { value: large }],
+              ["%2", "constant", ["Int"], { value: large }],
             ],
-            terminator: [null, "jump", "@end"],
+            terminator: [null, "jump", null, "@end"],
           },
           {
             name: "@end",
             phis: [
-              ["%3", "phi", [["@first", ["%1"]], ["@second", [
+              ["%3", "phi", ["Int"], [["@first", ["%1"]], ["@second", [
                 "%2",
               ]]]],
             ],
             lines: [],
-            terminator: [null, "return", ["%3"]],
+            terminator: [null, "return", ["Int"], ["%3"]],
           },
         ],
       },
@@ -394,38 +407,39 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@0",
             phis: [],
             lines: [],
-            terminator: [null, "jump", "@2"],
+            terminator: [null, "jump", null, "@2"],
           },
           {
             name: "@1",
             phis: [],
             lines: [
-              ["%1", "constant", { value: small }],
+              ["%1", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "jump", "@3"],
+            terminator: [null, "jump", null, "@3"],
           },
           {
             name: "@2",
             phis: [],
             lines: [
-              ["%2", "constant", { value: large }],
+              ["%2", "constant", ["Int"], { value: large }],
             ],
-            terminator: [null, "jump", "@3"],
+            terminator: [null, "jump", null, "@3"],
           },
           {
             name: "@3",
             phis: [
-              ["%3", "phi", [["@first", ["%1"]], ["@second", [
+              ["%3", "phi", ["Int"], [["@first", ["%1"]], ["@second", [
                 "%2",
               ]]]],
             ],
             lines: [],
-            terminator: [null, "return", ["%3"]],
+            terminator: [null, "return", ["Int"], ["%3"]],
           },
         ],
       },

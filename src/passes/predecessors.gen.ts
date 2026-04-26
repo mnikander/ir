@@ -32,9 +32,9 @@ export function collect_successors(
 ): readonly HIGH.Label[] {
   switch (terminator[1]) {
     case "jump":
-      return [terminator[2]];
+      return [terminator[3]];
     case "branch":
-      return terminator[3];
+      return terminator[4];
     case "return":
       return [];
   }

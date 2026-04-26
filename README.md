@@ -7,7 +7,8 @@ end, and Assembly on the other end.
 
 There is no parser. The input is in JSON form, not in text form. The JSON input
 is verified by the TypeScript type checker. There is a pretty-printer which can
-convert an HIR into text, for better readablity.
+convert an HIR into text, for better readablity. HIR has type annotations for
+analysis; LIR does not.
 
 ## Getting Started
 

@@ -18,7 +18,7 @@ export function number_slots_in_function(func: HIR.Function): SlottedFunction {
   let next_offset = 0;
 
   for (const param of func.params) {
-    const register = get_plain_register(param);
+    const register = get_plain_register(param[1]);
     if (find_slot(slots, register) === undefined) {
       slots.push({ name: register, offset: next_offset });
       next_offset += 1;
@@ -36,7 +36,7 @@ export function number_slots_in_function(func: HIR.Function): SlottedFunction {
   }
 
   const params: NumberedParam[] = func.params.map((param) => {
-    const name = get_plain_register(param);
+    const name = get_plain_register(param[1]);
     return {
       name,
       offset: get_slot(
@@ -50,6 +50,7 @@ export function number_slots_in_function(func: HIR.Function): SlottedFunction {
   return {
     name: func.name,
     params,
+    type: func.type,
     blocks: func.blocks.map(clone_block),
     slots,
   };
@@ -67,14 +68,14 @@ function clone_block(block: HIR.Block): HIR.Block {
 function clone_terminator(terminator: HIR.Terminator): HIR.Terminator {
   switch (terminator[1]) {
     case "jump":
-      return [null, "jump", terminator[2]];
+      return [null, "jump", null, terminator[3]];
     case "branch":
-      return [null, "branch", terminator[2], [
-        terminator[3][0],
-        terminator[3][1],
+      return [null, "branch", null, terminator[3], [
+        terminator[4][0],
+        terminator[4][1],
       ]];
     case "return":
-      return [null, "return", terminator[2]];
+      return [null, "return", terminator[2], terminator[3]];
   }
 }
 

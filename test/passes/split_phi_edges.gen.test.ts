@@ -9,28 +9,35 @@ describe("split_phi_edges", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
-            lines: [["%condition", "constant", { value: 1 }]],
-            terminator: [null, "branch", ["%condition"], ["@left", "@join"]],
+            lines: [["%condition", "constant", ["Int"], { value: 1 }]],
+            terminator: [null, "branch", null, ["%condition"], [
+              "@left",
+              "@join",
+            ]],
           },
           {
             name: "@left",
             phis: [],
-            lines: [["%left", "constant", { value: 11 }]],
-            terminator: [null, "jump", "@join"],
+            lines: [["%left", "constant", ["Int"], { value: 11 }]],
+            terminator: [null, "jump", null, "@join"],
           },
           {
             name: "@join",
             phis: [
-              ["%result", "phi", [["@entry", ["%condition"]], ["@left", [
-                "%left",
-              ]]]],
+              ["%result", "phi", ["Int"], [["@entry", ["%condition"]], [
+                "@left",
+                [
+                  "%left",
+                ],
+              ]]],
             ],
             lines: [],
-            terminator: [null, "return", ["%result"]],
+            terminator: [null, "return", ["Int"], ["%result"]],
           },
         ],
       },
@@ -40,12 +47,13 @@ describe("split_phi_edges", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
-            lines: [["%condition", "constant", { value: 1 }]],
-            terminator: [null, "branch", ["%condition"], [
+            lines: [["%condition", "constant", ["Int"], { value: 1 }]],
+            terminator: [null, "branch", null, ["%condition"], [
               "@left",
               "@phi.join.from.entry",
             ]],
@@ -53,32 +61,35 @@ describe("split_phi_edges", () => {
           {
             name: "@left",
             phis: [],
-            lines: [["%left", "constant", { value: 11 }]],
-            terminator: [null, "jump", "@phi.join.from.left"],
+            lines: [["%left", "constant", ["Int"], { value: 11 }]],
+            terminator: [null, "jump", null, "@phi.join.from.left"],
           },
           {
             name: "@phi.join.from.entry",
             phis: [],
             lines: [],
-            terminator: [null, "jump", "@join"],
+            terminator: [null, "jump", null, "@join"],
             edge: { target: "@join", predecessor: "@entry" },
           },
           {
             name: "@phi.join.from.left",
             phis: [],
             lines: [],
-            terminator: [null, "jump", "@join"],
+            terminator: [null, "jump", null, "@join"],
             edge: { target: "@join", predecessor: "@left" },
           },
           {
             name: "@join",
             phis: [
-              ["%result", "phi", [["@entry", ["%condition"]], ["@left", [
-                "%left",
-              ]]]],
+              ["%result", "phi", ["Int"], [["@entry", ["%condition"]], [
+                "@left",
+                [
+                  "%left",
+                ],
+              ]]],
             ],
             lines: [],
-            terminator: [null, "return", ["%result"]],
+            terminator: [null, "return", ["Int"], ["%result"]],
           },
         ],
       },

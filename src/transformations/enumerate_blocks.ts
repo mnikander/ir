@@ -10,6 +10,7 @@ export function enumerate_all_blocks(
     return {
       name: f.name,
       params: f.params,
+      type: f.type,
       blocks: enumerate_blocks(f.blocks),
     };
   });
@@ -41,16 +42,18 @@ function replace_successors(
     return [
       terminator[0],
       terminator[1],
-      number_to_label(valid(name_to_index.get(terminator[2]))),
+      terminator[2],
+      number_to_label(valid(name_to_index.get(terminator[3]))),
     ];
   } else if (terminator[HIGH.Get.Tag] === "branch") {
     return [
       terminator[0],
       terminator[1],
       terminator[2],
+      terminator[3],
       [
-        number_to_label(valid(name_to_index.get(terminator[3][0]))),
-        number_to_label(valid(name_to_index.get(terminator[3][1]))),
+        number_to_label(valid(name_to_index.get(terminator[4][0]))),
+        number_to_label(valid(name_to_index.get(terminator[4][1]))),
       ],
     ];
   } else {

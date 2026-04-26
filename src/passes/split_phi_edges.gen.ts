@@ -52,6 +52,7 @@ export function split_phi_edges_in_function(
   return {
     name: func.name,
     params: [...func.params],
+    type: func.type,
     blocks: rewritten,
   };
 }
@@ -68,14 +69,14 @@ function clone_block(block: HIGH.Block): SplitBlock {
 function clone_terminator(terminator: HIGH.Terminator): HIGH.Terminator {
   switch (terminator[1]) {
     case "jump":
-      return [null, "jump", terminator[2]];
+      return [null, "jump", null, terminator[3]];
     case "branch":
-      return [null, "branch", terminator[2], [
-        terminator[3][0],
-        terminator[3][1],
+      return [null, "branch", null, terminator[3], [
+        terminator[4][0],
+        terminator[4][1],
       ]];
     case "return":
-      return [null, "return", terminator[2]];
+      return [null, "return", terminator[2], terminator[3]];
   }
 }
 
@@ -103,16 +104,18 @@ function redirect_terminator_target(
       return [
         null,
         "jump",
-        terminator[2] === target ? replacement : terminator[2],
+        null,
+        terminator[3] === target ? replacement : terminator[3],
       ];
     case "branch":
       return [
         null,
         "branch",
-        terminator[2],
+        null,
+        terminator[3],
         [
-          terminator[3][0] === target ? replacement : terminator[3][0],
-          terminator[3][1] === target ? replacement : terminator[3][1],
+          terminator[4][0] === target ? replacement : terminator[4][0],
+          terminator[4][1] === target ? replacement : terminator[4][1],
         ],
       ];
     case "return":
@@ -131,7 +134,7 @@ function create_edge_block(
     ),
     phis: [],
     lines: [],
-    terminator: [null, "jump", target],
+    terminator: [null, "jump", null, target],
     edge: { target, predecessor },
   };
 }

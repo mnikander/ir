@@ -1349,7 +1349,7 @@ function @main [] -> Int
 
   block @entry:
     %0 = constant Int ${small}
-    return (consume %0)
+    return Int (consume %0)
 `;
 
     const input: HIGH.Program = [

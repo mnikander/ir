@@ -9,12 +9,13 @@ describe("HIR printer", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
-            lines: [["%0", "constant", { value: 11 }]],
-            terminator: [null, "return", ["%0"]],
+            lines: [["%0", "constant", ["Int"], { value: 11 }]],
+            terminator: [null, "return", ["Int"], ["%0"]],
           },
         ],
       },
@@ -22,11 +23,11 @@ describe("HIR printer", () => {
 
     expect(print(input)).toBe(
       "\n" +
-        "function @main []:\n" +
+        "function @main [] -> Int\n" +
         "\n" +
         "  block @entry:\n" +
-        "    %0 = constant 11\n" +
-        "    return %0\n",
+        "    %0 = constant Int 11\n" +
+        "    return Int %0\n",
     );
   });
 
@@ -35,27 +36,35 @@ describe("HIR printer", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: 11 }],
-              ["%1", "call", "@identity", [["%0"], ["consume", "%0"]]],
+              ["%0", "constant", ["Int"], { value: 11 }],
+              ["%1", "call", ["Int"], "@identity", [["%0"], [
+                "consume",
+                "%0",
+              ]]],
             ],
-            terminator: [null, "return", ["%1"]],
+            terminator: [null, "return", ["Int"], ["%1"]],
           },
         ],
       },
       {
         name: "@identity",
-        params: [["%value"], ["consume", "%owned"]],
+        params: [[["Int"], ["%value"]], [
+          ["Owned", ["Int"]],
+          ["consume", "%owned"],
+        ]],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%value"]],
+            terminator: [null, "return", ["Int"], ["%value"]],
           },
         ],
       },
@@ -63,17 +72,17 @@ describe("HIR printer", () => {
 
     expect(print(input)).toBe(
       "\n" +
-        "function @main []:\n" +
+        "function @main [] -> Int\n" +
         "\n" +
         "  block @entry:\n" +
-        "    %0 = constant 11\n" +
-        "    %1 = call @identity [%0 (consume %0)]\n" +
-        "    return %1\n" +
+        "    %0 = constant Int 11\n" +
+        "    %1 = call Int @identity [%0 (consume %0)]\n" +
+        "    return Int %1\n" +
         "\n" +
-        "function @identity [%value (consume %owned)]:\n" +
+        "function @identity [%value (consume %owned)] -> Int\n" +
         "\n" +
         "  block @entry:\n" +
-        "    return %value\n",
+        "    return Int %value\n",
     );
   });
 
@@ -82,30 +91,34 @@ describe("HIR printer", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
-            lines: [["%condition", "constant", { value: 1 }]],
-            terminator: [null, "branch", ["%condition"], ["@then", "@else"]],
+            lines: [["%condition", "constant", ["Int"], { value: 1 }]],
+            terminator: [null, "branch", null, ["%condition"], [
+              "@then",
+              "@else",
+            ]],
           },
           {
             name: "@then",
             phis: [],
             lines: [],
-            terminator: [null, "jump", "@end"],
+            terminator: [null, "jump", null, "@end"],
           },
           {
             name: "@else",
             phis: [],
             lines: [],
-            terminator: [null, "jump", "@end"],
+            terminator: [null, "jump", null, "@end"],
           },
           {
             name: "@end",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%condition"]],
+            terminator: [null, "return", ["Int"], ["%condition"]],
           },
         ],
       },
@@ -113,10 +126,10 @@ describe("HIR printer", () => {
 
     expect(print(input)).toBe(
       "\n" +
-        "function @main []:\n" +
+        "function @main [] -> Int\n" +
         "\n" +
         "  block @entry:\n" +
-        "    %condition = constant 1\n" +
+        "    %condition = constant Int 1\n" +
         "    branch %condition @then @else\n" +
         "\n" +
         "  block @then:\n" +
@@ -126,7 +139,7 @@ describe("HIR printer", () => {
         "    jump @end\n" +
         "\n" +
         "  block @end:\n" +
-        "    return %condition\n",
+        "    return Int %condition\n",
     );
   });
 
@@ -135,15 +148,22 @@ describe("HIR printer", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@join",
             phis: [
-              ["%x", "phi", [["@left", ["%a"]], ["@right", ["consume", "%b"]]]],
-              ["%y", "phi", [["@left", ["%c"]], ["@right", ["%d"]]]],
+              ["%x", "phi", ["Int"], [["@left", ["%a"]], [
+                "@right",
+                ["consume", "%b"],
+              ]]],
+              ["%y", "phi", ["Int"], [["@left", ["%c"]], [
+                "@right",
+                ["%d"],
+              ]]],
             ],
-            lines: [["%sum", "add", ["%x"], ["%y"]]],
-            terminator: [null, "return", ["%sum"]],
+            lines: [["%sum", "add", ["Int"], ["%x"], ["%y"]]],
+            terminator: [null, "return", ["Int"], ["%sum"]],
           },
         ],
       },
@@ -151,13 +171,13 @@ describe("HIR printer", () => {
 
     expect(print(input)).toBe(
       "\n" +
-        "function @main []:\n" +
+        "function @main [] -> Int\n" +
         "\n" +
         "  block @join:\n" +
-        "    %x = phi [[@left %a] [@right (consume %b)]]\n" +
-        "    %y = phi [[@left %c] [@right %d]]\n" +
-        "    %sum = add %x %y\n" +
-        "    return %sum\n",
+        "    %x = phi Int [[@left %a] [@right (consume %b)]]\n" +
+        "    %y = phi Int [[@left %c] [@right %d]]\n" +
+        "    %sum = add Int %x %y\n" +
+        "    return Int %sum\n",
     );
   });
 
@@ -166,17 +186,18 @@ describe("HIR printer", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", { value: 11 }],
-              ["%y", "constant", { value: 13 }],
-              ["%copy", "copy", ["consume", "%x"]],
-              ["%sum", "add", ["consume", "%copy"], ["%y"]],
+              ["%x", "constant", ["Int"], { value: 11 }],
+              ["%y", "constant", ["Int"], { value: 13 }],
+              ["%copy", "copy", ["Int"], ["consume", "%x"]],
+              ["%sum", "add", ["Int"], ["consume", "%copy"], ["%y"]],
             ],
-            terminator: [null, "branch", ["consume", "%sum"], [
+            terminator: [null, "branch", null, ["consume", "%sum"], [
               "@then",
               "@else",
             ]],
@@ -185,13 +206,13 @@ describe("HIR printer", () => {
             name: "@then",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["consume", "%y"]],
+            terminator: [null, "return", ["Int"], ["consume", "%y"]],
           },
           {
             name: "@else",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%y"]],
+            terminator: [null, "return", ["Int"], ["%y"]],
           },
         ],
       },
@@ -199,20 +220,20 @@ describe("HIR printer", () => {
 
     expect(print(input)).toBe(
       "\n" +
-        "function @main []:\n" +
+        "function @main [] -> Int\n" +
         "\n" +
         "  block @entry:\n" +
-        "    %x = constant 11\n" +
-        "    %y = constant 13\n" +
-        "    %copy = copy (consume %x)\n" +
-        "    %sum = add (consume %copy) %y\n" +
+        "    %x = constant Int 11\n" +
+        "    %y = constant Int 13\n" +
+        "    %copy = copy Int (consume %x)\n" +
+        "    %sum = add Int (consume %copy) %y\n" +
         "    branch (consume %sum) @then @else\n" +
         "\n" +
         "  block @then:\n" +
-        "    return (consume %y)\n" +
+        "    return Int (consume %y)\n" +
         "\n" +
         "  block @else:\n" +
-        "    return %y\n",
+        "    return Int %y\n",
     );
   });
 
@@ -221,18 +242,19 @@ describe("HIR printer", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", { value: 42 }],
-              ["%owned", "own", ["%x"]],
-              ["%borrowed", "borrow", "%x"],
-              ["%loaded", "load", "%borrowed"],
-              ["%owned", "drop"],
+              ["%x", "constant", ["Int"], { value: 42 }],
+              ["%owned", "own", ["Owned", ["Int"]], ["%x"]],
+              ["%borrowed", "borrow", ["Borrowed", ["Int"]], "%x"],
+              ["%loaded", "load", ["Int"], "%borrowed"],
+              ["%owned", "drop", null],
             ],
-            terminator: [null, "return", ["%loaded"]],
+            terminator: [null, "return", ["Int"], ["%loaded"]],
           },
         ],
       },
@@ -240,15 +262,15 @@ describe("HIR printer", () => {
 
     expect(print(input)).toBe(
       "\n" +
-        "function @main []:\n" +
+        "function @main [] -> Int\n" +
         "\n" +
         "  block @entry:\n" +
-        "    %x = constant 42\n" +
-        "    %owned = own %x\n" +
-        "    %borrowed = borrow %x\n" +
-        "    %loaded = load %borrowed\n" +
+        "    %x = constant Int 42\n" +
+        "    %owned = own (Owned Int) %x\n" +
+        "    %borrowed = borrow (Borrowed Int) %x\n" +
+        "    %loaded = load Int %borrowed\n" +
         "    %owned = drop\n" +
-        "    return %loaded\n",
+        "    return Int %loaded\n",
     );
   });
 
@@ -257,28 +279,29 @@ describe("HIR printer", () => {
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%a", "constant", { value: 11 }],
-              ["%b", "constant", { value: 13 }],
-              ["%sub", "subtract", ["%a"], ["%b"]],
-              ["%mul", "multiply", ["%a"], ["%b"]],
-              ["%div", "divide", ["%mul"], ["%a"]],
-              ["%rem", "remainder", ["%mul"], ["%b"]],
-              ["%min", "minimum", ["%a"], ["%b"]],
-              ["%max", "maximum", ["%a"], ["%b"]],
-              ["%neg", "negate", ["%a"]],
-              ["%eq", "equal", ["%a"], ["%b"]],
-              ["%ne", "unequal", ["%a"], ["%b"]],
-              ["%lt", "less", ["%a"], ["%b"]],
-              ["%le", "less_equal", ["%a"], ["%b"]],
-              ["%gt", "greater", ["%a"], ["%b"]],
-              ["%ge", "greater_equal", ["%a"], ["%b"]],
+              ["%a", "constant", ["Int"], { value: 11 }],
+              ["%b", "constant", ["Int"], { value: 13 }],
+              ["%sub", "subtract", ["Int"], ["%a"], ["%b"]],
+              ["%mul", "multiply", ["Int"], ["%a"], ["%b"]],
+              ["%div", "divide", ["Int"], ["%mul"], ["%a"]],
+              ["%rem", "remainder", ["Int"], ["%mul"], ["%b"]],
+              ["%min", "minimum", ["Int"], ["%a"], ["%b"]],
+              ["%max", "maximum", ["Int"], ["%a"], ["%b"]],
+              ["%neg", "negate", ["Int"], ["%a"]],
+              ["%eq", "equal", ["Int"], ["%a"], ["%b"]],
+              ["%ne", "unequal", ["Int"], ["%a"], ["%b"]],
+              ["%lt", "less", ["Int"], ["%a"], ["%b"]],
+              ["%le", "less_equal", ["Int"], ["%a"], ["%b"]],
+              ["%gt", "greater", ["Int"], ["%a"], ["%b"]],
+              ["%ge", "greater_equal", ["Int"], ["%a"], ["%b"]],
             ],
-            terminator: [null, "return", ["%ge"]],
+            terminator: [null, "return", ["Int"], ["%ge"]],
           },
         ],
       },
@@ -286,25 +309,25 @@ describe("HIR printer", () => {
 
     expect(print(input)).toBe(
       "\n" +
-        "function @main []:\n" +
+        "function @main [] -> Int\n" +
         "\n" +
         "  block @entry:\n" +
-        "    %a = constant 11\n" +
-        "    %b = constant 13\n" +
-        "    %sub = subtract %a %b\n" +
-        "    %mul = multiply %a %b\n" +
-        "    %div = divide %mul %a\n" +
-        "    %rem = remainder %mul %b\n" +
-        "    %min = minimum %a %b\n" +
-        "    %max = maximum %a %b\n" +
-        "    %neg = negate %a\n" +
-        "    %eq = equal %a %b\n" +
-        "    %ne = unequal %a %b\n" +
-        "    %lt = less %a %b\n" +
-        "    %le = less_equal %a %b\n" +
-        "    %gt = greater %a %b\n" +
-        "    %ge = greater_equal %a %b\n" +
-        "    return %ge\n",
+        "    %a = constant Int 11\n" +
+        "    %b = constant Int 13\n" +
+        "    %sub = subtract Int %a %b\n" +
+        "    %mul = multiply Int %a %b\n" +
+        "    %div = divide Int %mul %a\n" +
+        "    %rem = remainder Int %mul %b\n" +
+        "    %min = minimum Int %a %b\n" +
+        "    %max = maximum Int %a %b\n" +
+        "    %neg = negate Int %a\n" +
+        "    %eq = equal Int %a %b\n" +
+        "    %ne = unequal Int %a %b\n" +
+        "    %lt = less Int %a %b\n" +
+        "    %le = less_equal Int %a %b\n" +
+        "    %gt = greater Int %a %b\n" +
+        "    %ge = greater_equal Int %a %b\n" +
+        "    return Int %ge\n",
     );
   });
 });

@@ -12,7 +12,8 @@ export type SplitProgram = readonly SplitFunction[];
 
 export type SplitFunction = {
   name: HIR.Label;
-  params: HIR.Input[];
+  params: [HIR.Type, HIR.Input][];
+  type: HIR.Type;
   blocks: SplitBlock[];
 };
 
@@ -36,6 +37,7 @@ export type SlottedProgram = readonly SlottedFunction[];
 export type SlottedFunction = {
   name: HIR.Label;
   params: NumberedParam[];
+  type: HIR.Type;
   blocks: HIR.Block[];
   slots: SlotAssignment[];
 };

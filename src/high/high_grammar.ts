@@ -1,6 +1,7 @@
 // Copyright (c) 2026 Marco Nikander
 
 import { Borrowed, Int, Owned, Type } from "./types.ts";
+export type { Borrowed, Int, Owned, Type } from "./types.ts";
 
 export type Program      = readonly Function[];
 export type Function     = { name: Label,           params: [Type, Input][], type: Type, blocks: Block[] }; // TODO: should params just be Register instead of Input, or can a function require a move?

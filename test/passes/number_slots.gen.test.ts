@@ -8,16 +8,17 @@ describe("number_slots", () => {
     const input: HIR.Program = [
       {
         name: "@combine",
-        params: [["%a"], ["%b"]],
+        params: [[["Int"], ["%a"]], [["Int"], ["%b"]]],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%sum", "add", ["%a"], ["%b"]],
-              ["%product", "multiply", ["%sum"], ["%a"]],
+              ["%sum", "add", ["Int"], ["%a"], ["%b"]],
+              ["%product", "multiply", ["Int"], ["%sum"], ["%a"]],
             ],
-            terminator: [null, "return", ["%product"]],
+            terminator: [null, "return", ["Int"], ["%product"]],
           },
         ],
       },
@@ -30,15 +31,16 @@ describe("number_slots", () => {
           { name: "%a", offset: 0 },
           { name: "%b", offset: 1 },
         ],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%sum", "add", ["%a"], ["%b"]],
-              ["%product", "multiply", ["%sum"], ["%a"]],
+              ["%sum", "add", ["Int"], ["%a"], ["%b"]],
+              ["%product", "multiply", ["Int"], ["%sum"], ["%a"]],
             ],
-            terminator: [null, "return", ["%product"]],
+            terminator: [null, "return", ["Int"], ["%product"]],
           },
         ],
         slots: [

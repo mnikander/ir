@@ -19,6 +19,7 @@ export function lower_phi_moves_in_function(
   return {
     name: func.name,
     params: [...func.params],
+    type: func.type,
     blocks: func.blocks.map((block) =>
       lower_block(block, block_by_name, fresh_register)
     ),
@@ -60,11 +61,11 @@ function lower_phi_nodes(
         strip_sigils(phi[0])
       }`,
     );
-    return [temporary, "copy", source] satisfies HIGH.Copy;
+    return [temporary, "copy", phi[2], source] satisfies HIGH.Copy;
   });
 
   const writes = target.phis.map((phi, index) =>
-    [phi[0], "copy", [reads[index][0]]] satisfies HIGH.Copy
+    [phi[0], "copy", phi[2], [reads[index][0]]] satisfies HIGH.Copy
   );
 
   return [...reads, ...writes];
@@ -74,7 +75,7 @@ function find_phi_input(
   phi: HIGH.Phi,
   predecessor: HIGH.Label,
 ): HIGH.Input {
-  const entry = phi[2].find(([label]) => label === predecessor);
+  const entry = phi[3].find(([label]) => label === predecessor);
   if (entry === undefined) {
     throw Error(
       `Phi node '${
@@ -89,7 +90,9 @@ function find_phi_input(
 function create_register_generator(
   func: SplitFunction,
 ): (seed: string) => HIGH.Register {
-  const used = new Set<HIGH.Register>(func.params.map(get_input_register));
+  const used = new Set<HIGH.Register>(
+    func.params.map(([, input]) => get_input_register(input)),
+  );
 
   for (const block of func.blocks) {
     for (const phi of block.phis) {

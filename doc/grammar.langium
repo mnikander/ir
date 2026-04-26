@@ -1,53 +1,94 @@
 // Copyright (c) 2026 Marco Nikander
 
+// Documentation grammar for the pretty-printed HIR text form.
+// There is no parser in the implementation; JSON/TypeScript tuples are the
+// source format.
 // To try out this grammar, visit: https://langium.org/playground/
 
 grammar IR
 
 entry Model:
-    (lines+=Line)*;
+    (items+=Item)*;
 
-Line: 
-    (Block | Assign | Jump | Branch | Return)? NEWLINE;
+Item:
+    Function_ | Block | Assign | Jump | Branch | Return;
+
+Function_:
+    'function' name=BLK '[' params+=Input* ']' '->' type=Type;
 
 Block:
     'block' name=BLK ':';
 
 Assign:
-    name=VAR '=' value=(Call | Const | Unary | Binary | Phi);
+    name=VAR '=' value=(Call | Constant | Unary | Binary | Phi | Memory);
 
 Call:
-    'call' fn=ID (args+=VAR)+;
+    'call' type=Type fn=BLK '[' args+=Input* ']';
 
-Const:
-    'const' value=('true' | 'false' | INT | FLOAT | STRING);
+Constant:
+    'constant' type=Type value=INT;
+
+Memory:
+    Copy | Own | Borrow | Load | 'drop';
+
+Copy:
+    'copy' type=Type value=Input;
+
+Own:
+    'own' type=Type value=Input;
+
+Borrow:
+    'borrow' type=Type value=VAR;
+
+Load:
+    'load' type=Type value=VAR;
 
 Unary:
-    op=('not' | 'negate') value=VAR;
+    op='negate' type=Type value=Input;
 
 Binary:
-    op=('add' | 'subtract' | 'multiply' | 'divide' | 'remainder' | 'and' | 'or' | 'equal' | 'unequal' | 'less' | 'less_equal' | 'greater' | 'greater_equal') left=VAR right=VAR;
+    op=('add' | 'subtract' | 'multiply' | 'divide' | 'remainder' | 'minimum' | 'maximum' | 'equal' | 'unequal' | 'less' | 'less_equal' | 'greater' | 'greater_equal') type=Type left=Input right=Input;
 
 Phi:
-    'phi' (blocks+=BLK values+=VAR)+;
+    'phi' type=Type '[' inputs+=PhiInput* ']';
+
+PhiInput:
+    '[' block=BLK value=Input ']';
 
 Jump:
     'jump' target=BLK;
 
 Branch:
-    'branch' condition=VAR left=BLK right=BLK;
+    'branch' condition=Input left=BLK right=BLK;
 
 Return:
-    'return' value=VAR;
+    'return' type=Type value=Input;
 
-hidden terminal WS: ' '+;
-terminal NEWLINE: /\n/;
-terminal ID: /[_a-zA-Z][\w_]*/;
+Input:
+    ConsumeInput | RegisterInput;
+
+ConsumeInput:
+    '(' 'consume' value=VAR ')';
+
+RegisterInput:
+    value=VAR;
+
+Type:
+    IntType | OwnedType | BorrowedType;
+
+IntType:
+    inner='Int';
+
+OwnedType:
+    '(' 'Owned' inner=Type ')';
+
+BorrowedType:
+    '(' 'Borrowed' inner=Type ')';
+
+hidden terminal WS: /\s+/;
 terminal BLK: /\@[_a-zA-Z][\w_]*/;
 terminal VAR: /\%[_a-zA-Z][\w_]*/;
 terminal INT returns number: /[0-9]+/;
-terminal FLOAT returns number: /[-+]?((\d+\.\d*)|(\d*\.\d+))/;
-terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
 
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
@@ -55,25 +96,24 @@ hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
 // Code Example:
 /*
 
+function @main [] -> Int
+
 block @entry:
-%a = const true
-%b = not %a
-%c = const 1
-%d = negate %c
-%e = add %c %d
-branch %a @left @right
+%a = constant Int 1
+%b = negate Int %a
+%c = add Int %a %b
+branch %c @left @right
 
 block @left:
-%l = const 1
+%l = constant Int 1
 jump @end
 
 block @right:
-%r = const 2
+%r = constant Int 2
 jump @end
 
 block @end:
-%z = phi @left %l @right %r
-return %z
-
+%z = phi Int [[@left %l] [@right %r]]
+return Int %z
 
 */

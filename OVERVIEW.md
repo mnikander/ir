@@ -30,6 +30,7 @@ Files which are completely AI-generated have `*.gen.ts` or `*.gen.test.ts` file 
 - [high_grammar.ts](/home/marco/Documents/ir/src/high/high_grammar.ts)
   Defines structured HIR:
   - programs, functions, and blocks
+  - HIR-only type annotations
   - named registers and labels
   - SSA-style phi nodes
   - consumed inputs
@@ -68,7 +69,7 @@ Other pass files:
   Re-exports the lowering micro-passes.
 
 - [types.gen.ts](/home/marco/Documents/ir/src/passes/types.gen.ts)
-  Intermediate forms used between passes.
+  Intermediate forms used between passes. Numbered and lower forms erase HIR type annotations.
 
 ### Analysis, Checks, and Transformations
 
