@@ -9,37 +9,37 @@ import {
 describe("resolve_labels", () => {
   it("resolves function and block targets from symbolic notes", () => {
     const input: UnresolvedProgram = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
       [
         0,
-        "Call",
+        "call",
         { kind: "function", function_name: "@identity" },
         [],
         "@identity",
       ],
-      [null, "Jump", {
+      [null, "jump", {
         kind: "block",
         function_name: "@main",
         block_name: "@exit",
       }],
-      [null, "Noop", "@exit"],
-      [null, "Return", 0],
-      [null, "Noop", "fun @identity [%x]"],
-      [null, "Noop", "@entry"],
-      [null, "Return", 0],
+      [null, "noop", "@exit"],
+      [null, "return", 0],
+      [null, "noop", "fun @identity [%x]"],
+      [null, "noop", "@entry"],
+      [null, "return", 0],
     ];
 
     const expected: LIR.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Call", { line: 6 }, [], "@identity"],
-      [null, "Jump", { line: 4 }],
-      [null, "Noop", "@exit"],
-      [null, "Return", 0],
-      [null, "Noop", "fun @identity [%x]"],
-      [null, "Noop", "@entry"],
-      [null, "Return", 0],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "call", { line: 6 }, [], "@identity"],
+      [null, "jump", { line: 4 }],
+      [null, "noop", "@exit"],
+      [null, "return", 0],
+      [null, "noop", "fun @identity [%x]"],
+      [null, "noop", "@entry"],
+      [null, "return", 0],
     ];
 
     expect(resolve_labels(input)).toEqual(expected);

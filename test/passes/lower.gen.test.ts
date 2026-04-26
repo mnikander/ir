@@ -19,19 +19,19 @@ describe("lowering from HIR to LIR", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "Constant", { value: small }],
+              ["%0", "constant", { value: small }],
             ],
-            terminator: [null, "Return", ["%0"]],
+            terminator: [null, "return", ["%0"]],
           },
         ],
       },
     ];
 
     const expected: LIR.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [null, "Return", 0],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [null, "return", 0],
     ];
 
     expect(lower(input)).toEqual(expected);
@@ -47,55 +47,55 @@ describe("lowering from HIR to LIR", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "Constant", { value: 1 }],
-              ["%1", "Constant", { value: small }],
-              ["%2", "Constant", { value: large }],
-              ["%3", "Constant", { value: huge }],
+              ["%0", "constant", { value: 1 }],
+              ["%1", "constant", { value: small }],
+              ["%2", "constant", { value: large }],
+              ["%3", "constant", { value: huge }],
             ],
-            terminator: [null, "Branch", ["%0"], ["@then", "@else"]],
+            terminator: [null, "branch", ["%0"], ["@then", "@else"]],
           },
           {
             name: "@then",
             phis: [],
             lines: [
-              ["%4", "Add", ["%1"], ["%2"]],
+              ["%4", "add", ["%1"], ["%2"]],
             ],
-            terminator: [null, "Jump", "@end"],
+            terminator: [null, "jump", "@end"],
           },
           {
             name: "@else",
             phis: [],
             lines: [
-              ["%5", "Add", ["%2"], ["%3"]],
+              ["%5", "add", ["%2"], ["%3"]],
             ],
-            terminator: [null, "Jump", "@end"],
+            terminator: [null, "jump", "@end"],
           },
           {
             name: "@end",
             phis: [],
             lines: [],
-            terminator: [null, "Return", ["%4"]],
+            terminator: [null, "return", ["%4"]],
           },
         ],
       },
     ];
 
     const expected: LIR.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: 1 }],
-      [1, "Constant", { value: small }],
-      [2, "Constant", { value: large }],
-      [3, "Constant", { value: huge }],
-      [null, "Branch", 0, [{ line: 7 }, { line: 10 }]],
-      [null, "Noop", "@then"],
-      [4, "Add", 1, 2],
-      [null, "Jump", { line: 13 }],
-      [null, "Noop", "@else"],
-      [5, "Add", 2, 3],
-      [null, "Jump", { line: 13 }],
-      [null, "Noop", "@end"],
-      [null, "Return", 4],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: 1 }],
+      [1, "constant", { value: small }],
+      [2, "constant", { value: large }],
+      [3, "constant", { value: huge }],
+      [null, "branch", 0, [{ line: 7 }, { line: 10 }]],
+      [null, "noop", "@then"],
+      [4, "add", 1, 2],
+      [null, "jump", { line: 13 }],
+      [null, "noop", "@else"],
+      [5, "add", 2, 3],
+      [null, "jump", { line: 13 }],
+      [null, "noop", "@end"],
+      [null, "return", 4],
     ];
 
     expect(lower(input)).toEqual(expected);
@@ -111,22 +111,22 @@ describe("lowering from HIR to LIR", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "Constant", { value: small }],
-              ["%y", "Copy", ["consume", "%x"]],
+              ["%x", "constant", { value: small }],
+              ["%y", "copy", ["consume", "%x"]],
             ],
-            terminator: [null, "Return", ["%y"]],
+            terminator: [null, "return", ["%y"]],
           },
         ],
       },
     ];
 
     expect(lower(input)).toEqual([
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Copy", 0],
-      [0, "Drop"],
-      [null, "Return", 1],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "copy", 0],
+      [0, "drop"],
+      [null, "return", 1],
     ]);
   });
 
@@ -140,21 +140,21 @@ describe("lowering from HIR to LIR", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "Constant", { value: small }],
-              ["%x", "Drop"],
+              ["%x", "constant", { value: small }],
+              ["%x", "drop"],
             ],
-            terminator: [null, "Return", ["%x"]],
+            terminator: [null, "return", ["%x"]],
           },
         ],
       },
     ];
 
     expect(lower(input)).toEqual([
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [0, "Drop"],
-      [null, "Return", 0],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [0, "drop"],
+      [null, "return", 0],
     ]);
   });
 
@@ -168,24 +168,24 @@ describe("lowering from HIR to LIR", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "Constant", { value: small }],
-              ["%y", "Copy", ["consume", "%x"]],
-              ["%y", "Drop"],
+              ["%x", "constant", { value: small }],
+              ["%y", "copy", ["consume", "%x"]],
+              ["%y", "drop"],
             ],
-            terminator: [null, "Return", ["%y"]],
+            terminator: [null, "return", ["%y"]],
           },
         ],
       },
     ];
 
     expect(lower(input)).toEqual([
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Copy", 0],
-      [0, "Drop"],
-      [1, "Drop"],
-      [null, "Return", 1],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "copy", 0],
+      [0, "drop"],
+      [1, "drop"],
+      [null, "return", 1],
     ]);
   });
 
@@ -199,23 +199,23 @@ describe("lowering from HIR to LIR", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "Constant", { value: small }],
-              ["%r", "Borrow", "%x"],
-              ["%t", "Load", "%r"],
+              ["%x", "constant", { value: small }],
+              ["%r", "borrow", "%x"],
+              ["%t", "load", "%r"],
             ],
-            terminator: [null, "Return", ["%t"]],
+            terminator: [null, "return", ["%t"]],
           },
         ],
       },
     ];
 
     expect(lower(input)).toEqual([
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "AddressOf", 0],
-      [2, "Load", 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "address_of", 0],
+      [2, "load", 1],
+      [null, "return", 2],
     ]);
   });
 
@@ -229,23 +229,23 @@ describe("lowering from HIR to LIR", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "Constant", { value: small }],
-              ["%r", "Own", ["%x"]],
+              ["%x", "constant", { value: small }],
+              ["%r", "own", ["%x"]],
             ],
-            terminator: [null, "Return", ["%r"]],
+            terminator: [null, "return", ["%r"]],
           },
         ],
       },
     ];
 
     expect(lower(input)).toEqual([
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [2, "Copy", 0],
-      [1, "AddressOf", 2],
-      [0, "Drop"],
-      [null, "Return", 1],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [2, "copy", 0],
+      [1, "address_of", 2],
+      [0, "drop"],
+      [null, "return", 1],
     ]);
   });
 
@@ -259,9 +259,9 @@ describe("lowering from HIR to LIR", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%condition", "Constant", { value: 1 }],
+              ["%condition", "constant", { value: 1 }],
             ],
-            terminator: [null, "Branch", ["consume", "%condition"], [
+            terminator: [null, "branch", ["consume", "%condition"], [
               "@then",
               "@else",
             ]],
@@ -270,37 +270,37 @@ describe("lowering from HIR to LIR", () => {
             name: "@then",
             phis: [],
             lines: [
-              ["%value", "Constant", { value: small }],
+              ["%value", "constant", { value: small }],
             ],
-            terminator: [null, "Return", ["consume", "%value"]],
+            terminator: [null, "return", ["consume", "%value"]],
           },
           {
             name: "@else",
             phis: [],
             lines: [
-              ["%fallback", "Constant", { value: large }],
+              ["%fallback", "constant", { value: large }],
             ],
-            terminator: [null, "Return", ["%fallback"]],
+            terminator: [null, "return", ["%fallback"]],
           },
         ],
       },
     ];
 
     expect(lower(input)).toEqual([
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: 1 }],
-      [3, "Copy", 0],
-      [0, "Drop"],
-      [null, "Branch", 3, [{ line: 6 }, { line: 11 }]],
-      [null, "Noop", "@then"],
-      [1, "Constant", { value: small }],
-      [4, "Copy", 1],
-      [1, "Drop"],
-      [null, "Return", 4],
-      [null, "Noop", "@else"],
-      [2, "Constant", { value: large }],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: 1 }],
+      [3, "copy", 0],
+      [0, "drop"],
+      [null, "branch", 3, [{ line: 6 }, { line: 11 }]],
+      [null, "noop", "@then"],
+      [1, "constant", { value: small }],
+      [4, "copy", 1],
+      [1, "drop"],
+      [null, "return", 4],
+      [null, "noop", "@else"],
+      [2, "constant", { value: large }],
+      [null, "return", 2],
     ]);
   });
 
@@ -314,11 +314,11 @@ describe("lowering from HIR to LIR", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "Constant", { value: small }],
-              ["%1", "Constant", { value: large }],
-              ["%2", "Call", "@identity", [["%1"]]],
+              ["%0", "constant", { value: small }],
+              ["%1", "constant", { value: large }],
+              ["%2", "call", "@identity", [["%1"]]],
             ],
-            terminator: [null, "Return", ["%2"]],
+            terminator: [null, "return", ["%2"]],
           },
         ],
       },
@@ -330,22 +330,22 @@ describe("lowering from HIR to LIR", () => {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "Return", ["%a"]],
+            terminator: [null, "return", ["%a"]],
           },
         ],
       },
     ];
 
     const expected: LIR.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [2, "Call", { line: 6 }, [1], "@identity"],
-      [null, "Return", 2],
-      [null, "Noop", "fun @identity [%a]"],
-      [null, "Noop", "@entry"],
-      [null, "Return", 0],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [2, "call", { line: 6 }, [1], "@identity"],
+      [null, "return", 2],
+      [null, "noop", "fun @identity [%a]"],
+      [null, "noop", "@entry"],
+      [null, "return", 0],
     ];
 
     expect(lower(input)).toEqual(expected);
@@ -361,10 +361,10 @@ describe("lowering from HIR to LIR", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "Constant", { value: 5 }],
-              ["%result", "Call", "@factorial", [["%x"]]],
+              ["%x", "constant", { value: 5 }],
+              ["%result", "call", "@factorial", [["%x"]]],
             ],
-            terminator: [null, "Return", ["%result"]],
+            terminator: [null, "return", ["%result"]],
           },
         ],
       },
@@ -376,77 +376,77 @@ describe("lowering from HIR to LIR", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%one", "Constant", { value: 1 }],
+              ["%one", "constant", { value: 1 }],
             ],
-            terminator: [null, "Jump", "@gate"],
+            terminator: [null, "jump", "@gate"],
           },
           {
             name: "@gate",
             phis: [
-              ["%acc", "Phi", [["@entry", ["%one"]], ["@body", ["%new_acc"]]]],
-              ["%n", "Phi", [["@entry", ["%arg"]], ["@body", ["%new_n"]]]],
+              ["%acc", "phi", [["@entry", ["%one"]], ["@body", ["%new_acc"]]]],
+              ["%n", "phi", [["@entry", ["%arg"]], ["@body", ["%new_n"]]]],
             ],
             lines: [
-              ["%continue", "Greater", ["%n"], ["%one"]],
+              ["%continue", "greater", ["%n"], ["%one"]],
             ],
-            terminator: [null, "Branch", ["%continue"], ["@body", "@end"]],
+            terminator: [null, "branch", ["%continue"], ["@body", "@end"]],
           },
           {
             name: "@body",
             phis: [],
             lines: [
-              ["%new_acc", "Multiply", ["%n"], ["%acc"]],
-              ["%new_n", "Subtract", ["%n"], ["%one"]],
+              ["%new_acc", "multiply", ["%n"], ["%acc"]],
+              ["%new_n", "subtract", ["%n"], ["%one"]],
             ],
-            terminator: [null, "Jump", "@gate"],
+            terminator: [null, "jump", "@gate"],
           },
           {
             name: "@end",
             phis: [],
             lines: [],
-            terminator: [null, "Return", ["%n"]],
+            terminator: [null, "return", ["%n"]],
           },
         ],
       },
     ];
 
     const expected: LIR.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: 5 }],
-      [1, "Call", { line: 5 }, [0], "@factorial"],
-      [null, "Return", 1],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: 5 }],
+      [1, "call", { line: 5 }, [0], "@factorial"],
+      [null, "return", 1],
 
-      [null, "Noop", "fun @factorial [%arg]"],
-      [null, "Noop", "@entry"],
-      [1, "Constant", { value: 1 }],
-      [null, "Jump", { line: 9 }],
+      [null, "noop", "fun @factorial [%arg]"],
+      [null, "noop", "@entry"],
+      [1, "constant", { value: 1 }],
+      [null, "jump", { line: 9 }],
 
-      [null, "Noop", "@phi.gate.from.entry"],
-      [2, "Copy", 1],
-      [3, "Copy", 0],
-      [4, "Copy", 2],
-      [5, "Copy", 3],
-      [null, "Jump", { line: 21 }],
+      [null, "noop", "@phi.gate.from.entry"],
+      [2, "copy", 1],
+      [3, "copy", 0],
+      [4, "copy", 2],
+      [5, "copy", 3],
+      [null, "jump", { line: 21 }],
 
-      [null, "Noop", "@phi.gate.from.body"],
-      [6, "Copy", 9],
-      [7, "Copy", 10],
-      [4, "Copy", 6],
-      [5, "Copy", 7],
-      [null, "Jump", { line: 21 }],
+      [null, "noop", "@phi.gate.from.body"],
+      [6, "copy", 9],
+      [7, "copy", 10],
+      [4, "copy", 6],
+      [5, "copy", 7],
+      [null, "jump", { line: 21 }],
 
-      [null, "Noop", "@gate"],
-      [8, "Greater", 5, 1],
-      [null, "Branch", 8, [{ line: 24 }, { line: 28 }]],
+      [null, "noop", "@gate"],
+      [8, "greater", 5, 1],
+      [null, "branch", 8, [{ line: 24 }, { line: 28 }]],
 
-      [null, "Noop", "@body"],
-      [9, "Multiply", 5, 4],
-      [10, "Subtract", 5, 1],
-      [null, "Jump", { line: 15 }],
+      [null, "noop", "@body"],
+      [9, "multiply", 5, 4],
+      [10, "subtract", 5, 1],
+      [null, "jump", { line: 15 }],
 
-      [null, "Noop", "@end"],
-      [null, "Return", 5],
+      [null, "noop", "@end"],
+      [null, "return", 5],
     ];
 
     expect(lower(input)).toEqual(expected);

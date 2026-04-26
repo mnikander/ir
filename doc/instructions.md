@@ -31,9 +31,9 @@
 | Equal             | `equal`        | `%x = equal %a %b`                  | Integer, Integer       | Boolean   | |
 | Unequal           | `unequal`      | `%x = unequal %a %b`                | Integer, Integer       | Boolean   | |
 | Less              | `less`         | `%x = less %a %b`                   | Integer, Integer       | Boolean   | |
-| LessEqual         | `lessequal`    | `%x = lessequal %a %b`              | Integer, Integer       | Boolean   | |
+| LessEqual         | `less_equal`   | `%x = less_equal %a %b`             | Integer, Integer       | Boolean   | |
 | Greater           | `greater`      | `%x = greater %a %b`                | Integer, Integer       | Boolean   | |
-| GreaterEqual      | `greaterequal` | `%x = greaterequal %a %b`           | Integer, Integer       | Boolean   | |
+| GreaterEqual      | `greater_equal`| `%x = greater_equal %a %b`          | Integer, Integer       | Boolean   | |
 |                   |                |                                     |                        |           | |
 | **Terminator**    |                |                                     |                        |           | |
 | Jump              | `jump`         | `jump @end`                         | Label                  |           | unconditional branch |

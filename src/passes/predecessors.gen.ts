@@ -31,11 +31,11 @@ export function collect_successors(
   terminator: HIGH.Terminator,
 ): readonly HIGH.Label[] {
   switch (terminator[1]) {
-    case "Jump":
+    case "jump":
       return [terminator[2]];
-    case "Branch":
+    case "branch":
       return terminator[3];
-    case "Return":
+    case "return":
       return [];
   }
 }

@@ -14,10 +14,10 @@ describe("number_slots", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%sum", "Add", ["%a"], ["%b"]],
-              ["%product", "Multiply", ["%sum"], ["%a"]],
+              ["%sum", "add", ["%a"], ["%b"]],
+              ["%product", "multiply", ["%sum"], ["%a"]],
             ],
-            terminator: [null, "Return", ["%product"]],
+            terminator: [null, "return", ["%product"]],
           },
         ],
       },
@@ -35,10 +35,10 @@ describe("number_slots", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%sum", "Add", ["%a"], ["%b"]],
-              ["%product", "Multiply", ["%sum"], ["%a"]],
+              ["%sum", "add", ["%a"], ["%b"]],
+              ["%product", "multiply", ["%sum"], ["%a"]],
             ],
-            terminator: [null, "Return", ["%product"]],
+            terminator: [null, "return", ["%product"]],
           },
         ],
         slots: [

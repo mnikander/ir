@@ -14,9 +14,9 @@ describe("collect_predecessors", () => {
         name: "@entry",
         phis: [],
         lines: [
-          ["%condition", "Constant", { value: 1 }],
+          ["%condition", "constant", { value: 1 }],
         ],
-        terminator: [null, "Branch", ["%condition"], [
+        terminator: [null, "branch", ["%condition"], [
           "@left",
           "@join",
         ]],
@@ -25,13 +25,13 @@ describe("collect_predecessors", () => {
         name: "@left",
         phis: [],
         lines: [],
-        terminator: [null, "Jump", "@join"],
+        terminator: [null, "jump", "@join"],
       },
       {
         name: "@join",
         phis: [],
         lines: [],
-        terminator: [null, "Return", ["%condition"]],
+        terminator: [null, "return", ["%condition"]],
       },
     ];
 
@@ -60,9 +60,9 @@ describe("phi elimination pipeline", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%condition", "Constant", { value: 1 }],
+              ["%condition", "constant", { value: 1 }],
             ],
-            terminator: [null, "Branch", ["%condition"], [
+            terminator: [null, "branch", ["%condition"], [
               "@left",
               "@join",
             ]],
@@ -71,20 +71,20 @@ describe("phi elimination pipeline", () => {
             name: "@left",
             phis: [],
             lines: [
-              ["%left", "Constant", { value: 11 }],
+              ["%left", "constant", { value: 11 }],
             ],
-            terminator: [null, "Jump", "@join"],
+            terminator: [null, "jump", "@join"],
           },
           {
             name: "@join",
             phis: [
-              ["%result", "Phi", [["@entry", ["%condition"]], [
+              ["%result", "phi", [["@entry", ["%condition"]], [
                 "@left",
                 ["%left"],
               ]]],
             ],
             lines: [],
-            terminator: [null, "Return", ["%result"]],
+            terminator: [null, "return", ["%result"]],
           },
         ],
       },
@@ -101,9 +101,9 @@ describe("phi elimination pipeline", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%condition", "Constant", { value: 1 }],
+              ["%condition", "constant", { value: 1 }],
             ],
-            terminator: [null, "Branch", ["%condition"], [
+            terminator: [null, "branch", ["%condition"], [
               "@left",
               "@phi.join.from.entry",
             ]],
@@ -112,33 +112,33 @@ describe("phi elimination pipeline", () => {
             name: "@left",
             phis: [],
             lines: [
-              ["%left", "Constant", { value: 11 }],
+              ["%left", "constant", { value: 11 }],
             ],
-            terminator: [null, "Jump", "@phi.join.from.left"],
+            terminator: [null, "jump", "@phi.join.from.left"],
           },
           {
             name: "@phi.join.from.entry",
             phis: [],
             lines: [
-              ["%phi.join.from.entry.result", "Copy", ["%condition"]],
-              ["%result", "Copy", ["%phi.join.from.entry.result"]],
+              ["%phi.join.from.entry.result", "copy", ["%condition"]],
+              ["%result", "copy", ["%phi.join.from.entry.result"]],
             ],
-            terminator: [null, "Jump", "@join"],
+            terminator: [null, "jump", "@join"],
           },
           {
             name: "@phi.join.from.left",
             phis: [],
             lines: [
-              ["%phi.join.from.left.result", "Copy", ["%left"]],
-              ["%result", "Copy", ["%phi.join.from.left.result"]],
+              ["%phi.join.from.left.result", "copy", ["%left"]],
+              ["%result", "copy", ["%phi.join.from.left.result"]],
             ],
-            terminator: [null, "Jump", "@join"],
+            terminator: [null, "jump", "@join"],
           },
           {
             name: "@join",
             phis: [],
             lines: [],
-            terminator: [null, "Return", ["%result"]],
+            terminator: [null, "return", ["%result"]],
           },
         ],
       },
@@ -155,21 +155,21 @@ describe("phi elimination pipeline", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%left", "Constant", { value: 11 }],
-              ["%right", "Constant", { value: 13 }],
+              ["%left", "constant", { value: 11 }],
+              ["%right", "constant", { value: 13 }],
             ],
-            terminator: [null, "Jump", "@join"],
+            terminator: [null, "jump", "@join"],
           },
           {
             name: "@join",
             phis: [
-              ["%x", "Phi", [["@entry", ["%right"]]]],
-              ["%y", "Phi", [["@entry", ["%left"]]]],
+              ["%x", "phi", [["@entry", ["%right"]]]],
+              ["%y", "phi", [["@entry", ["%left"]]]],
             ],
             lines: [
-              ["%sum", "Add", ["%x"], ["%y"]],
+              ["%sum", "add", ["%x"], ["%y"]],
             ],
-            terminator: [null, "Return", ["%sum"]],
+            terminator: [null, "return", ["%sum"]],
           },
         ],
       },
@@ -186,29 +186,29 @@ describe("phi elimination pipeline", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%left", "Constant", { value: 11 }],
-              ["%right", "Constant", { value: 13 }],
+              ["%left", "constant", { value: 11 }],
+              ["%right", "constant", { value: 13 }],
             ],
-            terminator: [null, "Jump", "@phi.join.from.entry"],
+            terminator: [null, "jump", "@phi.join.from.entry"],
           },
           {
             name: "@phi.join.from.entry",
             phis: [],
             lines: [
-              ["%phi.join.from.entry.x", "Copy", ["%right"]],
-              ["%phi.join.from.entry.y", "Copy", ["%left"]],
-              ["%x", "Copy", ["%phi.join.from.entry.x"]],
-              ["%y", "Copy", ["%phi.join.from.entry.y"]],
+              ["%phi.join.from.entry.x", "copy", ["%right"]],
+              ["%phi.join.from.entry.y", "copy", ["%left"]],
+              ["%x", "copy", ["%phi.join.from.entry.x"]],
+              ["%y", "copy", ["%phi.join.from.entry.y"]],
             ],
-            terminator: [null, "Jump", "@join"],
+            terminator: [null, "jump", "@join"],
           },
           {
             name: "@join",
             phis: [],
             lines: [
-              ["%sum", "Add", ["%x"], ["%y"]],
+              ["%sum", "add", ["%x"], ["%y"]],
             ],
-            terminator: [null, "Return", ["%sum"]],
+            terminator: [null, "return", ["%sum"]],
           },
         ],
       },

@@ -67,15 +67,15 @@ function clone_block(block: HIGH.Block): SplitBlock {
 
 function clone_terminator(terminator: HIGH.Terminator): HIGH.Terminator {
   switch (terminator[1]) {
-    case "Jump":
-      return [null, "Jump", terminator[2]];
-    case "Branch":
-      return [null, "Branch", terminator[2], [
+    case "jump":
+      return [null, "jump", terminator[2]];
+    case "branch":
+      return [null, "branch", terminator[2], [
         terminator[3][0],
         terminator[3][1],
       ]];
-    case "Return":
-      return [null, "Return", terminator[2]];
+    case "return":
+      return [null, "return", terminator[2]];
   }
 }
 
@@ -99,23 +99,23 @@ function redirect_terminator_target(
   replacement: HIGH.Label,
 ): HIGH.Terminator {
   switch (terminator[1]) {
-    case "Jump":
+    case "jump":
       return [
         null,
-        "Jump",
+        "jump",
         terminator[2] === target ? replacement : terminator[2],
       ];
-    case "Branch":
+    case "branch":
       return [
         null,
-        "Branch",
+        "branch",
         terminator[2],
         [
           terminator[3][0] === target ? replacement : terminator[3][0],
           terminator[3][1] === target ? replacement : terminator[3][1],
         ],
       ];
-    case "Return":
+    case "return":
       return terminator;
   }
 }
@@ -131,7 +131,7 @@ function create_edge_block(
     ),
     phis: [],
     lines: [],
-    terminator: [null, "Jump", target],
+    terminator: [null, "jump", target],
     edge: { target, predecessor },
   };
 }

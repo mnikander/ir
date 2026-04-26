@@ -66,15 +66,15 @@ function clone_block(block: HIR.Block): HIR.Block {
 
 function clone_terminator(terminator: HIR.Terminator): HIR.Terminator {
   switch (terminator[1]) {
-    case "Jump":
-      return [null, "Jump", terminator[2]];
-    case "Branch":
-      return [null, "Branch", terminator[2], [
+    case "jump":
+      return [null, "jump", terminator[2]];
+    case "branch":
+      return [null, "branch", terminator[2], [
         terminator[3][0],
         terminator[3][1],
       ]];
-    case "Return":
-      return [null, "Return", terminator[2]];
+    case "return":
+      return [null, "return", terminator[2]];
   }
 }
 

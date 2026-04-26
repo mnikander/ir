@@ -60,11 +60,11 @@ function lower_phi_nodes(
         strip_sigils(phi[0])
       }`,
     );
-    return [temporary, "Copy", source] satisfies HIGH.Copy;
+    return [temporary, "copy", source] satisfies HIGH.Copy;
   });
 
   const writes = target.phis.map((phi, index) =>
-    [phi[0], "Copy", [reads[index][0]]] satisfies HIGH.Copy
+    [phi[0], "copy", [reads[index][0]]] satisfies HIGH.Copy
   );
 
   return [...reads, ...writes];

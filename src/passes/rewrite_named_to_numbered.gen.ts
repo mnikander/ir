@@ -68,46 +68,46 @@ function rewrite_line(
   }' in block '${block_name}' of function '${function_name}'`;
 
   switch (line[1]) {
-    case "Constant":
-      return [destination, "Constant", line[2]];
-    case "Copy":
-      return [destination, "Copy", rewrite_input(line[2], slots, context)];
-    case "Own":
-      return [destination, "Own", rewrite_input(line[2], slots, context)];
-    case "Call":
+    case "constant":
+      return [destination, "constant", line[2]];
+    case "copy":
+      return [destination, "copy", rewrite_input(line[2], slots, context)];
+    case "own":
+      return [destination, "own", rewrite_input(line[2], slots, context)];
+    case "call":
       return [
         destination,
-        "Call",
+        "call",
         line[2],
         line[3].map((input) => rewrite_input(input, slots, context)),
       ];
-    case "Borrow":
-      return [destination, "Borrow", get_slot(slots, line[2], context)];
-    case "Load":
-      return [destination, "Load", get_slot(slots, line[2], context)];
-    case "Drop":
-      return [destination, "Drop"];
-    case "Add":
-    case "Subtract":
-    case "Multiply":
-    case "Divide":
-    case "Remainder":
-    case "Minimum":
-    case "Maximum":
-    case "Equal":
-    case "Unequal":
-    case "Less":
-    case "LessEqual":
-    case "Greater":
-    case "GreaterEqual":
+    case "borrow":
+      return [destination, "borrow", get_slot(slots, line[2], context)];
+    case "load":
+      return [destination, "load", get_slot(slots, line[2], context)];
+    case "drop":
+      return [destination, "drop"];
+    case "add":
+    case "subtract":
+    case "multiply":
+    case "divide":
+    case "remainder":
+    case "minimum":
+    case "maximum":
+    case "equal":
+    case "unequal":
+    case "less":
+    case "less_equal":
+    case "greater":
+    case "greater_equal":
       return [
         destination,
         line[1],
         rewrite_input(line[2], slots, context),
         rewrite_input(line[3], slots, context),
       ];
-    case "Negate":
-      return [destination, "Negate", rewrite_input(line[2], slots, context)];
+    case "negate":
+      return [destination, "negate", rewrite_input(line[2], slots, context)];
   }
 }
 
@@ -122,17 +122,17 @@ function rewrite_terminator(
   }' in block '${block_name}' of function '${function_name}'`;
 
   switch (terminator[1]) {
-    case "Jump":
-      return [null, "Jump", terminator[2]];
-    case "Branch":
+    case "jump":
+      return [null, "jump", terminator[2]];
+    case "branch":
       return [
         null,
-        "Branch",
+        "branch",
         rewrite_input(terminator[2], slots, context),
         [terminator[3][0], terminator[3][1]],
       ];
-    case "Return":
-      return [null, "Return", rewrite_input(terminator[2], slots, context)];
+    case "return":
+      return [null, "return", rewrite_input(terminator[2], slots, context)];
   }
 }
 

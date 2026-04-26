@@ -21,9 +21,9 @@ describe("constants and exit", () => {
     // %0 = constant 11
 
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
     ];
     expect(() => evaluate(input)).toThrow();
   });
@@ -35,9 +35,9 @@ describe("constants and exit", () => {
     // exit %0
 
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [0, "Constant", { value: small }],
-      [null, "Return", 0],
+      [null, "noop", "fun @main []"],
+      [0, "constant", { value: small }],
+      [null, "return", 0],
     ];
     expect(() => evaluate(input)).toThrow();
   });
@@ -50,11 +50,11 @@ describe("constants and exit", () => {
     // exit %1
 
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "AddressOf", 0],
-      [null, "Return", 1],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "address_of", 0],
+      [null, "return", 1],
     ];
     expect(() => {
       evaluate(input);
@@ -70,22 +70,22 @@ describe("memory operations", () => {
     // exit %0
 
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [null, "Return", 0],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [null, "return", 0],
     ];
     expect(evaluate(input)).toBe(small);
   });
 
   it("must throw when the destination of Constant is Dead", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Drop"],
-      [0, "Constant", { value: small }], // error
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "drop"],
+      [0, "constant", { value: small }], // error
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
@@ -98,36 +98,36 @@ describe("memory operations", () => {
     // exit %1
 
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Copy", 0],
-      [null, "Return", 1],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "copy", 0],
+      [null, "return", 1],
     ];
     expect(evaluate(input)).toBe(small);
   });
 
   it("must throw when Copy is given a Dead source", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Drop"],
-      [1, "Copy", 0], // error
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "drop"],
+      [1, "copy", 0], // error
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
 
   it("must throw when Copy is given a Dead destination", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Drop"],
-      [1, "Copy", 0], // error
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "drop"],
+      [1, "copy", 0], // error
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
@@ -141,12 +141,12 @@ describe("memory operations", () => {
     // exit %2
 
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "AddressOf", 0],
-      [2, "Load", 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "address_of", 0],
+      [2, "load", 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(small);
   });
@@ -161,139 +161,139 @@ describe("memory operations", () => {
     // exit %0
 
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [2, "AddressOf", 0],
-      [2, "Store", 1],
-      [null, "Return", 0],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [2, "address_of", 0],
+      [2, "store", 1],
+      [null, "return", 0],
     ];
     expect(evaluate(input)).toBe(large);
   });
 
   it("must throw when Load is given a non-pointer source", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Load", 0],
-      [null, "Return", 1],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "load", 0],
+      [null, "return", 1],
     ];
     expect(() => evaluate(input)).toThrow(/Expected a Pointer/);
   });
 
   it("must throw when Store is given a non-pointer destination", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [0, "Store", 1],
-      [null, "Return", 1],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [0, "store", 1],
+      [null, "return", 1],
     ];
     expect(() => evaluate(input)).toThrow(/Expected a Pointer/);
   });
 
   it("must throw when Load is given a dangling pointer source", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "AddressOf", 0],
-      [0, "Constant", { value: large }], // over-write the original value and invalidate pointer
-      [2, "Load", 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "address_of", 0],
+      [0, "constant", { value: large }], // over-write the original value and invalidate pointer
+      [2, "load", 1],
+      [null, "return", 2],
     ];
     expect(() => evaluate(input)).toThrow(/dangling pointer/);
   });
 
   it("must throw when Load is given a Dead source", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Drop"],
-      [1, "Load", 0],
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "drop"],
+      [1, "load", 0],
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
 
   it("must throw when Load is given a Dead destination", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "AddressOf", 0],
-      [2, "Drop"],
-      [2, "Load", 1],
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "address_of", 0],
+      [2, "drop"],
+      [2, "load", 1],
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
 
   it("must throw when Store is given a dangling pointer destination", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [2, "AddressOf", 1],
-      [1, "Constant", { value: huge }], // over-write the original value and invalidate pointer
-      [2, "Store", 0],
-      [null, "Return", 1],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [2, "address_of", 1],
+      [1, "constant", { value: huge }], // over-write the original value and invalidate pointer
+      [2, "store", 0],
+      [null, "return", 1],
     ];
     expect(() => evaluate(input)).toThrow(/dangling pointer/);
   });
 
   it("must throw when Store is given a Dead source", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Drop"],
-      [1, "Store", 0],
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "drop"],
+      [1, "store", 0],
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
 
   it("must throw when Store is given a Dead destination", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Drop"],
-      [1, "Store", 0],
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "drop"],
+      [1, "store", 0],
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
 
   it("must throw when AddressOf is given a Dead source", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Drop"],
-      [1, "AddressOf", 0],
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "drop"],
+      [1, "address_of", 0],
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
 
   it("must throw when AddressOf is given a Dead destination", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Drop"],
-      [1, "AddressOf", 0],
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "drop"],
+      [1, "address_of", 0],
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
@@ -309,160 +309,160 @@ describe("arithmetic operations", () => {
     // exit %2
 
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [2, "Add", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [2, "add", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(small + large);
   });
 
   it("must evaluate integer subtraction", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: large }],
-      [1, "Constant", { value: small }],
-      [2, "Subtract", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: large }],
+      [1, "constant", { value: small }],
+      [2, "subtract", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(large - small);
   });
 
   it("must evaluate integer multiplication", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [2, "Multiply", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [2, "multiply", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(small * large);
   });
 
   it("must evaluate integer division", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small * large }],
-      [1, "Constant", { value: large }],
-      [2, "Divide", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small * large }],
+      [1, "constant", { value: large }],
+      [2, "divide", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(small);
   });
 
   it("must evaluate integer remainder", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: large }],
-      [1, "Constant", { value: small }],
-      [2, "Remainder", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: large }],
+      [1, "constant", { value: small }],
+      [2, "remainder", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(large % small);
   });
 
   it("must evaluate minimum", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [2, "Minimum", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [2, "minimum", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(small);
   });
 
   it("must evaluate maximum", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [2, "Maximum", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [2, "maximum", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(large);
   });
 
   it("must evaluate negation", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Negate", 0],
-      [null, "Return", 1],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "negate", 0],
+      [null, "return", 1],
     ];
     expect(evaluate(input)).toBe(-small);
   });
 
   it("must throw when Negate is given a Dead source", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Drop"],
-      [1, "Negate", 0], // error
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "drop"],
+      [1, "negate", 0], // error
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
 
   it("must throw when Negate is given a Dead destination", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Drop"],
-      [1, "Negate", 0], // error
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "drop"],
+      [1, "negate", 0], // error
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
 
   it("must throw when an arithmetic operation is given a Dead right argument", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Drop"],
-      [1, "Constant", { value: small }],
-      [2, "Add", 0, 1],
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "drop"],
+      [1, "constant", { value: small }],
+      [2, "add", 0, 1],
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
 
   it("must throw when an arithmetic operation is given a Dead left argument", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Drop"],
-      [2, "Add", 0, 1],
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "drop"],
+      [2, "add", 0, 1],
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
 
   it("must throw when an arithmetic operation is given a Dead destination", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [2, "Drop"],
-      [2, "Add", 0, 1],
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [2, "drop"],
+      [2, "add", 0, 1],
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
@@ -471,232 +471,232 @@ describe("arithmetic operations", () => {
 describe("comparison operations", () => {
   it("must evaluate small==small as true", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: small }],
-      [2, "Equal", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: small }],
+      [2, "equal", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(1);
   });
 
   it("must evaluate small==large as false", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [2, "Equal", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [2, "equal", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(0);
   });
 
   it("must evaluate small!=large as true", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [2, "Unequal", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [2, "unequal", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(1);
   });
 
   it("must evaluate small!=small as false", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: small }],
-      [2, "Unequal", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: small }],
+      [2, "unequal", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(0);
   });
 
   it("must evaluate small<large as true", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [2, "Less", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [2, "less", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(1);
   });
 
   it("must evaluate large<large as false", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: small }],
-      [2, "Less", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: small }],
+      [2, "less", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(0);
   });
 
   it("must evaluate large<small as false", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: large }],
-      [1, "Constant", { value: small }],
-      [2, "Less", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: large }],
+      [1, "constant", { value: small }],
+      [2, "less", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(0);
   });
 
   it("must evaluate small<=large as true", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [2, "LessEqual", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [2, "less_equal", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(1);
   });
 
   it("must evaluate small<=small as true", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: small }],
-      [2, "LessEqual", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: small }],
+      [2, "less_equal", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(1);
   });
 
   it("must evaluate large<=small as false", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: large }],
-      [1, "Constant", { value: small }],
-      [2, "LessEqual", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: large }],
+      [1, "constant", { value: small }],
+      [2, "less_equal", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(0);
   });
 
   it("must evaluate large>small as true", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: large }],
-      [1, "Constant", { value: small }],
-      [2, "Greater", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: large }],
+      [1, "constant", { value: small }],
+      [2, "greater", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(1);
   });
 
   it("must evaluate small>small as false", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: small }],
-      [2, "Greater", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: small }],
+      [2, "greater", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(0);
   });
 
   it("must evaluate small>large as false", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [2, "Greater", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [2, "greater", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(0);
   });
 
   it("must evaluate large>=small as true", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: large }],
-      [1, "Constant", { value: small }],
-      [2, "GreaterEqual", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: large }],
+      [1, "constant", { value: small }],
+      [2, "greater_equal", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(1);
   });
 
   it("must evaluate small>=small as true", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: small }],
-      [2, "GreaterEqual", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: small }],
+      [2, "greater_equal", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(1);
   });
 
   it("must evaluate small>=small as false", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [2, "GreaterEqual", 0, 1],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [2, "greater_equal", 0, 1],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(0);
   });
 
   it("must throw when a comparison operation is given a Dead right argument", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Drop"],
-      [1, "Constant", { value: small }],
-      [2, "Equal", 0, 1],
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "drop"],
+      [1, "constant", { value: small }],
+      [2, "equal", 0, 1],
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
 
   it("must throw when a comparison operation is given a Dead left argument", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Drop"],
-      [2, "Equal", 0, 1],
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "drop"],
+      [2, "equal", 0, 1],
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
 
   it("must throw when a comparison operation is given a Dead destination", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [2, "Drop"],
-      [2, "Equal", 0, 1],
-      [42, "Constant", { value: huge }],
-      [null, "Return", 42],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [2, "drop"],
+      [2, "equal", 0, 1],
+      [42, "constant", { value: huge }],
+      [null, "return", 42],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });
@@ -717,17 +717,17 @@ describe("control flow operations", () => {
     // exit %2
 
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [null, "Jump", { line: 6 }],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [null, "jump", { line: 6 }],
 
-      [null, "Noop", "@first"],
-      [1, "Constant", { value: small }],
-      [null, "Return", 1],
+      [null, "noop", "@first"],
+      [1, "constant", { value: small }],
+      [null, "return", 1],
 
-      [null, "Noop", "@second"],
-      [2, "Constant", { value: large }],
-      [null, "Return", 2],
+      [null, "noop", "@second"],
+      [2, "constant", { value: large }],
+      [null, "return", 2],
     ];
     expect(evaluate(input)).toBe(large);
   });
@@ -753,21 +753,21 @@ describe("control flow operations", () => {
     // exit %4
 
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: 1 }], // true
-      [1, "Constant", { value: small }],
-      [2, "Constant", { value: large }],
-      [3, "Constant", { value: huge }],
-      [null, "Branch", 0, [{ line: 7 }, { line: 10 }]],
-      [null, "Noop", "@then"],
-      [4, "Add", 1, 2],
-      [null, "Jump", { line: 13 }],
-      [null, "Noop", "@else"],
-      [4, "Add", 2, 3],
-      [null, "Jump", { line: 13 }],
-      [null, "Noop", "@end"],
-      [null, "Return", 4],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: 1 }], // true
+      [1, "constant", { value: small }],
+      [2, "constant", { value: large }],
+      [3, "constant", { value: huge }],
+      [null, "branch", 0, [{ line: 7 }, { line: 10 }]],
+      [null, "noop", "@then"],
+      [4, "add", 1, 2],
+      [null, "jump", { line: 13 }],
+      [null, "noop", "@else"],
+      [4, "add", 2, 3],
+      [null, "jump", { line: 13 }],
+      [null, "noop", "@end"],
+      [null, "return", 4],
     ];
     expect(evaluate(input)).toBe(small + large);
   });
@@ -793,21 +793,21 @@ describe("control flow operations", () => {
     // exit %5
 
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: 0 }], // false
-      [1, "Constant", { value: small }],
-      [2, "Constant", { value: large }],
-      [3, "Constant", { value: huge }],
-      [null, "Branch", 0, [{ line: 7 }, { line: 10 }]],
-      [null, "Noop", "@then"],
-      [4, "Add", 1, 2],
-      [null, "Jump", { line: 13 }],
-      [null, "Noop", "@else"],
-      [4, "Add", 2, 3],
-      [null, "Jump", { line: 13 }],
-      [null, "Noop", "@end"],
-      [null, "Return", 4],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: 0 }], // false
+      [1, "constant", { value: small }],
+      [2, "constant", { value: large }],
+      [3, "constant", { value: huge }],
+      [null, "branch", 0, [{ line: 7 }, { line: 10 }]],
+      [null, "noop", "@then"],
+      [4, "add", 1, 2],
+      [null, "jump", { line: 13 }],
+      [null, "noop", "@else"],
+      [4, "add", 2, 3],
+      [null, "jump", { line: 13 }],
+      [null, "noop", "@end"],
+      [null, "return", 4],
     ];
     expect(evaluate(input)).toBe(large + huge);
   });
@@ -825,15 +825,15 @@ describe("control flow operations", () => {
     // return %a
 
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }], // @entry
-      [1, "Constant", { value: large }],
-      [2, "Call", { line: 6 }, [1], "@identity"],
-      [null, "Return", 2],
-      [null, "Noop", "fun @identity [%a, %b]"],
-      [null, "Noop", "@entry"],
-      [null, "Return", 0],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }], // @entry
+      [1, "constant", { value: large }],
+      [2, "call", { line: 6 }, [1], "@identity"],
+      [null, "return", 2],
+      [null, "noop", "fun @identity [%a, %b]"],
+      [null, "noop", "@entry"],
+      [null, "return", 0],
     ];
     expect(evaluate(input)).toBe(large);
   });
@@ -851,15 +851,15 @@ describe("control flow operations", () => {
     // return %a
 
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: small }],
-      [1, "Constant", { value: large }],
-      [2, "Call", { line: 6 }, [0, 1], "@first"],
-      [null, "Return", 2],
-      [null, "Noop", "fun @first [%a, %b]"],
-      [null, "Noop", "@entry"],
-      [null, "Return", 0],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: small }],
+      [1, "constant", { value: large }],
+      [2, "call", { line: 6 }, [0, 1], "@first"],
+      [null, "return", 2],
+      [null, "noop", "fun @first [%a, %b]"],
+      [null, "noop", "@entry"],
+      [null, "return", 0],
     ];
     expect(evaluate(input)).toBe(small);
   });
@@ -898,39 +898,39 @@ describe("control flow operations", () => {
     // return %10
 
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: 5 }], // main
-      [1, "Constant", { value: 1 }],
-      [2, "Call", { line: 6 }, [0, 1], "@factorial"],
-      [null, "Return", 2],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: 5 }], // main
+      [1, "constant", { value: 1 }],
+      [2, "call", { line: 6 }, [0, 1], "@factorial"],
+      [null, "return", 2],
 
-      [null, "Noop", "fun @factorial [%n, %acc]"],
-      [null, "Noop", "@entry"],
-      [2, "Constant", { value: 1 }],
-      [3, "Equal", 0, 2],
-      [7, "Copy", 1],
-      [null, "Branch", 3, [{ line: 18 }, { line: 12 }]],
+      [null, "noop", "fun @factorial [%n, %acc]"],
+      [null, "noop", "@entry"],
+      [2, "constant", { value: 1 }],
+      [3, "equal", 0, 2],
+      [7, "copy", 1],
+      [null, "branch", 3, [{ line: 18 }, { line: 12 }]],
 
-      [null, "Noop", "@body"],
-      [4, "Subtract", 0, 2],
-      [5, "Multiply", 0, 1],
-      [6, "Call", { line: 6 }, [4, 5], "@factorial"],
-      [7, "Copy", 6],
-      [null, "Jump", { line: 18 }],
+      [null, "noop", "@body"],
+      [4, "subtract", 0, 2],
+      [5, "multiply", 0, 1],
+      [6, "call", { line: 6 }, [4, 5], "@factorial"],
+      [7, "copy", 6],
+      [null, "jump", { line: 18 }],
 
-      [null, "Noop", "@termination"],
-      [null, "Return", 7],
+      [null, "noop", "@termination"],
+      [null, "return", 7],
     ];
     expect(evaluate(input)).toBe(120);
   });
 
   it("must throw when Return is given a Dead argument", () => {
     const input: LOW.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Drop"],
-      [null, "Return", 0],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "drop"],
+      [null, "return", 0],
     ];
     expect(() => evaluate(input)).toThrow(/Dead/);
   });

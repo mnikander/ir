@@ -34,7 +34,7 @@ function extract_variables(program: HIGH.Program): HIGH.Register[] {
     );
     const lines_without_drop: HIGH.Line[] = block.lines.filter((
       line: HIGH.Line,
-    ) => line[HIGH.Get.Tag] !== "Drop");
+    ) => line[HIGH.Get.Tag] !== "drop");
     const variables_from_lines_without_drop: HIGH.Register[] =
       lines_without_drop
         .map((
@@ -63,7 +63,7 @@ function _extract_variables_via_loop(program: HIGH.Program): HIGH.Register[] {
       }
       for (let l = 0; l < block.lines.length; ++l) {
         const line: HIGH.Line = block.lines[l];
-        if (line[HIGH.Get.Tag] !== "Drop") {
+        if (line[HIGH.Get.Tag] !== "drop") {
           variables.push(line[HIGH.Get.Dest]);
         }
       }

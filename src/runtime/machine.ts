@@ -24,31 +24,31 @@ export function evaluate(program: LOW.Program): number {
     while (is_executable(stack)) {
       const op: LOW.Instruction = program[top(stack).pc];
       switch (op[LOW.Get.Tag]) {
-        case "Noop":         stack =          noop(stack, op); break;
-        case "Constant":     stack =      constant(stack, op); break;
-        case "Copy":         stack =          copy(stack, op); break;
-        case "Load":         stack =          load(stack, op); break;
-        case "Store":        stack =         store(stack, op); break;
-        case "AddressOf":    stack =    address_of(stack, op); break;
-        case "Drop":         stack =          drop(stack, op); break;
-        case "Add":          stack =           add(stack, op); break;
-        case "Subtract":     stack =      subtract(stack, op); break;
-        case "Multiply":     stack =      multiply(stack, op); break;
-        case "Divide":       stack =        divide(stack, op); break;
-        case "Remainder":    stack =     remainder(stack, op); break;
-        case "Minimum":      stack =       minimum(stack, op); break;
-        case "Maximum":      stack =       maximum(stack, op); break;
-        case "Negate":       stack =        negate(stack, op); break;
-        case "Equal":        stack =         equal(stack, op); break;
-        case "Unequal":      stack =       unequal(stack, op); break;
-        case "Less":         stack =          less(stack, op); break;
-        case "LessEqual":    stack =    less_equal(stack, op); break;
-        case "Greater":      stack =       greater(stack, op); break;
-        case "GreaterEqual": stack = greater_equal(stack, op); break;
-        case "Jump":         stack =          jump(stack, op); break;
-        case 'Branch':       stack =        branch(stack, op); break;
-        case 'Call':         stack =          call(stack, op); break;
-        case "Return":       stack =           ret(stack, op); break;
+        case "noop":          stack =          noop(stack, op); break;
+        case "constant":      stack =      constant(stack, op); break;
+        case "copy":          stack =          copy(stack, op); break;
+        case "load":          stack =          load(stack, op); break;
+        case "store":         stack =         store(stack, op); break;
+        case "address_of":    stack =    address_of(stack, op); break;
+        case "drop":          stack =          drop(stack, op); break;
+        case "add":           stack =           add(stack, op); break;
+        case "subtract":      stack =      subtract(stack, op); break;
+        case "multiply":      stack =      multiply(stack, op); break;
+        case "divide":        stack =        divide(stack, op); break;
+        case "remainder":     stack =     remainder(stack, op); break;
+        case "minimum":       stack =       minimum(stack, op); break;
+        case "maximum":       stack =       maximum(stack, op); break;
+        case "negate":        stack =        negate(stack, op); break;
+        case "equal":         stack =         equal(stack, op); break;
+        case "unequal":       stack =       unequal(stack, op); break;
+        case "less":          stack =          less(stack, op); break;
+        case "less_equal":    stack =    less_equal(stack, op); break;
+        case "greater":       stack =       greater(stack, op); break;
+        case "greater_equal": stack = greater_equal(stack, op); break;
+        case "jump":          stack =          jump(stack, op); break;
+        case "branch":        stack =        branch(stack, op); break;
+        case "call":          stack =          call(stack, op); break;
+        case "return":        stack =           ret(stack, op); break;
         default: throw Error(`unhandled instruction type '${(op as LOW.Instruction)[LOW.Get.Tag]}'`);
       }
     }

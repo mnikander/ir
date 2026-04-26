@@ -91,7 +91,7 @@ Other pass files:
   - programs and instructions
   - numeric stack offsets
   - concrete line-number control flow
-  - metadata `Noop` instructions
+  - metadata `noop` instructions
   - memory instructions
   - arithmetic and comparison instructions
   - control-flow instructions

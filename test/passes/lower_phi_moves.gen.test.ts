@@ -13,21 +13,21 @@ describe("lower_phi_moves", () => {
           {
             name: "@entry",
             phis: [],
-            lines: [["%left", "Constant", { value: 11 }], [
+            lines: [["%left", "constant", { value: 11 }], [
               "%right",
-              "Constant",
+              "constant",
               { value: 13 },
             ]],
-            terminator: [null, "Jump", "@join"],
+            terminator: [null, "jump", "@join"],
           },
           {
             name: "@join",
             phis: [
-              ["%x", "Phi", [["@entry", ["%right"]]]],
-              ["%y", "Phi", [["@entry", ["%left"]]]],
+              ["%x", "phi", [["@entry", ["%right"]]]],
+              ["%y", "phi", [["@entry", ["%left"]]]],
             ],
-            lines: [["%sum", "Add", ["%x"], ["%y"]]],
-            terminator: [null, "Return", ["%sum"]],
+            lines: [["%sum", "add", ["%x"], ["%y"]]],
+            terminator: [null, "return", ["%sum"]],
           },
         ],
       },
@@ -41,29 +41,29 @@ describe("lower_phi_moves", () => {
           {
             name: "@entry",
             phis: [],
-            lines: [["%left", "Constant", { value: 11 }], [
+            lines: [["%left", "constant", { value: 11 }], [
               "%right",
-              "Constant",
+              "constant",
               { value: 13 },
             ]],
-            terminator: [null, "Jump", "@phi.join.from.entry"],
+            terminator: [null, "jump", "@phi.join.from.entry"],
           },
           {
             name: "@phi.join.from.entry",
             phis: [],
             lines: [
-              ["%phi.join.from.entry.x", "Copy", ["%right"]],
-              ["%phi.join.from.entry.y", "Copy", ["%left"]],
-              ["%x", "Copy", ["%phi.join.from.entry.x"]],
-              ["%y", "Copy", ["%phi.join.from.entry.y"]],
+              ["%phi.join.from.entry.x", "copy", ["%right"]],
+              ["%phi.join.from.entry.y", "copy", ["%left"]],
+              ["%x", "copy", ["%phi.join.from.entry.x"]],
+              ["%y", "copy", ["%phi.join.from.entry.y"]],
             ],
-            terminator: [null, "Jump", "@join"],
+            terminator: [null, "jump", "@join"],
           },
           {
             name: "@join",
             phis: [],
-            lines: [["%sum", "Add", ["%x"], ["%y"]]],
-            terminator: [null, "Return", ["%sum"]],
+            lines: [["%sum", "add", ["%x"], ["%y"]]],
+            terminator: [null, "return", ["%sum"]],
           },
         ],
       },

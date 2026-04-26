@@ -75,7 +75,7 @@ export type NumberedInput = {
 
 export type NumberedCall = [
   destination: LIR.Offset,
-  tag: "Call",
+  tag: "call",
   label: HIR.Label,
   arguments: NumberedInput[],
 ];
@@ -89,32 +89,32 @@ export type NumberedMemory =
   | NumberedDrop;
 export type NumberedConstant = [
   destination: LIR.Offset,
-  tag: "Constant",
+  tag: "constant",
   value: HIR.Primitive,
 ];
 export type NumberedCopy = [
   destination: LIR.Offset,
-  tag: "Copy",
+  tag: "copy",
   value: NumberedInput,
 ];
 export type NumberedOwn = [
   destination: LIR.Offset,
-  tag: "Own",
+  tag: "own",
   value: NumberedInput,
 ];
 export type NumberedBorrow = [
   destination: LIR.Offset,
-  tag: "Borrow",
+  tag: "borrow",
   source: LIR.Offset,
 ];
 export type NumberedLoad = [
   destination: LIR.Offset,
-  tag: "Load",
+  tag: "load",
   source: LIR.Offset,
 ];
 export type NumberedDrop = [
   destination: LIR.Offset,
-  tag: "Drop",
+  tag: "drop",
 ];
 
 export type NumberedArithmetic =
@@ -128,49 +128,49 @@ export type NumberedArithmetic =
   | NumberedNegative;
 export type NumberedAdd = [
   destination: LIR.Offset,
-  tag: "Add",
+  tag: "add",
   left: NumberedInput,
   right: NumberedInput,
 ];
 export type NumberedSubtract = [
   destination: LIR.Offset,
-  tag: "Subtract",
+  tag: "subtract",
   left: NumberedInput,
   right: NumberedInput,
 ];
 export type NumberedMultiply = [
   destination: LIR.Offset,
-  tag: "Multiply",
+  tag: "multiply",
   left: NumberedInput,
   right: NumberedInput,
 ];
 export type NumberedDivide = [
   destination: LIR.Offset,
-  tag: "Divide",
+  tag: "divide",
   left: NumberedInput,
   right: NumberedInput,
 ];
 export type NumberedRemainder = [
   destination: LIR.Offset,
-  tag: "Remainder",
+  tag: "remainder",
   left: NumberedInput,
   right: NumberedInput,
 ];
 export type NumberedMinimum = [
   destination: LIR.Offset,
-  tag: "Minimum",
+  tag: "minimum",
   left: NumberedInput,
   right: NumberedInput,
 ];
 export type NumberedMaximum = [
   destination: LIR.Offset,
-  tag: "Maximum",
+  tag: "maximum",
   left: NumberedInput,
   right: NumberedInput,
 ];
 export type NumberedNegative = [
   destination: LIR.Offset,
-  tag: "Negate",
+  tag: "negate",
   left: NumberedInput,
 ];
 
@@ -183,52 +183,52 @@ export type NumberedComparison =
   | NumberedGreaterEqual;
 export type NumberedEqual = [
   destination: LIR.Offset,
-  tag: "Equal",
+  tag: "equal",
   left: NumberedInput,
   right: NumberedInput,
 ];
 export type NumberedUnequal = [
   destination: LIR.Offset,
-  tag: "Unequal",
+  tag: "unequal",
   left: NumberedInput,
   right: NumberedInput,
 ];
 export type NumberedLess = [
   destination: LIR.Offset,
-  tag: "Less",
+  tag: "less",
   left: NumberedInput,
   right: NumberedInput,
 ];
 export type NumberedLessEqual = [
   destination: LIR.Offset,
-  tag: "LessEqual",
+  tag: "less_equal",
   left: NumberedInput,
   right: NumberedInput,
 ];
 export type NumberedGreater = [
   destination: LIR.Offset,
-  tag: "Greater",
+  tag: "greater",
   left: NumberedInput,
   right: NumberedInput,
 ];
 export type NumberedGreaterEqual = [
   destination: LIR.Offset,
-  tag: "GreaterEqual",
+  tag: "greater_equal",
   left: NumberedInput,
   right: NumberedInput,
 ];
 
 export type NumberedTerminator = NumberedJump | NumberedBranch | NumberedReturn;
-export type NumberedJump = [destination: null, tag: "Jump", block: HIR.Label];
+export type NumberedJump = [destination: null, tag: "jump", block: HIR.Label];
 export type NumberedBranch = [
   destination: null,
-  tag: "Branch",
+  tag: "branch",
   condition: NumberedInput,
   block: [HIR.Label, HIR.Label],
 ];
 export type NumberedReturn = [
   destination: null,
-  tag: "Return",
+  tag: "return",
   source: NumberedInput,
 ];
 
@@ -279,7 +279,7 @@ export type ExpandedResolvedInstruction =
 
 export type ExpandedCall = [
   destination: LIR.Offset,
-  tag: "Call",
+  tag: "call",
   target: HIR.Label,
   arguments: LIR.Offset[],
 ];
@@ -288,13 +288,13 @@ export type ExpandedTerminator = ExpandedJump | ExpandedBranch | LIR.Return;
 
 export type ExpandedJump = [
   destination: null,
-  tag: "Jump",
+  tag: "jump",
   target: HIR.Label,
 ];
 
 export type ExpandedBranch = [
   destination: null,
-  tag: "Branch",
+  tag: "branch",
   condition: LIR.Offset,
   targets: [HIR.Label, HIR.Label],
 ];
@@ -314,20 +314,20 @@ export type UnresolvedProgram = readonly UnresolvedInstruction[];
 
 export type UnresolvedJump = [
   destination: null,
-  tag: "Jump",
+  tag: "jump",
   target: BlockTarget,
 ];
 
 export type UnresolvedBranch = [
   destination: null,
-  tag: "Branch",
+  tag: "branch",
   condition: LIR.Offset,
   targets: [BlockTarget, BlockTarget],
 ];
 
 export type UnresolvedCall = [
   destination: LIR.Offset,
-  tag: "Call",
+  tag: "call",
   target: FunctionTarget,
   arguments: LIR.Offset[],
   note: string,

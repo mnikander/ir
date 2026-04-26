@@ -24,7 +24,7 @@ function collect_function_lines(
   const function_lines = new Map<HIR.Label, number>();
 
   program.forEach((instruction, line_number) => {
-    if (instruction[1] !== "Noop" || instruction[2] === undefined) {
+    if (instruction[1] !== "noop" || instruction[2] === undefined) {
       return;
     }
 
@@ -53,7 +53,7 @@ function collect_block_lines(
   let current_function: HIR.Label | null = null;
 
   program.forEach((instruction, line_number) => {
-    if (instruction[1] !== "Noop" || instruction[2] === undefined) {
+    if (instruction[1] !== "noop" || instruction[2] === undefined) {
       return;
     }
 
@@ -94,24 +94,24 @@ function resolve_instruction(
   block_lines: Map<string, number>,
 ): LIR.Instruction {
   switch (instruction[1]) {
-    case "Jump":
-      return [null, "Jump", {
+    case "jump":
+      return [null, "jump", {
         line: get_block_line(block_lines, instruction[2]),
       }];
-    case "Branch":
+    case "branch":
       return [
         null,
-        "Branch",
+        "branch",
         instruction[2],
         [
           { line: get_block_line(block_lines, instruction[3][0]) },
           { line: get_block_line(block_lines, instruction[3][1]) },
         ],
       ];
-    case "Call":
+    case "call":
       return [
         instruction[0],
-        "Call",
+        "call",
         { line: get_function_line(function_lines, instruction[2]) },
         instruction[3],
         instruction[4],

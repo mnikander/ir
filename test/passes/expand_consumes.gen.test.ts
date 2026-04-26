@@ -17,7 +17,7 @@ describe("expand_consumes", () => {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "Return", { offset: 0, consume: true }],
+            terminator: [null, "return", { offset: 0, consume: true }],
           },
         ],
       },
@@ -31,10 +31,10 @@ describe("expand_consumes", () => {
           {
             name: "@entry",
             lines: [
-              [1, "Copy", 0],
-              [0, "Drop"],
+              [1, "copy", 0],
+              [0, "drop"],
             ],
-            terminator: [null, "Return", 1],
+            terminator: [null, "return", 1],
           },
         ],
       },

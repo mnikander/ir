@@ -55,50 +55,50 @@ function expand_line(
   next_temporary: LIR.Offset,
 ): { lines: ExpandedLine[]; next_temporary: LIR.Offset } {
   switch (line[1]) {
-    case "Constant":
+    case "constant":
       return {
-        lines: [[line[0], "Constant", line[2]]],
+        lines: [[line[0], "constant", line[2]]],
         next_temporary,
       };
-    case "Copy":
+    case "copy":
       return {
-        lines: with_consumed_drops([[line[0], "Copy", offset_of(line[2])]], [
+        lines: with_consumed_drops([[line[0], "copy", offset_of(line[2])]], [
           line[2],
         ]),
         next_temporary,
       };
-    case "Own": {
+    case "own": {
       const prepared = materialize_consumed_inputs([line[2]], next_temporary);
       const owned_offset = prepared.next_temporary;
       return {
         lines: [
           ...prepared.lines,
-          [owned_offset, "Copy", offset_of(prepared.inputs[0])],
-          [line[0], "AddressOf", owned_offset],
+          [owned_offset, "copy", offset_of(prepared.inputs[0])],
+          [line[0], "address_of", owned_offset],
           drop_instruction(offset_of(prepared.inputs[0])),
         ],
         next_temporary: owned_offset + 1,
       };
     }
-    case "Borrow":
+    case "borrow":
       return {
-        lines: [[line[0], "AddressOf", line[2]]],
+        lines: [[line[0], "address_of", line[2]]],
         next_temporary,
       };
-    case "Load":
+    case "load":
       return {
-        lines: [[line[0], "Load", line[2]]],
+        lines: [[line[0], "load", line[2]]],
         next_temporary,
       };
-    case "Drop":
+    case "drop":
       return {
         lines: [drop_instruction(line[0])],
         next_temporary,
       };
-    case "Call": {
+    case "call": {
       const lowered: ExpandedCall = [
         line[0],
-        "Call",
+        "call",
         line[2],
         line[3].map(offset_of),
       ];
@@ -107,19 +107,19 @@ function expand_line(
         next_temporary,
       };
     }
-    case "Add":
-    case "Subtract":
-    case "Multiply":
-    case "Divide":
-    case "Remainder":
-    case "Minimum":
-    case "Maximum":
-    case "Equal":
-    case "Unequal":
-    case "Less":
-    case "LessEqual":
-    case "Greater":
-    case "GreaterEqual":
+    case "add":
+    case "subtract":
+    case "multiply":
+    case "divide":
+    case "remainder":
+    case "minimum":
+    case "maximum":
+    case "equal":
+    case "unequal":
+    case "less":
+    case "less_equal":
+    case "greater":
+    case "greater_equal":
       return {
         lines: with_consumed_drops([[
           line[0],
@@ -129,9 +129,9 @@ function expand_line(
         ]], [line[2], line[3]]),
         next_temporary,
       };
-    case "Negate":
+    case "negate":
       return {
-        lines: with_consumed_drops([[line[0], "Negate", offset_of(line[2])]], [
+        lines: with_consumed_drops([[line[0], "negate", offset_of(line[2])]], [
           line[2],
         ]),
         next_temporary,
@@ -148,13 +148,13 @@ function expand_terminator(
   next_temporary: LIR.Offset;
 } {
   switch (terminator[1]) {
-    case "Jump":
+    case "jump":
       return {
         lines: [],
-        terminator: [null, "Jump", terminator[2]],
+        terminator: [null, "jump", terminator[2]],
         next_temporary,
       };
-    case "Branch": {
+    case "branch": {
       const prepared = materialize_consumed_inputs(
         [terminator[2]],
         next_temporary,
@@ -163,21 +163,21 @@ function expand_terminator(
         lines: prepared.lines,
         terminator: [
           null,
-          "Branch",
+          "branch",
           offset_of(prepared.inputs[0]),
           [terminator[3][0], terminator[3][1]],
         ],
         next_temporary: prepared.next_temporary,
       };
     }
-    case "Return": {
+    case "return": {
       const prepared = materialize_consumed_inputs(
         [terminator[2]],
         next_temporary,
       );
       return {
         lines: prepared.lines,
-        terminator: [null, "Return", offset_of(prepared.inputs[0])],
+        terminator: [null, "return", offset_of(prepared.inputs[0])],
         next_temporary: prepared.next_temporary,
       };
     }
@@ -200,7 +200,7 @@ function materialize_consumed_inputs(
 
     const temporary = next_temporary;
     next_temporary += 1;
-    lines.push([temporary, "Copy", input.offset]);
+    lines.push([temporary, "copy", input.offset]);
     lines.push(drop_instruction(input.offset));
     return { offset: temporary, consume: false };
   });
@@ -225,7 +225,7 @@ function with_consumed_drops(
 }
 
 function drop_instruction(offset: LIR.Offset): LIR.Drop {
-  return [offset, "Drop"];
+  return [offset, "drop"];
 }
 
 function offset_of(input: NumberedInput): LIR.Offset {

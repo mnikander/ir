@@ -17,19 +17,19 @@ export function emit_linear_lir(program: ExpandedProgram): UnresolvedProgram {
 
   for (const func of program) {
     register_function(function_names, func);
-    emitted.push([null, "Noop", format_function_note(func)]);
+    emitted.push([null, "noop", format_function_note(func)]);
 
     const block_names = new Set<HIR.Label>();
     for (const block of func.blocks) {
       register_block(block_names, func, block.name);
-      emitted.push([null, "Noop", block.name]);
+      emitted.push([null, "noop", block.name]);
 
       emitted.push(
         ...block.lines.map((line) =>
-          line[1] === "Call"
+          line[1] === "call"
             ? [
               line[0],
-              "Call",
+              "call",
               function_target(line[2]),
               line[3],
               line[2],
@@ -39,17 +39,17 @@ export function emit_linear_lir(program: ExpandedProgram): UnresolvedProgram {
       );
 
       switch (block.terminator[1]) {
-        case "Jump":
+        case "jump":
           emitted.push([
             null,
-            "Jump",
+            "jump",
             block_target(func.name, block.terminator[2]),
           ]);
           break;
-        case "Branch":
+        case "branch":
           emitted.push([
             null,
-            "Branch",
+            "branch",
             block.terminator[2],
             [
               block_target(func.name, block.terminator[3][0]),
@@ -57,7 +57,7 @@ export function emit_linear_lir(program: ExpandedProgram): UnresolvedProgram {
             ],
           ]);
           break;
-        case "Return":
+        case "return":
           emitted.push(block.terminator);
           break;
       }

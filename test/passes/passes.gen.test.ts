@@ -41,10 +41,10 @@ describe("numbering pipeline", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%sum", "Add", ["%a"], ["%b"]],
-              ["%product", "Multiply", ["%sum"], ["%a"]],
+              ["%sum", "add", ["%a"], ["%b"]],
+              ["%product", "multiply", ["%sum"], ["%a"]],
             ],
-            terminator: [null, "Return", ["%product"]],
+            terminator: [null, "return", ["%product"]],
           },
         ],
       },
@@ -62,16 +62,16 @@ describe("numbering pipeline", () => {
             name: "@entry",
             phis: [],
             lines: [
-              [2, "Add", { offset: 0, consume: false }, {
+              [2, "add", { offset: 0, consume: false }, {
                 offset: 1,
                 consume: false,
               }],
-              [3, "Multiply", { offset: 2, consume: false }, {
+              [3, "multiply", { offset: 2, consume: false }, {
                 offset: 0,
                 consume: false,
               }],
             ],
-            terminator: [null, "Return", { offset: 3, consume: false }],
+            terminator: [null, "return", { offset: 3, consume: false }],
           },
         ],
       },
@@ -88,9 +88,9 @@ describe("numbering pipeline", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%y", "Copy", ["consume", "%x"]],
+              ["%y", "copy", ["consume", "%x"]],
             ],
-            terminator: [null, "Return", ["consume", "%y"]],
+            terminator: [null, "return", ["consume", "%y"]],
           },
         ],
       },
@@ -107,9 +107,9 @@ describe("numbering pipeline", () => {
             name: "@entry",
             phis: [],
             lines: [
-              [1, "Copy", { offset: 0, consume: true }],
+              [1, "copy", { offset: 0, consume: true }],
             ],
-            terminator: [null, "Return", { offset: 1, consume: true }],
+            terminator: [null, "return", { offset: 1, consume: true }],
           },
         ],
       },
@@ -126,9 +126,9 @@ describe("numbering pipeline", () => {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "Drop"],
+              ["%x", "drop"],
             ],
-            terminator: [null, "Return", ["%x"]],
+            terminator: [null, "return", ["%x"]],
           },
         ],
       },
@@ -145,9 +145,9 @@ describe("numbering pipeline", () => {
             name: "@entry",
             phis: [],
             lines: [
-              [0, "Drop"],
+              [0, "drop"],
             ],
-            terminator: [null, "Return", { offset: 0, consume: false }],
+            terminator: [null, "return", { offset: 0, consume: false }],
           },
         ],
       },
@@ -166,12 +166,12 @@ describe("linearize_to_lir", () => {
             name: "@entry",
             phis: [],
             lines: [
-              [0, "Constant", { value: 1 }],
-              [1, "Constant", { value: small }],
-              [2, "Constant", { value: large }],
-              [3, "Constant", { value: huge }],
+              [0, "constant", { value: 1 }],
+              [1, "constant", { value: small }],
+              [2, "constant", { value: large }],
+              [3, "constant", { value: huge }],
             ],
-            terminator: [null, "Branch", { offset: 0, consume: false }, [
+            terminator: [null, "branch", { offset: 0, consume: false }, [
               "@then",
               "@else",
             ]],
@@ -180,50 +180,50 @@ describe("linearize_to_lir", () => {
             name: "@then",
             phis: [],
             lines: [
-              [4, "Add", { offset: 1, consume: false }, {
+              [4, "add", { offset: 1, consume: false }, {
                 offset: 2,
                 consume: false,
               }],
             ],
-            terminator: [null, "Jump", "@end"],
+            terminator: [null, "jump", "@end"],
           },
           {
             name: "@else",
             phis: [],
             lines: [
-              [5, "Add", { offset: 2, consume: false }, {
+              [5, "add", { offset: 2, consume: false }, {
                 offset: 3,
                 consume: false,
               }],
             ],
-            terminator: [null, "Jump", "@end"],
+            terminator: [null, "jump", "@end"],
           },
           {
             name: "@end",
             phis: [],
             lines: [],
-            terminator: [null, "Return", { offset: 4, consume: false }],
+            terminator: [null, "return", { offset: 4, consume: false }],
           },
         ],
       },
     ];
 
     const expected: LIR.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: 1 }],
-      [1, "Constant", { value: small }],
-      [2, "Constant", { value: large }],
-      [3, "Constant", { value: huge }],
-      [null, "Branch", 0, [{ line: 7 }, { line: 10 }]],
-      [null, "Noop", "@then"],
-      [4, "Add", 1, 2],
-      [null, "Jump", { line: 13 }],
-      [null, "Noop", "@else"],
-      [5, "Add", 2, 3],
-      [null, "Jump", { line: 13 }],
-      [null, "Noop", "@end"],
-      [null, "Return", 4],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: 1 }],
+      [1, "constant", { value: small }],
+      [2, "constant", { value: large }],
+      [3, "constant", { value: huge }],
+      [null, "branch", 0, [{ line: 7 }, { line: 10 }]],
+      [null, "noop", "@then"],
+      [4, "add", 1, 2],
+      [null, "jump", { line: 13 }],
+      [null, "noop", "@else"],
+      [5, "add", 2, 3],
+      [null, "jump", { line: 13 }],
+      [null, "noop", "@end"],
+      [null, "return", 4],
     ];
 
     expect(linearize_to_lir(input)).toEqual(expected);
@@ -239,10 +239,10 @@ describe("linearize_to_lir", () => {
             name: "@entry",
             phis: [],
             lines: [
-              [0, "Constant", { value: large }],
-              [1, "Call", "@identity", [{ offset: 0, consume: false }]],
+              [0, "constant", { value: large }],
+              [1, "call", "@identity", [{ offset: 0, consume: false }]],
             ],
-            terminator: [null, "Return", { offset: 1, consume: false }],
+            terminator: [null, "return", { offset: 1, consume: false }],
           },
         ],
       },
@@ -254,21 +254,21 @@ describe("linearize_to_lir", () => {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "Return", { offset: 0, consume: false }],
+            terminator: [null, "return", { offset: 0, consume: false }],
           },
         ],
       },
     ];
 
     const expected: LIR.Program = [
-      [null, "Noop", "fun @main []"],
-      [null, "Noop", "@entry"],
-      [0, "Constant", { value: large }],
-      [1, "Call", { line: 5 }, [0], "@identity"],
-      [null, "Return", 1],
-      [null, "Noop", "fun @identity [%a]"],
-      [null, "Noop", "@entry"],
-      [null, "Return", 0],
+      [null, "noop", "fun @main []"],
+      [null, "noop", "@entry"],
+      [0, "constant", { value: large }],
+      [1, "call", { line: 5 }, [0], "@identity"],
+      [null, "return", 1],
+      [null, "noop", "fun @identity [%a]"],
+      [null, "noop", "@entry"],
+      [null, "return", 0],
     ];
 
     expect(linearize_to_lir(input)).toEqual(expected);
@@ -284,20 +284,20 @@ describe("linearize_to_lir", () => {
             name: "@entry",
             phis: [],
             lines: [
-              [1, "Copy", { offset: 0, consume: true }],
+              [1, "copy", { offset: 0, consume: true }],
             ],
-            terminator: [null, "Return", { offset: 1, consume: false }],
+            terminator: [null, "return", { offset: 1, consume: false }],
           },
         ],
       },
     ];
 
     expect(linearize_to_lir(input)).toEqual([
-      [null, "Noop", "fun @main [%x]"],
-      [null, "Noop", "@entry"],
-      [1, "Copy", 0],
-      [0, "Drop"],
-      [null, "Return", 1],
+      [null, "noop", "fun @main [%x]"],
+      [null, "noop", "@entry"],
+      [1, "copy", 0],
+      [0, "drop"],
+      [null, "return", 1],
     ]);
   });
 
@@ -311,19 +311,19 @@ describe("linearize_to_lir", () => {
             name: "@entry",
             phis: [],
             lines: [
-              [0, "Drop"],
+              [0, "drop"],
             ],
-            terminator: [null, "Return", { offset: 0, consume: false }],
+            terminator: [null, "return", { offset: 0, consume: false }],
           },
         ],
       },
     ];
 
     expect(linearize_to_lir(input)).toEqual([
-      [null, "Noop", "fun @main [%x]"],
-      [null, "Noop", "@entry"],
-      [0, "Drop"],
-      [null, "Return", 0],
+      [null, "noop", "fun @main [%x]"],
+      [null, "noop", "@entry"],
+      [0, "drop"],
+      [null, "return", 0],
     ]);
   });
 
@@ -337,22 +337,22 @@ describe("linearize_to_lir", () => {
             name: "@entry",
             phis: [],
             lines: [
-              [1, "Copy", { offset: 0, consume: true }],
-              [1, "Drop"],
+              [1, "copy", { offset: 0, consume: true }],
+              [1, "drop"],
             ],
-            terminator: [null, "Return", { offset: 1, consume: false }],
+            terminator: [null, "return", { offset: 1, consume: false }],
           },
         ],
       },
     ];
 
     expect(linearize_to_lir(input)).toEqual([
-      [null, "Noop", "fun @main [%x]"],
-      [null, "Noop", "@entry"],
-      [1, "Copy", 0],
-      [0, "Drop"],
-      [1, "Drop"],
-      [null, "Return", 1],
+      [null, "noop", "fun @main [%x]"],
+      [null, "noop", "@entry"],
+      [1, "copy", 0],
+      [0, "drop"],
+      [1, "drop"],
+      [null, "return", 1],
     ]);
   });
 
@@ -366,13 +366,13 @@ describe("linearize_to_lir", () => {
             name: "@entry",
             phis: [],
             lines: [
-              [2, "Add", { offset: 0, consume: true }, {
+              [2, "add", { offset: 0, consume: true }, {
                 offset: 1,
                 consume: false,
               }],
-              [3, "Call", "@identity", [{ offset: 2, consume: true }]],
+              [3, "call", "@identity", [{ offset: 2, consume: true }]],
             ],
-            terminator: [null, "Return", { offset: 3, consume: false }],
+            terminator: [null, "return", { offset: 3, consume: false }],
           },
         ],
       },
@@ -384,23 +384,23 @@ describe("linearize_to_lir", () => {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "Return", { offset: 0, consume: false }],
+            terminator: [null, "return", { offset: 0, consume: false }],
           },
         ],
       },
     ];
 
     expect(linearize_to_lir(input)).toEqual([
-      [null, "Noop", "fun @main [%x, %y]"],
-      [null, "Noop", "@entry"],
-      [2, "Add", 0, 1],
-      [0, "Drop"],
-      [3, "Call", { line: 7 }, [2], "@identity"],
-      [2, "Drop"],
-      [null, "Return", 3],
-      [null, "Noop", "fun @identity [%a]"],
-      [null, "Noop", "@entry"],
-      [null, "Return", 0],
+      [null, "noop", "fun @main [%x, %y]"],
+      [null, "noop", "@entry"],
+      [2, "add", 0, 1],
+      [0, "drop"],
+      [3, "call", { line: 7 }, [2], "@identity"],
+      [2, "drop"],
+      [null, "return", 3],
+      [null, "noop", "fun @identity [%a]"],
+      [null, "noop", "@entry"],
+      [null, "return", 0],
     ]);
   });
 
@@ -414,7 +414,7 @@ describe("linearize_to_lir", () => {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "Branch", { offset: 0, consume: true }, [
+            terminator: [null, "branch", { offset: 0, consume: true }, [
               "@then",
               "@else",
             ]],
@@ -423,36 +423,36 @@ describe("linearize_to_lir", () => {
             name: "@then",
             phis: [],
             lines: [
-              [1, "Constant", { value: small }],
+              [1, "constant", { value: small }],
             ],
-            terminator: [null, "Return", { offset: 1, consume: true }],
+            terminator: [null, "return", { offset: 1, consume: true }],
           },
           {
             name: "@else",
             phis: [],
             lines: [
-              [2, "Constant", { value: large }],
+              [2, "constant", { value: large }],
             ],
-            terminator: [null, "Return", { offset: 2, consume: false }],
+            terminator: [null, "return", { offset: 2, consume: false }],
           },
         ],
       },
     ];
 
     expect(linearize_to_lir(input)).toEqual([
-      [null, "Noop", "fun @main [%condition]"],
-      [null, "Noop", "@entry"],
-      [3, "Copy", 0],
-      [0, "Drop"],
-      [null, "Branch", 3, [{ line: 5 }, { line: 10 }]],
-      [null, "Noop", "@then"],
-      [1, "Constant", { value: small }],
-      [4, "Copy", 1],
-      [1, "Drop"],
-      [null, "Return", 4],
-      [null, "Noop", "@else"],
-      [2, "Constant", { value: large }],
-      [null, "Return", 2],
+      [null, "noop", "fun @main [%condition]"],
+      [null, "noop", "@entry"],
+      [3, "copy", 0],
+      [0, "drop"],
+      [null, "branch", 3, [{ line: 5 }, { line: 10 }]],
+      [null, "noop", "@then"],
+      [1, "constant", { value: small }],
+      [4, "copy", 1],
+      [1, "drop"],
+      [null, "return", 4],
+      [null, "noop", "@else"],
+      [2, "constant", { value: large }],
+      [null, "return", 2],
     ]);
   });
 });

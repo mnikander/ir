@@ -35,15 +35,15 @@ function replace_successors(
   terminator: HIGH.Terminator,
   name_to_index: Map<HIGH.Label, number>,
 ): HIGH.Terminator {
-  if (terminator[HIGH.Get.Tag] === "Return") {
+  if (terminator[HIGH.Get.Tag] === "return") {
     return terminator;
-  } else if (terminator[HIGH.Get.Tag] === "Jump") {
+  } else if (terminator[HIGH.Get.Tag] === "jump") {
     return [
       terminator[0],
       terminator[1],
       number_to_label(valid(name_to_index.get(terminator[2]))),
     ];
-  } else if (terminator[HIGH.Get.Tag] === "Branch") {
+  } else if (terminator[HIGH.Get.Tag] === "branch") {
     return [
       terminator[0],
       terminator[1],
