@@ -87,6 +87,10 @@ function @main [] -> Int
     expect(evaluate(lower(input))).toBe(small);
   });
 
+  it.skip("must support pointers as phi operands", () => {
+    // TODO
+  });
+
   it("must allow consuming the Copy operand", () => {
     const text: string = `
 function @main [] -> Int
@@ -190,6 +194,10 @@ function @main [] -> Int
     expect(validate(input)).toBe(true);
     expect(check(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
+  });
+
+  it.skip("must allow consuming a phi operand", () => {
+    // TODO
   });
 });
 
