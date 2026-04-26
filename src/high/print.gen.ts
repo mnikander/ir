@@ -25,7 +25,7 @@ function print_block(block: HIGH.Block): string {
     print_terminator(block.terminator),
   ].map((line) => `    ${line}`);
 
-  return [`  block ${block.name}:`, ...body].join("\n");
+  return [`  block ${block.name}`, ...body].join("\n");
 }
 
 function print_phi(phi: HIGH.Phi): string {

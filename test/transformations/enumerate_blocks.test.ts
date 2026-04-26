@@ -11,7 +11,7 @@ const huge: number = 281;
 describe("constants and exit", () => {
   it("must set a single block label correctly", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // %0 = constant 11
     // return %0
     const input: HIGH.Program = [
@@ -54,14 +54,14 @@ describe("constants and exit", () => {
 
   it("must set jump target correctly", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // jump @second
     //
-    // block @first:
+    // block @first
     // %1 = constant 11
     // return %1
     //
-    // block @second:
+    // block @second
     // %2 = constant 22
     // return %2
     const input: HIGH.Program = [
@@ -132,22 +132,22 @@ describe("constants and exit", () => {
 
   it("must set branch targets correctly", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // %0 = constant true
     // %1 = constant 11
     // %2 = constant 22
     // %3 = constant 44
     // branch %0 @then @else
     //
-    // block @then:
+    // block @then
     // %4 = add %1, %2
     // jump @end
     //
-    // block @else:
+    // block @else
     // %5 = add %2, %3
     // jump @end
     //
-    // block @end:
+    // block @end
     // return %4
     const input: HIGH.Program = [
       {
@@ -239,18 +239,18 @@ describe("constants and exit", () => {
 
   it("must set block labels in all functions", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // %0 = constant 11
     // %1 = constant 22
     // %2 = call @identity [%1]
     // return %2
     //
     // function @identity [%a]:
-    // block @entry:
+    // block @entry
     // return %a
     //
     // function @identity2 [%a]:
-    // block @entry:
+    // block @entry
     // return %a
     const input: HIGH.Program = [
       {
@@ -348,18 +348,18 @@ describe("constants and exit", () => {
 
   it("phi node must assign from the correct register after an unconditional jump", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // jump @second
     //
-    // block @first:
+    // block @first
     // %1 = constant 11
     // jump @end
     //
-    // block @second:
+    // block @second
     // %2 = constant 22
     // jump @end
     //
-    // block @end:
+    // block @end
     // %3 = phi [[@first, %1], [@second, %2]]
     // return %3
     const input: HIGH.Program = [

@@ -25,7 +25,7 @@ describe("HIR printer", () => {
       "\n" +
         "function @main [] -> Int\n" +
         "\n" +
-        "  block @entry:\n" +
+        "  block @entry\n" +
         "    %0 = constant Int 11\n" +
         "    return Int %0\n",
     );
@@ -74,14 +74,14 @@ describe("HIR printer", () => {
       "\n" +
         "function @main [] -> Int\n" +
         "\n" +
-        "  block @entry:\n" +
+        "  block @entry\n" +
         "    %0 = constant Int 11\n" +
         "    %1 = call Int @identity [%0, (consume %0)]\n" +
         "    return Int %1\n" +
         "\n" +
         "function @identity [%value : Int, (consume %owned) : (Owned Int)] -> Int\n" +
         "\n" +
-        "  block @entry:\n" +
+        "  block @entry\n" +
         "    return Int %value\n",
     );
   });
@@ -128,17 +128,17 @@ describe("HIR printer", () => {
       "\n" +
         "function @main [] -> Int\n" +
         "\n" +
-        "  block @entry:\n" +
+        "  block @entry\n" +
         "    %condition = constant Int 1\n" +
         "    branch %condition @then @else\n" +
         "\n" +
-        "  block @then:\n" +
+        "  block @then\n" +
         "    jump @end\n" +
         "\n" +
-        "  block @else:\n" +
+        "  block @else\n" +
         "    jump @end\n" +
         "\n" +
-        "  block @end:\n" +
+        "  block @end\n" +
         "    return Int %condition\n",
     );
   });
@@ -173,7 +173,7 @@ describe("HIR printer", () => {
       "\n" +
         "function @main [] -> Int\n" +
         "\n" +
-        "  block @join:\n" +
+        "  block @join\n" +
         "    %x = phi Int [@left, %a] [@right, (consume %b)]\n" +
         "    %y = phi Int [@left, %c] [@right, %d]\n" +
         "    %sum = add Int %x %y\n" +
@@ -222,17 +222,17 @@ describe("HIR printer", () => {
       "\n" +
         "function @main [] -> Int\n" +
         "\n" +
-        "  block @entry:\n" +
+        "  block @entry\n" +
         "    %x = constant Int 11\n" +
         "    %y = constant Int 13\n" +
         "    %copy = copy Int (consume %x)\n" +
         "    %sum = add Int (consume %copy) %y\n" +
         "    branch (consume %sum) @then @else\n" +
         "\n" +
-        "  block @then:\n" +
+        "  block @then\n" +
         "    return Int (consume %y)\n" +
         "\n" +
-        "  block @else:\n" +
+        "  block @else\n" +
         "    return Int %y\n",
     );
   });
@@ -264,7 +264,7 @@ describe("HIR printer", () => {
       "\n" +
         "function @main [] -> Int\n" +
         "\n" +
-        "  block @entry:\n" +
+        "  block @entry\n" +
         "    %x = constant Int 42\n" +
         "    %owned = own (Owned Int) %x\n" +
         "    %borrowed = borrow (Borrowed Int) %x\n" +
@@ -311,7 +311,7 @@ describe("HIR printer", () => {
       "\n" +
         "function @main [] -> Int\n" +
         "\n" +
-        "  block @entry:\n" +
+        "  block @entry\n" +
         "    %a = constant Int 11\n" +
         "    %b = constant Int 13\n" +
         "    %sub = subtract Int %a %b\n" +

@@ -39,7 +39,7 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @foo:
+  block @foo
     %0 = constant Int ${small}
     return Int %0
 `;
@@ -72,7 +72,7 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int ${small}
     %1 = borrow (Borrowed Int) %0
     return Int %1
@@ -107,7 +107,7 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int ${small}
     return Int %0
 `;
@@ -141,7 +141,7 @@ describe("copying of registers", () => {
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int ${small}
     %1 = copy Int %0
     return Int %1
@@ -177,7 +177,7 @@ describe("arithmetic operations", () => {
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int ${small}
     %1 = constant Int ${large}
     %2 = add Int %0 %1
@@ -215,14 +215,14 @@ describe("labels, jump, and branch", () => {
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     jump @second
 
-  block @first:
+  block @first
     %1 = constant Int ${small}
     return Int %1
 
-  block @second:
+  block @second
     %2 = constant Int ${large}
     return Int %2
 `;
@@ -268,22 +268,22 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int 1
     %1 = constant Int ${small}
     %2 = constant Int ${large}
     %3 = constant Int ${huge}
     branch %0 @then @else
 
-  block @then:
+  block @then
     %4 = add Int %1 %2
     jump @end
 
-  block @else:
+  block @else
     %5 = add Int %2 %3
     jump @end
 
-  block @end:
+  block @end
     return Int %4
 `;
 
@@ -339,22 +339,22 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int 0
     %1 = constant Int ${small}
     %2 = constant Int ${large}
     %3 = constant Int ${huge}
     branch %0 @then @else
 
-  block @then:
+  block @then
     %4 = add Int %1 %2
     jump @end
 
-  block @else:
+  block @else
     %5 = add Int %2 %3
     jump @end
 
-  block @end:
+  block @end
     return Int %5
 `;
 
@@ -412,7 +412,7 @@ describe("function call", () => {
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int ${small}
     %1 = constant Int ${large}
     %2 = call Int @identity [%1]
@@ -420,7 +420,7 @@ function @main [] -> Int
 
 function @identity [%a : Int] -> Int
 
-  block @entry:
+  block @entry
     return Int %a
 `;
 
@@ -466,7 +466,7 @@ function @identity [%a : Int] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int ${small}
     %1 = constant Int ${large}
     %2 = call Int @first [%0, %1]
@@ -474,7 +474,7 @@ function @main [] -> Int
 
 function @first [%a : Int, %b : Int] -> Int
 
-  block @entry:
+  block @entry
     return Int %a
 `;
 
@@ -526,7 +526,7 @@ function @first [%a : Int, %b : Int] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int 5
     %1 = constant Int 1
     %2 = call Int @factorial [%0, %1]
@@ -534,18 +534,18 @@ function @main [] -> Int
 
 function @factorial [%n : Int, %acc : Int] -> Int
 
-  block @entry:
+  block @entry
     %3 = constant Int 1
     %6 = equal Int %n %3
     branch %6 @termination @body
 
-  block @body:
+  block @body
     %7 = subtract Int %n %3
     %8 = multiply Int %n %acc
     %9 = call Int @factorial [%7, %8]
     jump @termination
 
-  block @termination:
+  block @termination
     %10 = phi Int [@body, %9] [@entry, %acc]
     return Int %10
 `;
@@ -620,7 +620,7 @@ describe("static single assignment", () => {
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int ${small}
     %0 = constant Int ${large}
     return Int %1
@@ -655,7 +655,7 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int ${small}
     %1 = constant Int ${large}
     %2 = call Int @first [%0, %1]
@@ -663,7 +663,7 @@ function @main [] -> Int
 
 function @first [%a : Int, %a : Int] -> Int
 
-  block @entry:
+  block @entry
     return Int %a
 `;
 
@@ -710,7 +710,7 @@ function @first [%a : Int, %a : Int] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int ${small}
     %1 = constant Int ${large}
     %2 = call Int @identity [%1]
@@ -718,12 +718,12 @@ function @main [] -> Int
 
 function @identity [%a : Int] -> Int
 
-  block @entry:
+  block @entry
     return Int %a
 
 function @identity2 [%a : Int] -> Int
 
-  block @entry:
+  block @entry
     return Int %a
 `;
 
@@ -785,18 +785,18 @@ function @identity2 [%a : Int] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     jump @second
 
-  block @first:
+  block @first
     %1 = constant Int ${small}
     jump @end
 
-  block @second:
+  block @second
     %2 = constant Int ${large}
     jump @end
 
-  block @end:
+  block @end
     %3 = phi Int [@first, %1] [@second, %2]
     return Int %3
 `;
@@ -863,19 +863,19 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int 0
     %1 = constant Int 1
     %2 = constant Int 3
     jump @loop
 
-  block @loop:
+  block @loop
     %3 = phi Int [@entry, %0] [@loop, %4]
     %4 = add Int %1 %3
     %5 = unequal Int %3 %2
     branch %5 @loop @end
 
-  block @end:
+  block @end
     return Int %3
 `;
 
@@ -936,23 +936,23 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %condition = constant Int 0
     branch %condition @a @b
 
-  block @a:
+  block @a
     %alpha = constant Int ${small}
     jump @d
 
-  block @b:
+  block @b
     %bravo = constant Int ${large}
     jump @c
 
-  block @c:
+  block @c
     %charlie = constant Int ${huge}
     jump @d
 
-  block @d:
+  block @d
     %grandparent = phi Int [@a, %alpha] [@c, %bravo]
     %parent = phi Int [@a, %alpha] [@c, %charlie]
     %total = add Int %grandparent %parent
@@ -1040,19 +1040,19 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     jump @a
 
-  block @a:
+  block @a
     %alpha = constant Int ${small}
     %condition = constant Int 1
     branch %condition @b @c
 
-  block @b:
+  block @b
     %bravo = constant Int ${large}
     jump @c
 
-  block @c:
+  block @c
     %result = phi Int [@a, %alpha] [@b, %bravo]
     return Int %result
 `;
@@ -1123,19 +1123,19 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %echo = constant Int 0
     branch %echo @a @c
 
-  block @a:
+  block @a
     %alpha = constant Int 1
     branch %alpha @b @c
 
-  block @b:
+  block @b
     %bravo = constant Int 1
     jump @c
 
-  block @c:
+  block @c
     %result = phi Int [@entry, %echo] [@a, %alpha] [@b, %bravo]
     return Int %result
 `;
@@ -1204,19 +1204,19 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %echo = constant Int 0
     branch %echo @a @c
 
-  block @a:
+  block @a
     %alpha = constant Int 1
     branch %alpha @b @c
 
-  block @b:
+  block @b
     %bravo = constant Int 1
     jump @c
 
-  block @c:
+  block @c
     %result = phi Int [@a, %alpha] [@b, %bravo]
     return Int %result
 `;
@@ -1277,7 +1277,7 @@ describe("memory and ownership", () => {
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int ${small}
     %1 = copy Int (consume %0)
     return Int %1
@@ -1311,7 +1311,7 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %x = constant Int ${small}
     %y = constant Int ${large}
     %sum = add Int (consume %x) %y
@@ -1347,7 +1347,7 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int ${small}
     return Int (consume %0)
 `;
@@ -1379,7 +1379,7 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %x = constant Int ${small}
     %r = borrow (Borrowed Int) %x
     %t = load Int %r
@@ -1415,7 +1415,7 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %x = constant Int ${small}
     %r = own (Owned Int) %x
     %t = load Int %r
@@ -1451,7 +1451,7 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %x = constant Int ${small}
     %r = own (Owned Int) %x
     %t = copy Int %x
@@ -1486,7 +1486,7 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int 0
     %0 = drop
     return Int %0
@@ -1521,7 +1521,7 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int ${small}
     %0 = drop
     %0 = drop
@@ -1560,7 +1560,7 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %0 = constant Int ${small}
     %1 = copy Int (consume %0)
     return Int %0
@@ -1595,7 +1595,7 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %x = constant Int ${small}
     %r = borrow (Borrowed Int) %x
     %x = drop
@@ -1634,7 +1634,7 @@ function @main [] -> Int
     const text: string = `
 function @main [] -> Int
 
-  block @entry:
+  block @entry
     %x = constant Int ${small}
     %r = borrow (Borrowed Int) %x
     %y = copy Int (consume %x)

@@ -17,7 +17,7 @@ describe("constants and exit", () => {
 
   it.skip("must throw error if there is no Exit instruction", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // %0 = constant 11
 
     const input: LOW.Program = [
@@ -44,7 +44,7 @@ describe("constants and exit", () => {
 
   it("must throw a runtime-error when exiting with a Pointer instead of a Value", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // %0 = constant 0
     // %1 = address_of %0
     // exit %1
@@ -65,7 +65,7 @@ describe("constants and exit", () => {
 describe("memory operations", () => {
   it("must evaluate a constant", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // %0 = constant 11
     // exit %0
 
@@ -92,7 +92,7 @@ describe("memory operations", () => {
 
   it("must copy a constant", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // %0 = constant 11
     // %1 = copy %0
     // exit %1
@@ -134,7 +134,7 @@ describe("memory operations", () => {
 
   it("must load a value through an address produced by AddressOf", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // %0 = constant 11
     // %1 = address_of %0
     // %2 = load %1
@@ -153,7 +153,7 @@ describe("memory operations", () => {
 
   it("must store through an address produced by AddressOf", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // %0 = constant 11
     // %1 = constant 13
     // %2 = address_of %0
@@ -302,7 +302,7 @@ describe("memory operations", () => {
 describe("arithmetic operations", () => {
   it("must evaluate integer addition", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // %0 = constant 11
     // %1 = constant 22
     // %2 = add %0, %1
@@ -705,14 +705,14 @@ describe("comparison operations", () => {
 describe("control flow operations", () => {
   it("must execute the correct line of code after an unconditional jump", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // jump @second
     //
-    // block @first:
+    // block @first
     // %1 = constant 11
     // exit %1
     //
-    // block @second:
+    // block @second
     // %2 = constant 22
     // exit %2
 
@@ -734,22 +734,22 @@ describe("control flow operations", () => {
 
   it("must execute first branch if the condition is true", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // %0 = constant true
     // %1 = constant 11
     // %2 = constant 22
     // %3 = constant 44
     // branch %0 @then @else
     //
-    // block @then:
+    // block @then
     // %4 = add %1, %2
     // jump @end
     //
-    // block @else:
+    // block @else
     // %5 = add %2, %3
     // jump @end
     //
-    // block @end:
+    // block @end
     // exit %4
 
     const input: LOW.Program = [
@@ -774,22 +774,22 @@ describe("control flow operations", () => {
 
   it("must execute the second branch when condition is false", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // %0 = constant false
     // %1 = constant 11
     // %2 = constant 22
     // %3 = constant 44
     // branch %0 @then @else
     //
-    // block @then:
+    // block @then
     // %4 = add %1, %2
     // jump @end
     //
-    // block @else:
+    // block @else
     // %5 = add %2, %3
     // jump @end
     //
-    // block @end:
+    // block @end
     // exit %5
 
     const input: LOW.Program = [
@@ -814,14 +814,14 @@ describe("control flow operations", () => {
 
   it("must support calling the identity function", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // %0 = constant 11
     // %1 = constant 22
     // %2 = call @identity [%1]
     // exit %2
     //
     // function @identity [%a]:
-    // block @entry:
+    // block @entry
     // return %a
 
     const input: LOW.Program = [
@@ -840,14 +840,14 @@ describe("control flow operations", () => {
 
   it("must support calling a binary function", () => {
     // function @main []:
-    // block @entry:
+    // block @entry
     // %0 = constant 11
     // %1 = constant 22
     // %2 = call @first [%0, %1]
     // exit %2
     //
     // function @first [%a, %b]:
-    // block @entry:
+    // block @entry
     // return %a
 
     const input: LOW.Program = [
@@ -875,25 +875,25 @@ describe("control flow operations", () => {
     // IR code:
     //
     // function @main []:
-    // block @entry:
+    // block @entry
     // %0 = constant 5
     // %1 = constant 1
     // %2 = call @factorial [%0, %1]
     // exit %2
     //
     // function @factorial [%n, %acc]:
-    // block @entry:
+    // block @entry
     // %3 = constant 1
     // %6 = equal %n, %3
     // branch %6 @termination @body
     //
-    // block @body:
+    // block @body
     // %7 = subtract %n, %3
     // %8 = multiply %n, %acc
     // %9 = call @factorial [%7, %8]
     // jump @termination
     //
-    // block @termination:
+    // block @termination
     // %10 = phi [[@body, %9], [@entry, %acc]]
     // return %10
 
