@@ -46,7 +46,7 @@ describe("constants and exit", () => {
     // function @main []:
     // block @entry:
     // %0 = constant 0
-    // %1 = ref %0
+    // %1 = address_of %0
     // exit %1
 
     const input: LOW.Program = [
