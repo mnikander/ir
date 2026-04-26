@@ -31,8 +31,8 @@ function print_block(block: HIGH.Block): string {
 function print_phi(phi: HIGH.Phi): string {
   const inputs = phi[3].map(([label, input]) =>
     `[${label}, ${print_input(input)}]`
-  ).join(", ");
-  return `${phi[0]} = ${phi[1]} ${print_type(phi[2])} [${inputs}]`;
+  ).join(" ");
+  return `${phi[0]} = ${phi[1]} ${print_type(phi[2])} ${inputs}`;
 }
 
 function print_line(line: HIGH.Line): string {

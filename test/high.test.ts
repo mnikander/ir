@@ -546,7 +546,7 @@ function @factorial [%n : Int, %acc : Int] -> Int
     jump @termination
 
   block @termination:
-    %10 = phi Int [[@body, %9], [@entry, %acc]]
+    %10 = phi Int [@body, %9] [@entry, %acc]
     return Int %10
 `;
     const input: HIGH.Program = [
@@ -797,7 +797,7 @@ function @main [] -> Int
     jump @end
 
   block @end:
-    %3 = phi Int [[@first, %1], [@second, %2]]
+    %3 = phi Int [@first, %1] [@second, %2]
     return Int %3
 `;
 
@@ -870,7 +870,7 @@ function @main [] -> Int
     jump @loop
 
   block @loop:
-    %3 = phi Int [[@entry, %0], [@loop, %4]]
+    %3 = phi Int [@entry, %0] [@loop, %4]
     %4 = add Int %1 %3
     %5 = unequal Int %3 %2
     branch %5 @loop @end
@@ -953,8 +953,8 @@ function @main [] -> Int
     jump @d
 
   block @d:
-    %grandparent = phi Int [[@a, %alpha], [@c, %bravo]]
-    %parent = phi Int [[@a, %alpha], [@c, %charlie]]
+    %grandparent = phi Int [@a, %alpha] [@c, %bravo]
+    %parent = phi Int [@a, %alpha] [@c, %charlie]
     %total = add Int %grandparent %parent
     return Int %total
 `;
@@ -1053,7 +1053,7 @@ function @main [] -> Int
     jump @c
 
   block @c:
-    %result = phi Int [[@a, %alpha], [@b, %bravo]]
+    %result = phi Int [@a, %alpha] [@b, %bravo]
     return Int %result
 `;
 
@@ -1136,7 +1136,7 @@ function @main [] -> Int
     jump @c
 
   block @c:
-    %result = phi Int [[@entry, %echo], [@a, %alpha], [@b, %bravo]]
+    %result = phi Int [@entry, %echo] [@a, %alpha] [@b, %bravo]
     return Int %result
 `;
 
@@ -1217,7 +1217,7 @@ function @main [] -> Int
     jump @c
 
   block @c:
-    %result = phi Int [[@a, %alpha], [@b, %bravo]]
+    %result = phi Int [@a, %alpha] [@b, %bravo]
     return Int %result
 `;
 

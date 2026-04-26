@@ -174,8 +174,8 @@ describe("HIR printer", () => {
         "function @main [] -> Int\n" +
         "\n" +
         "  block @join:\n" +
-        "    %x = phi Int [[@left, %a], [@right, (consume %b)]]\n" +
-        "    %y = phi Int [[@left, %c], [@right, %d]]\n" +
+        "    %x = phi Int [@left, %a] [@right, (consume %b)]\n" +
+        "    %y = phi Int [@left, %c] [@right, %d]\n" +
         "    %sum = add Int %x %y\n" +
         "    return Int %sum\n",
     );
