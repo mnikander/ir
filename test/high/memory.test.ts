@@ -5,6 +5,7 @@ import { lower } from "../../src/passes/lower.gen.ts";
 import { evaluate } from "../../src/runtime/machine.ts";
 import { validate } from "../../src/analysis/validate.ts";
 import { print } from "../../src/high/print.gen.ts";
+import { check } from "../../src/check/check.ts";
 // import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
 // choose prime numbers for tests, to reduce chances of false-positive results for arithmetic ops
@@ -45,6 +46,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
+    expect(check(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
 
@@ -81,6 +83,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
+    expect(check(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
 
@@ -115,6 +118,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
+    expect(check(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
 
@@ -151,6 +155,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
+    expect(check(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small + large);
   });
 
@@ -183,6 +188,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
+    expect(check(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
 });
@@ -219,7 +225,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
+    expect(check(input)).toBe(false);
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
@@ -256,7 +262,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
+    expect(check(input)).toBe(false);
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
@@ -295,7 +301,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
+    expect(check(input)).toBe(false);
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
@@ -330,7 +336,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
+    expect(check(input)).toBe(false);
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
@@ -369,7 +375,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
+    expect(check(input)).toBe(false);
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
@@ -408,9 +414,8 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
+    expect(check(input)).toBe(false);
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
-    // expect(count_cfg_nodes(input)).toBe(1);// expect(table_of_contents(input).size).toBe(1);
   });
 });
 
@@ -446,6 +451,8 @@ function @main [] -> Int
       },
     ];
     expect(input).toBeDefined();
+    expect(validate(input)).toBe(true);
+    expect(check(input)).toBe(false);
     expect(print(input)).toEqual(text);
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
