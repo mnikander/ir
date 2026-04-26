@@ -4,7 +4,7 @@
 | :---              | :---           | :---                                | :---                   | :---      | :--- |
 |                   |                |                                     |                        |           | |
 | **Special Forms** |                |                                     |                        |           | |
-| Function          | `function`     | `function @identity [%arg] -> Int`  |                        | Int       | function definition |
+| Function          | `function`     | `function @identity [%arg : Int] -> Int` |                    | Int       | function definition |
 | Block             | `block`        | `block @entry:`                     |                        |           | basic block definition |
 | Phi               | `phi`          | `%x = phi Int [[@left, %l], [@right, %r]]` | Array<[Label, Value]> | Int       | SSA-style join |
 | Call              | `call`         | `%x = call Int @f [%a, (consume %b)]`| Label, Array<Value>    | Int       | function call |

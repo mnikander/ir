@@ -333,7 +333,7 @@ describe("lowering from HIR to LIR", () => {
       },
       {
         name: "@identity",
-        params: [[["Int"], ["%a"]]],
+        params: [[["%a"], ["Int"]]],
         return_type: ["Int"],
         blocks: [
           {
@@ -381,7 +381,7 @@ describe("lowering from HIR to LIR", () => {
       },
       {
         name: "@factorial",
-        params: [[["Int"], ["%arg"]]],
+        params: [[["%arg"], ["Int"]]],
         return_type: ["Int"],
         blocks: [
           {

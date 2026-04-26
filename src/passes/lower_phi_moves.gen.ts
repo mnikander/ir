@@ -91,7 +91,7 @@ function create_register_generator(
   func: SplitFunction,
 ): (seed: string) => HIGH.Register {
   const used = new Set<HIGH.Register>(
-    func.params.map(([, input]) => get_input_register(input)),
+    func.params.map(([input]) => get_input_register(input)),
   );
 
   for (const block of func.blocks) {

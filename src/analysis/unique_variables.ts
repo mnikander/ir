@@ -23,7 +23,7 @@ function extract_variables(program: HIGH.Program): HIGH.Register[] {
     )
       .reduce(concat);
     const variables_from_parameters: HIGH.Register[] = func.params.map(
-      ([, input]) => toRegister(input),
+      ([input]) => toRegister(input),
     );
     return variables_from_body.concat(variables_from_parameters);
   }
@@ -53,7 +53,7 @@ function _extract_variables_via_loop(program: HIGH.Program): HIGH.Register[] {
   for (let f = 0; f < program.length; ++f) {
     const func: HIGH.Function = program[f];
     for (let p = 0; p < func.params.length; ++p) {
-      variables.push(toRegister(func.params[p][1]));
+      variables.push(toRegister(func.params[p][0]));
     }
     for (let b = 0; b < func.blocks.length; ++b) {
       const block: HIGH.Block = func.blocks[b];

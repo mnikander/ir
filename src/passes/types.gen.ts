@@ -12,7 +12,7 @@ export type SplitProgram = readonly SplitFunction[];
 
 export type SplitFunction = {
   name: HIR.Label;
-  params: [HIR.Type, HIR.Input][];
+  params: [HIR.Input, HIR.Type][];
   return_type: HIR.Type;
   blocks: SplitBlock[];
 };

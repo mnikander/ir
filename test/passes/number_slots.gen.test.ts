@@ -8,7 +8,7 @@ describe("number_slots", () => {
     const input: HIR.Program = [
       {
         name: "@combine",
-        params: [[["Int"], ["%a"]], [["Int"], ["%b"]]],
+        params: [[["%a"], ["Int"]], [["%b"], ["Int"]]],
         return_type: ["Int"],
         blocks: [
           {

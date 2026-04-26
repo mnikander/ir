@@ -18,7 +18,7 @@ export function number_slots_in_function(func: HIR.Function): SlottedFunction {
   let next_offset = 0;
 
   for (const param of func.params) {
-    const register = get_plain_register(param[1]);
+    const register = get_plain_register(param[0]);
     if (find_slot(slots, register) === undefined) {
       slots.push({ name: register, offset: next_offset });
       next_offset += 1;
@@ -36,7 +36,7 @@ export function number_slots_in_function(func: HIR.Function): SlottedFunction {
   }
 
   const params: NumberedParam[] = func.params.map((param) => {
-    const name = get_plain_register(param[1]);
+    const name = get_plain_register(param[0]);
     return {
       name,
       offset: get_slot(

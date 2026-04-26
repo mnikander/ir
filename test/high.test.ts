@@ -418,7 +418,7 @@ function @main [] -> Int
     %2 = call Int @identity [%1]
     return Int %2
 
-function @identity [Int %a] -> Int
+function @identity [%a : Int] -> Int
 
   block @entry:
     return Int %a
@@ -444,7 +444,7 @@ function @identity [Int %a] -> Int
       },
       {
         name: "@identity",
-        params: [[["Int"], ["%a"]]],
+        params: [[["%a"], ["Int"]]],
         return_type: ["Int"],
         blocks: [
           {
@@ -472,7 +472,7 @@ function @main [] -> Int
     %2 = call Int @first [%0, %1]
     return Int %2
 
-function @first [Int %a, Int %b] -> Int
+function @first [%a : Int, %b : Int] -> Int
 
   block @entry:
     return Int %a
@@ -498,7 +498,7 @@ function @first [Int %a, Int %b] -> Int
       },
       {
         name: "@first",
-        params: [[["Int"], ["%a"]], [["Int"], ["%b"]]],
+        params: [[["%a"], ["Int"]], [["%b"], ["Int"]]],
         return_type: ["Int"],
         blocks: [
           {
@@ -532,7 +532,7 @@ function @main [] -> Int
     %2 = call Int @factorial [%0, %1]
     return Int %2
 
-function @factorial [Int %n, Int %acc] -> Int
+function @factorial [%n : Int, %acc : Int] -> Int
 
   block @entry:
     %3 = constant Int 1
@@ -569,7 +569,7 @@ function @factorial [Int %n, Int %acc] -> Int
       },
       {
         name: "@factorial",
-        params: [[["Int"], ["%n"]], [["Int"], ["%acc"]]],
+        params: [[["%n"], ["Int"]], [["%acc"], ["Int"]]],
         return_type: ["Int"],
         blocks: [
           {
@@ -661,7 +661,7 @@ function @main [] -> Int
     %2 = call Int @first [%0, %1]
     return Int %2
 
-function @first [Int %a, Int %a] -> Int
+function @first [%a : Int, %a : Int] -> Int
 
   block @entry:
     return Int %a
@@ -687,7 +687,7 @@ function @first [Int %a, Int %a] -> Int
       },
       {
         name: "@first",
-        params: [[["Int"], ["%a"]], [["Int"], ["%a"]]], // error
+        params: [[["%a"], ["Int"]], [["%a"], ["Int"]]], // error
         return_type: ["Int"],
         blocks: [
           {
@@ -716,12 +716,12 @@ function @main [] -> Int
     %2 = call Int @identity [%1]
     return Int %2
 
-function @identity [Int %a] -> Int
+function @identity [%a : Int] -> Int
 
   block @entry:
     return Int %a
 
-function @identity2 [Int %a] -> Int
+function @identity2 [%a : Int] -> Int
 
   block @entry:
     return Int %a
@@ -748,7 +748,7 @@ function @identity2 [Int %a] -> Int
 
       {
         name: "@identity",
-        params: [[["Int"], ["%a"]]],
+        params: [[["%a"], ["Int"]]],
         return_type: ["Int"],
         blocks: [
           {
@@ -762,7 +762,7 @@ function @identity2 [Int %a] -> Int
 
       {
         name: "@identity2",
-        params: [[["Int"], ["%a"]]], // error: same parameter name used again
+        params: [[["%a"], ["Int"]]], // error: same parameter name used again
         return_type: ["Int"],
         blocks: [
           {

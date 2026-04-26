@@ -105,12 +105,12 @@ function print_input_list(inputs: readonly HIGH.Input[]): string {
   return `[${inputs.map(print_input).join(", ")}]`;
 }
 
-function print_param_list(params: readonly [Type, HIGH.Input][]): string {
+function print_param_list(params: readonly [HIGH.Input, Type][]): string {
   return `[${params.map(print_param).join(", ")}]`;
 }
 
-function print_param([type, input]: readonly [Type, HIGH.Input]): string {
-  return `${print_type(type)} ${print_input(input)}`;
+function print_param([input, type]: readonly [HIGH.Input, Type]): string {
+  return `${print_input(input)} : ${print_type(type)}`;
 }
 
 function print_type(type: Type): string {

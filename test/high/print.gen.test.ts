@@ -54,9 +54,9 @@ describe("HIR printer", () => {
       },
       {
         name: "@identity",
-        params: [[["Int"], ["%value"]], [
-          ["Owned", ["Int"]],
+        params: [[["%value"], ["Int"]], [
           ["consume", "%owned"],
+          ["Owned", ["Int"]],
         ]],
         return_type: ["Int"],
         blocks: [
@@ -79,7 +79,7 @@ describe("HIR printer", () => {
         "    %1 = call Int @identity [%0, (consume %0)]\n" +
         "    return Int %1\n" +
         "\n" +
-        "function @identity [Int %value, (Owned Int) (consume %owned)] -> Int\n" +
+        "function @identity [%value : Int, (consume %owned) : (Owned Int)] -> Int\n" +
         "\n" +
         "  block @entry:\n" +
         "    return Int %value\n",

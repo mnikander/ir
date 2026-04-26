@@ -35,7 +35,7 @@ describe("numbering pipeline", () => {
     const input: HIR.Program = [
       {
         name: "@combine",
-        params: [[["Int"], ["%a"]], [["Int"], ["%b"]]],
+        params: [[["%a"], ["Int"]], [["%b"], ["Int"]]],
         return_type: ["Int"],
         blocks: [
           {
@@ -83,7 +83,7 @@ describe("numbering pipeline", () => {
     const input: HIR.Program = [
       {
         name: "@main",
-        params: [[["Int"], ["%x"]]],
+        params: [[["%x"], ["Int"]]],
         return_type: ["Int"],
         blocks: [
           {
@@ -122,7 +122,7 @@ describe("numbering pipeline", () => {
     const input: HIR.Program = [
       {
         name: "@main",
-        params: [[["Int"], ["%x"]]],
+        params: [[["%x"], ["Int"]]],
         return_type: ["Int"],
         blocks: [
           {
