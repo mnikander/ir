@@ -55,7 +55,7 @@ describe("phi elimination pipeline", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -97,7 +97,7 @@ describe("phi elimination pipeline", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -154,7 +154,7 @@ describe("phi elimination pipeline", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -186,7 +186,7 @@ describe("phi elimination pipeline", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",

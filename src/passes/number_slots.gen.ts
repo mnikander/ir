@@ -50,7 +50,7 @@ export function number_slots_in_function(func: HIR.Function): SlottedFunction {
   return {
     name: func.name,
     params,
-    type: func.type,
+    return_type: func.return_type,
     blocks: func.blocks.map(clone_block),
     slots,
   };

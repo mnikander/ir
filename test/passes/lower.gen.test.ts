@@ -14,7 +14,7 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -43,7 +43,7 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -108,7 +108,7 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -138,7 +138,7 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -167,7 +167,7 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -199,7 +199,7 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -230,7 +230,7 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -261,7 +261,7 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -317,7 +317,7 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -334,7 +334,7 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@identity",
         params: [[["Int"], ["%a"]]],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -366,7 +366,7 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -382,7 +382,7 @@ describe("lowering from HIR to LIR", () => {
       {
         name: "@factorial",
         params: [[["Int"], ["%arg"]]],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",

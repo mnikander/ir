@@ -52,7 +52,7 @@ export function split_phi_edges_in_function(
   return {
     name: func.name,
     params: [...func.params],
-    type: func.type,
+    return_type: func.return_type,
     blocks: rewritten,
   };
 }

@@ -11,7 +11,7 @@ function print_function(fun: HIGH.Function): string {
   const params = print_param_list(fun.params);
   const blocks = fun.blocks.map(print_block).join("\n\n");
   return [
-    `function ${fun.name} ${params} -> ${print_type(fun.type)}`,
+    `function ${fun.name} ${params} -> ${print_type(fun.return_type)}`,
     "",
     blocks,
   ]

@@ -24,7 +24,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [],
       },
     ];
@@ -48,7 +48,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@foo",
@@ -82,7 +82,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -116,7 +116,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -151,7 +151,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -188,7 +188,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -231,7 +231,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -291,7 +291,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -362,7 +362,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -428,7 +428,7 @@ function @identity [%a] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -445,7 +445,7 @@ function @identity [%a] -> Int
       {
         name: "@identity",
         params: [[["Int"], ["%a"]]],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -482,7 +482,7 @@ function @first [%a %b] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -499,7 +499,7 @@ function @first [%a %b] -> Int
       {
         name: "@first",
         params: [[["Int"], ["%a"]], [["Int"], ["%b"]]],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -553,7 +553,7 @@ function @factorial [%n %acc] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -570,7 +570,7 @@ function @factorial [%n %acc] -> Int
       {
         name: "@factorial",
         params: [[["Int"], ["%n"]], [["Int"], ["%acc"]]],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -630,7 +630,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -671,7 +671,7 @@ function @first [%a %a] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -688,7 +688,7 @@ function @first [%a %a] -> Int
       {
         name: "@first",
         params: [[["Int"], ["%a"]], [["Int"], ["%a"]]], // error
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -731,7 +731,7 @@ function @identity2 [%a] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -749,7 +749,7 @@ function @identity2 [%a] -> Int
       {
         name: "@identity",
         params: [[["Int"], ["%a"]]],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -763,7 +763,7 @@ function @identity2 [%a] -> Int
       {
         name: "@identity2",
         params: [[["Int"], ["%a"]]], // error: same parameter name used again
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -805,7 +805,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -883,7 +883,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -963,7 +963,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -1061,7 +1061,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -1144,7 +1144,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -1225,7 +1225,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -1287,7 +1287,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -1322,7 +1322,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -1356,7 +1356,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -1390,7 +1390,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -1426,7 +1426,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -1462,7 +1462,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -1496,7 +1496,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -1533,7 +1533,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -1570,7 +1570,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -1607,7 +1607,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -1646,7 +1646,7 @@ function @main [] -> Int
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",

@@ -10,7 +10,7 @@ export function enumerate_all_blocks(
     return {
       name: f.name,
       params: f.params,
-      type: f.type,
+      return_type: f.return_type,
       blocks: enumerate_blocks(f.blocks),
     };
   });

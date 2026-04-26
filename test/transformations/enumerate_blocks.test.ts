@@ -18,7 +18,7 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -35,7 +35,7 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@0",
@@ -68,7 +68,7 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -99,7 +99,7 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@0",
@@ -153,7 +153,7 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -195,7 +195,7 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@0",
@@ -256,7 +256,7 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -273,7 +273,7 @@ describe("constants and exit", () => {
       {
         name: "@identityA",
         params: [[["Int"], ["%a"]]],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -286,7 +286,7 @@ describe("constants and exit", () => {
       {
         name: "@identityB",
         params: [[["Int"], ["%b"]]], // error: same parameter name used again
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -301,7 +301,7 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@0",
@@ -318,7 +318,7 @@ describe("constants and exit", () => {
       {
         name: "@identityA",
         params: [[["Int"], ["%a"]]],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@0",
@@ -331,7 +331,7 @@ describe("constants and exit", () => {
       {
         name: "@identityB",
         params: [[["Int"], ["%b"]]], // error: same parameter name used again
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@0",
@@ -366,7 +366,7 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -407,7 +407,7 @@ describe("constants and exit", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@0",

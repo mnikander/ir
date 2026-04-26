@@ -36,7 +36,7 @@ describe("numbering pipeline", () => {
       {
         name: "@combine",
         params: [[["Int"], ["%a"]], [["Int"], ["%b"]]],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -84,7 +84,7 @@ describe("numbering pipeline", () => {
       {
         name: "@main",
         params: [[["Int"], ["%x"]]],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -123,7 +123,7 @@ describe("numbering pipeline", () => {
       {
         name: "@main",
         params: [[["Int"], ["%x"]]],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",

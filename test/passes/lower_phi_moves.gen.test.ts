@@ -9,7 +9,7 @@ describe("lower_phi_moves", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -39,7 +39,7 @@ describe("lower_phi_moves", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",

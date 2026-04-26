@@ -9,7 +9,7 @@ describe("HIR printer", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -36,7 +36,7 @@ describe("HIR printer", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -58,7 +58,7 @@ describe("HIR printer", () => {
           ["Owned", ["Int"]],
           ["consume", "%owned"],
         ]],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -91,7 +91,7 @@ describe("HIR printer", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -148,7 +148,7 @@ describe("HIR printer", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@join",
@@ -186,7 +186,7 @@ describe("HIR printer", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -242,7 +242,7 @@ describe("HIR printer", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -279,7 +279,7 @@ describe("HIR printer", () => {
       {
         name: "@main",
         params: [],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",

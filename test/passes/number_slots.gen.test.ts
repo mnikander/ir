@@ -9,7 +9,7 @@ describe("number_slots", () => {
       {
         name: "@combine",
         params: [[["Int"], ["%a"]], [["Int"], ["%b"]]],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",
@@ -31,7 +31,7 @@ describe("number_slots", () => {
           { name: "%a", offset: 0 },
           { name: "%b", offset: 1 },
         ],
-        type: ["Int"],
+        return_type: ["Int"],
         blocks: [
           {
             name: "@entry",

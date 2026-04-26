@@ -19,7 +19,7 @@ export function lower_phi_moves_in_function(
   return {
     name: func.name,
     params: [...func.params],
-    type: func.type,
+    return_type: func.return_type,
     blocks: func.blocks.map((block) =>
       lower_block(block, block_by_name, fresh_register)
     ),
