@@ -113,7 +113,7 @@ block @right:
 jump @end
 
 block @end:
-%z = phi Int [[@left %l] [@right %r]]
+%z = phi Int [[@left, %l], [@right, %r]]
 return Int %z
 
 */

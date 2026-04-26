@@ -76,7 +76,7 @@ describe("HIR printer", () => {
         "\n" +
         "  block @entry:\n" +
         "    %0 = constant Int 11\n" +
-        "    %1 = call Int @identity [%0 (consume %0)]\n" +
+        "    %1 = call Int @identity [%0, (consume %0)]\n" +
         "    return Int %1\n" +
         "\n" +
         "function @identity [Int %value, (Owned Int) (consume %owned)] -> Int\n" +
@@ -174,8 +174,8 @@ describe("HIR printer", () => {
         "function @main [] -> Int\n" +
         "\n" +
         "  block @join:\n" +
-        "    %x = phi Int [[@left %a] [@right (consume %b)]]\n" +
-        "    %y = phi Int [[@left %c] [@right %d]]\n" +
+        "    %x = phi Int [[@left, %a], [@right, (consume %b)]]\n" +
+        "    %y = phi Int [[@left, %c], [@right, %d]]\n" +
         "    %sum = add Int %x %y\n" +
         "    return Int %sum\n",
     );

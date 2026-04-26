@@ -6,8 +6,8 @@
 | **Special Forms** |                |                                     |                        |           | |
 | Function          | `function`     | `function @identity [%arg] -> Int`  |                        | Int       | function definition |
 | Block             | `block`        | `block @entry:`                     |                        |           | basic block definition |
-| Phi               | `phi`          | `%x = phi Int [[@left %l] [@right %r]]` | Array<[Label Value]> | Int       | SSA-style join |
-| Call              | `call`         | `%x = call Int @f [%a (consume %b)]`| Label, Array<Value>    | Int       | function call |
+| Phi               | `phi`          | `%x = phi Int [[@left, %l], [@right, %r]]` | Array<[Label, Value]> | Int       | SSA-style join |
+| Call              | `call`         | `%x = call Int @f [%a, (consume %b)]`| Label, Array<Value>    | Int       | function call |
 |                   |                |                                     |                        |           | |
 | **Memory**        |                |                                     |                        |           | |
 | Constant          | `constant`     | `%x = constant Int 42`              | Literal                | Int       | load a constant value |
@@ -37,7 +37,7 @@
 |                   |                |                                     |                        |           | |
 | **Terminator**    |                |                                     |                        |           | |
 | Jump              | `jump`         | `jump @end`                         | Label                  |           | unconditional branch |
-| Branch            | `branch`       | `branch (consume %c) @left @right`  | Boolean, [Label Label] |           | conditional branch |
+| Branch            | `branch`       | `branch (consume %c) @left @right`  | Boolean, [Label, Label] |           | conditional branch |
 | Return            | `return`       | `return Int (consume %x)`           | Value                  | Int       | |
 |                   |                |                                     |                        |           | |
 
