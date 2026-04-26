@@ -6,8 +6,11 @@ import { Register } from "../high/high_grammar.ts";
 export type ULD = [undef: boolean, live: boolean, dead: boolean];
 export type InSet = Map<Register, ULD>;
 
-export function make_in_set(): InSet {
-  return new Map<Register, ULD>();
+export function make_in_set(registers: Register[]): InSet {
+  const tuples: [Register, ULD][] = registers.map(
+    (r) => [r, [false, false, false]],
+  );
+  return new Map<Register, ULD>(tuples);
 }
 
 export function join(left: ULD, right: ULD): ULD {
