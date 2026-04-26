@@ -106,7 +106,11 @@ function print_input_list(inputs: readonly HIGH.Input[]): string {
 }
 
 function print_param_list(params: readonly [Type, HIGH.Input][]): string {
-  return print_input_list(params.map(([, input]) => input));
+  return `[${params.map(print_param).join(", ")}]`;
+}
+
+function print_param([type, input]: readonly [Type, HIGH.Input]): string {
+  return `${print_type(type)} ${print_input(input)}`;
 }
 
 function print_type(type: Type): string {
