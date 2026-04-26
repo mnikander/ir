@@ -84,49 +84,14 @@ function @main [] -> Int
     expect(evaluate(lower(input))).toBe(small);
   });
 
-  it("must detect use of a register owned by a pointer", () => {
-    const text: string = `
-function @main [] -> Int
-
-  block @entry
-    %x = constant Int ${small}
-    %r = own (Owned Int) %x
-    %t = copy Int %x
-    return Int %t
-`;
-
-    const input: HIGH.Program = [
-      {
-        name: "@main",
-        params: [],
-        return_type: ["Int"],
-        blocks: [
-          {
-            name: "@entry",
-            phis: [],
-            lines: [
-              ["%x", "constant", ["Int"], { value: small }],
-              ["%r", "own", ["Owned", ["Int"]], ["%x"]],
-              ["%t", "copy", ["Int"], ["%x"]],
-            ],
-            terminator: [null, "return", ["Int"], ["%t"]],
-          },
-        ],
-      },
-    ];
-    expect(input).toBeDefined();
-    expect(print(input)).toEqual(text);
-    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
-  });
-
   it("must allow consuming the Copy operand", () => {
     const text: string = `
 function @main [] -> Int
 
   block @entry
-    %0 = constant Int ${small}
-    %1 = copy Int (consume %0)
-    return Int %1
+    %a = constant Int ${small}
+    %b = copy Int (consume %a)
+    return Int %b
 `;
 
     const input: HIGH.Program = [
@@ -139,10 +104,10 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", ["Int"], { value: small }],
-              ["%1", "copy", ["Int"], ["consume", "%0"]],
+              ["%a", "constant", ["Int"], { value: small }],
+              ["%b", "copy", ["Int"], ["consume", "%a"]],
             ],
-            terminator: [null, "return", ["Int"], ["%1"]],
+            terminator: [null, "return", ["Int"], ["%b"]],
           },
         ],
       },
@@ -194,8 +159,8 @@ function @main [] -> Int
 function @main [] -> Int
 
   block @entry
-    %0 = constant Int ${small}
-    return Int (consume %0)
+    %a = constant Int ${small}
+    return Int (consume %a)
 `;
 
     const input: HIGH.Program = [
@@ -208,9 +173,9 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", ["Int"], { value: small }],
+              ["%a", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "return", ["Int"], ["consume", "%0"]],
+            terminator: [null, "return", ["Int"], ["consume", "%a"]],
           },
         ],
       },
@@ -220,15 +185,17 @@ function @main [] -> Int
     expect(validate(input)).toBe(true);
     expect(evaluate(lower(input))).toBe(small);
   });
+});
 
-  it("must detect a use-after-free", () => {
+describe("use-after-free", () => {
+  it("must detect a use-after-free in a return", () => {
     const text: string = `
 function @main [] -> Int
 
   block @entry
-    %0 = constant Int 0
-    %0 = drop
-    return Int %0
+    %a = constant Int 0
+    %a = drop
+    return Int %a
 `;
 
     const input: HIGH.Program = [
@@ -241,10 +208,47 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", ["Int"], { value: 0 }],
-              ["%0", "drop", null],
+              ["%a", "constant", ["Int"], { value: 0 }],
+              ["%a", "drop", null],
             ],
-            terminator: [null, "return", ["Int"], ["%0"]],
+            terminator: [null, "return", ["Int"], ["%a"]],
+          },
+        ],
+      },
+    ];
+    expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
+    expect(validate(input)).toBe(true);
+    // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
+  });
+
+  it("must detect a use-after-free in an arithmetic expression", () => {
+    const text: string = `
+function @main [] -> Int
+
+  block @entry
+    %a = constant Int 0
+    %a = drop
+    %b = negate Int %a
+    return Int %b
+`;
+
+    const input: HIGH.Program = [
+      {
+        name: "@main",
+        params: [],
+        return_type: ["Int"],
+        blocks: [
+          {
+            name: "@entry",
+            phis: [],
+            lines: [
+              ["%a", "constant", ["Int"], { value: 0 }],
+              ["%a", "drop", null],
+              ["%b", "negate", ["Int"], ["%a"]],
+            ],
+            terminator: [null, "return", ["Int"], ["%b"]],
           },
         ],
       },
@@ -261,11 +265,11 @@ function @main [] -> Int
 function @main [] -> Int
 
   block @entry
-    %0 = constant Int ${small}
-    %0 = drop
-    %0 = drop
-    %1 = constant Int ${small}
-    return Int %1
+    %a = constant Int ${small}
+    %a = drop
+    %a = drop
+    %b = constant Int ${small}
+    return Int %b
 `;
 
     const input: HIGH.Program = [
@@ -278,12 +282,12 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", ["Int"], { value: small }],
-              ["%0", "drop", null],
-              ["%0", "drop", null],
-              ["%1", "constant", ["Int"], { value: small }],
+              ["%a", "constant", ["Int"], { value: small }],
+              ["%a", "drop", null],
+              ["%a", "drop", null],
+              ["%b", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "return", ["Int"], ["%1"]],
+            terminator: [null, "return", ["Int"], ["%b"]],
           },
         ],
       },
@@ -300,9 +304,9 @@ function @main [] -> Int
 function @main [] -> Int
 
   block @entry
-    %0 = constant Int ${small}
-    %1 = copy Int (consume %0)
-    return Int %0
+    %a = constant Int ${small}
+    %b = copy Int (consume %a)
+    return Int %a
 `;
 
     const input: HIGH.Program = [
@@ -315,10 +319,10 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", ["Int"], { value: small }],
-              ["%1", "copy", ["Int"], ["consume", "%0"]],
+              ["%a", "constant", ["Int"], { value: small }],
+              ["%b", "copy", ["Int"], ["consume", "%a"]],
             ],
-            terminator: [null, "return", ["Int"], ["%0"]],
+            terminator: [null, "return", ["Int"], ["%a"]],
           },
         ],
       },
@@ -407,5 +411,42 @@ function @main [] -> Int
     // expect(() => {analyze(input)}).toThrow(); // static analysis must flag this as an error
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
     // expect(count_cfg_nodes(input)).toBe(1);// expect(table_of_contents(input).size).toBe(1);
+  });
+});
+
+describe("ownership violations", () => {
+  it("must detect invalid use of a register owned by a pointer", () => {
+    const text: string = `
+function @main [] -> Int
+
+  block @entry
+    %x = constant Int ${small}
+    %r = own (Owned Int) %x
+    %t = copy Int %x
+    return Int %t
+`;
+
+    const input: HIGH.Program = [
+      {
+        name: "@main",
+        params: [],
+        return_type: ["Int"],
+        blocks: [
+          {
+            name: "@entry",
+            phis: [],
+            lines: [
+              ["%x", "constant", ["Int"], { value: small }],
+              ["%r", "own", ["Owned", ["Int"]], ["%x"]],
+              ["%t", "copy", ["Int"], ["%x"]],
+            ],
+            terminator: [null, "return", ["Int"], ["%t"]],
+          },
+        ],
+      },
+    ];
+    expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 });
