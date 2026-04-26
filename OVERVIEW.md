@@ -2,8 +2,8 @@
 
 This repository contains a TypeScript/Deno interpreter for a small intermediate representation.
 The active architecture is HIR -> lowering passes -> LIR -> runtime.
-The input is in JSON form, not in text form.
-There is a pretty-printer which can convert an HIR into text, but there is no parser for the time being.
+The input is in JSON form, which is verified by the typescript type-checker.
+There is no parser.
 Files which are completely AI-generated end with `*.gen.ts` file extensions.
 
 ## Important Files

@@ -5,6 +5,10 @@ three-address code (3AC aka TAC) and static single-assignment (SSA) form. Like
 all IRs, it sits between high-level languages such as C or TypeScript on one
 end, and Assembly on the other end.
 
+There is no parser. The input is in JSON form, not in text form. The JSON input
+is verified by the TypeScript type checker. There is a pretty-printer which can
+convert an HIR into text, for better readablity.
+
 ## Getting Started
 
 This project is implemented in TypeScript, using [Deno](https://deno.com/).
