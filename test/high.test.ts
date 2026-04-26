@@ -418,7 +418,7 @@ function @main [] -> Int
     %2 = call Int @identity [%1]
     return Int %2
 
-function @identity [%a] -> Int
+function @identity [Int %a] -> Int
 
   block @entry:
     return Int %a
@@ -472,7 +472,7 @@ function @main [] -> Int
     %2 = call Int @first [%0 %1]
     return Int %2
 
-function @first [%a %b] -> Int
+function @first [Int %a, Int %b] -> Int
 
   block @entry:
     return Int %a
@@ -532,7 +532,7 @@ function @main [] -> Int
     %2 = call Int @factorial [%0 %1]
     return Int %2
 
-function @factorial [%n %acc] -> Int
+function @factorial [Int %n, Int %acc] -> Int
 
   block @entry:
     %3 = constant Int 1
@@ -661,7 +661,7 @@ function @main [] -> Int
     %2 = call Int @first [%0 %1]
     return Int %2
 
-function @first [%a %a] -> Int
+function @first [Int %a, Int %a] -> Int
 
   block @entry:
     return Int %a
@@ -716,12 +716,12 @@ function @main [] -> Int
     %2 = call Int @identity [%1]
     return Int %2
 
-function @identity [%a] -> Int
+function @identity [Int %a] -> Int
 
   block @entry:
     return Int %a
 
-function @identity2 [%a] -> Int
+function @identity2 [Int %a] -> Int
 
   block @entry:
     return Int %a
