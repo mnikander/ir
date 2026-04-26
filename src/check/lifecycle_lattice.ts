@@ -4,7 +4,11 @@ import { Register } from "../high/high_grammar.ts";
 
 // TODO: could add 'moved' as it's own state for better diagnostics
 export type ULD = [undef: boolean, live: boolean, dead: boolean];
-export type OutSet = Map<Register, ULD>;
+export type InSet = Map<Register, ULD>;
+
+export function make_in_set(): InSet {
+  return new Map<Register, ULD>();
+}
 
 export function join(left: ULD, right: ULD): ULD {
   return [left[0] || right[0], left[1] || right[1], left[2] || right[2]];
