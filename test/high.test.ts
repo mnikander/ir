@@ -15,7 +15,7 @@ const huge: number = 281;
 describe("constants and exit", () => {
   it("must throw error on empty input", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
 
 `;
@@ -24,6 +24,7 @@ function @main []:
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [],
       },
     ];
@@ -36,25 +37,26 @@ function @main []:
 
   it("must throw error if there is no Entry block", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @foo:
-    %0 = constant ${small}
-    return %0
+    %0 = constant Int ${small}
+    return Int %0
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@foo",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
+              ["%0", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "return", ["%0"]],
+            terminator: [null, "return", ["Int"], ["%0"]],
           },
         ],
       },
@@ -68,27 +70,28 @@ function @main []:
 
   it("must throw an error when exiting with a pointer instead of a Value", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant ${small}
-    %1 = borrow %0
-    return %1
+    %0 = constant Int ${small}
+    %1 = borrow (Borrowed Int) %0
+    return Int %1
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
-              ["%1", "borrow", "%0"],
+              ["%0", "constant", ["Int"], { value: small }],
+              ["%1", "borrow", ["Borrowed", ["Int"]], "%0"],
             ],
-            terminator: [null, "return", ["%1"]],
+            terminator: [null, "return", ["Int"], ["%1"]],
           },
         ],
       },
@@ -102,25 +105,26 @@ function @main []:
 
   it("must evaluate a constant", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant ${small}
-    return %0
+    %0 = constant Int ${small}
+    return Int %0
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
+              ["%0", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "return", ["%0"]],
+            terminator: [null, "return", ["Int"], ["%0"]],
           },
         ],
       },
@@ -135,27 +139,28 @@ function @main []:
 describe("copying of registers", () => {
   it("must copy a constant", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant ${small}
-    %1 = copy %0
-    return %1
+    %0 = constant Int ${small}
+    %1 = copy Int %0
+    return Int %1
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
-              ["%1", "copy", ["%0"]],
+              ["%0", "constant", ["Int"], { value: small }],
+              ["%1", "copy", ["Int"], ["%0"]],
             ],
-            terminator: [null, "return", ["%1"]],
+            terminator: [null, "return", ["Int"], ["%1"]],
           },
         ],
       },
@@ -170,29 +175,30 @@ function @main []:
 describe("arithmetic operations", () => {
   it("must evaluate integer addition", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant ${small}
-    %1 = constant ${large}
-    %2 = add %0 %1
-    return %2
+    %0 = constant Int ${small}
+    %1 = constant Int ${large}
+    %2 = add Int %0 %1
+    return Int %2
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
-              ["%1", "constant", { value: large }],
-              ["%2", "add", ["%0"], ["%1"]],
+              ["%0", "constant", ["Int"], { value: small }],
+              ["%1", "constant", ["Int"], { value: large }],
+              ["%2", "add", ["Int"], ["%0"], ["%1"]],
             ],
-            terminator: [null, "return", ["%2"]],
+            terminator: [null, "return", ["Int"], ["%2"]],
           },
         ],
       },
@@ -207,46 +213,47 @@ function @main []:
 describe("labels, jump, and branch", () => {
   it("must execute the correct line of code after an unconditional jump", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
     jump @second
 
   block @first:
-    %1 = constant ${small}
-    return %1
+    %1 = constant Int ${small}
+    return Int %1
 
   block @second:
-    %2 = constant ${large}
-    return %2
+    %2 = constant Int ${large}
+    return Int %2
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "jump", "@second"],
+            terminator: [null, "jump", null, "@second"],
           },
           {
             name: "@first",
             phis: [],
             lines: [
-              ["%1", "constant", { value: small }],
+              ["%1", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "return", ["%1"]],
+            terminator: [null, "return", ["Int"], ["%1"]],
           },
           {
             name: "@second",
             phis: [],
             lines: [
-              ["%2", "constant", { value: large }],
+              ["%2", "constant", ["Int"], { value: large }],
             ],
-            terminator: [null, "return", ["%2"]],
+            terminator: [null, "return", ["Int"], ["%2"]],
           },
         ],
       },
@@ -259,64 +266,65 @@ function @main []:
 
   it("must execute first branch if the condition is true", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant 1
-    %1 = constant ${small}
-    %2 = constant ${large}
-    %3 = constant ${huge}
+    %0 = constant Int 1
+    %1 = constant Int ${small}
+    %2 = constant Int ${large}
+    %3 = constant Int ${huge}
     branch %0 @then @else
 
   block @then:
-    %4 = add %1 %2
+    %4 = add Int %1 %2
     jump @end
 
   block @else:
-    %5 = add %2 %3
+    %5 = add Int %2 %3
     jump @end
 
   block @end:
-    return %4
+    return Int %4
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: 1 }],
-              ["%1", "constant", { value: small }],
-              ["%2", "constant", { value: large }],
-              ["%3", "constant", { value: huge }],
+              ["%0", "constant", ["Int"], { value: 1 }],
+              ["%1", "constant", ["Int"], { value: small }],
+              ["%2", "constant", ["Int"], { value: large }],
+              ["%3", "constant", ["Int"], { value: huge }],
             ],
-            terminator: [null, "branch", ["%0"], ["@then", "@else"]],
+            terminator: [null, "branch", null, ["%0"], ["@then", "@else"]],
           },
           {
             name: "@then",
             phis: [],
             lines: [
-              ["%4", "add", ["%1"], ["%2"]],
+              ["%4", "add", ["Int"], ["%1"], ["%2"]],
             ],
-            terminator: [null, "jump", "@end"],
+            terminator: [null, "jump", null, "@end"],
           },
           {
             name: "@else",
             phis: [],
             lines: [
-              ["%5", "add", ["%2"], ["%3"]],
+              ["%5", "add", ["Int"], ["%2"], ["%3"]],
             ],
-            terminator: [null, "jump", "@end"],
+            terminator: [null, "jump", null, "@end"],
           },
           {
             name: "@end",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%4"]],
+            terminator: [null, "return", ["Int"], ["%4"]],
           },
         ],
       },
@@ -329,64 +337,65 @@ function @main []:
 
   it("must execute the second branch when condition is false", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant 0
-    %1 = constant ${small}
-    %2 = constant ${large}
-    %3 = constant ${huge}
+    %0 = constant Int 0
+    %1 = constant Int ${small}
+    %2 = constant Int ${large}
+    %3 = constant Int ${huge}
     branch %0 @then @else
 
   block @then:
-    %4 = add %1 %2
+    %4 = add Int %1 %2
     jump @end
 
   block @else:
-    %5 = add %2 %3
+    %5 = add Int %2 %3
     jump @end
 
   block @end:
-    return %5
+    return Int %5
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: 0 }],
-              ["%1", "constant", { value: small }],
-              ["%2", "constant", { value: large }],
-              ["%3", "constant", { value: huge }],
+              ["%0", "constant", ["Int"], { value: 0 }],
+              ["%1", "constant", ["Int"], { value: small }],
+              ["%2", "constant", ["Int"], { value: large }],
+              ["%3", "constant", ["Int"], { value: huge }],
             ],
-            terminator: [null, "branch", ["%0"], ["@then", "@else"]],
+            terminator: [null, "branch", null, ["%0"], ["@then", "@else"]],
           },
           {
             name: "@then",
             phis: [],
             lines: [
-              ["%4", "add", ["%1"], ["%2"]],
+              ["%4", "add", ["Int"], ["%1"], ["%2"]],
             ],
-            terminator: [null, "jump", "@end"],
+            terminator: [null, "jump", null, "@end"],
           },
           {
             name: "@else",
             phis: [],
             lines: [
-              ["%5", "add", ["%2"], ["%3"]],
+              ["%5", "add", ["Int"], ["%2"], ["%3"]],
             ],
-            terminator: [null, "jump", "@end"],
+            terminator: [null, "jump", null, "@end"],
           },
           {
             name: "@end",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%5"]],
+            terminator: [null, "return", ["Int"], ["%5"]],
           },
         ],
       },
@@ -401,46 +410,48 @@ function @main []:
 describe("function call", () => {
   it("must support calling the identity function", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant ${small}
-    %1 = constant ${large}
-    %2 = call @identity [%1]
-    return %2
+    %0 = constant Int ${small}
+    %1 = constant Int ${large}
+    %2 = call Int @identity [%1]
+    return Int %2
 
-function @identity [%a]:
+function @identity [%a] -> Int
 
   block @entry:
-    return %a
+    return Int %a
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
-              ["%1", "constant", { value: large }],
-              ["%2", "call", "@identity", [["%1"]]],
+              ["%0", "constant", ["Int"], { value: small }],
+              ["%1", "constant", ["Int"], { value: large }],
+              ["%2", "call", ["Int"], "@identity", [["%1"]]],
             ],
-            terminator: [null, "return", ["%2"]],
+            terminator: [null, "return", ["Int"], ["%2"]],
           },
         ],
       },
       {
         name: "@identity",
-        params: [["%a"]],
+        params: [[["Int"], ["%a"]]],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%a"]],
+            terminator: [null, "return", ["Int"], ["%a"]],
           },
         ],
       },
@@ -453,46 +464,48 @@ function @identity [%a]:
 
   it("must support calling a binary function", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant ${small}
-    %1 = constant ${large}
-    %2 = call @first [%0 %1]
-    return %2
+    %0 = constant Int ${small}
+    %1 = constant Int ${large}
+    %2 = call Int @first [%0 %1]
+    return Int %2
 
-function @first [%a %b]:
+function @first [%a %b] -> Int
 
   block @entry:
-    return %a
+    return Int %a
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
-              ["%1", "constant", { value: large }],
-              ["%2", "call", "@first", [["%0"], ["%1"]]],
+              ["%0", "constant", ["Int"], { value: small }],
+              ["%1", "constant", ["Int"], { value: large }],
+              ["%2", "call", ["Int"], "@first", [["%0"], ["%1"]]],
             ],
-            terminator: [null, "return", ["%2"]],
+            terminator: [null, "return", ["Int"], ["%2"]],
           },
         ],
       },
       {
         name: "@first",
-        params: [["%a"], ["%b"]],
+        params: [[["Int"], ["%a"]], [["Int"], ["%b"]]],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%a"]],
+            terminator: [null, "return", ["Int"], ["%a"]],
           },
         ],
       },
@@ -511,60 +524,62 @@ function @first [%a %b]:
     //     return n == 1 ? acc : factorial(n-1, n*acc);
 
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant 5
-    %1 = constant 1
-    %2 = call @factorial [%0 %1]
-    return %2
+    %0 = constant Int 5
+    %1 = constant Int 1
+    %2 = call Int @factorial [%0 %1]
+    return Int %2
 
-function @factorial [%n %acc]:
+function @factorial [%n %acc] -> Int
 
   block @entry:
-    %3 = constant 1
-    %6 = equal %n %3
+    %3 = constant Int 1
+    %6 = equal Int %n %3
     branch %6 @termination @body
 
   block @body:
-    %7 = subtract %n %3
-    %8 = multiply %n %acc
-    %9 = call @factorial [%7 %8]
+    %7 = subtract Int %n %3
+    %8 = multiply Int %n %acc
+    %9 = call Int @factorial [%7 %8]
     jump @termination
 
   block @termination:
-    %10 = phi [[@body %9] [@entry %acc]]
-    return %10
+    %10 = phi Int [[@body %9] [@entry %acc]]
+    return Int %10
 `;
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: 5 }],
-              ["%1", "constant", { value: 1 }],
-              ["%2", "call", "@factorial", [["%0"], ["%1"]]],
+              ["%0", "constant", ["Int"], { value: 5 }],
+              ["%1", "constant", ["Int"], { value: 1 }],
+              ["%2", "call", ["Int"], "@factorial", [["%0"], ["%1"]]],
             ],
-            terminator: [null, "return", ["%2"]],
+            terminator: [null, "return", ["Int"], ["%2"]],
           },
         ],
       },
       {
         name: "@factorial",
-        params: [["%n"], ["%acc"]],
+        params: [[["Int"], ["%n"]], [["Int"], ["%acc"]]],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%3", "constant", { value: 1 }],
-              ["%6", "equal", ["%n"], ["%3"]],
+              ["%3", "constant", ["Int"], { value: 1 }],
+              ["%6", "equal", ["Int"], ["%n"], ["%3"]],
             ],
-            terminator: [null, "branch", ["%6"], [
+            terminator: [null, "branch", null, ["%6"], [
               "@termination",
               "@body",
             ]],
@@ -573,22 +588,22 @@ function @factorial [%n %acc]:
             name: "@body",
             phis: [],
             lines: [
-              ["%7", "subtract", ["%n"], ["%3"]],
-              ["%8", "multiply", ["%n"], ["%acc"]],
-              ["%9", "call", "@factorial", [["%7"], ["%8"]]],
+              ["%7", "subtract", ["Int"], ["%n"], ["%3"]],
+              ["%8", "multiply", ["Int"], ["%n"], ["%acc"]],
+              ["%9", "call", ["Int"], "@factorial", [["%7"], ["%8"]]],
             ],
-            terminator: [null, "jump", "@termination"],
+            terminator: [null, "jump", null, "@termination"],
           },
           {
             name: "@termination",
             phis: [
-              ["%10", "phi", [["@body", ["%9"]], [
+              ["%10", "phi", ["Int"], [["@body", ["%9"]], [
                 "@entry",
                 ["%acc"],
               ]]],
             ],
             lines: [],
-            terminator: [null, "return", ["%10"]],
+            terminator: [null, "return", ["Int"], ["%10"]],
           },
         ],
       },
@@ -603,27 +618,28 @@ function @factorial [%n %acc]:
 describe("static single assignment", () => {
   it("must throw an error when re-assigning to a register", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant ${small}
-    %0 = constant ${large}
-    return %1
+    %0 = constant Int ${small}
+    %0 = constant Int ${large}
+    return Int %1
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
-              ["%0", "constant", { value: large }], // attempt to reassign register 0
+              ["%0", "constant", ["Int"], { value: small }],
+              ["%0", "constant", ["Int"], { value: large }], // attempt to reassign register 0
             ],
-            terminator: [null, "return", ["%1"]],
+            terminator: [null, "return", ["Int"], ["%1"]],
           },
         ],
       },
@@ -637,46 +653,48 @@ function @main []:
 
   it("must throw an error when function parameters have the same name", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant ${small}
-    %1 = constant ${large}
-    %2 = call @first [%0 %1]
-    return %2
+    %0 = constant Int ${small}
+    %1 = constant Int ${large}
+    %2 = call Int @first [%0 %1]
+    return Int %2
 
-function @first [%a %a]:
+function @first [%a %a] -> Int
 
   block @entry:
-    return %a
+    return Int %a
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
-              ["%1", "constant", { value: large }],
-              ["%2", "call", "@first", [["%0"], ["%1"]]],
+              ["%0", "constant", ["Int"], { value: small }],
+              ["%1", "constant", ["Int"], { value: large }],
+              ["%2", "call", ["Int"], "@first", [["%0"], ["%1"]]],
             ],
-            terminator: [null, "return", ["%2"]],
+            terminator: [null, "return", ["Int"], ["%2"]],
           },
         ],
       },
       {
         name: "@first",
-        params: [["%a"], ["%a"]], // error
+        params: [[["Int"], ["%a"]], [["Int"], ["%a"]]], // error
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%a"]],
+            terminator: [null, "return", ["Int"], ["%a"]],
           },
         ],
       },
@@ -690,65 +708,68 @@ function @first [%a %a]:
 
   it("must throw an error when function parameter registers are not unique", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant ${small}
-    %1 = constant ${large}
-    %2 = call @identity [%1]
-    return %2
+    %0 = constant Int ${small}
+    %1 = constant Int ${large}
+    %2 = call Int @identity [%1]
+    return Int %2
 
-function @identity [%a]:
-
-  block @entry:
-    return %a
-
-function @identity2 [%a]:
+function @identity [%a] -> Int
 
   block @entry:
-    return %a
+    return Int %a
+
+function @identity2 [%a] -> Int
+
+  block @entry:
+    return Int %a
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
-              ["%1", "constant", { value: large }],
-              ["%2", "call", "@identity", [["%1"]]],
+              ["%0", "constant", ["Int"], { value: small }],
+              ["%1", "constant", ["Int"], { value: large }],
+              ["%2", "call", ["Int"], "@identity", [["%1"]]],
             ],
-            terminator: [null, "return", ["%2"]],
+            terminator: [null, "return", ["Int"], ["%2"]],
           },
         ],
       },
 
       {
         name: "@identity",
-        params: [["%a"]],
+        params: [[["Int"], ["%a"]]],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%a"]],
+            terminator: [null, "return", ["Int"], ["%a"]],
           },
         ],
       },
 
       {
         name: "@identity2",
-        params: [["%a"]], // error: same parameter name used again
+        params: [[["Int"], ["%a"]]], // error: same parameter name used again
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%a"]],
+            terminator: [null, "return", ["Int"], ["%a"]],
           },
         ],
       },
@@ -762,60 +783,61 @@ function @identity2 [%a]:
 
   it("phi node must assign from the correct register after an unconditional jump", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
     jump @second
 
   block @first:
-    %1 = constant ${small}
+    %1 = constant Int ${small}
     jump @end
 
   block @second:
-    %2 = constant ${large}
+    %2 = constant Int ${large}
     jump @end
 
   block @end:
-    %3 = phi [[@first %1] [@second %2]]
-    return %3
+    %3 = phi Int [[@first %1] [@second %2]]
+    return Int %3
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "jump", "@second"],
+            terminator: [null, "jump", null, "@second"],
           },
           {
             name: "@first",
             phis: [],
             lines: [
-              ["%1", "constant", { value: small }],
+              ["%1", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "jump", "@end"],
+            terminator: [null, "jump", null, "@end"],
           },
           {
             name: "@second",
             phis: [],
             lines: [
-              ["%2", "constant", { value: large }],
+              ["%2", "constant", ["Int"], { value: large }],
             ],
-            terminator: [null, "jump", "@end"],
+            terminator: [null, "jump", null, "@end"],
           },
           {
             name: "@end",
             phis: [
-              ["%3", "phi", [["@first", ["%1"]], ["@second", [
+              ["%3", "phi", ["Int"], [["@first", ["%1"]], ["@second", [
                 "%2",
               ]]]],
             ],
             lines: [],
-            terminator: [null, "return", ["%3"]],
+            terminator: [null, "return", ["Int"], ["%3"]],
           },
         ],
       },
@@ -839,55 +861,56 @@ function @main []:
     // IR-code:
     //
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant 0
-    %1 = constant 1
-    %2 = constant 3
+    %0 = constant Int 0
+    %1 = constant Int 1
+    %2 = constant Int 3
     jump @loop
 
   block @loop:
-    %3 = phi [[@entry %0] [@loop %4]]
-    %4 = add %1 %3
-    %5 = unequal %3 %2
+    %3 = phi Int [[@entry %0] [@loop %4]]
+    %4 = add Int %1 %3
+    %5 = unequal Int %3 %2
     branch %5 @loop @end
 
   block @end:
-    return %3
+    return Int %3
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: 0 }],
-              ["%1", "constant", { value: 1 }],
-              ["%2", "constant", { value: 3 }],
+              ["%0", "constant", ["Int"], { value: 0 }],
+              ["%1", "constant", ["Int"], { value: 1 }],
+              ["%2", "constant", ["Int"], { value: 3 }],
             ],
-            terminator: [null, "jump", "@loop"],
+            terminator: [null, "jump", null, "@loop"],
           },
           {
             name: "@loop",
             phis: [
-              ["%3", "phi", [["@entry", ["%0"]], ["@loop", ["%4"]]]],
+              ["%3", "phi", ["Int"], [["@entry", ["%0"]], ["@loop", ["%4"]]]],
             ],
             lines: [
-              ["%4", "add", ["%1"], ["%3"]],
-              ["%5", "unequal", ["%3"], ["%2"]],
+              ["%4", "add", ["Int"], ["%1"], ["%3"]],
+              ["%5", "unequal", ["Int"], ["%3"], ["%2"]],
             ],
-            terminator: [null, "branch", ["%5"], ["@loop", "@end"]],
+            terminator: [null, "branch", null, ["%5"], ["@loop", "@end"]],
           },
           {
             name: "@end",
             phis: [],
             lines: [],
-            terminator: [null, "return", ["%3"]],
+            terminator: [null, "return", ["Int"], ["%3"]],
           },
         ],
       },
@@ -911,43 +934,44 @@ function @main []:
     //
     //
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %condition = constant 0
+    %condition = constant Int 0
     branch %condition @a @b
 
   block @a:
-    %alpha = constant ${small}
+    %alpha = constant Int ${small}
     jump @d
 
   block @b:
-    %bravo = constant ${large}
+    %bravo = constant Int ${large}
     jump @c
 
   block @c:
-    %charlie = constant ${huge}
+    %charlie = constant Int ${huge}
     jump @d
 
   block @d:
-    %grandparent = phi [[@a %alpha] [@c %bravo]]
-    %parent = phi [[@a %alpha] [@c %charlie]]
-    %total = add %grandparent %parent
-    return %total
+    %grandparent = phi Int [[@a %alpha] [@c %bravo]]
+    %parent = phi Int [[@a %alpha] [@c %charlie]]
+    %total = add Int %grandparent %parent
+    return Int %total
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%condition", "constant", { value: 0 }],
+              ["%condition", "constant", ["Int"], { value: 0 }],
             ],
-            terminator: [null, "branch", ["%condition"], [
+            terminator: [null, "branch", null, ["%condition"], [
               "@a",
               "@b",
             ]],
@@ -956,42 +980,42 @@ function @main []:
             name: "@a",
             phis: [],
             lines: [
-              ["%alpha", "constant", { value: small }],
+              ["%alpha", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "jump", "@d"],
+            terminator: [null, "jump", null, "@d"],
           },
           {
             name: "@b",
             phis: [],
             lines: [
-              ["%bravo", "constant", { value: large }],
+              ["%bravo", "constant", ["Int"], { value: large }],
             ],
-            terminator: [null, "jump", "@c"],
+            terminator: [null, "jump", null, "@c"],
           },
           {
             name: "@c",
             phis: [],
             lines: [
-              ["%charlie", "constant", { value: huge }],
+              ["%charlie", "constant", ["Int"], { value: huge }],
             ],
-            terminator: [null, "jump", "@d"],
+            terminator: [null, "jump", null, "@d"],
           },
           {
             name: "@d",
             phis: [
-              ["%grandparent", "phi", [["@a", ["%alpha"]], [
+              ["%grandparent", "phi", ["Int"], [["@a", ["%alpha"]], [
                 "@c",
                 ["%bravo"],
               ]]],
-              ["%parent", "phi", [["@a", ["%alpha"]], [
+              ["%parent", "phi", ["Int"], [["@a", ["%alpha"]], [
                 "@c",
                 ["%charlie"],
               ]]],
             ],
             lines: [
-              ["%total", "add", ["%grandparent"], ["%parent"]],
+              ["%total", "add", ["Int"], ["%grandparent"], ["%parent"]],
             ],
-            terminator: [null, "return", ["%total"]],
+            terminator: [null, "return", ["Int"], ["%total"]],
           },
         ],
       },
@@ -1014,44 +1038,45 @@ function @main []:
     //
     //
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
     jump @a
 
   block @a:
-    %alpha = constant ${small}
-    %condition = constant 1
+    %alpha = constant Int ${small}
+    %condition = constant Int 1
     branch %condition @b @c
 
   block @b:
-    %bravo = constant ${large}
+    %bravo = constant Int ${large}
     jump @c
 
   block @c:
-    %result = phi [[@a %alpha] [@b %bravo]]
-    return %result
+    %result = phi Int [[@a %alpha] [@b %bravo]]
+    return Int %result
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "jump", "@a"],
+            terminator: [null, "jump", null, "@a"],
           },
           {
             name: "@a",
             phis: [],
             lines: [
-              ["%alpha", "constant", { value: small }],
-              ["%condition", "constant", { value: 1 }],
+              ["%alpha", "constant", ["Int"], { value: small }],
+              ["%condition", "constant", ["Int"], { value: 1 }],
             ],
-            terminator: [null, "branch", ["%condition"], [
+            terminator: [null, "branch", null, ["%condition"], [
               "@b",
               "@c",
             ]],
@@ -1060,20 +1085,20 @@ function @main []:
             name: "@b",
             phis: [],
             lines: [
-              ["%bravo", "constant", { value: large }],
+              ["%bravo", "constant", ["Int"], { value: large }],
             ],
-            terminator: [null, "jump", "@c"],
+            terminator: [null, "jump", null, "@c"],
           },
           {
             name: "@c",
             phis: [
-              ["%result", "phi", [["@a", ["%alpha"]], [
+              ["%result", "phi", ["Int"], [["@a", ["%alpha"]], [
                 "@b",
                 ["%bravo"],
               ]]],
             ],
             lines: [],
-            terminator: [null, "return", ["%result"]],
+            terminator: [null, "return", ["Int"], ["%result"]],
           },
         ],
       },
@@ -1096,64 +1121,65 @@ function @main []:
     //
     //
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %echo = constant 0
+    %echo = constant Int 0
     branch %echo @a @c
 
   block @a:
-    %alpha = constant 1
+    %alpha = constant Int 1
     branch %alpha @b @c
 
   block @b:
-    %bravo = constant 1
+    %bravo = constant Int 1
     jump @c
 
   block @c:
-    %result = phi [[@entry %echo] [@a %alpha] [@b %bravo]]
-    return %result
+    %result = phi Int [[@entry %echo] [@a %alpha] [@b %bravo]]
+    return Int %result
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%echo", "constant", { value: 0 }],
+              ["%echo", "constant", ["Int"], { value: 0 }],
             ],
-            terminator: [null, "branch", ["%echo"], ["@a", "@c"]],
+            terminator: [null, "branch", null, ["%echo"], ["@a", "@c"]],
           },
           {
             name: "@a",
             phis: [],
             lines: [
-              ["%alpha", "constant", { value: 1 }],
+              ["%alpha", "constant", ["Int"], { value: 1 }],
             ],
-            terminator: [null, "branch", ["%alpha"], ["@b", "@c"]],
+            terminator: [null, "branch", null, ["%alpha"], ["@b", "@c"]],
           },
           {
             name: "@b",
             phis: [],
             lines: [
-              ["%bravo", "constant", { value: 1 }],
+              ["%bravo", "constant", ["Int"], { value: 1 }],
             ],
-            terminator: [null, "jump", "@c"],
+            terminator: [null, "jump", null, "@c"],
           },
           {
             name: "@c",
             phis: [
-              ["%result", "phi", [["@entry", ["%echo"]], [
+              ["%result", "phi", ["Int"], [["@entry", ["%echo"]], [
                 "@a",
                 ["%alpha"],
               ], ["@b", ["%bravo"]]]],
             ],
             lines: [],
-            terminator: [null, "return", ["%result"]],
+            terminator: [null, "return", ["Int"], ["%result"]],
           },
         ],
       },
@@ -1176,64 +1202,65 @@ function @main []:
     //
     //
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %echo = constant 0
+    %echo = constant Int 0
     branch %echo @a @c
 
   block @a:
-    %alpha = constant 1
+    %alpha = constant Int 1
     branch %alpha @b @c
 
   block @b:
-    %bravo = constant 1
+    %bravo = constant Int 1
     jump @c
 
   block @c:
-    %result = phi [[@a %alpha] [@b %bravo]]
-    return %result
+    %result = phi Int [[@a %alpha] [@b %bravo]]
+    return Int %result
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%echo", "constant", { value: 0 }],
+              ["%echo", "constant", ["Int"], { value: 0 }],
             ],
-            terminator: [null, "branch", ["%echo"], ["@a", "@c"]],
+            terminator: [null, "branch", null, ["%echo"], ["@a", "@c"]],
           },
           {
             name: "@a",
             phis: [],
             lines: [
-              ["%alpha", "constant", { value: 1 }],
+              ["%alpha", "constant", ["Int"], { value: 1 }],
             ],
-            terminator: [null, "branch", ["%alpha"], ["@b", "@c"]],
+            terminator: [null, "branch", null, ["%alpha"], ["@b", "@c"]],
           },
           {
             name: "@b",
             phis: [],
             lines: [
-              ["%bravo", "constant", { value: 1 }],
+              ["%bravo", "constant", ["Int"], { value: 1 }],
             ],
-            terminator: [null, "jump", "@c"],
+            terminator: [null, "jump", null, "@c"],
           },
           {
             name: "@c",
             phis: [
-              ["%result", "phi", [["@a", ["%alpha"]], [
+              ["%result", "phi", ["Int"], [["@a", ["%alpha"]], [
                 "@b",
                 ["%bravo"],
               ]]],
             ],
             lines: [],
-            terminator: [null, "return", ["%result"]],
+            terminator: [null, "return", ["Int"], ["%result"]],
           },
         ],
       },
@@ -1248,27 +1275,28 @@ function @main []:
 describe("memory and ownership", () => {
   it("must allow consuming the Copy operand", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant ${small}
-    %1 = copy (consume %0)
-    return %1
+    %0 = constant Int ${small}
+    %1 = copy Int (consume %0)
+    return Int %1
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
-              ["%1", "copy", ["consume", "%0"]],
+              ["%0", "constant", ["Int"], { value: small }],
+              ["%1", "copy", ["Int"], ["consume", "%0"]],
             ],
-            terminator: [null, "return", ["%1"]],
+            terminator: [null, "return", ["Int"], ["%1"]],
           },
         ],
       },
@@ -1281,29 +1309,30 @@ function @main []:
 
   it("must allow consuming an Add operand", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %x = constant ${small}
-    %y = constant ${large}
-    %sum = add (consume %x) %y
-    return %sum
+    %x = constant Int ${small}
+    %y = constant Int ${large}
+    %sum = add Int (consume %x) %y
+    return Int %sum
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", { value: small }],
-              ["%y", "constant", { value: large }],
-              ["%sum", "add", ["consume", "%x"], ["%y"]],
+              ["%x", "constant", ["Int"], { value: small }],
+              ["%y", "constant", ["Int"], { value: large }],
+              ["%sum", "add", ["Int"], ["consume", "%x"], ["%y"]],
             ],
-            terminator: [null, "return", ["%sum"]],
+            terminator: [null, "return", ["Int"], ["%sum"]],
           },
         ],
       },
@@ -1316,10 +1345,10 @@ function @main []:
 
   it("must allow consuming the return operand", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant ${small}
+    %0 = constant Int ${small}
     return (consume %0)
 `;
 
@@ -1327,14 +1356,15 @@ function @main []:
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
+              ["%0", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "return", ["consume", "%0"]],
+            terminator: [null, "return", ["Int"], ["consume", "%0"]],
           },
         ],
       },
@@ -1347,29 +1377,30 @@ function @main []:
 
   it("must create and load from a pointer", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %x = constant ${small}
-    %r = borrow %x
-    %t = load %r
-    return %t
+    %x = constant Int ${small}
+    %r = borrow (Borrowed Int) %x
+    %t = load Int %r
+    return Int %t
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", { value: small }],
-              ["%r", "borrow", "%x"],
-              ["%t", "load", "%r"],
+              ["%x", "constant", ["Int"], { value: small }],
+              ["%r", "borrow", ["Borrowed", ["Int"]], "%x"],
+              ["%t", "load", ["Int"], "%r"],
             ],
-            terminator: [null, "return", ["%t"]],
+            terminator: [null, "return", ["Int"], ["%t"]],
           },
         ],
       },
@@ -1382,29 +1413,30 @@ function @main []:
 
   it("must allow a register to be owned by a pointer", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %x = constant ${small}
-    %r = own %x
-    %t = load %r
-    return %t
+    %x = constant Int ${small}
+    %r = own (Owned Int) %x
+    %t = load Int %r
+    return Int %t
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", { value: small }],
-              ["%r", "own", ["%x"]],
-              ["%t", "load", "%r"],
+              ["%x", "constant", ["Int"], { value: small }],
+              ["%r", "own", ["Owned", ["Int"]], ["%x"]],
+              ["%t", "load", ["Int"], "%r"],
             ],
-            terminator: [null, "return", ["%t"]],
+            terminator: [null, "return", ["Int"], ["%t"]],
           },
         ],
       },
@@ -1417,29 +1449,30 @@ function @main []:
 
   it("must detect use of a register owned by a pointer", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %x = constant ${small}
-    %r = own %x
-    %t = copy %x
-    return %t
+    %x = constant Int ${small}
+    %r = own (Owned Int) %x
+    %t = copy Int %x
+    return Int %t
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", { value: small }],
-              ["%r", "own", ["%x"]],
-              ["%t", "copy", ["%x"]],
+              ["%x", "constant", ["Int"], { value: small }],
+              ["%r", "own", ["Owned", ["Int"]], ["%x"]],
+              ["%t", "copy", ["Int"], ["%x"]],
             ],
-            terminator: [null, "return", ["%t"]],
+            terminator: [null, "return", ["Int"], ["%t"]],
           },
         ],
       },
@@ -1451,27 +1484,28 @@ function @main []:
 
   it("must detect a use-after-free", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant 0
+    %0 = constant Int 0
     %0 = drop
-    return %0
+    return Int %0
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: 0 }],
-              ["%0", "drop"],
+              ["%0", "constant", ["Int"], { value: 0 }],
+              ["%0", "drop", null],
             ],
-            terminator: [null, "return", ["%0"]],
+            terminator: [null, "return", ["Int"], ["%0"]],
           },
         ],
       },
@@ -1485,31 +1519,32 @@ function @main []:
 
   it("must detect a double-free", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant ${small}
+    %0 = constant Int ${small}
     %0 = drop
     %0 = drop
-    %1 = constant ${small}
-    return %1
+    %1 = constant Int ${small}
+    return Int %1
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
-              ["%0", "drop"],
-              ["%0", "drop"],
-              ["%1", "constant", { value: small }],
+              ["%0", "constant", ["Int"], { value: small }],
+              ["%0", "drop", null],
+              ["%0", "drop", null],
+              ["%1", "constant", ["Int"], { value: small }],
             ],
-            terminator: [null, "return", ["%1"]],
+            terminator: [null, "return", ["Int"], ["%1"]],
           },
         ],
       },
@@ -1523,27 +1558,28 @@ function @main []:
 
   it("must detect a use-after-move", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %0 = constant ${small}
-    %1 = copy (consume %0)
-    return %0
+    %0 = constant Int ${small}
+    %1 = copy Int (consume %0)
+    return Int %0
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", { value: small }],
-              ["%1", "copy", ["consume", "%0"]],
+              ["%0", "constant", ["Int"], { value: small }],
+              ["%1", "copy", ["Int"], ["consume", "%0"]],
             ],
-            terminator: [null, "return", ["%0"]],
+            terminator: [null, "return", ["Int"], ["%0"]],
           },
         ],
       },
@@ -1557,31 +1593,32 @@ function @main []:
 
   it("must detect a dangling pointer when the source register is dropped", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %x = constant ${small}
-    %r = borrow %x
+    %x = constant Int ${small}
+    %r = borrow (Borrowed Int) %x
     %x = drop
-    %t = load %r
-    return %t
+    %t = load Int %r
+    return Int %t
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", { value: small }],
-              ["%r", "borrow", "%x"],
-              ["%x", "drop"],
-              ["%t", "load", "%r"],
+              ["%x", "constant", ["Int"], { value: small }],
+              ["%r", "borrow", ["Borrowed", ["Int"]], "%x"],
+              ["%x", "drop", null],
+              ["%t", "load", ["Int"], "%r"],
             ],
-            terminator: [null, "return", ["%t"]],
+            terminator: [null, "return", ["Int"], ["%t"]],
           },
         ],
       },
@@ -1595,31 +1632,32 @@ function @main []:
 
   it("must detect a dangling pointer when the source register is moved", () => {
     const text: string = `
-function @main []:
+function @main [] -> Int
 
   block @entry:
-    %x = constant ${small}
-    %r = borrow %x
-    %y = copy (consume %x)
-    %t = load %r
-    return %t
+    %x = constant Int ${small}
+    %r = borrow (Borrowed Int) %x
+    %y = copy Int (consume %x)
+    %t = load Int %r
+    return Int %t
 `;
 
     const input: HIGH.Program = [
       {
         name: "@main",
         params: [],
+        type: ["Int"],
         blocks: [
           {
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", { value: small }],
-              ["%r", "borrow", "%x"],
-              ["%y", "copy", ["consume", "%x"]],
-              ["%t", "load", "%r"],
+              ["%x", "constant", ["Int"], { value: small }],
+              ["%r", "borrow", ["Borrowed", ["Int"]], "%x"],
+              ["%y", "copy", ["Int"], ["consume", "%x"]],
+              ["%t", "load", ["Int"], "%r"],
             ],
-            terminator: [null, "return", ["%t"]],
+            terminator: [null, "return", ["Int"], ["%t"]],
           },
         ],
       },
