@@ -4,7 +4,7 @@ This repository contains a TypeScript/Deno interpreter for a small intermediate 
 The active architecture is HIR -> lowering passes -> LIR -> runtime.
 The input is in JSON form, which is verified by the typescript type-checker.
 There is no parser.
-Files which are completely AI-generated end with `*.gen.ts` file extensions.
+Files which are completely AI-generated have `*.gen.ts` or `*.gen.test.ts` file extensions.
 
 ## Important Files
 
