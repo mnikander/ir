@@ -7,11 +7,6 @@ import { validate } from "../../src/analysis/validate.ts";
 import { print } from "../../src/high/print.gen.ts";
 // import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
-// choose prime numbers for tests, to reduce chances of false-positive results for arithmetic ops
-const small: number = 11;
-const large: number = 13;
-const huge: number = 281;
-
 describe("constants and exit", () => {
   it("must throw error on empty input", () => {
     const text: string = `
@@ -40,7 +35,7 @@ function @main [] -> Int
 function @main [] -> Int
 
   block @foo
-    %0 = constant Int ${small}
+    %0 = constant Int 11
     return Int %0
 `;
 
@@ -54,7 +49,7 @@ function @main [] -> Int
             name: "@foo",
             phis: [],
             lines: [
-              ["%0", "constant", ["Int"], { value: small }],
+              ["%0", "constant", ["Int"], { value: 11 }],
             ],
             terminator: [null, "return", ["Int"], ["%0"]],
           },
@@ -73,7 +68,7 @@ function @main [] -> Int
 function @main [] -> Int
 
   block @entry
-    %0 = constant Int ${small}
+    %0 = constant Int 11
     %1 = borrow (Borrowed Int) %0
     return Int %1
 `;
@@ -88,7 +83,7 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", ["Int"], { value: small }],
+              ["%0", "constant", ["Int"], { value: 11 }],
               ["%1", "borrow", ["Borrowed", ["Int"]], "%0"],
             ],
             terminator: [null, "return", ["Int"], ["%1"]],
@@ -108,7 +103,7 @@ function @main [] -> Int
 function @main [] -> Int
 
   block @entry
-    %0 = constant Int ${small}
+    %0 = constant Int 11
     return Int %0
 `;
 
@@ -122,7 +117,7 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", ["Int"], { value: small }],
+              ["%0", "constant", ["Int"], { value: 11 }],
             ],
             terminator: [null, "return", ["Int"], ["%0"]],
           },
@@ -132,7 +127,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    expect(evaluate(lower(input))).toBe(small);
+    expect(evaluate(lower(input))).toBe(11);
   });
 });
 
@@ -142,7 +137,7 @@ describe("copying of registers", () => {
 function @main [] -> Int
 
   block @entry
-    %0 = constant Int ${small}
+    %0 = constant Int 11
     %1 = copy Int %0
     return Int %1
 `;
@@ -157,7 +152,7 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", ["Int"], { value: small }],
+              ["%0", "constant", ["Int"], { value: 11 }],
               ["%1", "copy", ["Int"], ["%0"]],
             ],
             terminator: [null, "return", ["Int"], ["%1"]],
@@ -168,7 +163,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    expect(evaluate(lower(input))).toBe(small);
+    expect(evaluate(lower(input))).toBe(11);
   });
 });
 
@@ -178,8 +173,8 @@ describe("arithmetic operations", () => {
 function @main [] -> Int
 
   block @entry
-    %0 = constant Int ${small}
-    %1 = constant Int ${large}
+    %0 = constant Int 11
+    %1 = constant Int 13
     %2 = add Int %0 %1
     return Int %2
 `;
@@ -194,8 +189,8 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", ["Int"], { value: small }],
-              ["%1", "constant", ["Int"], { value: large }],
+              ["%0", "constant", ["Int"], { value: 11 }],
+              ["%1", "constant", ["Int"], { value: 13 }],
               ["%2", "add", ["Int"], ["%0"], ["%1"]],
             ],
             terminator: [null, "return", ["Int"], ["%2"]],
@@ -206,7 +201,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    expect(evaluate(lower(input))).toBe(small + large);
+    expect(evaluate(lower(input))).toBe(11 + 13);
   });
 });
 
@@ -219,11 +214,11 @@ function @main [] -> Int
     jump @second
 
   block @first
-    %1 = constant Int ${small}
+    %1 = constant Int 11
     return Int %1
 
   block @second
-    %2 = constant Int ${large}
+    %2 = constant Int 13
     return Int %2
 `;
 
@@ -243,7 +238,7 @@ function @main [] -> Int
             name: "@first",
             phis: [],
             lines: [
-              ["%1", "constant", ["Int"], { value: small }],
+              ["%1", "constant", ["Int"], { value: 11 }],
             ],
             terminator: [null, "return", ["Int"], ["%1"]],
           },
@@ -251,7 +246,7 @@ function @main [] -> Int
             name: "@second",
             phis: [],
             lines: [
-              ["%2", "constant", ["Int"], { value: large }],
+              ["%2", "constant", ["Int"], { value: 13 }],
             ],
             terminator: [null, "return", ["Int"], ["%2"]],
           },
@@ -261,7 +256,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    expect(evaluate(lower(input))).toBe(large);
+    expect(evaluate(lower(input))).toBe(13);
   });
 
   it("must execute first branch if the condition is true", () => {
@@ -270,9 +265,9 @@ function @main [] -> Int
 
   block @entry
     %0 = constant Int 1
-    %1 = constant Int ${small}
-    %2 = constant Int ${large}
-    %3 = constant Int ${huge}
+    %1 = constant Int 11
+    %2 = constant Int 13
+    %3 = constant Int 281
     branch %0 @then @else
 
   block @then
@@ -298,9 +293,9 @@ function @main [] -> Int
             phis: [],
             lines: [
               ["%0", "constant", ["Int"], { value: 1 }],
-              ["%1", "constant", ["Int"], { value: small }],
-              ["%2", "constant", ["Int"], { value: large }],
-              ["%3", "constant", ["Int"], { value: huge }],
+              ["%1", "constant", ["Int"], { value: 11 }],
+              ["%2", "constant", ["Int"], { value: 13 }],
+              ["%3", "constant", ["Int"], { value: 281 }],
             ],
             terminator: [null, "branch", null, ["%0"], ["@then", "@else"]],
           },
@@ -332,7 +327,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    expect(evaluate(lower(input))).toBe(small + large);
+    expect(evaluate(lower(input))).toBe(11 + 13);
   });
 
   it("must execute the second branch when condition is false", () => {
@@ -341,9 +336,9 @@ function @main [] -> Int
 
   block @entry
     %0 = constant Int 0
-    %1 = constant Int ${small}
-    %2 = constant Int ${large}
-    %3 = constant Int ${huge}
+    %1 = constant Int 11
+    %2 = constant Int 13
+    %3 = constant Int 281
     branch %0 @then @else
 
   block @then
@@ -369,9 +364,9 @@ function @main [] -> Int
             phis: [],
             lines: [
               ["%0", "constant", ["Int"], { value: 0 }],
-              ["%1", "constant", ["Int"], { value: small }],
-              ["%2", "constant", ["Int"], { value: large }],
-              ["%3", "constant", ["Int"], { value: huge }],
+              ["%1", "constant", ["Int"], { value: 11 }],
+              ["%2", "constant", ["Int"], { value: 13 }],
+              ["%3", "constant", ["Int"], { value: 281 }],
             ],
             terminator: [null, "branch", null, ["%0"], ["@then", "@else"]],
           },
@@ -403,7 +398,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    expect(evaluate(lower(input))).toBe(large + huge);
+    expect(evaluate(lower(input))).toBe(13 + 281);
   });
 });
 
@@ -413,8 +408,8 @@ describe("function call", () => {
 function @main [] -> Int
 
   block @entry
-    %0 = constant Int ${small}
-    %1 = constant Int ${large}
+    %0 = constant Int 11
+    %1 = constant Int 13
     %2 = call Int @identity [%1]
     return Int %2
 
@@ -434,8 +429,8 @@ function @identity [%a : Int] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", ["Int"], { value: small }],
-              ["%1", "constant", ["Int"], { value: large }],
+              ["%0", "constant", ["Int"], { value: 11 }],
+              ["%1", "constant", ["Int"], { value: 13 }],
               ["%2", "call", ["Int"], "@identity", [["%1"]]],
             ],
             terminator: [null, "return", ["Int"], ["%2"]],
@@ -459,7 +454,7 @@ function @identity [%a : Int] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    expect(evaluate(lower(input))).toBe(large);
+    expect(evaluate(lower(input))).toBe(13);
   });
 
   it("must support calling a binary function", () => {
@@ -467,8 +462,8 @@ function @identity [%a : Int] -> Int
 function @main [] -> Int
 
   block @entry
-    %0 = constant Int ${small}
-    %1 = constant Int ${large}
+    %0 = constant Int 11
+    %1 = constant Int 13
     %2 = call Int @first [%0, %1]
     return Int %2
 
@@ -488,8 +483,8 @@ function @first [%a : Int, %b : Int] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", ["Int"], { value: small }],
-              ["%1", "constant", ["Int"], { value: large }],
+              ["%0", "constant", ["Int"], { value: 11 }],
+              ["%1", "constant", ["Int"], { value: 13 }],
               ["%2", "call", ["Int"], "@first", [["%0"], ["%1"]]],
             ],
             terminator: [null, "return", ["Int"], ["%2"]],
@@ -513,7 +508,7 @@ function @first [%a : Int, %b : Int] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    expect(evaluate(lower(input))).toBe(small);
+    expect(evaluate(lower(input))).toBe(11);
   });
 
   it("must evaluate tail-recursive functions", () => {
@@ -621,8 +616,8 @@ describe("static single assignment", () => {
 function @main [] -> Int
 
   block @entry
-    %0 = constant Int ${small}
-    %0 = constant Int ${large}
+    %0 = constant Int 11
+    %0 = constant Int 13
     return Int %1
 `;
 
@@ -636,8 +631,8 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", ["Int"], { value: small }],
-              ["%0", "constant", ["Int"], { value: large }], // attempt to reassign register 0
+              ["%0", "constant", ["Int"], { value: 11 }],
+              ["%0", "constant", ["Int"], { value: 13 }], // attempt to reassign register 0
             ],
             terminator: [null, "return", ["Int"], ["%1"]],
           },
@@ -656,8 +651,8 @@ function @main [] -> Int
 function @main [] -> Int
 
   block @entry
-    %0 = constant Int ${small}
-    %1 = constant Int ${large}
+    %0 = constant Int 11
+    %1 = constant Int 13
     %2 = call Int @first [%0, %1]
     return Int %2
 
@@ -677,8 +672,8 @@ function @first [%a : Int, %a : Int] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", ["Int"], { value: small }],
-              ["%1", "constant", ["Int"], { value: large }],
+              ["%0", "constant", ["Int"], { value: 11 }],
+              ["%1", "constant", ["Int"], { value: 13 }],
               ["%2", "call", ["Int"], "@first", [["%0"], ["%1"]]],
             ],
             terminator: [null, "return", ["Int"], ["%2"]],
@@ -711,8 +706,8 @@ function @first [%a : Int, %a : Int] -> Int
 function @main [] -> Int
 
   block @entry
-    %0 = constant Int ${small}
-    %1 = constant Int ${large}
+    %0 = constant Int 11
+    %1 = constant Int 13
     %2 = call Int @identity [%1]
     return Int %2
 
@@ -737,8 +732,8 @@ function @identity2 [%a : Int] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%0", "constant", ["Int"], { value: small }],
-              ["%1", "constant", ["Int"], { value: large }],
+              ["%0", "constant", ["Int"], { value: 11 }],
+              ["%1", "constant", ["Int"], { value: 13 }],
               ["%2", "call", ["Int"], "@identity", [["%1"]]],
             ],
             terminator: [null, "return", ["Int"], ["%2"]],
@@ -789,11 +784,11 @@ function @main [] -> Int
     jump @second
 
   block @first
-    %1 = constant Int ${small}
+    %1 = constant Int 11
     jump @end
 
   block @second
-    %2 = constant Int ${large}
+    %2 = constant Int 13
     jump @end
 
   block @end
@@ -817,7 +812,7 @@ function @main [] -> Int
             name: "@first",
             phis: [],
             lines: [
-              ["%1", "constant", ["Int"], { value: small }],
+              ["%1", "constant", ["Int"], { value: 11 }],
             ],
             terminator: [null, "jump", null, "@end"],
           },
@@ -825,7 +820,7 @@ function @main [] -> Int
             name: "@second",
             phis: [],
             lines: [
-              ["%2", "constant", ["Int"], { value: large }],
+              ["%2", "constant", ["Int"], { value: 13 }],
             ],
             terminator: [null, "jump", null, "@end"],
           },
@@ -845,7 +840,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    expect(evaluate(lower(input))).toBe(large);
+    expect(evaluate(lower(input))).toBe(13);
   });
 
   it("phi node must assign from the correct register when executing a loop", () => {
@@ -941,15 +936,15 @@ function @main [] -> Int
     branch %condition @a @b
 
   block @a
-    %alpha = constant Int ${small}
+    %alpha = constant Int 11
     jump @d
 
   block @b
-    %bravo = constant Int ${large}
+    %bravo = constant Int 13
     jump @c
 
   block @c
-    %charlie = constant Int ${huge}
+    %charlie = constant Int 281
     jump @d
 
   block @d
@@ -980,7 +975,7 @@ function @main [] -> Int
             name: "@a",
             phis: [],
             lines: [
-              ["%alpha", "constant", ["Int"], { value: small }],
+              ["%alpha", "constant", ["Int"], { value: 11 }],
             ],
             terminator: [null, "jump", null, "@d"],
           },
@@ -988,7 +983,7 @@ function @main [] -> Int
             name: "@b",
             phis: [],
             lines: [
-              ["%bravo", "constant", ["Int"], { value: large }],
+              ["%bravo", "constant", ["Int"], { value: 13 }],
             ],
             terminator: [null, "jump", null, "@c"],
           },
@@ -996,7 +991,7 @@ function @main [] -> Int
             name: "@c",
             phis: [],
             lines: [
-              ["%charlie", "constant", ["Int"], { value: huge }],
+              ["%charlie", "constant", ["Int"], { value: 281 }],
             ],
             terminator: [null, "jump", null, "@d"],
           },
@@ -1023,7 +1018,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    expect(evaluate(lower(input))).toBe(large + huge);
+    expect(evaluate(lower(input))).toBe(13 + 281);
   });
 
   it("phi node must allow assignment when both inputs are available", () => {
@@ -1044,12 +1039,12 @@ function @main [] -> Int
     jump @a
 
   block @a
-    %alpha = constant Int ${small}
+    %alpha = constant Int 11
     %condition = constant Int 1
     branch %condition @b @c
 
   block @b
-    %bravo = constant Int ${large}
+    %bravo = constant Int 13
     jump @c
 
   block @c
@@ -1073,7 +1068,7 @@ function @main [] -> Int
             name: "@a",
             phis: [],
             lines: [
-              ["%alpha", "constant", ["Int"], { value: small }],
+              ["%alpha", "constant", ["Int"], { value: 11 }],
               ["%condition", "constant", ["Int"], { value: 1 }],
             ],
             terminator: [null, "branch", null, ["%condition"], [
@@ -1085,7 +1080,7 @@ function @main [] -> Int
             name: "@b",
             phis: [],
             lines: [
-              ["%bravo", "constant", ["Int"], { value: large }],
+              ["%bravo", "constant", ["Int"], { value: 13 }],
             ],
             terminator: [null, "jump", null, "@c"],
           },
@@ -1106,7 +1101,7 @@ function @main [] -> Int
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
-    expect(evaluate(lower(input))).toBe(large);
+    expect(evaluate(lower(input))).toBe(13);
   });
 
   it("must allow assignment when three inputs are available", () => {

@@ -8,17 +8,13 @@ import { print } from "../../src/high/print.gen.ts";
 import { check } from "../../src/check/check.ts";
 // import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
-// choose prime numbers for tests, to reduce chances of false-positive results for arithmetic ops
-const small: number = 11;
-const large: number = 13;
-
 describe("memory and ownership", () => {
   it("must create and load from a pointer", () => {
     const text: string = `
 function @main [] -> Int
 
   block @entry
-    %x = constant Int ${small}
+    %x = constant Int 11
     %r = borrow (Borrowed Int) %x
     %t = load Int %r
     return Int %t
@@ -34,7 +30,7 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", ["Int"], { value: small }],
+              ["%x", "constant", ["Int"], { value: 11 }],
               ["%r", "borrow", ["Borrowed", ["Int"]], "%x"],
               ["%t", "load", ["Int"], "%r"],
             ],
@@ -47,7 +43,7 @@ function @main [] -> Int
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(check(input)).toBe(true);
-    expect(evaluate(lower(input))).toBe(small);
+    expect(evaluate(lower(input))).toBe(11);
   });
 
   it("must allow a register to be owned by a pointer", () => {
@@ -55,7 +51,7 @@ function @main [] -> Int
 function @main [] -> Int
 
   block @entry
-    %x = constant Int ${small}
+    %x = constant Int 11
     %r = own (Owned Int) %x
     %t = load Int %r
     return Int %t
@@ -71,7 +67,7 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", ["Int"], { value: small }],
+              ["%x", "constant", ["Int"], { value: 11 }],
               ["%r", "own", ["Owned", ["Int"]], ["%x"]],
               ["%t", "load", ["Int"], "%r"],
             ],
@@ -84,7 +80,7 @@ function @main [] -> Int
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(check(input)).toBe(true);
-    expect(evaluate(lower(input))).toBe(small);
+    expect(evaluate(lower(input))).toBe(11);
   });
 
   it.skip("must support pointers as phi operands", () => {
@@ -96,7 +92,7 @@ function @main [] -> Int
 function @main [] -> Int
 
   block @entry
-    %a = constant Int ${small}
+    %a = constant Int 11
     %b = copy Int (consume %a)
     return Int %b
 `;
@@ -111,7 +107,7 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%a", "constant", ["Int"], { value: small }],
+              ["%a", "constant", ["Int"], { value: 11 }],
               ["%b", "copy", ["Int"], ["consume", "%a"]],
             ],
             terminator: [null, "return", ["Int"], ["%b"]],
@@ -123,7 +119,7 @@ function @main [] -> Int
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(check(input)).toBe(true);
-    expect(evaluate(lower(input))).toBe(small);
+    expect(evaluate(lower(input))).toBe(11);
   });
 
   it("must allow consuming an Add operand", () => {
@@ -131,8 +127,8 @@ function @main [] -> Int
 function @main [] -> Int
 
   block @entry
-    %x = constant Int ${small}
-    %y = constant Int ${large}
+    %x = constant Int 11
+    %y = constant Int 13
     %sum = add Int (consume %x) %y
     return Int %sum
 `;
@@ -147,8 +143,8 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", ["Int"], { value: small }],
-              ["%y", "constant", ["Int"], { value: large }],
+              ["%x", "constant", ["Int"], { value: 11 }],
+              ["%y", "constant", ["Int"], { value: 13 }],
               ["%sum", "add", ["Int"], ["consume", "%x"], ["%y"]],
             ],
             terminator: [null, "return", ["Int"], ["%sum"]],
@@ -160,7 +156,7 @@ function @main [] -> Int
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(check(input)).toBe(true);
-    expect(evaluate(lower(input))).toBe(small + large);
+    expect(evaluate(lower(input))).toBe(11 + 13);
   });
 
   it("must allow consuming the return operand", () => {
@@ -168,7 +164,7 @@ function @main [] -> Int
 function @main [] -> Int
 
   block @entry
-    %a = constant Int ${small}
+    %a = constant Int 11
     return Int (consume %a)
 `;
 
@@ -182,7 +178,7 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%a", "constant", ["Int"], { value: small }],
+              ["%a", "constant", ["Int"], { value: 11 }],
             ],
             terminator: [null, "return", ["Int"], ["consume", "%a"]],
           },
@@ -193,7 +189,7 @@ function @main [] -> Int
     expect(print(input)).toEqual(text);
     expect(validate(input)).toBe(true);
     expect(check(input)).toBe(true);
-    expect(evaluate(lower(input))).toBe(small);
+    expect(evaluate(lower(input))).toBe(11);
   });
 
   it.skip("must allow consuming a phi operand", () => {
@@ -279,10 +275,10 @@ function @main [] -> Int
 function @main [] -> Int
 
   block @entry
-    %a = constant Int ${small}
+    %a = constant Int 11
     %a = drop
     %a = drop
-    %b = constant Int ${small}
+    %b = constant Int 11
     return Int %b
 `;
 
@@ -296,10 +292,10 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%a", "constant", ["Int"], { value: small }],
+              ["%a", "constant", ["Int"], { value: 11 }],
               ["%a", "drop", null],
               ["%a", "drop", null],
-              ["%b", "constant", ["Int"], { value: small }],
+              ["%b", "constant", ["Int"], { value: 11 }],
             ],
             terminator: [null, "return", ["Int"], ["%b"]],
           },
@@ -318,7 +314,7 @@ function @main [] -> Int
 function @main [] -> Int
 
   block @entry
-    %a = constant Int ${small}
+    %a = constant Int 11
     %b = copy Int (consume %a)
     return Int %a
 `;
@@ -333,7 +329,7 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%a", "constant", ["Int"], { value: small }],
+              ["%a", "constant", ["Int"], { value: 11 }],
               ["%b", "copy", ["Int"], ["consume", "%a"]],
             ],
             terminator: [null, "return", ["Int"], ["%a"]],
@@ -353,7 +349,7 @@ function @main [] -> Int
 function @main [] -> Int
 
   block @entry
-    %x = constant Int ${small}
+    %x = constant Int 11
     %r = borrow (Borrowed Int) %x
     %x = drop
     %t = load Int %r
@@ -370,7 +366,7 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", ["Int"], { value: small }],
+              ["%x", "constant", ["Int"], { value: 11 }],
               ["%r", "borrow", ["Borrowed", ["Int"]], "%x"],
               ["%x", "drop", null],
               ["%t", "load", ["Int"], "%r"],
@@ -392,7 +388,7 @@ function @main [] -> Int
 function @main [] -> Int
 
   block @entry
-    %x = constant Int ${small}
+    %x = constant Int 11
     %r = borrow (Borrowed Int) %x
     %y = copy Int (consume %x)
     %t = load Int %r
@@ -409,7 +405,7 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", ["Int"], { value: small }],
+              ["%x", "constant", ["Int"], { value: 11 }],
               ["%r", "borrow", ["Borrowed", ["Int"]], "%x"],
               ["%y", "copy", ["Int"], ["consume", "%x"]],
               ["%t", "load", ["Int"], "%r"],
@@ -433,7 +429,7 @@ describe("ownership violations", () => {
 function @main [] -> Int
 
   block @entry
-    %x = constant Int ${small}
+    %x = constant Int 11
     %r = own (Owned Int) %x
     %t = copy Int %x
     return Int %t
@@ -449,7 +445,7 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [
-              ["%x", "constant", ["Int"], { value: small }],
+              ["%x", "constant", ["Int"], { value: 11 }],
               ["%r", "own", ["Owned", ["Int"]], ["%x"]],
               ["%t", "copy", ["Int"], ["%x"]],
             ],
