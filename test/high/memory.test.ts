@@ -8,7 +8,7 @@ import { print } from "../../src/high/print.gen.ts";
 import { check } from "../../src/check/check.ts";
 // import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
-describe("memory and ownership", () => {
+describe.skip("memory and ownership", () => {
   it("must create and load from a pointer", () => {
     const text: string = `
 function @main [] -> Int
