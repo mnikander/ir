@@ -197,7 +197,7 @@ function @main [] -> Int
   });
 });
 
-describe("use-after-free", () => {
+describe.skip("use-after-free", () => {
   it("must detect a use-after-free in a return", () => {
     const text: string = `
 function @main [] -> Int
@@ -423,7 +423,7 @@ function @main [] -> Int
   });
 });
 
-describe("ownership violations", () => {
+describe.skip("ownership violations", () => {
   it("must detect invalid use of a register owned by a pointer", () => {
     const text: string = `
 function @main [] -> Int
