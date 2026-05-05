@@ -933,23 +933,23 @@ function @main [] -> Int
 
   block @entry
     %condition = constant Int 0
-    branch %condition @a @b
+    branch %condition @alpha @bravo
 
-  block @a
-    %alpha = constant Int 11
-    jump @d
+  block @alpha
+    %a = constant Int 11
+    jump @delta
 
-  block @b
-    %bravo = constant Int 13
-    jump @c
+  block @bravo
+    %b = constant Int 13
+    jump @charlie
 
-  block @c
-    %charlie = constant Int 281
-    jump @d
+  block @charlie
+    %c = constant Int 281
+    jump @delta
 
-  block @d
-    %grandparent = phi Int [@a, %alpha] [@c, %bravo]
-    %parent = phi Int [@a, %alpha] [@c, %charlie]
+  block @delta
+    %grandparent = phi Int [@alpha, %a] [@charlie, %b]
+    %parent = phi Int [@alpha, %a] [@charlie, %c]
     %total = add Int %grandparent %parent
     return Int %total
 `;
@@ -967,44 +967,44 @@ function @main [] -> Int
               ["%condition", "constant", ["Int"], { value: 0 }],
             ],
             terminator: [null, "branch", null, ["%condition"], [
-              "@a",
-              "@b",
+              "@alpha",
+              "@bravo",
             ]],
           },
           {
-            name: "@a",
+            name: "@alpha",
             phis: [],
             lines: [
-              ["%alpha", "constant", ["Int"], { value: 11 }],
+              ["%a", "constant", ["Int"], { value: 11 }],
             ],
-            terminator: [null, "jump", null, "@d"],
+            terminator: [null, "jump", null, "@delta"],
           },
           {
-            name: "@b",
+            name: "@bravo",
             phis: [],
             lines: [
-              ["%bravo", "constant", ["Int"], { value: 13 }],
+              ["%b", "constant", ["Int"], { value: 13 }],
             ],
-            terminator: [null, "jump", null, "@c"],
+            terminator: [null, "jump", null, "@charlie"],
           },
           {
-            name: "@c",
+            name: "@charlie",
             phis: [],
             lines: [
-              ["%charlie", "constant", ["Int"], { value: 281 }],
+              ["%c", "constant", ["Int"], { value: 281 }],
             ],
-            terminator: [null, "jump", null, "@d"],
+            terminator: [null, "jump", null, "@delta"],
           },
           {
-            name: "@d",
+            name: "@delta",
             phis: [
-              ["%grandparent", "phi", ["Int"], [["@a", ["%alpha"]], [
-                "@c",
-                ["%bravo"],
+              ["%grandparent", "phi", ["Int"], [["@alpha", ["%a"]], [
+                "@charlie",
+                ["%b"],
               ]]],
-              ["%parent", "phi", ["Int"], [["@a", ["%alpha"]], [
-                "@c",
-                ["%charlie"],
+              ["%parent", "phi", ["Int"], [["@alpha", ["%a"]], [
+                "@charlie",
+                ["%c"],
               ]]],
             ],
             lines: [
@@ -1036,19 +1036,19 @@ function @main [] -> Int
 function @main [] -> Int
 
   block @entry
-    jump @a
+    jump @alpha
 
-  block @a
-    %alpha = constant Int 11
+  block @alpha
+    %a = constant Int 11
     %condition = constant Int 1
-    branch %condition @b @c
+    branch %condition @bravo @charlie
 
-  block @b
-    %bravo = constant Int 13
-    jump @c
+  block @bravo
+    %b = constant Int 13
+    jump @charlie
 
-  block @c
-    %result = phi Int [@a, %alpha] [@b, %bravo]
+  block @charlie
+    %result = phi Int [@alpha, %a] [@bravo, %b]
     return Int %result
 `;
 
@@ -1062,34 +1062,34 @@ function @main [] -> Int
             name: "@entry",
             phis: [],
             lines: [],
-            terminator: [null, "jump", null, "@a"],
+            terminator: [null, "jump", null, "@alpha"],
           },
           {
-            name: "@a",
+            name: "@alpha",
             phis: [],
             lines: [
-              ["%alpha", "constant", ["Int"], { value: 11 }],
+              ["%a", "constant", ["Int"], { value: 11 }],
               ["%condition", "constant", ["Int"], { value: 1 }],
             ],
             terminator: [null, "branch", null, ["%condition"], [
-              "@b",
-              "@c",
+              "@bravo",
+              "@charlie",
             ]],
           },
           {
-            name: "@b",
+            name: "@bravo",
             phis: [],
             lines: [
-              ["%bravo", "constant", ["Int"], { value: 13 }],
+              ["%b", "constant", ["Int"], { value: 13 }],
             ],
-            terminator: [null, "jump", null, "@c"],
+            terminator: [null, "jump", null, "@charlie"],
           },
           {
-            name: "@c",
+            name: "@charlie",
             phis: [
-              ["%result", "phi", ["Int"], [["@a", ["%alpha"]], [
-                "@b",
-                ["%bravo"],
+              ["%result", "phi", ["Int"], [["@alpha", ["%a"]], [
+                "@bravo",
+                ["%b"],
               ]]],
             ],
             lines: [],
@@ -1120,18 +1120,18 @@ function @main [] -> Int
 
   block @entry
     %echo = constant Int 0
-    branch %echo @a @c
+    branch %echo @alpha @charlie
 
-  block @a
-    %alpha = constant Int 1
-    branch %alpha @b @c
+  block @alpha
+    %a = constant Int 1
+    branch %a @bravo @charlie
 
-  block @b
-    %bravo = constant Int 1
-    jump @c
+  block @bravo
+    %b = constant Int 1
+    jump @charlie
 
-  block @c
-    %result = phi Int [@entry, %echo] [@a, %alpha] [@b, %bravo]
+  block @charlie
+    %result = phi Int [@entry, %echo] [@alpha, %a] [@bravo, %b]
     return Int %result
 `;
 
@@ -1147,31 +1147,34 @@ function @main [] -> Int
             lines: [
               ["%echo", "constant", ["Int"], { value: 0 }],
             ],
-            terminator: [null, "branch", null, ["%echo"], ["@a", "@c"]],
+            terminator: [null, "branch", null, ["%echo"], [
+              "@alpha",
+              "@charlie",
+            ]],
           },
           {
-            name: "@a",
+            name: "@alpha",
             phis: [],
             lines: [
-              ["%alpha", "constant", ["Int"], { value: 1 }],
+              ["%a", "constant", ["Int"], { value: 1 }],
             ],
-            terminator: [null, "branch", null, ["%alpha"], ["@b", "@c"]],
+            terminator: [null, "branch", null, ["%a"], ["@bravo", "@charlie"]],
           },
           {
-            name: "@b",
+            name: "@bravo",
             phis: [],
             lines: [
-              ["%bravo", "constant", ["Int"], { value: 1 }],
+              ["%b", "constant", ["Int"], { value: 1 }],
             ],
-            terminator: [null, "jump", null, "@c"],
+            terminator: [null, "jump", null, "@charlie"],
           },
           {
-            name: "@c",
+            name: "@charlie",
             phis: [
               ["%result", "phi", ["Int"], [["@entry", ["%echo"]], [
-                "@a",
-                ["%alpha"],
-              ], ["@b", ["%bravo"]]]],
+                "@alpha",
+                ["%a"],
+              ], ["@bravo", ["%b"]]]],
             ],
             lines: [],
             terminator: [null, "return", ["Int"], ["%result"]],
@@ -1201,18 +1204,18 @@ function @main [] -> Int
 
   block @entry
     %echo = constant Int 0
-    branch %echo @a @c
+    branch %echo @alpha @charlie
 
-  block @a
-    %alpha = constant Int 1
-    branch %alpha @b @c
+  block @alpha
+    %a = constant Int 1
+    branch %a @bravo @charlie
 
-  block @b
-    %bravo = constant Int 1
-    jump @c
+  block @bravo
+    %b = constant Int 1
+    jump @charlie
 
-  block @c
-    %result = phi Int [@a, %alpha] [@b, %bravo]
+  block @charlie
+    %result = phi Int [@alpha, %a] [@bravo, %b]
     return Int %result
 `;
 
@@ -1228,30 +1231,33 @@ function @main [] -> Int
             lines: [
               ["%echo", "constant", ["Int"], { value: 0 }],
             ],
-            terminator: [null, "branch", null, ["%echo"], ["@a", "@c"]],
+            terminator: [null, "branch", null, ["%echo"], [
+              "@alpha",
+              "@charlie",
+            ]],
           },
           {
-            name: "@a",
+            name: "@alpha",
             phis: [],
             lines: [
-              ["%alpha", "constant", ["Int"], { value: 1 }],
+              ["%a", "constant", ["Int"], { value: 1 }],
             ],
-            terminator: [null, "branch", null, ["%alpha"], ["@b", "@c"]],
+            terminator: [null, "branch", null, ["%a"], ["@bravo", "@charlie"]],
           },
           {
-            name: "@b",
+            name: "@bravo",
             phis: [],
             lines: [
-              ["%bravo", "constant", ["Int"], { value: 1 }],
+              ["%b", "constant", ["Int"], { value: 1 }],
             ],
-            terminator: [null, "jump", null, "@c"],
+            terminator: [null, "jump", null, "@charlie"],
           },
           {
-            name: "@c",
+            name: "@charlie",
             phis: [
-              ["%result", "phi", ["Int"], [["@a", ["%alpha"]], [
-                "@b",
-                ["%bravo"],
+              ["%result", "phi", ["Int"], [["@alpha", ["%a"]], [
+                "@bravo",
+                ["%b"],
               ]]],
             ],
             lines: [],
