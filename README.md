@@ -10,6 +10,13 @@ is verified by the TypeScript type checker. There is a pretty-printer which can
 convert an HIR into text, for better readablity. HIR has type annotations for
 analysis; LIR does not.
 
+## More Information
+
+- [IR design](./doc/design.md)
+- [Table of Instructions](./doc/instructions.md)
+- [Log of design decisions for the interpreter and IR](./doc/decisions.md)
+- [Overview](./OVERVIEW.md) which outlines the architecture and files
+
 ## Getting Started
 
 This project is implemented in TypeScript, using [Deno](https://deno.com/).
@@ -55,13 +62,6 @@ impl: stack underflow check
 fix(runtime): correct program counter update
 doc: clarify SSA invariants
 ```
-
-## More Information
-
-- [IR design](./doc/design.md)
-- [Table of Instructions](./doc/instructions.md)
-- [Log of design decisions for the interpreter and IR](./doc/decisions.md)
-- [Overview](./OVERVIEW.md) which outlines the architecture and files
 
 ---
 
