@@ -8,13 +8,17 @@ end, and Assembly on the other end.
 This project actually contains two IRs, a high intermediate representation
 ([HIR](src/high/high_grammar.ts)) and a low intermediate representation
 ([LIR](src/low/low_grammar.ts)). The focus of the project is the HIR, which is
-in SSA form and is designed for memory safety. The LIR is closer to assembly and
-is used for execution on a virtual [machine](src/runtime/machine.ts). HIR has
-type annotations for analysis; LIR does not.
+in SSA form and is designed for memory safety. HIR has type annotations for
+analysis; LIR does not.
 
 There is no parser for the HIR. The input is in JSON form, not in text form. The
 JSON input is verified by the TypeScript type-checker. There is a pretty-printer
 which can convert an HIR into text, for better readablity.
+
+The LIR is closer to assembly and is used for execution on a virtual
+[machine](src/runtime/machine.ts). The lowering passes from HIR to LIR are an
+LLM-generated blackbox, using a micro-pass architecture inspired by the Chez
+Scheme compiler.
 
 ## More Information
 
