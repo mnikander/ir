@@ -13,8 +13,7 @@ Certain language features are omitted entirely, to simplify the semantics and re
 <!-- What problem am I trying to solve? -->
 <!-- Which other solutions and projects exist? -->
 
-The goal is to write:
-- memory-safe programs
+The goal is to write memory-safe programs
 - without garbage-collection overhead
 - with deterministic runtime for real-time applications
 - without lifetime annotations
@@ -33,7 +32,7 @@ Several important features are:
 | static single-assignment (SSA) form | variables are easy to reason about and optimize |
 | call-by-value                       | keeps the language implementation relatively simple |
 | storage is on the stack by default  | good runtime performance, lifetimes tied to lexical scope are easy to reason about |
-| heap storage, i.e. `box` is explicit| heap storage is vital for persistent data, but must be freed at the end of its lifetime |
+| heap storage is opt-in              | clear semantics, heap storage must be expicitly freed at the end of its lifetime |
 
 ## Life-Cycle of a Variable
 
@@ -77,10 +76,10 @@ flowchart LR;
     C -->|access| CU;
 ```
 
-Note that stack-allocated variables are automatically freed on return, i.e. when the stack-frame is popped.
+Stack-allocated variables are automatically freed on return, i.e. when the stack-frame is popped.
 This means there is no need to explicitly free a stack-allocated variable.
 A heap-allocated variable *must* be freed explicitly.
-This means heap variables are not allowed to be in the 'Defined' state, when the enclosing function returns.
+Thus, heap variable are not allowed to be in the 'Defined' state when the enclosing function returns.
 That would be a memory leak.
 
 ---
