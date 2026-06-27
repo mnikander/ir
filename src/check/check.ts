@@ -1,6 +1,5 @@
 // Copyright (c) 2026 Marco Nikander
 
-import { assert } from "node:console";
 import * as HIGH from "../high/high_grammar.ts";
 import { InSet, make_in_set } from "./lifecycle_lattice.ts";
 
@@ -19,18 +18,28 @@ function check_function(fun: HIGH.Function): boolean {
     fun.blocks[0].phis.length === 0
   ) return false; // "Entry block cannot have phi-nodes",
 
-  // TODO: resolve and check phi nodes
+  // I need mappings Register->Type
+  // for Pointers I need Register->Register[] (i.e. Pointer->Pointees[])
+
+  // TODO: resolve and check phi nodes, `ok_phis`
 
   const registers: HIGH.Register[] = extract_variables_from_block(
     fun.blocks[0],
   );
   const in_set: InSet = make_in_set(registers);
-  return check_block_lines(fun.blocks[0], in_set);
+  const ok_lines: boolean = check_block_lines(fun.blocks[0], in_set);
+
+  // TODO: resolve and check terminator, `ok_terminator`
+
+  return ok_lines;
 }
 
 function check_block_lines(block: HIGH.Block, in_set: InSet): boolean {
   // if I want to implement _just_ the function for a linear block,
   // then the IN-SET already includes resolved Phi-nodes
+
+  // I want to update the in_set for all registers which occur in the lines (dest and args)
+  // lines.map with
 
   return false; // TODO implement
 }
