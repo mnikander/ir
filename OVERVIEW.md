@@ -71,16 +71,10 @@ Other pass files:
 - [types.gen.ts](/home/marco/Documents/ir/src/passes/types.gen.ts)
   Intermediate forms used between passes. Numbered and lower forms erase HIR type annotations.
 
-### Analysis, Checks, and Transformations
+### Analysis and Transformations
 
 - [validate.ts](/home/marco/Documents/ir/src/analysis/validate.ts)
   Current validation entry point; delegates to [unique_variables.ts](/home/marco/Documents/ir/src/analysis/unique_variables.ts).
-
-- [lifecycle_lattice.ts](/home/marco/Documents/ir/src/check/lifecycle_lattice.ts)
-  Undefined/live/dead lattice used for lifecycle checking experiments.
-
-- [build_cfg.ts](/home/marco/Documents/ir/src/check/build_cfg.ts)
-  Builds a successor-only control-flow graph for a HIR function.
 
 - [enumerate_blocks.ts](/home/marco/Documents/ir/src/transformations/enumerate_blocks.ts)
   Renames HIR block labels to numeric labels and rewrites terminator successors.
