@@ -5,10 +5,16 @@ three-address code (3AC aka TAC) and static single-assignment (SSA) form. Like
 all IRs, it sits between high-level languages such as C or TypeScript on one
 end, and Assembly on the other end.
 
-There is no parser. The input is in JSON form, not in text form. The JSON input
-is verified by the TypeScript type checker. There is a pretty-printer which can
-convert an HIR into text, for better readablity. HIR has type annotations for
-analysis; LIR does not.
+This project actually contains two IRs, a high intermediate representation
+([HIR](src/high/high_grammar.ts)) and a low intermediate representation
+([LIR](src/low/low_grammar.ts)). The focus of the project is the HIR, which is
+in SSA form and is designed for memory safety. The LIR is closer to assembly and
+is used for execution on a virtual [machine](src/runtime/machine.ts). HIR has
+type annotations for analysis; LIR does not.
+
+There is no parser for the HIR. The input is in JSON form, not in text form. The
+JSON input is verified by the TypeScript type-checker. There is a pretty-printer
+which can convert an HIR into text, for better readablity.
 
 ## More Information
 
@@ -59,7 +65,7 @@ Accepted examples:
 
 ```text
 impl: stack underflow check
-fix(runtime): correct program counter update
+fix: correct program counter update
 doc: clarify SSA invariants
 ```
 
