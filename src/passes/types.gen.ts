@@ -92,7 +92,7 @@ export type NumberedMemory =
 export type NumberedConstant = [
   destination: LIR.Offset,
   tag: "constant",
-  value: HIR.Primitive,
+  value: HIR.Literal,
 ];
 export type NumberedCopy = [
   destination: LIR.Offset,

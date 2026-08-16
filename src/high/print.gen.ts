@@ -43,7 +43,7 @@ function print_line(line: HIGH.Line): string {
       }`;
     case "constant":
       return `${line[0]} = ${line[1]} ${print_type(line[2])} ${
-        print_primitive(line[3])
+        print_literal(line[3])
       }`;
     case "copy":
     case "own":
@@ -124,8 +124,8 @@ function print_type(type: Type): string {
   }
 }
 
-function print_primitive(primitive: HIGH.Primitive): string {
-  return String(primitive.value);
+function print_literal(literal: HIGH.Literal): string {
+  return String(literal.value);
 }
 
 function assert_never(value: never): never {

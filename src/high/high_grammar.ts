@@ -12,7 +12,7 @@ export type Phi          = [ destination: Register, tag: 'phi',           type: 
 export type Call         = [ destination: Register, tag: 'call',          type: Type, label: Label, arguments: Input[] ];
 
 export type Memory       = Constant | Copy | Own | Borrow | Load | Drop;
-export type Constant     = [ destination: Register, tag: 'constant',      type: Int,  value: Primitive ];
+export type Constant     = [ destination: Register, tag: 'constant',      type: Int,  value: Literal ];
 export type Copy         = [ destination: Register, tag: 'copy',          type: Type, value: Input ];
 export type Own          = [ destination: Register, tag: 'own',           type: Owned, value: Input ];
 // export type Heap         = [ destination: Register, tag: 'Heap',          type: Type, value: Input ];
@@ -46,7 +46,7 @@ export type Return       = [ destination: null,     tag: 'return',        type: 
 export type Input        = [Register] | ['consume', Register]; // could add support for immediate values later
 export type Register     = `%${string}`;
 export type Label        = `@${string}`;
-export type Primitive    = { value: number };
+export type Literal      = { value: number };
 
 export enum Get {
     Dest   = 0,

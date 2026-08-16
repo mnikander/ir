@@ -7,7 +7,7 @@ export type Instruction  = Noop | Memory | Arithmetic | Comparison | Control;
 export type Noop         = [ destination: null,   tag: 'noop',          note?: string ];
 
 export type Memory       = Constant | Copy | Load | Store | AddressOf | Drop;
-export type Constant     = [ destination: Offset, tag: 'constant',      value:  Primitive ];
+export type Constant     = [ destination: Offset, tag: 'constant',      value:  Literal ];
 export type Copy         = [ destination: Offset, tag: 'copy',          source: Offset ];
 export type Load         = [ destination: Offset, tag: 'load',          source: Offset ];
 export type Store        = [ destination: Offset ,tag: 'store',         source: Offset ];
@@ -45,6 +45,6 @@ export enum Get {
   Right  = 3, // alias to second argument
 }
 
-export type Primitive = { value: number };
+export type Literal = { value: number };
 export type Offset = number;
 export type LineNumber = { line: number };
