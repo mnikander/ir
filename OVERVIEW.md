@@ -5,6 +5,8 @@ The active architecture is HIR -> lowering passes -> LIR -> runtime.
 The input is in JSON form, which is verified by the typescript type-checker.
 There is no parser.
 Files which are completely AI-generated have `*.gen.ts` or `*.gen.test.ts` file extensions.
+An MIR has been defined, but is not yet used.
+The codebase will be gradually refactored to replace the HIR with MIR.
 
 ## Important Files
 
@@ -41,6 +43,11 @@ Files which are completely AI-generated have `*.gen.ts` or `*.gen.test.ts` file 
 
 - [print.gen.ts](/home/marco/Documents/ir/src/high/print.gen.ts)
   Pretty-prints HIR programs for tests and debugging.
+
+### Middle-Level IR
+- Not yet used, but the codebase will be refactored to use the MIR instead of the HIR
+- [middle_grammar.ts](/home/marco/Documents/ir/src/middle/middle_grammar.ts)
+  Defines MIR based on tagged symbolic-expressions
 
 ### Lowering Pipeline
 
