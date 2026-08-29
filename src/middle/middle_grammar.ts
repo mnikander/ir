@@ -1,10 +1,9 @@
 // Copyright (c) 2026 Marco Nikander
 
-// This "new grammar" is a brainstorm for how the high grammar could look in the future.
-// The codebase can be update by gradually refactoring the high grammar to match this grammar.
+// A middle intermediate representation (MIR) designed to simplify static analysis.
 
-import { Type } from "./types.ts";
-export type { Type } from "./types.ts";
+import { Type } from "../high/types.ts";
+export type { Type } from "../high/types.ts";
 
 export type Program      = [ tag: "program", ...Function[] ];
 export type Function     = [ tag: "function", Parameters, Result, Locals, Blocks ];
