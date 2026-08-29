@@ -38,11 +38,16 @@ function print_locals([, ...types]: MIR.Locals): string {
   return print_list("locals", types.map(print_type));
 }
 
-function print_blocks([, ...lines]: MIR.Blocks): string {
-  if (lines.length === 0) return "(blocks)";
+function print_blocks([, ...blocks]: MIR.Blocks): string {
+  if (blocks.length === 0) return "(blocks)";
   return `(blocks\n${
-    lines.map((line) => indent(print_line(line))).join("\n")
+    blocks.map((block) => indent(print_block(block))).join("\n")
   })`;
+}
+
+function print_block([, ...lines]: MIR.Block): string {
+  if (lines.length === 0) return "(block)";
+  return `(block\n${lines.map((line) => indent(print_line(line))).join("\n")})`;
 }
 
 function print_line(line: MIR.Line): string {
