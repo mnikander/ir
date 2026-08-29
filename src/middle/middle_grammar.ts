@@ -20,7 +20,7 @@ export type Arithmetic   = Add | Subtract | Multiply | Divide | Remainder | Mini
 export type Comparison   = Equal | Unequal | Less | LessEqual | Greater | GreaterEqual;
 export type Terminator   = Branch | Return;
 
-export type Phi          = [ tag: 'phi',           destination: Define, inputs: Source[]];
+export type Phi          = [ tag: 'phi',           destination: Define, inputs: Sources];
 export type Call         = [ tag: 'call',          destination: Define, function: Label, arguments: Arguments ];
 export type Constant     = [ tag: 'constant',      destination: Define, value: Literal ];
 export type Copy         = [ tag: 'copy',          destination: Define, value: Read | Move ];
@@ -43,14 +43,15 @@ export type LessEqual    = [ tag: 'less_equal',    destination: Define, left: Re
 export type Greater      = [ tag: 'greater',       destination: Define, left: Read | Move, right: Read | Move ];
 export type GreaterEqual = [ tag: 'greater_equal', destination: Define, left: Read | Move, right: Read | Move ];
 export type Return       = [ tag: 'return',                             left: Read | Move ];
-export type Branch       = [ tag: 'branch',        index:  Read | Move, blocks: Label[] ];
+export type Branch       = [ tag: 'branch',        index:  Read | Move, blocks: Labels ];
 
-export type Source       = [ tag: "from",          source_block: Label, source_register: Read | Move ];
+export type Sources      = [ tag: "sources",       ...[source_block: Label, source_register: Read | Move][] ];
 export type Define       = [ tag: "define",        resource: number ]; // define a Resource
 export type Read         = [ tag: "read",          resource: number ]; // use the value of a Resource
 export type Move         = [ tag: "move",          resource: number ]; // destructively move, i.e. consume, the Resource
 export type Literal      = [ tag: "literal",       value: number ];
 export type Label        = [ tag: "label",         id: number ];
+export type Labels       = [ tag: "labels",        ...number[] ];
 
 export enum Get {
     Tag       = 0,
