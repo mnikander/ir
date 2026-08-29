@@ -11,7 +11,8 @@ export type Function     = [ tag: "function", Parameters, Result, Locals, Blocks
 export type Parameters   = [ tag: "parameters", ...Type[]];
 export type Result       = [ tag: "result", Type ];
 export type Locals       = [ tag: "locals", ...Type[]];
-export type Blocks       = [ tag: "blocks", ...Line[]];
+export type Blocks       = [ tag: "blocks", ...Block[]];
+export type Block        = [ tag: "block", ...Line[]];
 export type Arguments    = [ tag: "arguments", ...(Read | Move)[]];
 
 export type Line         = Phi | Call | Memory | Arithmetic | Comparison | Terminator;
