@@ -6,13 +6,13 @@
 import { Type } from "./types.ts";
 export type { Type } from "./types.ts";
 
-export type Program      = readonly Function[];
+export type Program      = [ tag: "program", ...Function[] ];
+export type Function     = [ tag: "function", Parameters, Result, Locals, Blocks ];
 
-export type Function     = [ tag: "function", Param[], Return, Local[], Block[]];
-export type Param        = [ tag: "param", Type ];
+export type Parameters   = [ tag: "parameters", ...Type[]];
 export type Result       = [ tag: "result", Type ];
-export type Local        = [ tag: "local", Type ];
-export type Block        = [ tag: "block", Line[] ];
+export type Locals       = [ tag: "locals", ...Type[]];
+export type Blocks       = [ tag: "blocks", ...Line[]];
 
 export type Line         = Phi | Call | Memory | Arithmetic | Comparison | Terminator;
 export type Memory       = Constant | Copy | Own | Borrow | Load | Drop;

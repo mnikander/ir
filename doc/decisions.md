@@ -51,4 +51,5 @@ Note: each line should be kept to a maximum of 260 characters. This allows viewi
 | 2026-04-26 | #1b5 | impl    | in JSON form, the type annotation is after the tag  | Easy access. Every instruction has a Destination and Tag field, with fixed offsets. Inserting the Type after that, before the arguments, makes access simple, via `Get`.|
 | 2026-04-26 | #efb | HIR     | annotate function parameter types explicitly        | Enable type-safety of user-defined functions.|
 | 2026-04-26 | #33c | HIR     | do not allow type parameters for functions          | Monomorphic functions keep things simple, for now. Would enable user-defined functions with the same syntax as built-in instructions. Requires introducing Type Variables.|
+| 2026-08-29 | #9aa | impl    | dedicated AST nodes for Parameters, Locals, etc     | Short and readable. Allows writing `["parameters", ["Int"], ["Int"]]` instead of for example `["list", ["param", ["Int"]], ["param", ["Int"]]]`.|
 |            |        |         |                                                     | |
