@@ -51,6 +51,33 @@ The codebase will be gradually refactored to replace the HIR with MIR.
 - [print.gen.ts](/home/marco/Documents/ir/src/middle/print.gen.ts)
   Pretty-prints MIR programs as canonical, indented symbolic expressions
 
+#### MIR Printed Syntax
+
+MIR is printed as tagged symbolic expressions. Structural nodes are expanded
+over indented lines, with each `(blocks ...)` node containing explicit
+`(block ...)` nodes, while instructions and operands remain inline. Numeric
+resources and labels retain their tags, for example `(read 0)`, `(move 0)`,
+`(literal 0)`, and `(label 1)`. Literals can be used directly as MIR operands;
+for example, an unconditional jump is represented by a branch from the
+immediate value `0` to a singleton target list. Phi inputs, call operands, and branch targets are wrapped in
+explicit variadic `(sources ...)`, `(arguments ...)`, and `(labels ...)` nodes:
+
+```text
+(program
+  (function
+    (parameters Int)
+    (result Int)
+    (locals (Owned Int))
+    (blocks
+      (block
+        (phi (define 0) (sources (from (label 1) (read 2)) (from (label 2) (move 3))))
+        (call (define 1) (label 0) (arguments (read 0) (move 2)))
+        (branch (literal 0) (labels 1)))
+      (block
+        (return (read 1))))))
+```
+
+
 ### Lowering Pipeline
 
 The pipeline entry point is [lower.gen.ts](/home/marco/Documents/ir/src/passes/lower.gen.ts). It runs these passes in order:

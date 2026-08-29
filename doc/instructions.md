@@ -43,36 +43,10 @@
 
 ## Notes
 - `Boolean` is currently represented as `Int` with the value 0 or 1.
-- HIR carries type annotations, but there is no type-checker yet.
+- HIR and MIR carry type annotations, but there is no type-checker yet.
 - LIR does not carry type annotations.
 - `Value` is either `Int` or a pointer type such as `(Owned Int)` or `(Borrowed Int)`.
-- Arguments can be passed via read, such as `%x`, or consuming read, such as `(consume %x)`.
-
-## MIR Printed Syntax
-
-MIR is printed as tagged symbolic expressions. Structural nodes are expanded
-over indented lines, with each `(blocks ...)` node containing explicit
-`(block ...)` nodes, while instructions and operands remain inline. Numeric
-resources and labels retain their tags, for example `(read 0)`, `(move 0)`,
-`(literal 0)`, and `(label 1)`. Literals can be used directly as MIR operands;
-for example, an unconditional jump is represented by a branch from the
-immediate value `0` to a singleton target list. Phi inputs, call operands, and branch targets are wrapped in
-explicit variadic `(sources ...)`, `(arguments ...)`, and `(labels ...)` nodes:
-
-```text
-(program
-  (function
-    (parameters Int)
-    (result Int)
-    (locals (Owned Int))
-    (blocks
-      (block
-        (phi (define 0) (sources (from (label 1) (read 2)) (from (label 2) (move 3))))
-        (call (define 1) (label 0) (arguments (read 0) (move 2)))
-        (branch (literal 0) (labels 1)))
-      (block
-        (return (read 1))))))
-```
+- Arguments can be literal values, of used/moved variables.
 
 ---
 **Copyright (c) 2026 Marco Nikander**
