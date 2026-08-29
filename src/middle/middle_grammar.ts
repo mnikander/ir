@@ -12,6 +12,7 @@ export type Parameters   = [ tag: "parameters", ...Type[]];
 export type Result       = [ tag: "result", Type ];
 export type Locals       = [ tag: "locals", ...Type[]];
 export type Blocks       = [ tag: "blocks", ...Line[]];
+export type Arguments    = [ tag: "arguments", ...(Read | Move)[]];
 
 export type Line         = Phi | Call | Memory | Arithmetic | Comparison | Terminator;
 export type Memory       = Constant | Copy | Own | Borrow | Load | Drop;
@@ -20,7 +21,7 @@ export type Comparison   = Equal | Unequal | Less | LessEqual | Greater | Greate
 export type Terminator   = Branch | Return;
 
 export type Phi          = [ tag: 'phi',           destination: Define, inputs: Source[]];
-export type Call         = [ tag: 'call',          destination: Define, function: Label, arguments: Read | Move[] ];
+export type Call         = [ tag: 'call',          destination: Define, function: Label, arguments: Arguments ];
 export type Constant     = [ tag: 'constant',      destination: Define, value: Literal ];
 export type Copy         = [ tag: 'copy',          destination: Define, value: Read | Move ];
 export type Own          = [ tag: 'own',           destination: Define, value: Read | Move ];

@@ -48,6 +48,8 @@ The codebase will be gradually refactored to replace the HIR with MIR.
 - Not yet used, but the codebase will be refactored to use the MIR instead of the HIR
 - [middle_grammar.ts](/home/marco/Documents/ir/src/middle/middle_grammar.ts)
   Defines MIR based on tagged symbolic-expressions
+- [print.gen.ts](/home/marco/Documents/ir/src/middle/print.gen.ts)
+  Pretty-prints MIR programs as canonical, indented symbolic expressions
 
 ### Lowering Pipeline
 

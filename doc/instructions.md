@@ -48,5 +48,24 @@
 - `Value` is either `Int` or a pointer type such as `(Owned Int)` or `(Borrowed Int)`.
 - Arguments can be passed via read, such as `%x`, or consuming read, such as `(consume %x)`.
 
+## MIR Printed Syntax
+
+MIR is printed as tagged symbolic expressions. Structural nodes are expanded
+over indented lines, while instructions and operands remain inline. Numeric
+resources and labels retain their tags, for example `(read 0)`, `(move 0)`,
+and `(label 1)`. Call operands are wrapped in an explicit variadic
+`(arguments ...)` node:
+
+```text
+(program
+  (function
+    (parameters Int)
+    (result Int)
+    (locals (Owned Int))
+    (blocks
+      (call (define 1) (label 0) (arguments (read 0) (move 2)))
+      (return (read 1)))))
+```
+
 ---
 **Copyright (c) 2026 Marco Nikander**
