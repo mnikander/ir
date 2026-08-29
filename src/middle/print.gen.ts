@@ -50,7 +50,7 @@ function print_line(line: MIR.Line): string {
     case "phi":
       return print_list("phi", [
         print_define(line[1]),
-        ...line[2].map(print_source),
+        print_sources(line[2]),
       ]);
     case "call":
       return print_list("call", [
@@ -98,7 +98,7 @@ function print_line(line: MIR.Line): string {
     case "branch":
       return print_list("branch", [
         print_input(line[1]),
-        ...line[2].map(print_label),
+        print_labels(line[2]),
       ]);
     default:
       return assert_never(line);
@@ -109,8 +109,16 @@ function print_arguments([, ...arguments_]: MIR.Arguments): string {
   return print_list("arguments", arguments_.map(print_input));
 }
 
-function print_source([, block, register]: MIR.Source): string {
+function print_sources([, ...sources]: MIR.Sources): string {
+  return print_list("sources", sources.map(print_source));
+}
+
+function print_source([, block, register]: MIR.From): string {
   return print_list("from", [print_label(block), print_input(register)]);
+}
+
+function print_labels([, ...labels]: MIR.Labels): string {
+  return print_list("labels", labels.map(String));
 }
 
 function print_input(input: MIR.Read | MIR.Move): string {

@@ -39,10 +39,10 @@ describe("MIR printer", () => {
         ["locals", ["Int"], ["Owned", ["Int"]]],
         [
           "blocks",
-          ["phi", ["define", 0], [
-            ["from", ["label", 1], ["read", 2]],
-            ["from", ["label", 2], ["move", 3]],
-          ]],
+          ["phi", ["define", 0], ["sources", ["from", ["label", 1], [
+            "read",
+            2,
+          ]], ["from", ["label", 2], ["move", 3]]]],
           ["call", ["define", 1], ["label", 0], [
             "arguments",
             ["read", 0],
@@ -74,7 +74,7 @@ describe("MIR printer", () => {
         "    (result Int)\n" +
         "    (locals Int (Owned Int))\n" +
         "    (blocks\n" +
-        "      (phi (define 0) (from (label 1) (read 2)) (from (label 2) (move 3)))\n" +
+        "      (phi (define 0) (sources (from (label 1) (read 2)) (from (label 2) (move 3))))\n" +
         "      (call (define 1) (label 0) (arguments (read 0) (move 2)))\n" +
         "      (call (define 2) (label 1) (arguments))\n" +
         "      (constant (define 3) (literal 42))\n" +
@@ -119,7 +119,7 @@ describe("MIR printer", () => {
     );
     lines.push(
       ["negate", ["define", 13], ["read", 2]],
-      ["branch", ["move", 13], [["label", 1], ["label", 2]]],
+      ["branch", ["move", 13], ["labels", 1, 2]],
       ["return", ["read", 13]],
     );
     const input: MIR.Program = [
@@ -142,7 +142,7 @@ describe("MIR printer", () => {
         "    (blocks\n" +
         expected_lines.join("\n") + "\n" +
         "      (negate (define 13) (read 2))\n" +
-        "      (branch (move 13) (label 1) (label 2))\n" +
+        "      (branch (move 13) (labels 1 2))\n" +
         "      (return (read 13)))))\n",
     );
   });

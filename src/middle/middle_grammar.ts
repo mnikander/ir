@@ -45,7 +45,8 @@ export type GreaterEqual = [ tag: 'greater_equal', destination: Define, left: Re
 export type Return       = [ tag: 'return',                             left: Read | Move ];
 export type Branch       = [ tag: 'branch',        index:  Read | Move, blocks: Labels ];
 
-export type Sources      = [ tag: "sources",       ...[source_block: Label, source_register: Read | Move][] ];
+export type Sources      = [ tag: "sources",       ...From[] ];
+export type From         = [ tag: "from",          block: Label, resource: Read | Move ];
 export type Define       = [ tag: "define",        resource: number ]; // define a Resource
 export type Read         = [ tag: "read",          resource: number ]; // use the value of a Resource
 export type Move         = [ tag: "move",          resource: number ]; // destructively move, i.e. consume, the Resource
