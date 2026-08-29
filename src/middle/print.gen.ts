@@ -126,8 +126,17 @@ function print_labels([, ...labels]: MIR.Labels): string {
   return print_list("labels", labels.map(String));
 }
 
-function print_input(input: MIR.Read | MIR.Move): string {
-  return input[0] === "read" ? print_read(input) : print_move(input);
+function print_input(input: MIR.Read | MIR.Move | MIR.Literal): string {
+  switch (input[0]) {
+    case "read":
+      return print_read(input);
+    case "move":
+      return print_move(input);
+    case "literal":
+      return print_literal(input);
+    default:
+      return assert_never(input);
+  }
 }
 
 function print_define([, resource]: MIR.Define): string {

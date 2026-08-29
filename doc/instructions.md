@@ -54,7 +54,9 @@ MIR is printed as tagged symbolic expressions. Structural nodes are expanded
 over indented lines, with each `(blocks ...)` node containing explicit
 `(block ...)` nodes, while instructions and operands remain inline. Numeric
 resources and labels retain their tags, for example `(read 0)`, `(move 0)`,
-and `(label 1)`. Phi inputs, call operands, and branch targets are wrapped in
+`(literal 0)`, and `(label 1)`. Literals can be used directly as MIR operands;
+for example, an unconditional jump is represented by a branch from the
+immediate value `0` to a singleton target list. Phi inputs, call operands, and branch targets are wrapped in
 explicit variadic `(sources ...)`, `(arguments ...)`, and `(labels ...)` nodes:
 
 ```text
@@ -67,7 +69,7 @@ explicit variadic `(sources ...)`, `(arguments ...)`, and `(labels ...)` nodes:
       (block
         (phi (define 0) (sources (from (label 1) (read 2)) (from (label 2) (move 3))))
         (call (define 1) (label 0) (arguments (read 0) (move 2)))
-        (branch (read 1) (labels 1 2)))
+        (branch (literal 0) (labels 1)))
       (block
         (return (read 1))))))
 ```

@@ -146,7 +146,7 @@ describe("MIR printer", () => {
     );
     lines.push(
       ["negate", ["define", 13], ["read", 2]],
-      ["branch", ["move", 13], ["labels", 1, 2]],
+      ["branch", ["literal", 0], ["labels", 1, 2]],
       ["return", ["read", 13]],
     );
     const input: MIR.Program = [
@@ -170,7 +170,7 @@ describe("MIR printer", () => {
         "      (block\n" +
         expected_lines.join("\n") + "\n" +
         "        (negate (define 13) (read 2))\n" +
-        "        (branch (move 13) (labels 1 2))\n" +
+        "        (branch (literal 0) (labels 1 2))\n" +
         "        (return (read 13))))))\n",
     );
   });
