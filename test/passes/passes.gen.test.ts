@@ -10,7 +10,7 @@ import {
   reserve_temporaries,
   resolve_labels,
   rewrite_named_to_numbered,
-} from "../../src/passes/mod.gen.ts";
+} from "../../src/hir_to_lir/mod.gen.ts";
 
 const small: number = 11;
 const large: number = 13;

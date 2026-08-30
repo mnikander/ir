@@ -2,7 +2,7 @@ import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 import * as HIR from "../../src/high/high_grammar.ts";
 import * as LIR from "../../src/low/low_grammar.ts";
-import { lower } from "../../src/passes/lower.gen.ts";
+import { lower } from "../../src/hir_to_lir/lower.gen.ts";
 
 const small: number = 11;
 const large: number = 13;

@@ -5,7 +5,7 @@ import {
   collect_predecessors,
   lower_phi_moves,
   split_phi_edges,
-} from "../../src/passes/mod.gen.ts";
+} from "../../src/hir_to_lir/mod.gen.ts";
 
 describe("collect_predecessors", () => {
   it("records incoming blocks for jump and branch targets", () => {

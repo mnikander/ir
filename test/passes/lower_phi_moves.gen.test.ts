@@ -1,6 +1,6 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
-import { lower_phi_moves, split_phi_edges } from "../../src/passes/mod.gen.ts";
+import { lower_phi_moves, split_phi_edges } from "../../src/hir_to_lir/mod.gen.ts";
 import * as HIGH from "../../src/high/high_grammar.ts";
 
 describe("lower_phi_moves", () => {

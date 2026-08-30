@@ -1,7 +1,7 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 import * as HIR from "../../src/high/high_grammar.ts";
-import { number_slots } from "../../src/passes/mod.gen.ts";
+import { number_slots } from "../../src/hir_to_lir/mod.gen.ts";
 
 describe("number_slots", () => {
   it("records stable slots while leaving named blocks untouched", () => {
