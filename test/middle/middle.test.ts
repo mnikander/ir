@@ -22,8 +22,7 @@ describe("MIR: constants and exit", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(validate(input)).toBe(false);
-    // expect(() => evaluate(analyze(input))).toThrow();
+    // expect(() => evaluate(lower(input))).toThrow();
   });
 
   it("must throw an error when exiting with a pointer instead of a Value", () => {
@@ -52,7 +51,7 @@ describe("MIR: constants and exit", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(() => evaluate(analyze(input))).toThrow();
+    // expect(() => evaluate(lower(input))).toThrow();
   });
 
   it("must evaluate a constant", () => {
@@ -473,8 +472,7 @@ describe("MIR: static single assignment", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(validate(input)).toBe(false);
-    // expect(() => {evaluate(analyze(input))}).toThrow();
+    // expect(() => {evaluate(lower(input))}).toThrow();
   });
 
   it("phi node must assign from the correct register after an unconditional jump", () => {
