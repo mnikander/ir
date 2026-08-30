@@ -103,7 +103,7 @@ function print_line(line: MIR.Line): string {
     case "branch":
       return print_list("branch", [
         print_input(line[1]),
-        print_targets(line[2]),
+        print_block_ids(line[2]),
       ]);
     default:
       return assert_never(line);
@@ -122,8 +122,8 @@ function print_source([, block, register]: MIR.From): string {
   return print_list("from", [print_block_id(block), print_input(register)]);
 }
 
-function print_targets([, ...labels]: MIR.Targets): string {
-  return print_list("targets", labels.map(String));
+function print_block_ids([, ...ids]: MIR.BlockIds): string {
+  return print_list("block_ids", ids.map(String));
 }
 
 function print_input(input: MIR.Read | MIR.Move | MIR.Literal): string {
