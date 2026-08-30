@@ -53,7 +53,7 @@ Note: each line should be kept to a maximum of 260 characters. This allows viewi
 | 2026-04-26 | #33c | HIR,MIR | do not allow type parameters for functions          | Monomorphic functions keep things simple, for now. Would enable user-defined functions with the same syntax as built-in instructions, but would require Type variables.|
 | 2026-08-29 | #9aa | MIR     | dedicated AST nodes for Parameters, Locals, etc     | Short and readable. Allows writing `["parameters", ["Int"], ["Int"]]` instead of for example `["list", ["param", ["Int"]], ["param", ["Int"]]]`.|
 | 2026-08-29 | #f57 | MIR     | every AST nodes begins with a tag                   | Simple uniform dispatch. AST in unit tests becomes more verbose though.|
-| 2026-08-29 | #b13 | MIR     | build IR from symbolic expressions only            | Simple uniform structure which simplifies lowering and analysis.|
+| 2026-08-29 | #b13 | MIR     | build IR from symbolic expressions only             | Simple uniform structure which simplifies lowering and analysis.|
 | 2026-08-29 | #70d | MIR     | indices instead of names for function and block ids | Simplifies analysis and lowering to LIR. Both the analysis and LIR need indices, not names.|
 | 2026-08-29 | #12f | MIR     | switch from HIR to MIR                              | Simplify codebase. This makes the IR a bit less human-readable. A possible HIR or surface language, optimized for human readablity, is future work.|
 |            |        |         |                                                     | |
