@@ -174,4 +174,28 @@ describe("MIR printer", () => {
         "        (return (read 13))))))\n",
     );
   });
+
+  it("prints jump instruction", () => {
+    const input: MIR.Program = [
+      "program",
+      [
+        "function",
+        ["parameters"],
+        ["result", ["Int"]],
+        ["locals"],
+        ["blocks", ["block", ["jump", ["block_id", 42]]]],
+      ],
+    ];
+
+    expect(print(input)).toBe(
+      "\n(program\n" +
+        "  (function\n" +
+        "    (parameters)\n" +
+        "    (result Int)\n" +
+        "    (locals)\n" +
+        "    (blocks\n" +
+        "      (block\n" +
+        "        (jump (block_id 42))))))\n",
+    );
+  });
 });

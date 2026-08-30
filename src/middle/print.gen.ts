@@ -105,6 +105,8 @@ function print_line(line: MIR.Line): string {
         print_input(line[1]),
         print_block_ids(line[2]),
       ]);
+    case "jump":
+      return print_list("jump", [print_block_id(line[1])]);
     default:
       return assert_never(line);
   }
