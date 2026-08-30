@@ -22,7 +22,7 @@ export type Comparison   = Equal | Unequal | Less | LessEqual | Greater | Greate
 export type Terminator   = Branch | Return;
 
 export type Phi          = [ tag: 'phi',           destination: Let, inputs: Sources];
-export type Call         = [ tag: 'call',          destination: Let, function: Label, arguments: Arguments ];
+export type Call         = [ tag: 'call',          destination: Let, function: FunctionId, arguments: Arguments ];
 export type Constant     = [ tag: 'constant',      destination: Let, value: Literal ];
 export type Copy         = [ tag: 'copy',          destination: Let, value: Read | Move ];
 export type Own          = [ tag: 'own',           destination: Let, value: Read | Move ];
@@ -52,6 +52,7 @@ export type Let          = [ tag: "let",           resource: number ]; // define
 export type Read         = [ tag: "read",          resource: number ]; // use the value of a Resource
 export type Move         = [ tag: "move",          resource: number ]; // destructively move, i.e. consume, the Resource
 export type Literal      = [ tag: "literal",       value: number ];
+export type FunctionId   = [ tag: "function_id",   id: number ];
 export type Label        = [ tag: "label",         id: number ];
 export type Targets      = [ tag: "targets",       ...number[] ];
 

@@ -71,7 +71,7 @@ explicit variadic `(sources ...)`, `(arguments ...)`, and `(labels ...)` nodes:
     (blocks
       (block
         (phi (define 0) (sources (from (label 1) (read 2)) (from (label 2) (move 3))))
-        (call (define 1) (label 0) (arguments (read 0) (move 2)))
+        (call (define 1) (function_id 0) (arguments (read 0) (move 2)))
         (branch (literal 0) (labels 1)))
       (block
         (return (read 1))))))

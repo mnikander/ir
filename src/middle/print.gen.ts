@@ -60,7 +60,7 @@ function print_line(line: MIR.Line): string {
     case "call":
       return print_list("call", [
         print_let(line[1]),
-        print_label(line[2]),
+        print_function_id(line[2]),
         print_arguments(line[3]),
       ]);
     case "constant":
@@ -153,6 +153,10 @@ function print_move([, resource]: MIR.Move): string {
 
 function print_literal([, value]: MIR.Literal): string {
   return `(literal ${value})`;
+}
+
+function print_function_id([, id]: MIR.FunctionId): string {
+  return `(function_id ${id})`;
 }
 
 function print_label([, id]: MIR.Label): string {

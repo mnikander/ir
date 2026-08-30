@@ -20,7 +20,7 @@ describe("MIR: constants and exit", () => {
       ["locals"],
       ["blocks"],
     ]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(validate(input)).toBe(false);
     // expect(() => evaluate(analyze(input))).toThrow();
@@ -50,7 +50,7 @@ describe("MIR: constants and exit", () => {
         ["read", 0],
       ], ["return", ["read", 1]]]],
     ]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(() => evaluate(analyze(input))).toThrow();
   });
@@ -77,7 +77,7 @@ describe("MIR: constants and exit", () => {
         ["read", 0],
       ]]],
     ]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(11);
   });
@@ -108,7 +108,7 @@ describe("MIR: copying of registers", () => {
         ["read", 0],
       ], ["return", ["read", 1]]]],
     ]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(11);
   });
@@ -142,7 +142,7 @@ describe("MIR: arithmetic operations", () => {
         ["return", ["read", 2]],
       ]],
     ]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(11 + 13);
   });
@@ -180,7 +180,7 @@ describe("MIR: targets, jump, and branch", () => {
         1,
       ]]]],
     ]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(13);
   });
@@ -228,7 +228,7 @@ describe("MIR: targets, jump, and branch", () => {
         ["targets", 3],
       ]], ["block", ["return", ["read", 3]]]],
     ]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(11 + 13);
   });
@@ -276,7 +276,7 @@ describe("MIR: targets, jump, and branch", () => {
         ["targets", 3],
       ]], ["block", ["return", ["read", 4]]]],
     ]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(13 + 281);
   });
@@ -294,7 +294,7 @@ describe("MIR: function call", () => {
       (block
         (constant (let 0) (literal 11))
         (constant (let 1) (literal 13))
-        (call (let 2) (label 1) (arguments (read 1)))
+        (call (let 2) (function_id 1) (arguments (read 1)))
         (return (read 2)))))
   (function
     (parameters Int)
@@ -313,14 +313,14 @@ describe("MIR: function call", () => {
         "block",
         ["constant", ["let", 0], ["literal", 11]],
         ["constant", ["let", 1], ["literal", 13]],
-        ["call", ["let", 2], ["label", 1], ["arguments", ["read", 1]]],
+        ["call", ["let", 2], ["function_id", 1], ["arguments", ["read", 1]]],
         ["return", ["read", 2]],
       ]],
     ], ["function", ["parameters", ["Int"]], ["result", ["Int"]], ["locals"], [
       "blocks",
       ["block", ["return", ["read", 0]]],
     ]]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(13);
   });
@@ -336,7 +336,7 @@ describe("MIR: function call", () => {
       (block
         (constant (let 0) (literal 11))
         (constant (let 1) (literal 13))
-        (call (let 2) (label 1) (arguments (read 0) (read 1)))
+        (call (let 2) (function_id 1) (arguments (read 0) (read 1)))
         (return (read 2)))))
   (function
     (parameters Int Int)
@@ -355,14 +355,14 @@ describe("MIR: function call", () => {
         "constant",
         ["let", 1],
         ["literal", 13],
-      ], ["call", ["let", 2], ["label", 1], ["arguments", ["read", 0], [
+      ], ["call", ["let", 2], ["function_id", 1], ["arguments", ["read", 0], [
         "read",
         1,
       ]]], ["return", ["read", 2]]]],
     ], ["function", ["parameters", ["Int"], ["Int"]], ["result", ["Int"]], [
       "locals",
     ], ["blocks", ["block", ["return", ["read", 0]]]]]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(11);
   });
@@ -384,7 +384,7 @@ describe("MIR: function call", () => {
       (block
         (constant (let 0) (literal 5))
         (constant (let 1) (literal 1))
-        (call (let 2) (label 1) (arguments (read 0) (read 1)))
+        (call (let 2) (function_id 1) (arguments (read 0) (read 1)))
         (return (read 2)))))
   (function
     (parameters Int Int)
@@ -397,7 +397,7 @@ describe("MIR: function call", () => {
       (block
         (subtract (let 4) (read 0) (literal 1))
         (multiply (let 5) (read 0) (read 1))
-        (call (let 6) (label 1) (arguments (read 4) (read 5)))
+        (call (let 6) (function_id 1) (arguments (read 4) (read 5)))
         (branch (literal 0) (targets 2)))
       (block
         (phi (let 7) (sources (from (label 1) (read 6)) (from (label 0) (read 1))))
@@ -412,7 +412,7 @@ describe("MIR: function call", () => {
         "constant",
         ["let", 1],
         ["literal", 1],
-      ], ["call", ["let", 2], ["label", 1], ["arguments", ["read", 0], [
+      ], ["call", ["let", 2], ["function_id", 1], ["arguments", ["read", 0], [
         "read",
         1,
       ]]], ["return", ["read", 2]]]],
@@ -431,7 +431,7 @@ describe("MIR: function call", () => {
       "block",
       ["subtract", ["let", 4], ["read", 0], ["literal", 1]],
       ["multiply", ["let", 5], ["read", 0], ["read", 1]],
-      ["call", ["let", 6], ["label", 1], ["arguments", ["read", 4], [
+      ["call", ["let", 6], ["function_id", 1], ["arguments", ["read", 4], [
         "read",
         5,
       ]]],
@@ -440,7 +440,7 @@ describe("MIR: function call", () => {
       "read",
       6,
     ]], ["from", ["label", 0], ["read", 1]]]], ["return", ["read", 7]]]]]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(120);
   });
@@ -471,7 +471,7 @@ describe("MIR: static single assignment", () => {
         ["literal", 13],
       ], ["return", ["read", 1]]]],
     ]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(validate(input)).toBe(false);
     // expect(() => {evaluate(analyze(input))}).toThrow();
@@ -515,7 +515,7 @@ describe("MIR: static single assignment", () => {
         ["read", 0],
       ], ["from", ["label", 2], ["read", 1]]]], ["return", ["read", 2]]]],
     ]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(13);
   });
@@ -575,7 +575,7 @@ describe("MIR: static single assignment", () => {
         ["branch", ["read", 5], ["targets", 2, 1]],
       ], ["block", ["return", ["read", 3]]]],
     ]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(3);
   });
@@ -652,7 +652,7 @@ describe("MIR: static single assignment", () => {
       ["add", ["let", 6], ["read", 4], ["read", 5]],
       ["return", ["read", 6]],
     ]]]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(13 + 281);
   });
@@ -707,7 +707,7 @@ describe("MIR: static single assignment", () => {
         ["read", 0],
       ], ["from", ["label", 2], ["read", 2]]]], ["return", ["read", 3]]]],
     ]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(13);
   });
@@ -767,7 +767,7 @@ describe("MIR: static single assignment", () => {
         ["read", 1],
       ], ["from", ["label", 2], ["read", 2]]]], ["return", ["read", 3]]]],
     ]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(0);
   });
@@ -827,7 +827,7 @@ describe("MIR: static single assignment", () => {
         ["read", 2],
       ]]], ["return", ["read", 3]]]],
     ]];
-    expect(input).toBeDefined();
+    expect(input).toBeletd();
     expect(print(input)).toEqual(text);
     // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
