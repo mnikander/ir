@@ -61,21 +61,21 @@ describe("MIR printer", () => {
           "blocks",
           [
             "block",
-            ["phi", ["define", 0], ["sources", ["from", ["label", 1], [
+            ["phi", ["let", 0], ["sources", ["from", ["label", 1], [
               "read",
               2,
             ]], ["from", ["label", 2], ["move", 3]]]],
-            ["call", ["define", 1], ["label", 0], [
+            ["call", ["let", 1], ["label", 0], [
               "arguments",
               ["read", 0],
               ["move", 2],
             ]],
-            ["call", ["define", 2], ["label", 1], ["arguments"]],
-            ["constant", ["define", 3], ["literal", 42]],
-            ["copy", ["define", 4], ["read", 3]],
-            ["own", ["define", 5], ["move", 4]],
-            ["borrow", ["define", 6], ["read", 5]],
-            ["load", ["define", 7], ["move", 6]],
+            ["call", ["let", 2], ["label", 1], ["arguments"]],
+            ["constant", ["let", 3], ["literal", 42]],
+            ["copy", ["let", 4], ["read", 3]],
+            ["own", ["let", 5], ["move", 4]],
+            ["borrow", ["let", 6], ["read", 5]],
+            ["load", ["let", 7], ["move", 6]],
             ["drop", ["move", 5]],
             ["return", ["read", 7]],
           ],
@@ -99,14 +99,14 @@ describe("MIR printer", () => {
         "    (locals Int (Owned Int))\n" +
         "    (blocks\n" +
         "      (block\n" +
-        "        (phi (define 0) (sources (from (label 1) (read 2)) (from (label 2) (move 3))))\n" +
-        "        (call (define 1) (label 0) (arguments (read 0) (move 2)))\n" +
-        "        (call (define 2) (label 1) (arguments))\n" +
-        "        (constant (define 3) (literal 42))\n" +
-        "        (copy (define 4) (read 3))\n" +
-        "        (own (define 5) (move 4))\n" +
-        "        (borrow (define 6) (read 5))\n" +
-        "        (load (define 7) (move 6))\n" +
+        "        (phi (let 0) (sources (from (label 1) (read 2)) (from (label 2) (move 3))))\n" +
+        "        (call (let 1) (label 0) (arguments (read 0) (move 2)))\n" +
+        "        (call (let 2) (label 1) (arguments))\n" +
+        "        (constant (let 3) (literal 42))\n" +
+        "        (copy (let 4) (read 3))\n" +
+        "        (own (let 5) (move 4))\n" +
+        "        (borrow (let 6) (read 5))\n" +
+        "        (load (let 7) (move 6))\n" +
         "        (drop (move 5))\n" +
         "        (return (read 7)))\n" +
         "      (block)))\n" +
@@ -139,13 +139,13 @@ describe("MIR printer", () => {
     const lines: MIR.Line[] = binary_tags.map((tag, index) =>
       [
         tag,
-        ["define", index],
+        ["let", index],
         ["read", 0],
         ["move", 1],
       ] as MIR.Line
     );
     lines.push(
-      ["negate", ["define", 13], ["read", 2]],
+      ["negate", ["let", 13], ["read", 2]],
       ["branch", ["literal", 0], ["labels", 1, 2]],
       ["return", ["read", 13]],
     );
@@ -158,7 +158,7 @@ describe("MIR printer", () => {
     ];
 
     const expected_lines = binary_tags.map((tag, index) =>
-      `        (${tag} (define ${index}) (read 0) (move 1))`
+      `        (${tag} (let ${index}) (read 0) (move 1))`
     );
     expect(print(input)).toBe(
       "\n(program\n" +
@@ -169,7 +169,7 @@ describe("MIR printer", () => {
         "    (blocks\n" +
         "      (block\n" +
         expected_lines.join("\n") + "\n" +
-        "        (negate (define 13) (read 2))\n" +
+        "        (negate (let 13) (read 2))\n" +
         "        (branch (literal 0) (labels 1 2))\n" +
         "        (return (read 13))))))\n",
     );

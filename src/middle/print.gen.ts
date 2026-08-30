@@ -54,25 +54,25 @@ function print_line(line: MIR.Line): string {
   switch (line[0]) {
     case "phi":
       return print_list("phi", [
-        print_define(line[1]),
+        print_let(line[1]),
         print_sources(line[2]),
       ]);
     case "call":
       return print_list("call", [
-        print_define(line[1]),
+        print_let(line[1]),
         print_label(line[2]),
         print_arguments(line[3]),
       ]);
     case "constant":
       return print_list("constant", [
-        print_define(line[1]),
+        print_let(line[1]),
         print_literal(line[2]),
       ]);
     case "copy":
     case "own":
     case "borrow":
     case "load":
-      return print_list(line[0], [print_define(line[1]), print_input(line[2])]);
+      return print_list(line[0], [print_let(line[1]), print_input(line[2])]);
     case "drop":
       return print_list("drop", [print_move(line[1])]);
     case "add":
@@ -89,13 +89,13 @@ function print_line(line: MIR.Line): string {
     case "greater":
     case "greater_equal":
       return print_list(line[0], [
-        print_define(line[1]),
+        print_let(line[1]),
         print_input(line[2]),
         print_input(line[3]),
       ]);
     case "negate":
       return print_list("negate", [
-        print_define(line[1]),
+        print_let(line[1]),
         print_input(line[2]),
       ]);
     case "return":
@@ -139,8 +139,8 @@ function print_input(input: MIR.Read | MIR.Move | MIR.Literal): string {
   }
 }
 
-function print_define([, resource]: MIR.Define): string {
-  return `(define ${resource})`;
+function print_let([, resource]: MIR.Let): string {
+  return `(let ${resource})`;
 }
 
 function print_read([, resource]: MIR.Read): string {
