@@ -3,7 +3,7 @@ import { expect } from "@std/expect";
 import * as MID from "../../src/middle/middle_grammar.ts";
 import { print } from "../../src/middle/print.gen.ts";
 
-describe.skip("memory and ownership", () => {
+describe.skip("MIR: memory and ownership", () => {
   it("must create and load from a pointer", () => {
     const text: string = `
 (program
@@ -168,7 +168,7 @@ describe.skip("memory and ownership", () => {
   });
 });
 
-describe.skip("use-after-free", () => {
+describe.skip("MIR: use-after-free", () => {
   it("must detect a use-after-free in a return", () => {
     const text: string = `
 (program
@@ -364,7 +364,7 @@ describe.skip("use-after-free", () => {
   });
 });
 
-describe.skip("ownership violations", () => {
+describe.skip("MIR: ownership violations", () => {
   it("must detect invalid use of a register owned by a pointer", () => {
     const text: string = `
 (program

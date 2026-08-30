@@ -11,7 +11,7 @@ function analyze_lifecycle(_input: HIGH.Program): boolean {
   return false;
 }
 
-describe.skip("memory and ownership", () => {
+describe.skip("HIR: memory and ownership", () => {
   it("must create and load from a pointer", () => {
     const text: string = `
 function @main [] -> Int
@@ -200,7 +200,7 @@ function @main [] -> Int
   });
 });
 
-describe.skip("use-after-free", () => {
+describe.skip("HIR: use-after-free", () => {
   it("must detect a use-after-free in a return", () => {
     const text: string = `
 function @main [] -> Int
@@ -426,7 +426,7 @@ function @main [] -> Int
   });
 });
 
-describe.skip("ownership violations", () => {
+describe.skip("HIR: ownership violations", () => {
   it("must detect invalid use of a register owned by a pointer", () => {
     const text: string = `
 function @main [] -> Int

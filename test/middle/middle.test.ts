@@ -3,7 +3,7 @@ import { expect } from "@std/expect";
 import * as MID from "../../src/middle/middle_grammar.ts";
 import { print } from "../../src/middle/print.gen.ts";
 
-describe("constants and exit", () => {
+describe("MIR: constants and exit", () => {
   it("must throw error on empty input", () => {
     const text: string = `
 (program
@@ -86,7 +86,7 @@ describe("constants and exit", () => {
   });
 });
 
-describe("copying of registers", () => {
+describe("MIR: copying of registers", () => {
   it("must copy a constant", () => {
     const text: string = `
 (program
@@ -118,7 +118,7 @@ describe("copying of registers", () => {
   });
 });
 
-describe("arithmetic operations", () => {
+describe("MIR: arithmetic operations", () => {
   it("must evaluate integer addition", () => {
     const text: string = `
 (program
@@ -152,7 +152,7 @@ describe("arithmetic operations", () => {
   });
 });
 
-describe("labels, jump, and branch", () => {
+describe("MIR: labels, jump, and branch", () => {
   it("must execute the correct line of code after an unconditional jump", () => {
     const text: string = `
 (program
@@ -288,7 +288,7 @@ describe("labels, jump, and branch", () => {
   });
 });
 
-describe("function call", () => {
+describe("MIR: function call", () => {
   it("must support calling the identity function", () => {
     const text: string = `
 (program
@@ -455,7 +455,7 @@ describe("function call", () => {
   });
 });
 
-describe("static single assignment", () => {
+describe("MIR: static single assignment", () => {
   it("must throw an error when re-assigning to a register", () => {
     const text: string = `
 (program

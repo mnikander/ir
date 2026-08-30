@@ -7,7 +7,7 @@ import { validate } from "../../src/analysis/validate.ts";
 import { print } from "../../src/high/print.gen.ts";
 // import { adjacency_list, analyze, control_flow_graph, Edge, node_list, table_of_contents } from "../src/analysis.ts";
 
-describe("constants and exit", () => {
+describe("HIR: constants and exit", () => {
   it("must throw error on empty input", () => {
     const text: string = `
 function @main [] -> Int
@@ -131,7 +131,7 @@ function @main [] -> Int
   });
 });
 
-describe("copying of registers", () => {
+describe("HIR: copying of registers", () => {
   it("must copy a constant", () => {
     const text: string = `
 function @main [] -> Int
@@ -167,7 +167,7 @@ function @main [] -> Int
   });
 });
 
-describe("arithmetic operations", () => {
+describe("HIR: arithmetic operations", () => {
   it("must evaluate integer addition", () => {
     const text: string = `
 function @main [] -> Int
@@ -205,7 +205,7 @@ function @main [] -> Int
   });
 });
 
-describe("labels, jump, and branch", () => {
+describe("HIR: labels, jump, and branch", () => {
   it("must execute the correct line of code after an unconditional jump", () => {
     const text: string = `
 function @main [] -> Int
@@ -402,7 +402,7 @@ function @main [] -> Int
   });
 });
 
-describe("function call", () => {
+describe("HIR: function call", () => {
   it("must support calling the identity function", () => {
     const text: string = `
 function @main [] -> Int
@@ -610,7 +610,7 @@ function @factorial [%n : Int, %acc : Int] -> Int
   });
 });
 
-describe("static single assignment", () => {
+describe("HIR: static single assignment", () => {
   it("must throw an error when re-assigning to a register", () => {
     const text: string = `
 function @main [] -> Int
