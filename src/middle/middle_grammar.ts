@@ -28,7 +28,6 @@ export type Copy         = [ tag: 'copy',          destination: Define, value: R
 export type Own          = [ tag: 'own',           destination: Define, value: Read | Move ];
 export type Borrow       = [ tag: 'borrow',        destination: Define, value: Read | Move ];
 export type Load         = [ tag: 'load',          destination: Define, pointer: Read | Move ]; // dereference pointer and load the value
-export type Drop         = [ tag: 'drop',          destination: Move ];
 export type Add          = [ tag: 'add',           destination: Define, left: Read | Move | Literal, right: Read | Move | Literal ];
 export type Subtract     = [ tag: 'subtract',      destination: Define, left: Read | Move | Literal, right: Read | Move | Literal ];
 export type Multiply     = [ tag: 'multiply',      destination: Define, left: Read | Move | Literal, right: Read | Move | Literal ];
@@ -43,7 +42,8 @@ export type Less         = [ tag: 'less',          destination: Define, left: Re
 export type LessEqual    = [ tag: 'less_equal',    destination: Define, left: Read | Move | Literal, right: Read | Move | Literal ];
 export type Greater      = [ tag: 'greater',       destination: Define, left: Read | Move | Literal, right: Read | Move | Literal ];
 export type GreaterEqual = [ tag: 'greater_equal', destination: Define, left: Read | Move | Literal, right: Read | Move | Literal ];
-export type Return       = [ tag: 'return',                             left: Read | Move | Literal ];
+export type Drop         = [ tag: 'drop',          target: Move ];
+export type Return       = [ tag: 'return',        target: Read | Move | Literal ];
 export type Branch       = [ tag: 'branch',        index:  Read | Move | Literal, blocks: Labels ];
 
 export type Sources      = [ tag: "sources",       ...From[] ];
