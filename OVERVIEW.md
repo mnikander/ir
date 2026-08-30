@@ -56,8 +56,8 @@ The codebase will be gradually refactored to replace the HIR with MIR.
 MIR is printed as tagged symbolic expressions. Structural nodes are expanded
 over indented lines, with each `(blocks ...)` node containing explicit
 `(block ...)` nodes, while instructions and operands remain inline. Numeric
-resources and labels retain their tags, for example `(read 0)`, `(move 0)`,
-`(literal 0)`, and `(label 1)`. Literals can be used directly as MIR operands;
+resources and block IDs retain their tags, for example `(read 0)`, `(move 0)`,
+`(literal 0)`, and `(block_id 1)`. Literals can be used directly as MIR operands;
 for example, an unconditional jump is represented by a branch from the
 immediate value `0` to a singleton target list. Phi inputs, call operands, and branch targets are wrapped in
 explicit variadic `(sources ...)`, `(arguments ...)`, and `(labels ...)` nodes:
@@ -70,7 +70,7 @@ explicit variadic `(sources ...)`, `(arguments ...)`, and `(labels ...)` nodes:
     (locals (Owned Int))
     (blocks
       (block
-        (phi (define 0) (sources (from (label 1) (read 2)) (from (label 2) (move 3))))
+        (phi (define 0) (sources (from (block_id 1) (read 2)) (from (block_id 2) (move 3))))
         (call (define 1) (function_id 0) (arguments (read 0) (move 2)))
         (branch (literal 0) (labels 1)))
       (block

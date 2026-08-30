@@ -61,10 +61,10 @@ describe("MIR printer", () => {
           "blocks",
           [
             "block",
-            ["phi", ["let", 0], ["sources", ["from", ["label", 1], [
+            ["phi", ["let", 0], ["sources", ["from", ["block_id", 1], [
               "read",
               2,
-            ]], ["from", ["label", 2], ["move", 3]]]],
+            ]], ["from", ["block_id", 2], ["move", 3]]]],
             ["call", ["let", 1], ["function_id", 0], [
               "arguments",
               ["read", 0],
@@ -99,7 +99,7 @@ describe("MIR printer", () => {
         "    (locals Int (Owned Int))\n" +
         "    (blocks\n" +
         "      (block\n" +
-        "        (phi (let 0) (sources (from (label 1) (read 2)) (from (label 2) (move 3))))\n" +
+        "        (phi (let 0) (sources (from (block_id 1) (read 2)) (from (block_id 2) (move 3))))\n" +
         "        (call (let 1) (function_id 0) (arguments (read 0) (move 2)))\n" +
         "        (call (let 2) (function_id 1) (arguments))\n" +
         "        (constant (let 3) (literal 42))\n" +

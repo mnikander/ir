@@ -400,7 +400,7 @@ describe("MIR: function call", () => {
         (call (let 6) (function_id 1) (arguments (read 4) (read 5)))
         (branch (literal 0) (targets 2)))
       (block
-        (phi (let 7) (sources (from (label 1) (read 6)) (from (label 0) (read 1))))
+        (phi (let 7) (sources (from (block_id 1) (read 6)) (from (block_id 0) (read 1))))
         (return (read 7))))))
 `;
     const input: MID.Program = ["program", [
@@ -436,10 +436,10 @@ describe("MIR: function call", () => {
         5,
       ]]],
       ["branch", ["literal", 0], ["targets", 2]],
-    ], ["block", ["phi", ["let", 7], ["sources", ["from", ["label", 1], [
+    ], ["block", ["phi", ["let", 7], ["sources", ["from", ["block_id", 1], [
       "read",
       6,
-    ]], ["from", ["label", 0], ["read", 1]]]], ["return", ["read", 7]]]]]];
+    ]], ["from", ["block_id", 0], ["read", 1]]]], ["return", ["read", 7]]]]]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(120);
@@ -494,7 +494,7 @@ describe("MIR: static single assignment", () => {
         (constant (let 1) (literal 13))
         (branch (literal 0) (targets 3)))
       (block
-        (phi (let 2) (sources (from (label 1) (read 0)) (from (label 2) (read 1))))
+        (phi (let 2) (sources (from (block_id 1) (read 0)) (from (block_id 2) (read 1))))
         (return (read 2))))))
 `;
     const input: MID.Program = ["program", [
@@ -511,9 +511,9 @@ describe("MIR: static single assignment", () => {
         0,
       ], ["targets", 3]]], ["block", ["phi", ["let", 2], ["sources", [
         "from",
-        ["label", 1],
+        ["block_id", 1],
         ["read", 0],
-      ], ["from", ["label", 2], ["read", 1]]]], ["return", ["read", 2]]]],
+      ], ["from", ["block_id", 2], ["read", 1]]]], ["return", ["read", 2]]]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -545,7 +545,7 @@ describe("MIR: static single assignment", () => {
         (constant (let 2) (literal 3))
         (branch (literal 0) (targets 1)))
       (block
-        (phi (let 3) (sources (from (label 0) (read 0)) (from (label 1) (read 4))))
+        (phi (let 3) (sources (from (block_id 0) (read 0)) (from (block_id 1) (read 4))))
         (add (let 4) (read 1) (read 3))
         (unequal (let 5) (read 3) (read 2))
         (branch (read 5) (targets 2 1)))
@@ -567,8 +567,8 @@ describe("MIR: static single assignment", () => {
         "block",
         ["phi", ["let", 3], [
           "sources",
-          ["from", ["label", 0], ["read", 0]],
-          ["from", ["label", 1], ["read", 4]],
+          ["from", ["block_id", 0], ["read", 0]],
+          ["from", ["block_id", 1], ["read", 4]],
         ]],
         ["add", ["let", 4], ["read", 1], ["read", 3]],
         ["unequal", ["let", 5], ["read", 3], ["read", 2]],
@@ -612,8 +612,8 @@ describe("MIR: static single assignment", () => {
         (constant (let 3) (literal 281))
         (branch (literal 0) (targets 4)))
       (block
-        (phi (let 4) (sources (from (label 1) (read 1)) (from (label 3) (read 2))))
-        (phi (let 5) (sources (from (label 1) (read 1)) (from (label 3) (read 3))))
+        (phi (let 4) (sources (from (block_id 1) (read 1)) (from (block_id 3) (read 2))))
+        (phi (let 5) (sources (from (block_id 1) (read 1)) (from (block_id 3) (read 3))))
         (add (let 6) (read 4) (read 5))
         (return (read 6))))))
 `;
@@ -639,14 +639,14 @@ describe("MIR: static single assignment", () => {
       0,
     ], ["targets", 4]]], [
       "block",
-      ["phi", ["let", 4], ["sources", ["from", ["label", 1], ["read", 1]], [
+      ["phi", ["let", 4], ["sources", ["from", ["block_id", 1], ["read", 1]], [
         "from",
-        ["label", 3],
+        ["block_id", 3],
         ["read", 2],
       ]]],
-      ["phi", ["let", 5], ["sources", ["from", ["label", 1], ["read", 1]], [
+      ["phi", ["let", 5], ["sources", ["from", ["block_id", 1], ["read", 1]], [
         "from",
-        ["label", 3],
+        ["block_id", 3],
         ["read", 3],
       ]]],
       ["add", ["let", 6], ["read", 4], ["read", 5]],
@@ -685,7 +685,7 @@ describe("MIR: static single assignment", () => {
         (constant (let 2) (literal 13))
         (branch (literal 0) (targets 3)))
       (block
-        (phi (let 3) (sources (from (label 1) (read 0)) (from (label 2) (read 2))))
+        (phi (let 3) (sources (from (block_id 1) (read 0)) (from (block_id 2) (read 2))))
         (return (read 3))))))
 `;
     const input: MID.Program = ["program", [
@@ -703,9 +703,9 @@ describe("MIR: static single assignment", () => {
         0,
       ], ["targets", 3]]], ["block", ["phi", ["let", 3], ["sources", [
         "from",
-        ["label", 1],
+        ["block_id", 1],
         ["read", 0],
-      ], ["from", ["label", 2], ["read", 2]]]], ["return", ["read", 3]]]],
+      ], ["from", ["block_id", 2], ["read", 2]]]], ["return", ["read", 3]]]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -740,7 +740,7 @@ describe("MIR: static single assignment", () => {
         (constant (let 2) (literal 1))
         (branch (literal 0) (targets 3)))
       (block
-        (phi (let 3) (sources (from (label 0) (read 0)) (from (label 1) (read 1)) (from (label 2) (read 2))))
+        (phi (let 3) (sources (from (block_id 0) (read 0)) (from (block_id 1) (read 1)) (from (block_id 2) (read 2))))
         (return (read 3))))))
 `;
     const input: MID.Program = ["program", [
@@ -761,11 +761,11 @@ describe("MIR: static single assignment", () => {
       ]], ["branch", ["literal", 0], ["targets", 3]]], ["block", ["phi", [
         "let",
         3,
-      ], ["sources", ["from", ["label", 0], ["read", 0]], [
+      ], ["sources", ["from", ["block_id", 0], ["read", 0]], [
         "from",
-        ["label", 1],
+        ["block_id", 1],
         ["read", 1],
-      ], ["from", ["label", 2], ["read", 2]]]], ["return", ["read", 3]]]],
+      ], ["from", ["block_id", 2], ["read", 2]]]], ["return", ["read", 3]]]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -800,7 +800,7 @@ describe("MIR: static single assignment", () => {
         (constant (let 2) (literal 1))
         (branch (literal 0) (targets 3)))
       (block
-        (phi (let 3) (sources (from (label 1) (read 1)) (from (label 2) (read 2))))
+        (phi (let 3) (sources (from (block_id 1) (read 1)) (from (block_id 2) (read 2))))
         (return (read 3))))))
 `;
     const input: MID.Program = ["program", [
@@ -821,9 +821,9 @@ describe("MIR: static single assignment", () => {
       ]], ["branch", ["literal", 0], ["targets", 3]]], ["block", ["phi", [
         "let",
         3,
-      ], ["sources", ["from", ["label", 1], ["read", 1]], [
+      ], ["sources", ["from", ["block_id", 1], ["read", 1]], [
         "from",
-        ["label", 2],
+        ["block_id", 2],
         ["read", 2],
       ]]], ["return", ["read", 3]]]],
     ]];

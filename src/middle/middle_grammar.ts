@@ -47,13 +47,13 @@ export type Return       = [ tag: 'return',        target: Read | Move | Literal
 export type Branch       = [ tag: 'branch',        index:  Read | Move | Literal, blocks: Targets ];
 
 export type Sources      = [ tag: "sources",       ...From[] ];
-export type From         = [ tag: "from",          block: Label, resource: Read | Move | Literal ];
+export type From         = [ tag: "from",          block: BlockId, resource: Read | Move | Literal ];
 export type Let          = [ tag: "let",           resource: number ]; // define a Resource
 export type Read         = [ tag: "read",          resource: number ]; // use the value of a Resource
 export type Move         = [ tag: "move",          resource: number ]; // destructively move, i.e. consume, the Resource
 export type Literal      = [ tag: "literal",       value: number ];
 export type FunctionId   = [ tag: "function_id",   id: number ];
-export type Label        = [ tag: "label",         id: number ];
+export type BlockId      = [ tag: "block_id",      id: number ];
 export type Targets      = [ tag: "targets",       ...number[] ];
 
 export enum Get {

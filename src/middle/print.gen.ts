@@ -119,7 +119,7 @@ function print_sources([, ...sources]: MIR.Sources): string {
 }
 
 function print_source([, block, register]: MIR.From): string {
-  return print_list("from", [print_label(block), print_input(register)]);
+  return print_list("from", [print_block_id(block), print_input(register)]);
 }
 
 function print_targets([, ...labels]: MIR.Targets): string {
@@ -159,8 +159,8 @@ function print_function_id([, id]: MIR.FunctionId): string {
   return `(function_id ${id})`;
 }
 
-function print_label([, id]: MIR.Label): string {
-  return `(label ${id})`;
+function print_block_id([, id]: MIR.BlockId): string {
+  return `(block_id ${id})`;
 }
 
 function print_type(type: Type): string {
