@@ -18,19 +18,19 @@ describe.skip("MIR: memory and ownership", () => {
         (load (define 2) (read 1))
         (return (read 2))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Borrowed", ["Int"]], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["borrow", ["define", 1], ["read", 0]],
-          ["load", ["define", 2], ["read", 1]],
-          ["return", ["read", 2]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Borrowed", ["Int"]], ["Int"]],
+      ["blocks", [
+        "block",
+        ["constant", ["define", 0], ["literal", 11]],
+        ["borrow", ["define", 1], ["read", 0]],
+        ["load", ["define", 2], ["read", 1]],
+        ["return", ["read", 2]],
+      ]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(validate(input)).toBe(true);
@@ -51,19 +51,19 @@ describe.skip("MIR: memory and ownership", () => {
         (load (define 2) (read 1))
         (return (read 2))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Owned", ["Int"]], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["own", ["define", 1], ["read", 0]],
-          ["load", ["define", 2], ["read", 1]],
-          ["return", ["read", 2]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Owned", ["Int"]], ["Int"]],
+      ["blocks", [
+        "block",
+        ["constant", ["define", 0], ["literal", 11]],
+        ["own", ["define", 1], ["read", 0]],
+        ["load", ["define", 2], ["read", 1]],
+        ["return", ["read", 2]],
+      ]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(11);
@@ -86,18 +86,17 @@ describe.skip("MIR: memory and ownership", () => {
         (copy (define 1) (move 0))
         (return (read 1))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["copy", ["define", 1], ["move", 0]],
-          ["return", ["read", 1]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"]],
+      ["blocks", ["block", ["constant", ["define", 0], ["literal", 11]], [
+        "copy",
+        ["define", 1],
+        ["move", 0],
+      ], ["return", ["read", 1]]]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(11);
@@ -117,19 +116,19 @@ describe.skip("MIR: memory and ownership", () => {
         (add (define 2) (move 0) (read 1))
         (return (read 2))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["constant", ["define", 1], ["literal", 13]],
-          ["add", ["define", 2], ["move", 0], ["read", 1]],
-          ["return", ["read", 2]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"], ["Int"]],
+      ["blocks", [
+        "block",
+        ["constant", ["define", 0], ["literal", 11]],
+        ["constant", ["define", 1], ["literal", 13]],
+        ["add", ["define", 2], ["move", 0], ["read", 1]],
+        ["return", ["read", 2]],
+      ]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(11 + 13);
@@ -147,17 +146,16 @@ describe.skip("MIR: memory and ownership", () => {
         (constant (define 0) (literal 11))
         (return (move 0))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["return", ["move", 0]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"]],
+      ["blocks", ["block", ["constant", ["define", 0], ["literal", 11]], [
+        "return",
+        ["move", 0],
+      ]]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(11);
@@ -182,18 +180,16 @@ describe.skip("MIR: use-after-free", () => {
         (drop (move 0))
         (return (read 0))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 0]],
-          ["drop", ["move", 0]],
-          ["return", ["read", 0]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"]],
+      ["blocks", ["block", ["constant", ["define", 0], ["literal", 0]], [
+        "drop",
+        ["move", 0],
+      ], ["return", ["read", 0]]]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
@@ -213,19 +209,19 @@ describe.skip("MIR: use-after-free", () => {
         (negate (define 1) (read 0))
         (return (read 1))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 0]],
-          ["drop", ["move", 0]],
-          ["negate", ["define", 1], ["read", 0]],
-          ["return", ["read", 1]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"]],
+      ["blocks", [
+        "block",
+        ["constant", ["define", 0], ["literal", 0]],
+        ["drop", ["move", 0]],
+        ["negate", ["define", 1], ["read", 0]],
+        ["return", ["read", 1]],
+      ]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
@@ -246,20 +242,20 @@ describe.skip("MIR: use-after-free", () => {
         (constant (define 1) (literal 11))
         (return (read 1))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["drop", ["move", 0]],
-          ["drop", ["move", 0]],
-          ["constant", ["define", 1], ["literal", 11]],
-          ["return", ["read", 1]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"]],
+      ["blocks", [
+        "block",
+        ["constant", ["define", 0], ["literal", 11]],
+        ["drop", ["move", 0]],
+        ["drop", ["move", 0]],
+        ["constant", ["define", 1], ["literal", 11]],
+        ["return", ["read", 1]],
+      ]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
@@ -278,18 +274,17 @@ describe.skip("MIR: use-after-free", () => {
         (copy (define 1) (move 0))
         (return (read 0))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["copy", ["define", 1], ["move", 0]],
-          ["return", ["read", 0]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"]],
+      ["blocks", ["block", ["constant", ["define", 0], ["literal", 11]], [
+        "copy",
+        ["define", 1],
+        ["move", 0],
+      ], ["return", ["read", 0]]]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
@@ -310,20 +305,20 @@ describe.skip("MIR: use-after-free", () => {
         (load (define 2) (read 1))
         (return (read 2))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Borrowed", ["Int"]], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["borrow", ["define", 1], ["read", 0]],
-          ["drop", ["move", 0]],
-          ["load", ["define", 2], ["read", 1]],
-          ["return", ["read", 2]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Borrowed", ["Int"]], ["Int"]],
+      ["blocks", [
+        "block",
+        ["constant", ["define", 0], ["literal", 11]],
+        ["borrow", ["define", 1], ["read", 0]],
+        ["drop", ["move", 0]],
+        ["load", ["define", 2], ["read", 1]],
+        ["return", ["read", 2]],
+      ]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
@@ -344,20 +339,20 @@ describe.skip("MIR: use-after-free", () => {
         (load (define 3) (read 1))
         (return (read 3))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Borrowed", ["Int"]], ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["borrow", ["define", 1], ["read", 0]],
-          ["copy", ["define", 2], ["move", 0]],
-          ["load", ["define", 3], ["read", 1]],
-          ["return", ["read", 3]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Borrowed", ["Int"]], ["Int"], ["Int"]],
+      ["blocks", [
+        "block",
+        ["constant", ["define", 0], ["literal", 11]],
+        ["borrow", ["define", 1], ["read", 0]],
+        ["copy", ["define", 2], ["move", 0]],
+        ["load", ["define", 3], ["read", 1]],
+        ["return", ["read", 3]],
+      ]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
@@ -379,19 +374,19 @@ describe.skip("MIR: ownership violations", () => {
         (copy (define 2) (read 0))
         (return (read 2))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Owned", ["Int"]], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["own", ["define", 1], ["read", 0]],
-          ["copy", ["define", 2], ["read", 0]],
-          ["return", ["read", 2]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Owned", ["Int"]], ["Int"]],
+      ["blocks", [
+        "block",
+        ["constant", ["define", 0], ["literal", 11]],
+        ["own", ["define", 1], ["read", 0]],
+        ["copy", ["define", 2], ["read", 0]],
+        ["return", ["read", 2]],
+      ]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error

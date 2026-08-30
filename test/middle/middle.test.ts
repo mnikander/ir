@@ -13,14 +13,13 @@ describe("MIR: constants and exit", () => {
     (locals)
     (blocks)))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals"],
-        ["blocks"]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals"],
+      ["blocks"],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(validate(input)).toBe(false);
@@ -40,18 +39,17 @@ describe("MIR: constants and exit", () => {
         (borrow (define 1) (read 0))
         (return (read 1))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Borrowed", ["Int"]]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["borrow", ["define", 1], ["read", 0]],
-          ["return", ["read", 1]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Borrowed", ["Int"]]],
+      ["blocks", ["block", ["constant", ["define", 0], ["literal", 11]], [
+        "borrow",
+        ["define", 1],
+        ["read", 0],
+      ], ["return", ["read", 1]]]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(() => evaluate(analyze(input))).toThrow();
@@ -69,17 +67,16 @@ describe("MIR: constants and exit", () => {
         (constant (define 0) (literal 11))
         (return (read 0))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["return", ["read", 0]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"]],
+      ["blocks", ["block", ["constant", ["define", 0], ["literal", 11]], [
+        "return",
+        ["read", 0],
+      ]]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(11);
@@ -100,18 +97,17 @@ describe("MIR: copying of registers", () => {
         (copy (define 1) (read 0))
         (return (read 1))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["copy", ["define", 1], ["read", 0]],
-          ["return", ["read", 1]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"]],
+      ["blocks", ["block", ["constant", ["define", 0], ["literal", 11]], [
+        "copy",
+        ["define", 1],
+        ["read", 0],
+      ], ["return", ["read", 1]]]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(11);
@@ -133,19 +129,19 @@ describe("MIR: arithmetic operations", () => {
         (add (define 2) (read 0) (read 1))
         (return (read 2))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["constant", ["define", 1], ["literal", 13]],
-          ["add", ["define", 2], ["read", 0], ["read", 1]],
-          ["return", ["read", 2]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"], ["Int"]],
+      ["blocks", [
+        "block",
+        ["constant", ["define", 0], ["literal", 11]],
+        ["constant", ["define", 1], ["literal", 13]],
+        ["add", ["define", 2], ["read", 0], ["read", 1]],
+        ["return", ["read", 2]],
+      ]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(11 + 13);
@@ -170,22 +166,20 @@ describe("MIR: labels, jump, and branch", () => {
         (constant (define 1) (literal 13))
         (return (read 1))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["branch", ["literal", 0], ["labels", 2]],
-        ], ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["return", ["read", 0]],
-        ], ["block",
-          ["constant", ["define", 1], ["literal", 13]],
-          ["return", ["read", 1]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"]],
+      ["blocks", ["block", ["branch", ["literal", 0], ["labels", 2]]], [
+        "block",
+        ["constant", ["define", 0], ["literal", 11]],
+        ["return", ["read", 0]],
+      ], ["block", ["constant", ["define", 1], ["literal", 13]], ["return", [
+        "read",
+        1,
+      ]]]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(13);
@@ -213,27 +207,27 @@ describe("MIR: labels, jump, and branch", () => {
       (block
         (return (read 3))))))
 `;
-    const input: MID.Program = ["program",
-        ["function",
-          ["parameters"],
-          ["result", ["Int"]],
-          ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
-          ["blocks", ["block",
-            ["constant", ["define", 0], ["literal", 11]],
-            ["constant", ["define", 1], ["literal", 13]],
-            ["constant", ["define", 2], ["literal", 281]],
-            ["branch", ["literal", 0], ["labels", 1, 2]],
-          ], ["block",
-          ["add", ["define", 3], ["read", 0], ["read", 1]],
-          ["branch", ["literal", 0], ["labels", 3]],
-          ], ["block",
-          ["add", ["define", 4], ["read", 1], ["read", 2]],
-          ["branch", ["literal", 0], ["labels", 3]],
-          ], ["block",
-          ["return", ["read", 3]]
-          ]]
-        ]
-      ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["blocks", [
+        "block",
+        ["constant", ["define", 0], ["literal", 11]],
+        ["constant", ["define", 1], ["literal", 13]],
+        ["constant", ["define", 2], ["literal", 281]],
+        ["branch", ["literal", 0], ["labels", 1, 2]],
+      ], ["block", ["add", ["define", 3], ["read", 0], ["read", 1]], [
+        "branch",
+        ["literal", 0],
+        ["labels", 3],
+      ]], ["block", ["add", ["define", 4], ["read", 1], ["read", 2]], [
+        "branch",
+        ["literal", 0],
+        ["labels", 3],
+      ]], ["block", ["return", ["read", 3]]]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(11 + 13);
@@ -261,27 +255,27 @@ describe("MIR: labels, jump, and branch", () => {
       (block
         (return (read 4))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["constant", ["define", 1], ["literal", 13]],
-          ["constant", ["define", 2], ["literal", 281]],
-          ["branch", ["literal", 1], ["labels", 1, 2]],
-        ], ["block",
-          ["add", ["define", 3], ["read", 0], ["read", 1]],
-          ["branch", ["literal", 0], ["labels", 3]],
-        ], ["block",
-          ["add", ["define", 4], ["read", 1], ["read", 2]],
-          ["branch", ["literal", 0], ["labels", 3]],
-        ], ["block",
-          ["return", ["read", 4]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["blocks", [
+        "block",
+        ["constant", ["define", 0], ["literal", 11]],
+        ["constant", ["define", 1], ["literal", 13]],
+        ["constant", ["define", 2], ["literal", 281]],
+        ["branch", ["literal", 1], ["labels", 1, 2]],
+      ], ["block", ["add", ["define", 3], ["read", 0], ["read", 1]], [
+        "branch",
+        ["literal", 0],
+        ["labels", 3],
+      ]], ["block", ["add", ["define", 4], ["read", 1], ["read", 2]], [
+        "branch",
+        ["literal", 0],
+        ["labels", 3],
+      ]], ["block", ["return", ["read", 4]]]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(13 + 281);
@@ -310,27 +304,22 @@ describe("MIR: function call", () => {
       (block
         (return (read 0))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["constant", ["define", 1], ["literal", 13]],
-          ["call", ["define", 2], ["label", 1], ["arguments", ["read", 1]]],
-          ["return", ["read", 2]]
-        ]]
-      ],
-      ["function",
-        ["parameters", ["Int"]],
-        ["result", ["Int"]],
-        ["locals"],
-        ["blocks", ["block",
-          ["return", ["read", 0]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"], ["Int"]],
+      ["blocks", [
+        "block",
+        ["constant", ["define", 0], ["literal", 11]],
+        ["constant", ["define", 1], ["literal", 13]],
+        ["call", ["define", 2], ["label", 1], ["arguments", ["read", 1]]],
+        ["return", ["read", 2]],
+      ]],
+    ], ["function", ["parameters", ["Int"]], ["result", ["Int"]], ["locals"], [
+      "blocks",
+      ["block", ["return", ["read", 0]]],
+    ]]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(13);
@@ -357,27 +346,22 @@ describe("MIR: function call", () => {
       (block
         (return (read 0))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["constant", ["define", 1], ["literal", 13]],
-          ["call", ["define", 2], ["label", 1], ["arguments", ["read", 0], ["read", 1]]],
-          ["return", ["read", 2]]
-        ]]
-      ],
-      ["function",
-        ["parameters", ["Int"], ["Int"]],
-        ["result", ["Int"]],
-        ["locals"],
-        ["blocks", ["block",
-          ["return", ["read", 0]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"], ["Int"]],
+      ["blocks", ["block", ["constant", ["define", 0], ["literal", 11]], [
+        "constant",
+        ["define", 1],
+        ["literal", 13],
+      ], ["call", ["define", 2], ["label", 1], ["arguments", ["read", 0], [
+        "read",
+        1,
+      ]]], ["return", ["read", 2]]]],
+    ], ["function", ["parameters", ["Int"], ["Int"]], ["result", ["Int"]], [
+      "locals",
+    ], ["blocks", ["block", ["return", ["read", 0]]]]]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(11);
@@ -419,36 +403,43 @@ describe("MIR: function call", () => {
         (phi (define 7) (sources (from (label 1) (read 6)) (from (label 0) (read 1))))
         (return (read 7))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 5]],
-          ["constant", ["define", 1], ["literal", 1]],
-          ["call", ["define", 2], ["label", 1], ["arguments", ["read", 0], ["read", 1]]],
-          ["return", ["read", 2]]
-        ]]
-      ],
-      ["function",
-        ["parameters", ["Int"], ["Int"]],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["equal", ["define", 3], ["read", 0], ["literal", 1]],
-          ["branch", ["read", 3], ["labels", 1, 2]],
-        ], ["block",
-          ["subtract", ["define", 4], ["read", 0], ["literal", 1]],
-          ["multiply", ["define", 5], ["read", 0], ["read", 1]],
-          ["call", ["define", 6], ["label", 1], ["arguments", ["read", 4], ["read", 5]]],
-          ["branch", ["literal", 0], ["labels", 2]],
-        ], ["block",
-          ["phi", ["define", 7], ["sources", ["from", ["label", 1], ["read", 6]], ["from", ["label", 0], ["read", 1]]]],
-          ["return", ["read", 7]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"], ["Int"]],
+      ["blocks", ["block", ["constant", ["define", 0], ["literal", 5]], [
+        "constant",
+        ["define", 1],
+        ["literal", 1],
+      ], ["call", ["define", 2], ["label", 1], ["arguments", ["read", 0], [
+        "read",
+        1,
+      ]]], ["return", ["read", 2]]]],
+    ], ["function", ["parameters", ["Int"], ["Int"]], ["result", ["Int"]], [
+      "locals",
+      ["Int"],
+      ["Int"],
+      ["Int"],
+      ["Int"],
+      ["Int"],
+      ["Int"],
+    ], ["blocks", ["block", ["equal", ["define", 3], ["read", 0], [
+      "literal",
+      1,
+    ]], ["branch", ["read", 3], ["labels", 1, 2]]], [
+      "block",
+      ["subtract", ["define", 4], ["read", 0], ["literal", 1]],
+      ["multiply", ["define", 5], ["read", 0], ["read", 1]],
+      ["call", ["define", 6], ["label", 1], ["arguments", ["read", 4], [
+        "read",
+        5,
+      ]]],
+      ["branch", ["literal", 0], ["labels", 2]],
+    ], ["block", ["phi", ["define", 7], ["sources", ["from", ["label", 1], [
+      "read",
+      6,
+    ]], ["from", ["label", 0], ["read", 1]]]], ["return", ["read", 7]]]]]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(120);
@@ -469,18 +460,17 @@ describe("MIR: static single assignment", () => {
         (constant (define 0) (literal 13))
         (return (read 1))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["constant", ["define", 0], ["literal", 13]],
-          ["return", ["read", 1]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"]],
+      ["blocks", ["block", ["constant", ["define", 0], ["literal", 11]], [
+        "constant",
+        ["define", 0],
+        ["literal", 13],
+      ], ["return", ["read", 1]]]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(validate(input)).toBe(false);
@@ -507,25 +497,24 @@ describe("MIR: static single assignment", () => {
         (phi (define 2) (sources (from (label 1) (read 0)) (from (label 2) (read 1))))
         (return (read 2))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["branch", ["literal", 0], ["labels", 2]],
-        ], ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["branch", ["literal", 0], ["labels", 3]],
-        ], ["block",
-          ["constant", ["define", 1], ["literal", 13]],
-          ["branch", ["literal", 0], ["labels", 3]],
-        ], ["block",
-          ["phi", ["define", 2], ["sources", ["from", ["label", 1], ["read", 0]], ["from", ["label", 2], ["read", 1]]]],
-          ["return", ["read", 2]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"], ["Int"]],
+      ["blocks", ["block", ["branch", ["literal", 0], ["labels", 2]]], [
+        "block",
+        ["constant", ["define", 0], ["literal", 11]],
+        ["branch", ["literal", 0], ["labels", 3]],
+      ], ["block", ["constant", ["define", 1], ["literal", 13]], ["branch", [
+        "literal",
+        0,
+      ], ["labels", 3]]], ["block", ["phi", ["define", 2], ["sources", [
+        "from",
+        ["label", 1],
+        ["read", 0],
+      ], ["from", ["label", 2], ["read", 1]]]], ["return", ["read", 2]]]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(13);
@@ -563,26 +552,29 @@ describe("MIR: static single assignment", () => {
       (block
         (return (read 3))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 0]],
-          ["constant", ["define", 1], ["literal", 1]],
-          ["constant", ["define", 2], ["literal", 3]],
-          ["branch", ["literal", 0], ["labels", 1]],
-        ], ["block",
-          ["phi", ["define", 3], ["sources", ["from", ["label", 0], ["read", 0]], ["from", ["label", 1], ["read", 4]]]],
-          ["add", ["define", 4], ["read", 1], ["read", 3]],
-          ["unequal", ["define", 5], ["read", 3], ["read", 2]],
-          ["branch", ["read", 5], ["labels", 2, 1]],
-        ], ["block",
-          ["return", ["read", 3]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["blocks", [
+        "block",
+        ["constant", ["define", 0], ["literal", 0]],
+        ["constant", ["define", 1], ["literal", 1]],
+        ["constant", ["define", 2], ["literal", 3]],
+        ["branch", ["literal", 0], ["labels", 1]],
+      ], [
+        "block",
+        ["phi", ["define", 3], [
+          "sources",
+          ["from", ["label", 0], ["read", 0]],
+          ["from", ["label", 1], ["read", 4]],
+        ]],
+        ["add", ["define", 4], ["read", 1], ["read", 3]],
+        ["unequal", ["define", 5], ["read", 3], ["read", 2]],
+        ["branch", ["read", 5], ["labels", 2, 1]],
+      ], ["block", ["return", ["read", 3]]]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(3);
@@ -626,31 +618,40 @@ describe("MIR: static single assignment", () => {
         (return (read 6))))))
 `;
 
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 0]],
-          ["branch", ["read", 0], ["labels", 1, 2]],
-        ], ["block",
-          ["constant", ["define", 1], ["literal", 11]],
-          ["branch", ["literal", 0], ["labels", 4]],
-        ], ["block",
-          ["constant", ["define", 2], ["literal", 13]],
-          ["branch", ["literal", 0], ["labels", 3]],
-        ], ["block",
-          ["constant", ["define", 3], ["literal", 281]],
-          ["branch", ["literal", 0], ["labels", 4]],
-        ], ["block",
-          ["phi", ["define", 4], ["sources", ["from", ["label", 1], ["read", 1]], ["from", ["label", 3], ["read", 2]]]],
-          ["phi", ["define", 5], ["sources", ["from", ["label", 1], ["read", 1]], ["from", ["label", 3], ["read", 3]]]],
-          ["add", ["define", 6], ["read", 4], ["read", 5]],
-          ["return", ["read", 6]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", ["function", ["parameters"], [
+      "result",
+      ["Int"],
+    ], ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], [
+      "Int",
+    ]], ["blocks", ["block", ["constant", ["define", 0], ["literal", 0]], [
+      "branch",
+      ["read", 0],
+      ["labels", 1, 2],
+    ]], ["block", ["constant", ["define", 1], ["literal", 11]], ["branch", [
+      "literal",
+      0,
+    ], ["labels", 4]]], [
+      "block",
+      ["constant", ["define", 2], ["literal", 13]],
+      ["branch", ["literal", 0], ["labels", 3]],
+    ], ["block", ["constant", ["define", 3], ["literal", 281]], ["branch", [
+      "literal",
+      0,
+    ], ["labels", 4]]], [
+      "block",
+      ["phi", ["define", 4], ["sources", ["from", ["label", 1], ["read", 1]], [
+        "from",
+        ["label", 3],
+        ["read", 2],
+      ]]],
+      ["phi", ["define", 5], ["sources", ["from", ["label", 1], ["read", 1]], [
+        "from",
+        ["label", 3],
+        ["read", 3],
+      ]]],
+      ["add", ["define", 6], ["read", 4], ["read", 5]],
+      ["return", ["read", 6]],
+    ]]]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(13 + 281);
@@ -687,26 +688,25 @@ describe("MIR: static single assignment", () => {
         (phi (define 3) (sources (from (label 1) (read 0)) (from (label 2) (read 2))))
         (return (read 3))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["branch", ["literal", 0], ["labels", 1]],
-        ], ["block",
-          ["constant", ["define", 0], ["literal", 11]],
-          ["constant", ["define", 1], ["literal", 1]],
-          ["branch", ["read", 1], ["labels", 2, 3]],
-        ], ["block",
-          ["constant", ["define", 2], ["literal", 13]],
-          ["branch", ["literal", 0], ["labels", 3]],
-        ], ["block",
-          ["phi", ["define", 3], ["sources", ["from", ["label", 1], ["read", 0]], ["from", ["label", 2], ["read", 2]]]],
-          ["return", ["read", 3]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["blocks", ["block", ["branch", ["literal", 0], ["labels", 1]]], [
+        "block",
+        ["constant", ["define", 0], ["literal", 11]],
+        ["constant", ["define", 1], ["literal", 1]],
+        ["branch", ["read", 1], ["labels", 2, 3]],
+      ], ["block", ["constant", ["define", 2], ["literal", 13]], ["branch", [
+        "literal",
+        0,
+      ], ["labels", 3]]], ["block", ["phi", ["define", 3], ["sources", [
+        "from",
+        ["label", 1],
+        ["read", 0],
+      ], ["from", ["label", 2], ["read", 2]]]], ["return", ["read", 3]]]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(13);
@@ -743,30 +743,30 @@ describe("MIR: static single assignment", () => {
         (phi (define 3) (sources (from (label 0) (read 0)) (from (label 1) (read 1)) (from (label 2) (read 2))))
         (return (read 3))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 0]],
-          ["branch", ["read", 0], ["labels", 3, 1]],
-        ], ["block",
-          ["constant", ["define", 1], ["literal", 1]],
-          ["branch", ["read", 1], ["labels", 3, 2]],
-        ], ["block",
-          ["constant", ["define", 2], ["literal", 1]],
-          ["branch", ["literal", 0], ["labels", 3]],
-        ], ["block",
-          ["phi", ["define", 3], ["sources",
-            ["from", ["label", 0], ["read", 0]],
-            ["from", ["label", 1], ["read", 1]],
-            ["from", ["label", 2], ["read", 2]],
-          ]],
-          ["return", ["read", 3]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["blocks", ["block", ["constant", ["define", 0], ["literal", 0]], [
+        "branch",
+        ["read", 0],
+        ["labels", 3, 1],
+      ]], ["block", ["constant", ["define", 1], ["literal", 1]], ["branch", [
+        "read",
+        1,
+      ], ["labels", 3, 2]]], ["block", ["constant", ["define", 2], [
+        "literal",
+        1,
+      ]], ["branch", ["literal", 0], ["labels", 3]]], ["block", ["phi", [
+        "define",
+        3,
+      ], ["sources", ["from", ["label", 0], ["read", 0]], [
+        "from",
+        ["label", 1],
+        ["read", 1],
+      ], ["from", ["label", 2], ["read", 2]]]], ["return", ["read", 3]]]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(0);
@@ -803,32 +803,32 @@ describe("MIR: static single assignment", () => {
         (phi (define 3) (sources (from (label 1) (read 1)) (from (label 2) (read 2))))
         (return (read 3))))))
 `;
-    const input: MID.Program = ["program",
-      ["function",
-        ["parameters"],
-        ["result", ["Int"]],
-        ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
-        ["blocks", ["block",
-          ["constant", ["define", 0], ["literal", 0]],
-          ["branch", ["read", 0], ["labels", 3, 1]],
-        ], ["block",
-          ["constant", ["define", 1], ["literal", 1]],
-          ["branch", ["read", 1], ["labels", 3, 2]],
-        ], ["block",
-          ["constant", ["define", 2], ["literal", 1]],
-          ["branch", ["literal", 0], ["labels", 3]],
-        ], ["block",
-          ["phi", ["define", 3], ["sources",
-            ["from", ["label", 1], ["read", 1]],
-            ["from", ["label", 2], ["read", 2]],
-          ]],
-          ["return", ["read", 3]]
-        ]]
-      ]
-    ];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["blocks", ["block", ["constant", ["define", 0], ["literal", 0]], [
+        "branch",
+        ["read", 0],
+        ["labels", 3, 1],
+      ]], ["block", ["constant", ["define", 1], ["literal", 1]], ["branch", [
+        "read",
+        1,
+      ], ["labels", 3, 2]]], ["block", ["constant", ["define", 2], [
+        "literal",
+        1,
+      ]], ["branch", ["literal", 0], ["labels", 3]]], ["block", ["phi", [
+        "define",
+        3,
+      ], ["sources", ["from", ["label", 1], ["read", 1]], [
+        "from",
+        ["label", 2],
+        ["read", 2],
+      ]]], ["return", ["read", 3]]]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
-
   });
 });
