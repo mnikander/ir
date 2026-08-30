@@ -148,7 +148,7 @@ describe("MIR: arithmetic operations", () => {
   });
 });
 
-describe("MIR: labels, jump, and branch", () => {
+describe("MIR: targets, jump, and branch", () => {
   it("must execute the correct line of code after an unconditional jump", () => {
     const text: string = `
 (program
@@ -158,7 +158,7 @@ describe("MIR: labels, jump, and branch", () => {
     (locals Int Int)
     (blocks
       (block
-        (branch (literal 0) (labels 2)))
+        (branch (literal 0) (targets 2)))
       (block
         (constant (let 0) (literal 11))
         (return (read 0)))
@@ -171,7 +171,7 @@ describe("MIR: labels, jump, and branch", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"], ["Int"]],
-      ["blocks", ["block", ["branch", ["literal", 0], ["labels", 2]]], [
+      ["blocks", ["block", ["branch", ["literal", 0], ["targets", 2]]], [
         "block",
         ["constant", ["let", 0], ["literal", 11]],
         ["return", ["read", 0]],
@@ -185,7 +185,7 @@ describe("MIR: labels, jump, and branch", () => {
     // expect(evaluate(lower(input))).toBe(13);
   });
 
-  it("must branch to label #0 when index is 0", () => {
+  it("must branch to target #0 when index is 0", () => {
     const text: string = `
 (program
   (function
@@ -197,13 +197,13 @@ describe("MIR: labels, jump, and branch", () => {
         (constant (let 0) (literal 11))
         (constant (let 1) (literal 13))
         (constant (let 2) (literal 281))
-        (branch (literal 0) (labels 1 2)))
+        (branch (literal 0) (targets 1 2)))
       (block
         (add (let 3) (read 0) (read 1))
-        (branch (literal 0) (labels 3)))
+        (branch (literal 0) (targets 3)))
       (block
         (add (let 4) (read 1) (read 2))
-        (branch (literal 0) (labels 3)))
+        (branch (literal 0) (targets 3)))
       (block
         (return (read 3))))))
 `;
@@ -217,15 +217,15 @@ describe("MIR: labels, jump, and branch", () => {
         ["constant", ["let", 0], ["literal", 11]],
         ["constant", ["let", 1], ["literal", 13]],
         ["constant", ["let", 2], ["literal", 281]],
-        ["branch", ["literal", 0], ["labels", 1, 2]],
+        ["branch", ["literal", 0], ["targets", 1, 2]],
       ], ["block", ["add", ["let", 3], ["read", 0], ["read", 1]], [
         "branch",
         ["literal", 0],
-        ["labels", 3],
+        ["targets", 3],
       ]], ["block", ["add", ["let", 4], ["read", 1], ["read", 2]], [
         "branch",
         ["literal", 0],
-        ["labels", 3],
+        ["targets", 3],
       ]], ["block", ["return", ["read", 3]]]],
     ]];
     expect(input).toBeDefined();
@@ -233,7 +233,7 @@ describe("MIR: labels, jump, and branch", () => {
     // expect(evaluate(lower(input))).toBe(11 + 13);
   });
 
-  it("must branch to label #1 when index is 1", () => {
+  it("must branch to target #1 when index is 1", () => {
     const text: string = `
 (program
   (function
@@ -245,13 +245,13 @@ describe("MIR: labels, jump, and branch", () => {
         (constant (let 0) (literal 11))
         (constant (let 1) (literal 13))
         (constant (let 2) (literal 281))
-        (branch (literal 1) (labels 1 2)))
+        (branch (literal 1) (targets 1 2)))
       (block
         (add (let 3) (read 0) (read 1))
-        (branch (literal 0) (labels 3)))
+        (branch (literal 0) (targets 3)))
       (block
         (add (let 4) (read 1) (read 2))
-        (branch (literal 0) (labels 3)))
+        (branch (literal 0) (targets 3)))
       (block
         (return (read 4))))))
 `;
@@ -265,15 +265,15 @@ describe("MIR: labels, jump, and branch", () => {
         ["constant", ["let", 0], ["literal", 11]],
         ["constant", ["let", 1], ["literal", 13]],
         ["constant", ["let", 2], ["literal", 281]],
-        ["branch", ["literal", 1], ["labels", 1, 2]],
+        ["branch", ["literal", 1], ["targets", 1, 2]],
       ], ["block", ["add", ["let", 3], ["read", 0], ["read", 1]], [
         "branch",
         ["literal", 0],
-        ["labels", 3],
+        ["targets", 3],
       ]], ["block", ["add", ["let", 4], ["read", 1], ["read", 2]], [
         "branch",
         ["literal", 0],
-        ["labels", 3],
+        ["targets", 3],
       ]], ["block", ["return", ["read", 4]]]],
     ]];
     expect(input).toBeDefined();
@@ -393,12 +393,12 @@ describe("MIR: function call", () => {
     (blocks
       (block
         (equal (let 3) (read 0) (literal 1))
-        (branch (read 3) (labels 1 2)))
+        (branch (read 3) (targets 1 2)))
       (block
         (subtract (let 4) (read 0) (literal 1))
         (multiply (let 5) (read 0) (read 1))
         (call (let 6) (label 1) (arguments (read 4) (read 5)))
-        (branch (literal 0) (labels 2)))
+        (branch (literal 0) (targets 2)))
       (block
         (phi (let 7) (sources (from (label 1) (read 6)) (from (label 0) (read 1))))
         (return (read 7))))))
@@ -427,7 +427,7 @@ describe("MIR: function call", () => {
     ], ["blocks", ["block", ["equal", ["let", 3], ["read", 0], [
       "literal",
       1,
-    ]], ["branch", ["read", 3], ["labels", 1, 2]]], [
+    ]], ["branch", ["read", 3], ["targets", 1, 2]]], [
       "block",
       ["subtract", ["let", 4], ["read", 0], ["literal", 1]],
       ["multiply", ["let", 5], ["read", 0], ["read", 1]],
@@ -435,7 +435,7 @@ describe("MIR: function call", () => {
         "read",
         5,
       ]]],
-      ["branch", ["literal", 0], ["labels", 2]],
+      ["branch", ["literal", 0], ["targets", 2]],
     ], ["block", ["phi", ["let", 7], ["sources", ["from", ["label", 1], [
       "read",
       6,
@@ -486,13 +486,13 @@ describe("MIR: static single assignment", () => {
     (locals Int Int Int)
     (blocks
       (block
-        (branch (literal 0) (labels 2)))
+        (branch (literal 0) (targets 2)))
       (block
         (constant (let 0) (literal 11))
-        (branch (literal 0) (labels 3)))
+        (branch (literal 0) (targets 3)))
       (block
         (constant (let 1) (literal 13))
-        (branch (literal 0) (labels 3)))
+        (branch (literal 0) (targets 3)))
       (block
         (phi (let 2) (sources (from (label 1) (read 0)) (from (label 2) (read 1))))
         (return (read 2))))))
@@ -502,14 +502,14 @@ describe("MIR: static single assignment", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"]],
-      ["blocks", ["block", ["branch", ["literal", 0], ["labels", 2]]], [
+      ["blocks", ["block", ["branch", ["literal", 0], ["targets", 2]]], [
         "block",
         ["constant", ["let", 0], ["literal", 11]],
-        ["branch", ["literal", 0], ["labels", 3]],
+        ["branch", ["literal", 0], ["targets", 3]],
       ], ["block", ["constant", ["let", 1], ["literal", 13]], ["branch", [
         "literal",
         0,
-      ], ["labels", 3]]], ["block", ["phi", ["let", 2], ["sources", [
+      ], ["targets", 3]]], ["block", ["phi", ["let", 2], ["sources", [
         "from",
         ["label", 1],
         ["read", 0],
@@ -543,12 +543,12 @@ describe("MIR: static single assignment", () => {
         (constant (let 0) (literal 0))
         (constant (let 1) (literal 1))
         (constant (let 2) (literal 3))
-        (branch (literal 0) (labels 1)))
+        (branch (literal 0) (targets 1)))
       (block
         (phi (let 3) (sources (from (label 0) (read 0)) (from (label 1) (read 4))))
         (add (let 4) (read 1) (read 3))
         (unequal (let 5) (read 3) (read 2))
-        (branch (read 5) (labels 2 1)))
+        (branch (read 5) (targets 2 1)))
       (block
         (return (read 3))))))
 `;
@@ -562,7 +562,7 @@ describe("MIR: static single assignment", () => {
         ["constant", ["let", 0], ["literal", 0]],
         ["constant", ["let", 1], ["literal", 1]],
         ["constant", ["let", 2], ["literal", 3]],
-        ["branch", ["literal", 0], ["labels", 1]],
+        ["branch", ["literal", 0], ["targets", 1]],
       ], [
         "block",
         ["phi", ["let", 3], [
@@ -572,7 +572,7 @@ describe("MIR: static single assignment", () => {
         ]],
         ["add", ["let", 4], ["read", 1], ["read", 3]],
         ["unequal", ["let", 5], ["read", 3], ["read", 2]],
-        ["branch", ["read", 5], ["labels", 2, 1]],
+        ["branch", ["read", 5], ["targets", 2, 1]],
       ], ["block", ["return", ["read", 3]]]],
     ]];
     expect(input).toBeDefined();
@@ -601,16 +601,16 @@ describe("MIR: static single assignment", () => {
     (blocks
       (block
         (constant (let 0) (literal 0))
-        (branch (read 0) (labels 1 2)))
+        (branch (read 0) (targets 1 2)))
       (block
         (constant (let 1) (literal 11))
-        (branch (literal 0) (labels 4)))
+        (branch (literal 0) (targets 4)))
       (block
         (constant (let 2) (literal 13))
-        (branch (literal 0) (labels 3)))
+        (branch (literal 0) (targets 3)))
       (block
         (constant (let 3) (literal 281))
-        (branch (literal 0) (labels 4)))
+        (branch (literal 0) (targets 4)))
       (block
         (phi (let 4) (sources (from (label 1) (read 1)) (from (label 3) (read 2))))
         (phi (let 5) (sources (from (label 1) (read 1)) (from (label 3) (read 3))))
@@ -626,18 +626,18 @@ describe("MIR: static single assignment", () => {
     ]], ["blocks", ["block", ["constant", ["let", 0], ["literal", 0]], [
       "branch",
       ["read", 0],
-      ["labels", 1, 2],
+      ["targets", 1, 2],
     ]], ["block", ["constant", ["let", 1], ["literal", 11]], ["branch", [
       "literal",
       0,
-    ], ["labels", 4]]], [
+    ], ["targets", 4]]], [
       "block",
       ["constant", ["let", 2], ["literal", 13]],
-      ["branch", ["literal", 0], ["labels", 3]],
+      ["branch", ["literal", 0], ["targets", 3]],
     ], ["block", ["constant", ["let", 3], ["literal", 281]], ["branch", [
       "literal",
       0,
-    ], ["labels", 4]]], [
+    ], ["targets", 4]]], [
       "block",
       ["phi", ["let", 4], ["sources", ["from", ["label", 1], ["read", 1]], [
         "from",
@@ -676,14 +676,14 @@ describe("MIR: static single assignment", () => {
     (locals Int Int Int Int)
     (blocks
       (block
-        (branch (literal 0) (labels 1)))
+        (branch (literal 0) (targets 1)))
       (block
         (constant (let 0) (literal 11))
         (constant (let 1) (literal 1))
-        (branch (read 1) (labels 2 3)))
+        (branch (read 1) (targets 2 3)))
       (block
         (constant (let 2) (literal 13))
-        (branch (literal 0) (labels 3)))
+        (branch (literal 0) (targets 3)))
       (block
         (phi (let 3) (sources (from (label 1) (read 0)) (from (label 2) (read 2))))
         (return (read 3))))))
@@ -693,15 +693,15 @@ describe("MIR: static single assignment", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
-      ["blocks", ["block", ["branch", ["literal", 0], ["labels", 1]]], [
+      ["blocks", ["block", ["branch", ["literal", 0], ["targets", 1]]], [
         "block",
         ["constant", ["let", 0], ["literal", 11]],
         ["constant", ["let", 1], ["literal", 1]],
-        ["branch", ["read", 1], ["labels", 2, 3]],
+        ["branch", ["read", 1], ["targets", 2, 3]],
       ], ["block", ["constant", ["let", 2], ["literal", 13]], ["branch", [
         "literal",
         0,
-      ], ["labels", 3]]], ["block", ["phi", ["let", 3], ["sources", [
+      ], ["targets", 3]]], ["block", ["phi", ["let", 3], ["sources", [
         "from",
         ["label", 1],
         ["read", 0],
@@ -732,13 +732,13 @@ describe("MIR: static single assignment", () => {
     (blocks
       (block
         (constant (let 0) (literal 0))
-        (branch (read 0) (labels 3 1)))
+        (branch (read 0) (targets 3 1)))
       (block
         (constant (let 1) (literal 1))
-        (branch (read 1) (labels 3 2)))
+        (branch (read 1) (targets 3 2)))
       (block
         (constant (let 2) (literal 1))
-        (branch (literal 0) (labels 3)))
+        (branch (literal 0) (targets 3)))
       (block
         (phi (let 3) (sources (from (label 0) (read 0)) (from (label 1) (read 1)) (from (label 2) (read 2))))
         (return (read 3))))))
@@ -751,14 +751,14 @@ describe("MIR: static single assignment", () => {
       ["blocks", ["block", ["constant", ["let", 0], ["literal", 0]], [
         "branch",
         ["read", 0],
-        ["labels", 3, 1],
+        ["targets", 3, 1],
       ]], ["block", ["constant", ["let", 1], ["literal", 1]], ["branch", [
         "read",
         1,
-      ], ["labels", 3, 2]]], ["block", ["constant", ["let", 2], [
+      ], ["targets", 3, 2]]], ["block", ["constant", ["let", 2], [
         "literal",
         1,
-      ]], ["branch", ["literal", 0], ["labels", 3]]], ["block", ["phi", [
+      ]], ["branch", ["literal", 0], ["targets", 3]]], ["block", ["phi", [
         "let",
         3,
       ], ["sources", ["from", ["label", 0], ["read", 0]], [
@@ -792,13 +792,13 @@ describe("MIR: static single assignment", () => {
     (blocks
       (block
         (constant (let 0) (literal 0))
-        (branch (read 0) (labels 3 1)))
+        (branch (read 0) (targets 3 1)))
       (block
         (constant (let 1) (literal 1))
-        (branch (read 1) (labels 3 2)))
+        (branch (read 1) (targets 3 2)))
       (block
         (constant (let 2) (literal 1))
-        (branch (literal 0) (labels 3)))
+        (branch (literal 0) (targets 3)))
       (block
         (phi (let 3) (sources (from (label 1) (read 1)) (from (label 2) (read 2))))
         (return (read 3))))))
@@ -811,14 +811,14 @@ describe("MIR: static single assignment", () => {
       ["blocks", ["block", ["constant", ["let", 0], ["literal", 0]], [
         "branch",
         ["read", 0],
-        ["labels", 3, 1],
+        ["targets", 3, 1],
       ]], ["block", ["constant", ["let", 1], ["literal", 1]], ["branch", [
         "read",
         1,
-      ], ["labels", 3, 2]]], ["block", ["constant", ["let", 2], [
+      ], ["targets", 3, 2]]], ["block", ["constant", ["let", 2], [
         "literal",
         1,
-      ]], ["branch", ["literal", 0], ["labels", 3]]], ["block", ["phi", [
+      ]], ["branch", ["literal", 0], ["targets", 3]]], ["block", ["phi", [
         "let",
         3,
       ], ["sources", ["from", ["label", 1], ["read", 1]], [

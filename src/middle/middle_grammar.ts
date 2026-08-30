@@ -44,7 +44,7 @@ export type Greater      = [ tag: 'greater',       destination: Let, left: Read 
 export type GreaterEqual = [ tag: 'greater_equal', destination: Let, left: Read | Move | Literal, right: Read | Move | Literal ];
 export type Drop         = [ tag: 'drop',          target: Move ];
 export type Return       = [ tag: 'return',        target: Read | Move | Literal ];
-export type Branch       = [ tag: 'branch',        index:  Read | Move | Literal, blocks: Labels ];
+export type Branch       = [ tag: 'branch',        index:  Read | Move | Literal, blocks: Targets ];
 
 export type Sources      = [ tag: "sources",       ...From[] ];
 export type From         = [ tag: "from",          block: Label, resource: Read | Move | Literal ];
@@ -53,7 +53,7 @@ export type Read         = [ tag: "read",          resource: number ]; // use th
 export type Move         = [ tag: "move",          resource: number ]; // destructively move, i.e. consume, the Resource
 export type Literal      = [ tag: "literal",       value: number ];
 export type Label        = [ tag: "label",         id: number ];
-export type Labels       = [ tag: "labels",        ...number[] ];
+export type Targets      = [ tag: "targets",       ...number[] ];
 
 export enum Get {
     Tag       = 0,
