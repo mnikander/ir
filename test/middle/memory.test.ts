@@ -91,11 +91,12 @@ describe.skip("MIR: memory and ownership", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"], ["Int"]],
-      ["blocks", ["block", ["constant", ["let", 0], ["literal", 11]], [
-        "copy",
-        ["let", 1],
-        ["move", 0],
-      ], ["return", ["read", 1]]]],
+      ["blocks", [
+        "block",
+        ["constant", ["let", 0], ["literal", 11]],
+        ["copy", ["let", 1], ["move", 0]],
+        ["return", ["read", 1]],
+      ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -151,10 +152,11 @@ describe.skip("MIR: memory and ownership", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"]],
-      ["blocks", ["block", ["constant", ["let", 0], ["literal", 11]], [
-        "return",
-        ["move", 0],
-      ]]],
+      ["blocks", [
+        "block",
+        ["constant", ["let", 0], ["literal", 11]],
+        ["return", ["move", 0]],
+      ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -185,10 +187,12 @@ describe.skip("MIR: use-after-free", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"]],
-      ["blocks", ["block", ["constant", ["let", 0], ["literal", 0]], [
-        "drop",
-        ["move", 0],
-      ], ["return", ["read", 0]]]],
+      ["blocks", [
+        "block",
+        ["constant", ["let", 0], ["literal", 0]],
+        ["drop", ["move", 0]],
+        ["return", ["read", 0]],
+      ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -279,11 +283,12 @@ describe.skip("MIR: use-after-free", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"], ["Int"]],
-      ["blocks", ["block", ["constant", ["let", 0], ["literal", 11]], [
-        "copy",
-        ["let", 1],
-        ["move", 0],
-      ], ["return", ["read", 0]]]],
+      ["blocks", [
+        "block",
+        ["constant", ["let", 0], ["literal", 11]],
+        ["copy", ["let", 1], ["move", 0]],
+        ["return", ["read", 0]],
+      ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);

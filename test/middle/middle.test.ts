@@ -43,11 +43,12 @@ describe("MIR: constants and exit", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"], ["Borrowed", ["Int"]]],
-      ["blocks", ["block", ["constant", ["let", 0], ["literal", 11]], [
-        "borrow",
-        ["let", 1],
-        ["read", 0],
-      ], ["return", ["read", 1]]]],
+      ["blocks", [
+        "block",
+        ["constant", ["let", 0], ["literal", 11]],
+        ["borrow", ["let", 1], ["read", 0]],
+        ["return", ["read", 1]],
+      ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -71,10 +72,11 @@ describe("MIR: constants and exit", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"]],
-      ["blocks", ["block", ["constant", ["let", 0], ["literal", 11]], [
-        "return",
-        ["read", 0],
-      ]]],
+      ["blocks", [
+        "block",
+        ["constant", ["let", 0], ["literal", 11]],
+        ["return", ["read", 0]],
+      ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -101,11 +103,12 @@ describe("MIR: copying of registers", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"], ["Int"]],
-      ["blocks", ["block", ["constant", ["let", 0], ["literal", 11]], [
-        "copy",
-        ["let", 1],
-        ["read", 0],
-      ], ["return", ["read", 1]]]],
+      ["blocks", [
+        "block",
+        ["constant", ["let", 0], ["literal", 11]],
+        ["copy", ["let", 1], ["read", 0]],
+        ["return", ["read", 1]],
+      ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -170,14 +173,18 @@ describe("MIR: block_ids, jump, and branch", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"], ["Int"]],
-      ["blocks", ["block", ["branch", ["literal", 0], ["block_ids", 2]]], [
+      ["blocks", [
+        "block",
+        ["branch", ["literal", 0], ["block_ids", 2]],
+      ], [
         "block",
         ["constant", ["let", 0], ["literal", 11]],
         ["return", ["read", 0]],
-      ], ["block", ["constant", ["let", 1], ["literal", 13]], ["return", [
-        "read",
-        1,
-      ]]]],
+      ], [
+        "block",
+        ["constant", ["let", 1], ["literal", 13]],
+        ["return", ["read", 1]],
+      ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -217,15 +224,18 @@ describe("MIR: block_ids, jump, and branch", () => {
         ["constant", ["let", 1], ["literal", 13]],
         ["constant", ["let", 2], ["literal", 281]],
         ["branch", ["literal", 0], ["block_ids", 1, 2]],
-      ], ["block", ["add", ["let", 3], ["read", 0], ["read", 1]], [
-        "branch",
-        ["literal", 0],
-        ["block_ids", 3],
-      ]], ["block", ["add", ["let", 4], ["read", 1], ["read", 2]], [
-        "branch",
-        ["literal", 0],
-        ["block_ids", 3],
-      ]], ["block", ["return", ["read", 3]]]],
+      ], [
+        "block",
+        ["add", ["let", 3], ["read", 0], ["read", 1]],
+        ["branch", ["literal", 0], ["block_ids", 3]],
+      ], [
+        "block",
+        ["add", ["let", 4], ["read", 1], ["read", 2]],
+        ["branch", ["literal", 0], ["block_ids", 3]],
+      ], [
+        "block",
+        ["return", ["read", 3]],
+      ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -265,15 +275,18 @@ describe("MIR: block_ids, jump, and branch", () => {
         ["constant", ["let", 1], ["literal", 13]],
         ["constant", ["let", 2], ["literal", 281]],
         ["branch", ["literal", 1], ["block_ids", 1, 2]],
-      ], ["block", ["add", ["let", 3], ["read", 0], ["read", 1]], [
-        "branch",
-        ["literal", 0],
-        ["block_ids", 3],
-      ]], ["block", ["add", ["let", 4], ["read", 1], ["read", 2]], [
-        "branch",
-        ["literal", 0],
-        ["block_ids", 3],
-      ]], ["block", ["return", ["read", 4]]]],
+      ], [
+        "block",
+        ["add", ["let", 3], ["read", 0], ["read", 1]],
+        ["branch", ["literal", 0], ["block_ids", 3]],
+      ], [
+        "block",
+        ["add", ["let", 4], ["read", 1], ["read", 2]],
+        ["branch", ["literal", 0], ["block_ids", 3]],
+      ], [
+        "block",
+        ["return", ["read", 4]],
+      ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -315,10 +328,16 @@ describe("MIR: function call", () => {
         ["call", ["let", 2], ["function_id", 1], ["arguments", ["read", 1]]],
         ["return", ["read", 2]],
       ]],
-    ], ["function", ["parameters", ["Int"]], ["result", ["Int"]], ["locals"], [
-      "blocks",
-      ["block", ["return", ["read", 0]]],
-    ]]];
+    ], [
+      "function",
+      ["parameters", ["Int"]],
+      ["result", ["Int"]],
+      ["locals"],
+      ["blocks", [
+        "block",
+        ["return", ["read", 0]],
+      ]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(13);
@@ -350,17 +369,26 @@ describe("MIR: function call", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"]],
-      ["blocks", ["block", ["constant", ["let", 0], ["literal", 11]], [
-        "constant",
-        ["let", 1],
-        ["literal", 13],
-      ], ["call", ["let", 2], ["function_id", 1], ["arguments", ["read", 0], [
-        "read",
-        1,
-      ]]], ["return", ["read", 2]]]],
-    ], ["function", ["parameters", ["Int"], ["Int"]], ["result", ["Int"]], [
-      "locals",
-    ], ["blocks", ["block", ["return", ["read", 0]]]]]];
+      ["blocks", [
+        "block",
+        ["constant", ["let", 0], ["literal", 11]],
+        ["constant", ["let", 1], ["literal", 13]],
+        ["call", ["let", 2], ["function_id", 1], ["arguments", ["read", 0], [
+          "read",
+          1,
+        ]]],
+        ["return", ["read", 2]],
+      ]],
+    ], [
+      "function",
+      ["parameters", ["Int"], ["Int"]],
+      ["result", ["Int"]],
+      ["locals"],
+      ["blocks", [
+        "block",
+        ["return", ["read", 0]],
+      ]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(11);
@@ -407,38 +435,44 @@ describe("MIR: function call", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"]],
-      ["blocks", ["block", ["constant", ["let", 0], ["literal", 5]], [
-        "constant",
-        ["let", 1],
-        ["literal", 1],
-      ], ["call", ["let", 2], ["function_id", 1], ["arguments", ["read", 0], [
-        "read",
-        1,
-      ]]], ["return", ["read", 2]]]],
-    ], ["function", ["parameters", ["Int"], ["Int"]], ["result", ["Int"]], [
-      "locals",
-      ["Int"],
-      ["Int"],
-      ["Int"],
-      ["Int"],
-      ["Int"],
-      ["Int"],
-    ], ["blocks", ["block", ["equal", ["let", 3], ["read", 0], [
-      "literal",
-      1,
-    ]], ["branch", ["read", 3], ["block_ids", 1, 2]]], [
-      "block",
-      ["subtract", ["let", 4], ["read", 0], ["literal", 1]],
-      ["multiply", ["let", 5], ["read", 0], ["read", 1]],
-      ["call", ["let", 6], ["function_id", 1], ["arguments", ["read", 4], [
-        "read",
-        5,
-      ]]],
-      ["branch", ["literal", 0], ["block_ids", 2]],
-    ], ["block", ["phi", ["let", 7], ["sources", ["from", ["block_id", 1], [
-      "read",
-      6,
-    ]], ["from", ["block_id", 0], ["read", 1]]]], ["return", ["read", 7]]]]]];
+      ["blocks", [
+        "block",
+        ["constant", ["let", 0], ["literal", 5]],
+        ["constant", ["let", 1], ["literal", 1]],
+        ["call", ["let", 2], ["function_id", 1], ["arguments", ["read", 0], [
+          "read",
+          1,
+        ]]],
+        ["return", ["read", 2]],
+      ]],
+    ], [
+      "function",
+      ["parameters", ["Int"], ["Int"]],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["blocks", [
+        "block",
+        ["equal", ["let", 3], ["read", 0], ["literal", 1]],
+        ["branch", ["read", 3], ["block_ids", 1, 2]],
+      ], [
+        "block",
+        ["subtract", ["let", 4], ["read", 0], ["literal", 1]],
+        ["multiply", ["let", 5], ["read", 0], ["read", 1]],
+        ["call", ["let", 6], ["function_id", 1], ["arguments", ["read", 4], [
+          "read",
+          5,
+        ]]],
+        ["branch", ["literal", 0], ["block_ids", 2]],
+      ], [
+        "block",
+        ["phi", ["let", 7], [
+          "sources",
+          ["from", ["block_id", 1], ["read", 6]],
+          ["from", ["block_id", 0], ["read", 1]],
+        ]],
+        ["return", ["read", 7]],
+      ]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(120);
@@ -464,11 +498,12 @@ describe("MIR: static single assignment", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"], ["Int"]],
-      ["blocks", ["block", ["constant", ["let", 0], ["literal", 11]], [
-        "constant",
-        ["let", 0],
-        ["literal", 13],
-      ], ["return", ["read", 1]]]],
+      ["blocks", [
+        "block",
+        ["constant", ["let", 0], ["literal", 11]],
+        ["constant", ["let", 0], ["literal", 13]],
+        ["return", ["read", 1]],
+      ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -500,18 +535,26 @@ describe("MIR: static single assignment", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"]],
-      ["blocks", ["block", ["branch", ["literal", 0], ["block_ids", 2]]], [
+      ["blocks", [
+        "block",
+        ["branch", ["literal", 0], ["block_ids", 2]],
+      ], [
         "block",
         ["constant", ["let", 0], ["literal", 11]],
         ["branch", ["literal", 0], ["block_ids", 3]],
-      ], ["block", ["constant", ["let", 1], ["literal", 13]], ["branch", [
-        "literal",
-        0,
-      ], ["block_ids", 3]]], ["block", ["phi", ["let", 2], ["sources", [
-        "from",
-        ["block_id", 1],
-        ["read", 0],
-      ], ["from", ["block_id", 2], ["read", 1]]]], ["return", ["read", 2]]]],
+      ], [
+        "block",
+        ["constant", ["let", 1], ["literal", 13]],
+        ["branch", ["literal", 0], ["block_ids", 3]],
+      ], [
+        "block",
+        ["phi", ["let", 2], [
+          "sources",
+          ["from", ["block_id", 1], ["read", 0]],
+          ["from", ["block_id", 2], ["read", 1]],
+        ]],
+        ["return", ["read", 2]],
+      ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -571,7 +614,10 @@ describe("MIR: static single assignment", () => {
         ["add", ["let", 4], ["read", 1], ["read", 3]],
         ["unequal", ["let", 5], ["read", 3], ["read", 2]],
         ["branch", ["read", 5], ["block_ids", 2, 1]],
-      ], ["block", ["return", ["read", 3]]]],
+      ], [
+        "block",
+        ["return", ["read", 3]],
+      ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -616,40 +662,43 @@ describe("MIR: static single assignment", () => {
         (return (read 6))))))
 `;
 
-    const input: MID.Program = ["program", ["function", ["parameters"], [
-      "result",
-      ["Int"],
-    ], ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], [
-      "Int",
-    ]], ["blocks", ["block", ["constant", ["let", 0], ["literal", 0]], [
-      "branch",
-      ["read", 0],
-      ["block_ids", 1, 2],
-    ]], ["block", ["constant", ["let", 1], ["literal", 11]], ["branch", [
-      "literal",
-      0,
-    ], ["block_ids", 4]]], [
-      "block",
-      ["constant", ["let", 2], ["literal", 13]],
-      ["branch", ["literal", 0], ["block_ids", 3]],
-    ], ["block", ["constant", ["let", 3], ["literal", 281]], ["branch", [
-      "literal",
-      0,
-    ], ["block_ids", 4]]], [
-      "block",
-      ["phi", ["let", 4], ["sources", ["from", ["block_id", 1], ["read", 1]], [
-        "from",
-        ["block_id", 3],
-        ["read", 2],
-      ]]],
-      ["phi", ["let", 5], ["sources", ["from", ["block_id", 1], ["read", 1]], [
-        "from",
-        ["block_id", 3],
-        ["read", 3],
-      ]]],
-      ["add", ["let", 6], ["read", 4], ["read", 5]],
-      ["return", ["read", 6]],
-    ]]]];
+    const input: MID.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["blocks", [
+        "block",
+        ["constant", ["let", 0], ["literal", 0]],
+        ["branch", ["read", 0], ["block_ids", 1, 2]],
+      ], [
+        "block",
+        ["constant", ["let", 1], ["literal", 11]],
+        ["branch", ["literal", 0], ["block_ids", 4]],
+      ], [
+        "block",
+        ["constant", ["let", 2], ["literal", 13]],
+        ["branch", ["literal", 0], ["block_ids", 3]],
+      ], [
+        "block",
+        ["constant", ["let", 3], ["literal", 281]],
+        ["branch", ["literal", 0], ["block_ids", 4]],
+      ], [
+        "block",
+        ["phi", ["let", 4], [
+          "sources",
+          ["from", ["block_id", 1], ["read", 1]],
+          ["from", ["block_id", 3], ["read", 2]],
+        ]],
+        ["phi", ["let", 5], [
+          "sources",
+          ["from", ["block_id", 1], ["read", 1]],
+          ["from", ["block_id", 3], ["read", 3]],
+        ]],
+        ["add", ["let", 6], ["read", 4], ["read", 5]],
+        ["return", ["read", 6]],
+      ]],
+    ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     // expect(evaluate(lower(input))).toBe(13 + 281);
@@ -691,19 +740,27 @@ describe("MIR: static single assignment", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
-      ["blocks", ["block", ["branch", ["literal", 0], ["block_ids", 1]]], [
+      ["blocks", [
+        "block",
+        ["branch", ["literal", 0], ["block_ids", 1]],
+      ], [
         "block",
         ["constant", ["let", 0], ["literal", 11]],
         ["constant", ["let", 1], ["literal", 1]],
         ["branch", ["read", 1], ["block_ids", 2, 3]],
-      ], ["block", ["constant", ["let", 2], ["literal", 13]], ["branch", [
-        "literal",
-        0,
-      ], ["block_ids", 3]]], ["block", ["phi", ["let", 3], ["sources", [
-        "from",
-        ["block_id", 1],
-        ["read", 0],
-      ], ["from", ["block_id", 2], ["read", 2]]]], ["return", ["read", 3]]]],
+      ], [
+        "block",
+        ["constant", ["let", 2], ["literal", 13]],
+        ["branch", ["literal", 0], ["block_ids", 3]],
+      ], [
+        "block",
+        ["phi", ["let", 3], [
+          "sources",
+          ["from", ["block_id", 1], ["read", 0]],
+          ["from", ["block_id", 2], ["read", 2]],
+        ]],
+        ["return", ["read", 3]],
+      ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -746,24 +803,28 @@ describe("MIR: static single assignment", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
-      ["blocks", ["block", ["constant", ["let", 0], ["literal", 0]], [
-        "branch",
-        ["read", 0],
-        ["block_ids", 3, 1],
-      ]], ["block", ["constant", ["let", 1], ["literal", 1]], ["branch", [
-        "read",
-        1,
-      ], ["block_ids", 3, 2]]], ["block", ["constant", ["let", 2], [
-        "literal",
-        1,
-      ]], ["branch", ["literal", 0], ["block_ids", 3]]], ["block", ["phi", [
-        "let",
-        3,
-      ], ["sources", ["from", ["block_id", 0], ["read", 0]], [
-        "from",
-        ["block_id", 1],
-        ["read", 1],
-      ], ["from", ["block_id", 2], ["read", 2]]]], ["return", ["read", 3]]]],
+      ["blocks", [
+        "block",
+        ["constant", ["let", 0], ["literal", 0]],
+        ["branch", ["read", 0], ["block_ids", 3, 1]],
+      ], [
+        "block",
+        ["constant", ["let", 1], ["literal", 1]],
+        ["branch", ["read", 1], ["block_ids", 3, 2]],
+      ], [
+        "block",
+        ["constant", ["let", 2], ["literal", 1]],
+        ["branch", ["literal", 0], ["block_ids", 3]],
+      ], [
+        "block",
+        ["phi", ["let", 3], [
+          "sources",
+          ["from", ["block_id", 0], ["read", 0]],
+          ["from", ["block_id", 1], ["read", 1]],
+          ["from", ["block_id", 2], ["read", 2]],
+        ]],
+        ["return", ["read", 3]],
+      ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -806,24 +867,27 @@ describe("MIR: static single assignment", () => {
       ["parameters"],
       ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
-      ["blocks", ["block", ["constant", ["let", 0], ["literal", 0]], [
-        "branch",
-        ["read", 0],
-        ["block_ids", 3, 1],
-      ]], ["block", ["constant", ["let", 1], ["literal", 1]], ["branch", [
-        "read",
-        1,
-      ], ["block_ids", 3, 2]]], ["block", ["constant", ["let", 2], [
-        "literal",
-        1,
-      ]], ["branch", ["literal", 0], ["block_ids", 3]]], ["block", ["phi", [
-        "let",
-        3,
-      ], ["sources", ["from", ["block_id", 1], ["read", 1]], [
-        "from",
-        ["block_id", 2],
-        ["read", 2],
-      ]]], ["return", ["read", 3]]]],
+      ["blocks", [
+        "block",
+        ["constant", ["let", 0], ["literal", 0]],
+        ["branch", ["read", 0], ["block_ids", 3, 1]],
+      ], [
+        "block",
+        ["constant", ["let", 1], ["literal", 1]],
+        ["branch", ["read", 1], ["block_ids", 3, 2]],
+      ], [
+        "block",
+        ["constant", ["let", 2], ["literal", 1]],
+        ["branch", ["literal", 0], ["block_ids", 3]],
+      ], [
+        "block",
+        ["phi", ["let", 3], [
+          "sources",
+          ["from", ["block_id", 1], ["read", 1]],
+          ["from", ["block_id", 2], ["read", 2]],
+        ]],
+        ["return", ["read", 3]],
+      ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
