@@ -13,11 +13,10 @@ export type Result       = [ tag: "result", Type ];
 export type Locals       = [ tag: "locals", ...Type[]];
 export type Blocks       = [ tag: "blocks", ...Block[]];
 export type Block        = [ tag: "block", ...Line[]];
-export type Arguments    = [ tag: "arguments", ...(Operand)[]];
 
 export type Line         = Let | Drop | Terminator;
-export type Value        = Phi | Call | Memory | Arithmetic | Comparison;
-export type Memory       = Constant | Copy | Own | Borrow | Dereference;
+export type Value        = Phi | Call | Memory | Constant | Copy | Arithmetic | Comparison;
+export type Memory       = Own | Borrow | Dereference;
 export type Arithmetic   = Add | Subtract | Multiply | Divide | Remainder | Minimum | Maximum | Negative;
 export type Comparison   = Equal | Unequal | Less | LessEqual | Greater | GreaterEqual;
 export type Terminator   = Return | Jump | Branch;
@@ -28,7 +27,6 @@ export type Drop         = [ tag: 'drop',          source: Move ];
 export type Return       = [ tag: 'return',        source: Operand ];
 export type Jump         = [ tag: 'jump',          target: BlockId ];
 export type Branch       = [ tag: 'branch',        condition: Operand, thenBlock: BlockId, elseBlock: BlockId ];
-
 export type Phi          = [ tag: 'phi',           inputs: Sources];
 export type Call         = [ tag: 'call',          function: FunctionId, arguments: Arguments ];
 export type Constant     = [ tag: 'constant',      value: Literal ];
@@ -51,14 +49,14 @@ export type LessEqual    = [ tag: 'less_equal',    left: Operand, right: Operand
 export type Greater      = [ tag: 'greater',       left: Operand, right: Operand ];
 export type GreaterEqual = [ tag: 'greater_equal', left: Operand, right: Operand ];
 
-export type Sources      = [ tag: "sources",       ...From[] ];
-export type From         = [ tag: "from",          block: BlockId, resource: Operand ];
 export type Read         = [ tag: "read",          resource: number ]; // use the value of a Resource
 export type Move         = [ tag: "move",          resource: number ]; // destructively move, i.e. consume, the Resource
 export type Literal      = [ tag: "literal",       value: number ];
+export type Arguments    = [ tag: "arguments",     ...Operand[]];
+export type Sources      = [ tag: "sources",       ...From[] ];
+export type From         = [ tag: "from",          block: BlockId, resource: Operand ];
 export type FunctionId   = [ tag: "function_id",   id: number ];
 export type BlockId      = [ tag: "block_id",      id: number ];
-export type BlockIds     = [ tag: "block_ids",     ...number[] ];
 
 export enum Get {
     Tag       = 0,
