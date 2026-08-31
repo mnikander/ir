@@ -56,4 +56,5 @@ Note: each line should be kept to a maximum of 260 characters. This allows viewi
 | 2026-08-29 | #b13 | MIR     | build IR from symbolic expressions only             | Simple uniform structure which simplifies lowering and analysis.|
 | 2026-08-29 | #70d | MIR     | indices instead of names for function and block ids | Simplifies analysis and lowering to LIR. Both the analysis and LIR need indices, not names.|
 | 2026-08-29 | #12f | MIR     | switch from HIR to MIR                              | Simplify codebase. This makes the IR a bit less human-readable. A possible HIR or surface language, optimized for human readablity, is future work.|
+| 2026-08-31 | #082 | MIR     | introduce `let` as a keyword                        | Improves readability. `(let 2 (add (read 0) (read 1)))` has quite a bit of nesting, but it is clear which resource is being defined, and which ones are being used.|
 |            |        |         |                                                     | |
