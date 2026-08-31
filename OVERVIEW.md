@@ -51,7 +51,42 @@ The codebase will be gradually refactored to replace the HIR with MIR.
 - [print.gen.ts](/home/marco/Documents/ir/src/middle/print.gen.ts)
   Pretty-prints MIR programs as canonical, indented symbolic expressions
 
-#### MIR Printed Syntax
+
+#### MIR Syntax
+
+MIR represents every value-producing line as a tagged `let` tuple containing a
+tagged value operation. The destination precedes the operation in both the
+symbolic-expression and JSON forms:
+
+```text
+(let 2 (add (read 0) (read 1)))
+["let", 2, ["add", ["read", 0], ["read", 1]]]
+```
+
+Value-producing instructions are wrapped in `let` nodes to bind their result 
+to a resource number. The syntax is:
+
+```
+(let resource value-op)
+```
+
+For example:
+- `(let 0 (constant (literal 42)))` - load constant 42 into resource 0
+- `(let 1 (add (read 0) (read 2)))` - add resources 0 and 2, store in resource 1
+- `(let 3 (phi (sources (from (block_id 1) (read 2)) (from (block_id 2) (move 3)))))` - phi node
+
+Operands can be:
+- `(read n)` - read from resource n
+- `(move n)` - move from resource n (consuming it)
+- `(literal n)` - literal value n
+- `(block_id n)` - block identifier n
+- `(function_id n)` - function identifier n
+
+Terminator instructions (drop, return, jump, branch) are not wrapped in `let`:
+- `(drop (move 0))` - drop resource 0
+- `(return (read 0))` - return resource 0
+- `(jump (block_id 1))` - unconditionally jump to block 1
+- `(branch (read 0) (block_id 1) (block_id 2))` - conditional branch
 
 MIR is printed as tagged symbolic expressions. Structural nodes are expanded
 over indented lines, with each `(blocks ...)` node containing explicit
@@ -79,7 +114,6 @@ wrapped in explicit variadic `(sources ...)` and `(arguments ...)` nodes:
       (block
         (return (read 1))))))
 ```
-
 
 ### Lowering Pipeline
 
