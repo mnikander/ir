@@ -1,6 +1,6 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
-import * as MID from "../../src/middle/middle_grammar.ts";
+import * as MIR from "../../src/middle/middle_grammar.ts";
 import { print } from "../../src/middle/print.gen.ts";
 
 describe("MIR: constants and exit", () => {
@@ -13,7 +13,7 @@ describe("MIR: constants and exit", () => {
     (locals)
     (blocks)))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -38,7 +38,7 @@ describe("MIR: constants and exit", () => {
         (let 1 (borrow (read 0)))
         (return (read 1))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -67,7 +67,7 @@ describe("MIR: constants and exit", () => {
         (let 0 (constant (literal 11)))
         (return (read 0))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -98,7 +98,7 @@ describe("MIR: copying of registers", () => {
         (let 1 (copy (read 0)))
         (return (read 1))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -131,7 +131,7 @@ describe("MIR: arithmetic operations", () => {
         (let 2 (add (read 0) (read 1)))
         (return (read 2))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -168,7 +168,7 @@ describe("MIR: block_ids, jump, and branch", () => {
         (let 1 (constant (literal 13)))
         (return (read 1))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -213,7 +213,7 @@ describe("MIR: block_ids, jump, and branch", () => {
       (block
         (return (read 3))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -264,7 +264,7 @@ describe("MIR: block_ids, jump, and branch", () => {
       (block
         (return (read 4))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -316,7 +316,7 @@ describe("MIR: function call", () => {
       (block
         (return (read 0))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -364,7 +364,7 @@ describe("MIR: function call", () => {
       (block
         (return (read 0))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -430,7 +430,7 @@ describe("MIR: function call", () => {
         (let 7 (phi (sources (from (block_id 1) (read 6)) (from (block_id 0) (read 1)))))
         (return (read 7))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -493,7 +493,7 @@ describe("MIR: static single assignment", () => {
         (let 0 (constant (literal 13)))
         (return (read 1))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -530,7 +530,7 @@ describe("MIR: static single assignment", () => {
         (let 2 (phi (sources (from (block_id 1) (read 0)) (from (block_id 2) (read 1)))))
         (return (read 2))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -593,7 +593,7 @@ describe("MIR: static single assignment", () => {
       (block
         (return (read 3))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -662,7 +662,7 @@ describe("MIR: static single assignment", () => {
         (return (read 6))))))
 `;
 
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -735,7 +735,7 @@ describe("MIR: static single assignment", () => {
         (let 3 (phi (sources (from (block_id 1) (read 0)) (from (block_id 2) (read 2)))))
         (return (read 3))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -798,7 +798,7 @@ describe("MIR: static single assignment", () => {
         (let 3 (phi (sources (from (block_id 0) (read 0)) (from (block_id 1) (read 1)) (from (block_id 2) (read 2)))))
         (return (read 3))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -862,7 +862,7 @@ describe("MIR: static single assignment", () => {
         (let 3 (phi (sources (from (block_id 1) (read 1)) (from (block_id 2) (read 2)))))
         (return (read 3))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],

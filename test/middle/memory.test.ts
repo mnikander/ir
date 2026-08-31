@@ -1,6 +1,6 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
-import * as MID from "../../src/middle/middle_grammar.ts";
+import * as MIR from "../../src/middle/middle_grammar.ts";
 import { print } from "../../src/middle/print.gen.ts";
 
 describe.skip("MIR: memory and ownership", () => {
@@ -18,7 +18,7 @@ describe.skip("MIR: memory and ownership", () => {
         (let 2 (dereference (read 1)))
         (return (read 2))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -51,7 +51,7 @@ describe.skip("MIR: memory and ownership", () => {
         (let 2 (dereference (read 1)))
         (return (read 2))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -86,7 +86,7 @@ describe.skip("MIR: memory and ownership", () => {
         (let 1 (copy (move 0)))
         (return (read 1))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -117,7 +117,7 @@ describe.skip("MIR: memory and ownership", () => {
         (let 2 (add (move 0) (read 1)))
         (return (read 2))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -147,7 +147,7 @@ describe.skip("MIR: memory and ownership", () => {
         (let 0 (constant (literal 11)))
         (return (move 0))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -182,7 +182,7 @@ describe.skip("MIR: use-after-free", () => {
         (drop (move 0))
         (return (read 0))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -213,7 +213,7 @@ describe.skip("MIR: use-after-free", () => {
         (let 1 (negate (read 0)))
         (return (read 1))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -246,7 +246,7 @@ describe.skip("MIR: use-after-free", () => {
         (let 1 (constant (literal 11)))
         (return (read 1))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -278,7 +278,7 @@ describe.skip("MIR: use-after-free", () => {
         (let 1 (copy (move 0)))
         (return (read 0))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -310,7 +310,7 @@ describe.skip("MIR: use-after-free", () => {
         (let 2 (dereference (read 1)))
         (return (read 2))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -344,7 +344,7 @@ describe.skip("MIR: use-after-free", () => {
         (let 3 (dereference (read 1)))
         (return (read 3))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
@@ -379,7 +379,7 @@ describe.skip("MIR: ownership violations", () => {
         (let 2 (copy (read 0)))
         (return (read 2))))))
 `;
-    const input: MID.Program = ["program", [
+    const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["result", ["Int"]],
