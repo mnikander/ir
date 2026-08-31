@@ -17,7 +17,7 @@ export type Arguments    = [ tag: "arguments", ...(Operand)[]];
 
 export type Line         = Let | Drop | Terminator;
 export type Value        = Phi | Call | Memory | Arithmetic | Comparison;
-export type Memory       = Constant | Copy | Own | Borrow | Load;
+export type Memory       = Constant | Copy | Own | Borrow | Dereference;
 export type Arithmetic   = Add | Subtract | Multiply | Divide | Remainder | Minimum | Maximum | Negative;
 export type Comparison   = Equal | Unequal | Less | LessEqual | Greater | GreaterEqual;
 export type Terminator   = Return | Jump | Branch;
@@ -35,7 +35,7 @@ export type Constant     = [ tag: 'constant',      value: Literal ];
 export type Copy         = [ tag: 'copy',          value: Read | Move ];
 export type Own          = [ tag: 'own',           value: Read | Move ]; // cannot be lowered yet, LIR is missing the corresponding functionality
 export type Borrow       = [ tag: 'borrow',        value: Read | Move ]; // take the address of a resource and create a read-only pointer
-export type Load         = [ tag: 'load',          pointer: Read | Move ]; // dereference pointer and load the value
+export type Dereference  = [ tag: 'dereference',   pointer: Read | Move ]; // dereference pointer and load the value
 export type Add          = [ tag: 'add',           left: Operand, right: Operand ];
 export type Subtract     = [ tag: 'subtract',      left: Operand, right: Operand ];
 export type Multiply     = [ tag: 'multiply',      left: Operand, right: Operand ];

@@ -85,7 +85,7 @@ function print_value(value: MIR.Value): string {
     case "copy":
     case "own":
     case "borrow":
-    case "load":
+    case "dereference":
       return print_list(value[0], [print_input(value[1])]);
     case "add":
     case "subtract":

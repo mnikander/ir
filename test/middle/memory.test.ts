@@ -4,7 +4,7 @@ import * as MID from "../../src/middle/middle_grammar.ts";
 import { print } from "../../src/middle/print.gen.ts";
 
 describe.skip("MIR: memory and ownership", () => {
-  it("must create and load from a pointer", () => {
+  it("must create and dereference a pointer", () => {
     const text: string = `
 (program
   (function
@@ -15,7 +15,7 @@ describe.skip("MIR: memory and ownership", () => {
       (block
         (let 0 (constant (literal 11)))
         (let 1 (borrow (read 0)))
-        (let 2 (load (read 1)))
+        (let 2 (dereference (read 1)))
         (return (read 2))))))
 `;
     const input: MID.Program = ["program", [
@@ -27,7 +27,7 @@ describe.skip("MIR: memory and ownership", () => {
         "block",
         ["let", 0, ["constant", ["literal", 11]]],
         ["let", 1, ["borrow", ["read", 0]]],
-        ["let", 2, ["load", ["read", 1]]],
+        ["let", 2, ["dereference", ["read", 1]]],
         ["return", ["read", 2]],
       ]],
     ]];
@@ -48,7 +48,7 @@ describe.skip("MIR: memory and ownership", () => {
       (block
         (let 0 (constant (literal 11)))
         (let 1 (own (read 0)))
-        (let 2 (load (read 1)))
+        (let 2 (dereference (read 1)))
         (return (read 2))))))
 `;
     const input: MID.Program = ["program", [
@@ -60,7 +60,7 @@ describe.skip("MIR: memory and ownership", () => {
         "block",
         ["let", 0, ["constant", ["literal", 11]]],
         ["let", 1, ["own", ["read", 0]]],
-        ["let", 2, ["load", ["read", 1]]],
+        ["let", 2, ["dereference", ["read", 1]]],
         ["return", ["read", 2]],
       ]],
     ]];
@@ -307,7 +307,7 @@ describe.skip("MIR: use-after-free", () => {
         (let 0 (constant (literal 11)))
         (let 1 (borrow (read 0)))
         (drop (move 0))
-        (let 2 (load (read 1)))
+        (let 2 (dereference (read 1)))
         (return (read 2))))))
 `;
     const input: MID.Program = ["program", [
@@ -320,7 +320,7 @@ describe.skip("MIR: use-after-free", () => {
         ["let", 0, ["constant", ["literal", 11]]],
         ["let", 1, ["borrow", ["read", 0]]],
         ["drop", ["move", 0]],
-        ["let", 2, ["load", ["read", 1]]],
+        ["let", 2, ["dereference", ["read", 1]]],
         ["return", ["read", 2]],
       ]],
     ]];
@@ -341,7 +341,7 @@ describe.skip("MIR: use-after-free", () => {
         (let 0 (constant (literal 11)))
         (let 1 (borrow (read 0)))
         (let 2 (copy (move 0)))
-        (let 3 (load (read 1)))
+        (let 3 (dereference (read 1)))
         (return (read 3))))))
 `;
     const input: MID.Program = ["program", [
@@ -354,7 +354,7 @@ describe.skip("MIR: use-after-free", () => {
         ["let", 0, ["constant", ["literal", 11]]],
         ["let", 1, ["borrow", ["read", 0]]],
         ["let", 2, ["copy", ["move", 0]]],
-        ["let", 3, ["load", ["read", 1]]],
+        ["let", 3, ["dereference", ["read", 1]]],
         ["return", ["read", 3]],
       ]],
     ]];
