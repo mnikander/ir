@@ -45,7 +45,7 @@ export type GreaterEqual = [ tag: 'greater_equal', destination: Let, left: Read 
 export type Drop         = [ tag: 'drop',          source: Move ];
 export type Return       = [ tag: 'return',        source: Read | Move | Literal ];
 export type Jump         = [ tag: 'jump',          target: BlockId ];
-export type Branch       = [ tag: 'branch',        condition: Read | Move | Literal, blocks: BlockIds ];
+export type Branch       = [ tag: 'branch',        condition: Read | Move | Literal, thenBlock: BlockId, elseBlock: BlockId ];
 
 export type Sources      = [ tag: "sources",       ...From[] ];
 export type From         = [ tag: "from",          block: BlockId, resource: Read | Move | Literal ];

@@ -191,7 +191,7 @@ describe("MIR: block_ids, jump, and branch", () => {
     // expect(evaluate(lower(input))).toBe(13);
   });
 
-  it("must branch to target #0 when index is 0", () => {
+  it("must execute first branch if the condition is true", () => {
     const text: string = `
 (program
   (function
@@ -203,7 +203,7 @@ describe("MIR: block_ids, jump, and branch", () => {
         (constant (let 0) (literal 11))
         (constant (let 1) (literal 13))
         (constant (let 2) (literal 281))
-        (branch (literal 0) (block_ids 1 2)))
+        (branch (literal 1) (block_id 1) (block_id 2)))
       (block
         (add (let 3) (read 0) (read 1))
         (jump (block_id 3)))
@@ -223,7 +223,7 @@ describe("MIR: block_ids, jump, and branch", () => {
         ["constant", ["let", 0], ["literal", 11]],
         ["constant", ["let", 1], ["literal", 13]],
         ["constant", ["let", 2], ["literal", 281]],
-        ["branch", ["literal", 0], ["block_ids", 1, 2]],
+        ["branch", ["literal", 1], ["block_id", 1], ["block_id", 2]],
       ], [
         "block",
         ["add", ["let", 3], ["read", 0], ["read", 1]],
@@ -242,7 +242,7 @@ describe("MIR: block_ids, jump, and branch", () => {
     // expect(evaluate(lower(input))).toBe(11 + 13);
   });
 
-  it("must branch to target #1 when index is 1", () => {
+  it("must execute the second branch when condition is false", () => {
     const text: string = `
 (program
   (function
@@ -254,7 +254,7 @@ describe("MIR: block_ids, jump, and branch", () => {
         (constant (let 0) (literal 11))
         (constant (let 1) (literal 13))
         (constant (let 2) (literal 281))
-        (branch (literal 1) (block_ids 1 2)))
+        (branch (literal 0) (block_id 1) (block_id 2)))
       (block
         (add (let 3) (read 0) (read 1))
         (jump (block_id 3)))
@@ -274,7 +274,7 @@ describe("MIR: block_ids, jump, and branch", () => {
         ["constant", ["let", 0], ["literal", 11]],
         ["constant", ["let", 1], ["literal", 13]],
         ["constant", ["let", 2], ["literal", 281]],
-        ["branch", ["literal", 1], ["block_ids", 1, 2]],
+        ["branch", ["literal", 0], ["block_id", 1], ["block_id", 2]],
       ], [
         "block",
         ["add", ["let", 3], ["read", 0], ["read", 1]],
@@ -420,7 +420,7 @@ describe("MIR: function call", () => {
     (blocks
       (block
         (equal (let 3) (read 0) (literal 1))
-        (branch (read 3) (block_ids 1 2)))
+        (branch (read 3) (block_id 1) (block_id 2)))
       (block
         (subtract (let 4) (read 0) (literal 1))
         (multiply (let 5) (read 0) (read 1))
@@ -453,7 +453,7 @@ describe("MIR: function call", () => {
       ["blocks", [
         "block",
         ["equal", ["let", 3], ["read", 0], ["literal", 1]],
-        ["branch", ["read", 3], ["block_ids", 1, 2]],
+        ["branch", ["read", 3], ["block_id", 1], ["block_id", 2]],
       ], [
         "block",
         ["subtract", ["let", 4], ["read", 0], ["literal", 1]],
@@ -589,7 +589,7 @@ describe("MIR: static single assignment", () => {
         (phi (let 3) (sources (from (block_id 0) (read 0)) (from (block_id 1) (read 4))))
         (add (let 4) (read 1) (read 3))
         (unequal (let 5) (read 3) (read 2))
-        (branch (read 5) (block_ids 2 1)))
+        (branch (read 5) (block_id 1) (block_id 2)))
       (block
         (return (read 3))))))
 `;
@@ -613,7 +613,7 @@ describe("MIR: static single assignment", () => {
         ]],
         ["add", ["let", 4], ["read", 1], ["read", 3]],
         ["unequal", ["let", 5], ["read", 3], ["read", 2]],
-        ["branch", ["read", 5], ["block_ids", 2, 1]],
+        ["branch", ["read", 5], ["block_id", 1], ["block_id", 2]],
       ], [
         "block",
         ["return", ["read", 3]],
@@ -645,7 +645,7 @@ describe("MIR: static single assignment", () => {
     (blocks
       (block
         (constant (let 0) (literal 0))
-        (branch (read 0) (block_ids 1 2)))
+        (branch (read 0) (block_id 1) (block_id 2)))
       (block
         (constant (let 1) (literal 11))
         (jump (block_id 4)))
@@ -670,7 +670,7 @@ describe("MIR: static single assignment", () => {
       ["blocks", [
         "block",
         ["constant", ["let", 0], ["literal", 0]],
-        ["branch", ["read", 0], ["block_ids", 1, 2]],
+        ["branch", ["read", 0], ["block_id", 1], ["block_id", 2]],
       ], [
         "block",
         ["constant", ["let", 1], ["literal", 11]],
@@ -727,7 +727,7 @@ describe("MIR: static single assignment", () => {
       (block
         (constant (let 0) (literal 11))
         (constant (let 1) (literal 1))
-        (branch (read 1) (block_ids 2 3)))
+        (branch (read 1) (block_id 2) (block_id 3)))
       (block
         (constant (let 2) (literal 13))
         (jump (block_id 3)))
@@ -747,7 +747,7 @@ describe("MIR: static single assignment", () => {
         "block",
         ["constant", ["let", 0], ["literal", 11]],
         ["constant", ["let", 1], ["literal", 1]],
-        ["branch", ["read", 1], ["block_ids", 2, 3]],
+        ["branch", ["read", 1], ["block_id", 2], ["block_id", 3]],
       ], [
         "block",
         ["constant", ["let", 2], ["literal", 13]],
@@ -787,10 +787,10 @@ describe("MIR: static single assignment", () => {
     (blocks
       (block
         (constant (let 0) (literal 0))
-        (branch (read 0) (block_ids 3 1)))
+        (branch (read 0) (block_id 1) (block_id 3)))
       (block
         (constant (let 1) (literal 1))
-        (branch (read 1) (block_ids 3 2)))
+        (branch (read 1) (block_id 2) (block_id 3)))
       (block
         (constant (let 2) (literal 1))
         (jump (block_id 3)))
@@ -806,11 +806,11 @@ describe("MIR: static single assignment", () => {
       ["blocks", [
         "block",
         ["constant", ["let", 0], ["literal", 0]],
-        ["branch", ["read", 0], ["block_ids", 3, 1]],
+        ["branch", ["read", 0], ["block_id", 1], ["block_id", 3]],
       ], [
         "block",
         ["constant", ["let", 1], ["literal", 1]],
-        ["branch", ["read", 1], ["block_ids", 3, 2]],
+        ["branch", ["read", 1], ["block_id", 2], ["block_id", 3]],
       ], [
         "block",
         ["constant", ["let", 2], ["literal", 1]],
@@ -851,10 +851,10 @@ describe("MIR: static single assignment", () => {
     (blocks
       (block
         (constant (let 0) (literal 0))
-        (branch (read 0) (block_ids 3 1)))
+        (branch (read 0) (block_id 1) (block_id 3)))
       (block
         (constant (let 1) (literal 1))
-        (branch (read 1) (block_ids 3 2)))
+        (branch (read 1) (block_id 2) (block_id 3)))
       (block
         (constant (let 2) (literal 1))
         (jump (block_id 3)))
@@ -870,11 +870,11 @@ describe("MIR: static single assignment", () => {
       ["blocks", [
         "block",
         ["constant", ["let", 0], ["literal", 0]],
-        ["branch", ["read", 0], ["block_ids", 3, 1]],
+        ["branch", ["read", 0], ["block_id", 1], ["block_id", 3]],
       ], [
         "block",
         ["constant", ["let", 1], ["literal", 1]],
-        ["branch", ["read", 1], ["block_ids", 3, 2]],
+        ["branch", ["read", 1], ["block_id", 2], ["block_id", 3]],
       ], [
         "block",
         ["constant", ["let", 2], ["literal", 1]],
