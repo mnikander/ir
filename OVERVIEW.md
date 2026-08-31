@@ -55,12 +55,15 @@ The codebase will be gradually refactored to replace the HIR with MIR.
 
 MIR is printed as tagged symbolic expressions. Structural nodes are expanded
 over indented lines, with each `(blocks ...)` node containing explicit
-`(block ...)` nodes, while instructions and operands remain inline. Numeric
-resources and block IDs retain their tags, for example `(read 0)`, `(move 0)`,
-`(literal 0)`, and `(block_id 1)`. Literals can be used directly as MIR operands;
-for example, an unconditional jump is represented by a branch from the
-immediate value `0` to a singleton target list. Phi inputs, call operands, and branch targets are wrapped in
-explicit variadic `(sources ...)`, `(arguments ...)`, and `(labels ...)` nodes:
+`(block ...)` nodes, while instructions and operands remain inline. A
+value-producing line is a `(let RESOURCE VALUE)` node, so its destination is
+visible before the nested operation. In the JSON representation the same node
+is `["let", RESOURCE, VALUE]`; both the definition and its value retain a tag at
+index zero. Non-producing `drop` and terminator nodes remain direct block lines.
+
+Resource uses and block IDs retain their tags, for example `(read 0)`,
+`(move 0)`, `(literal 0)`, and `(block_id 1)`. Phi inputs and call operands are
+wrapped in explicit variadic `(sources ...)` and `(arguments ...)` nodes:
 
 ```text
 (program
@@ -70,9 +73,9 @@ explicit variadic `(sources ...)`, `(arguments ...)`, and `(labels ...)` nodes:
     (locals (Owned Int))
     (blocks
       (block
-        (phi (define 0) (sources (from (block_id 1) (read 2)) (from (block_id 2) (move 3))))
-        (call (define 1) (function_id 0) (arguments (read 0) (move 2)))
-        (branch (literal 0) (labels 1)))
+        (let 0 (phi (sources (from (block_id 1) (read 2)) (from (block_id 2) (move 3)))))
+        (let 1 (call (function_id 0) (arguments (read 0) (move 2))))
+        (branch (literal 0) (block_id 1) (block_id 2)))
       (block
         (return (read 1))))))
 ```

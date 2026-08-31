@@ -52,29 +52,41 @@ function print_block([, ...lines]: MIR.Block): string {
 
 function print_line(line: MIR.Line): string {
   switch (line[0]) {
-    case "phi":
-      return print_list("phi", [
-        print_let(line[1]),
-        print_sources(line[2]),
+    case "let":
+      return print_let(line);
+    case "drop":
+      return print_list("drop", [print_move(line[1])]);
+    case "return":
+      return print_list("return", [print_input(line[1])]);
+    case "branch":
+      return print_list("branch", [
+        print_input(line[1]),
+        print_block_id(line[2]),
+        print_block_id(line[3]),
       ]);
+    case "jump":
+      return print_list("jump", [print_block_id(line[1])]);
+    default:
+      return assert_never(line);
+  }
+}
+
+function print_value(value: MIR.Value): string {
+  switch (value[0]) {
+    case "phi":
+      return print_list("phi", [print_sources(value[1])]);
     case "call":
       return print_list("call", [
-        print_let(line[1]),
-        print_function_id(line[2]),
-        print_arguments(line[3]),
+        print_function_id(value[1]),
+        print_arguments(value[2]),
       ]);
     case "constant":
-      return print_list("constant", [
-        print_let(line[1]),
-        print_literal(line[2]),
-      ]);
+      return print_list("constant", [print_literal(value[1])]);
     case "copy":
     case "own":
     case "borrow":
     case "load":
-      return print_list(line[0], [print_let(line[1]), print_input(line[2])]);
-    case "drop":
-      return print_list("drop", [print_move(line[1])]);
+      return print_list(value[0], [print_input(value[1])]);
     case "add":
     case "subtract":
     case "multiply":
@@ -88,28 +100,14 @@ function print_line(line: MIR.Line): string {
     case "less_equal":
     case "greater":
     case "greater_equal":
-      return print_list(line[0], [
-        print_let(line[1]),
-        print_input(line[2]),
-        print_input(line[3]),
+      return print_list(value[0], [
+        print_input(value[1]),
+        print_input(value[2]),
       ]);
     case "negate":
-      return print_list("negate", [
-        print_let(line[1]),
-        print_input(line[2]),
-      ]);
-    case "return":
-      return print_list("return", [print_input(line[1])]);
-    case "branch":
-      return print_list("branch", [
-        print_input(line[1]),
-        print_block_id(line[2]),
-        print_block_id(line[3]),
-      ]);
-    case "jump":
-      return print_list("jump", [print_block_id(line[1])]);
+      return print_list("negate", [print_input(value[1])]);
     default:
-      return assert_never(line);
+      return assert_never(value);
   }
 }
 
@@ -138,8 +136,8 @@ function print_input(input: MIR.Read | MIR.Move | MIR.Literal): string {
   }
 }
 
-function print_let([, resource]: MIR.Let): string {
-  return `(let ${resource})`;
+function print_let([, resource, value]: MIR.Let): string {
+  return print_list("let", [String(resource), print_value(value)]);
 }
 
 function print_read([, resource]: MIR.Read): string {

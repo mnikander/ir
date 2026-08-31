@@ -13,9 +13,9 @@ describe.skip("MIR: memory and ownership", () => {
     (locals Int (Borrowed Int) Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
-        (borrow (let 1) (read 0))
-        (load (let 2) (read 1))
+        (let 0 (constant (literal 11)))
+        (let 1 (borrow (read 0)))
+        (let 2 (load (read 1)))
         (return (read 2))))))
 `;
     const input: MID.Program = ["program", [
@@ -25,9 +25,9 @@ describe.skip("MIR: memory and ownership", () => {
       ["locals", ["Int"], ["Borrowed", ["Int"]], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["borrow", ["let", 1], ["read", 0]],
-        ["load", ["let", 2], ["read", 1]],
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 1, ["borrow", ["read", 0]]],
+        ["let", 2, ["load", ["read", 1]]],
         ["return", ["read", 2]],
       ]],
     ]];
@@ -46,9 +46,9 @@ describe.skip("MIR: memory and ownership", () => {
     (locals Int (Owned Int) Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
-        (own (let 1) (read 0))
-        (load (let 2) (read 1))
+        (let 0 (constant (literal 11)))
+        (let 1 (own (read 0)))
+        (let 2 (load (read 1)))
         (return (read 2))))))
 `;
     const input: MID.Program = ["program", [
@@ -58,9 +58,9 @@ describe.skip("MIR: memory and ownership", () => {
       ["locals", ["Int"], ["Owned", ["Int"]], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["own", ["let", 1], ["read", 0]],
-        ["load", ["let", 2], ["read", 1]],
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 1, ["own", ["read", 0]]],
+        ["let", 2, ["load", ["read", 1]]],
         ["return", ["read", 2]],
       ]],
     ]];
@@ -82,8 +82,8 @@ describe.skip("MIR: memory and ownership", () => {
     (locals Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
-        (copy (let 1) (move 0))
+        (let 0 (constant (literal 11)))
+        (let 1 (copy (move 0)))
         (return (read 1))))))
 `;
     const input: MID.Program = ["program", [
@@ -93,8 +93,8 @@ describe.skip("MIR: memory and ownership", () => {
       ["locals", ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["copy", ["let", 1], ["move", 0]],
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 1, ["copy", ["move", 0]]],
         ["return", ["read", 1]],
       ]],
     ]];
@@ -112,9 +112,9 @@ describe.skip("MIR: memory and ownership", () => {
     (locals Int Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
-        (constant (let 1) (literal 13))
-        (add (let 2) (move 0) (read 1))
+        (let 0 (constant (literal 11)))
+        (let 1 (constant (literal 13)))
+        (let 2 (add (move 0) (read 1)))
         (return (read 2))))))
 `;
     const input: MID.Program = ["program", [
@@ -124,9 +124,9 @@ describe.skip("MIR: memory and ownership", () => {
       ["locals", ["Int"], ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["constant", ["let", 1], ["literal", 13]],
-        ["add", ["let", 2], ["move", 0], ["read", 1]],
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 1, ["constant", ["literal", 13]]],
+        ["let", 2, ["add", ["move", 0], ["read", 1]]],
         ["return", ["read", 2]],
       ]],
     ]];
@@ -144,7 +144,7 @@ describe.skip("MIR: memory and ownership", () => {
     (locals Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
+        (let 0 (constant (literal 11)))
         (return (move 0))))))
 `;
     const input: MID.Program = ["program", [
@@ -154,7 +154,7 @@ describe.skip("MIR: memory and ownership", () => {
       ["locals", ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
+        ["let", 0, ["constant", ["literal", 11]]],
         ["return", ["move", 0]],
       ]],
     ]];
@@ -178,7 +178,7 @@ describe.skip("MIR: use-after-free", () => {
     (locals Int)
     (blocks
       (block
-        (constant (let 0) (literal 0))
+        (let 0 (constant (literal 0)))
         (drop (move 0))
         (return (read 0))))))
 `;
@@ -189,7 +189,7 @@ describe.skip("MIR: use-after-free", () => {
       ["locals", ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 0]],
+        ["let", 0, ["constant", ["literal", 0]]],
         ["drop", ["move", 0]],
         ["return", ["read", 0]],
       ]],
@@ -208,9 +208,9 @@ describe.skip("MIR: use-after-free", () => {
     (locals Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 0))
+        (let 0 (constant (literal 0)))
         (drop (move 0))
-        (negate (let 1) (read 0))
+        (let 1 (negate (read 0)))
         (return (read 1))))))
 `;
     const input: MID.Program = ["program", [
@@ -220,9 +220,9 @@ describe.skip("MIR: use-after-free", () => {
       ["locals", ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 0]],
+        ["let", 0, ["constant", ["literal", 0]]],
         ["drop", ["move", 0]],
-        ["negate", ["let", 1], ["read", 0]],
+        ["let", 1, ["negate", ["read", 0]]],
         ["return", ["read", 1]],
       ]],
     ]];
@@ -240,10 +240,10 @@ describe.skip("MIR: use-after-free", () => {
     (locals Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
+        (let 0 (constant (literal 11)))
         (drop (move 0))
         (drop (move 0))
-        (constant (let 1) (literal 11))
+        (let 1 (constant (literal 11)))
         (return (read 1))))))
 `;
     const input: MID.Program = ["program", [
@@ -253,10 +253,10 @@ describe.skip("MIR: use-after-free", () => {
       ["locals", ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
+        ["let", 0, ["constant", ["literal", 11]]],
         ["drop", ["move", 0]],
         ["drop", ["move", 0]],
-        ["constant", ["let", 1], ["literal", 11]],
+        ["let", 1, ["constant", ["literal", 11]]],
         ["return", ["read", 1]],
       ]],
     ]];
@@ -274,8 +274,8 @@ describe.skip("MIR: use-after-free", () => {
     (locals Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
-        (copy (let 1) (move 0))
+        (let 0 (constant (literal 11)))
+        (let 1 (copy (move 0)))
         (return (read 0))))))
 `;
     const input: MID.Program = ["program", [
@@ -285,8 +285,8 @@ describe.skip("MIR: use-after-free", () => {
       ["locals", ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["copy", ["let", 1], ["move", 0]],
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 1, ["copy", ["move", 0]]],
         ["return", ["read", 0]],
       ]],
     ]];
@@ -304,10 +304,10 @@ describe.skip("MIR: use-after-free", () => {
     (locals Int (Borrowed Int) Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
-        (borrow (let 1) (read 0))
+        (let 0 (constant (literal 11)))
+        (let 1 (borrow (read 0)))
         (drop (move 0))
-        (load (let 2) (read 1))
+        (let 2 (load (read 1)))
         (return (read 2))))))
 `;
     const input: MID.Program = ["program", [
@@ -317,10 +317,10 @@ describe.skip("MIR: use-after-free", () => {
       ["locals", ["Int"], ["Borrowed", ["Int"]], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["borrow", ["let", 1], ["read", 0]],
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 1, ["borrow", ["read", 0]]],
         ["drop", ["move", 0]],
-        ["load", ["let", 2], ["read", 1]],
+        ["let", 2, ["load", ["read", 1]]],
         ["return", ["read", 2]],
       ]],
     ]];
@@ -338,10 +338,10 @@ describe.skip("MIR: use-after-free", () => {
     (locals Int (Borrowed Int) Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
-        (borrow (let 1) (read 0))
-        (copy (let 2) (move 0))
-        (load (let 3) (read 1))
+        (let 0 (constant (literal 11)))
+        (let 1 (borrow (read 0)))
+        (let 2 (copy (move 0)))
+        (let 3 (load (read 1)))
         (return (read 3))))))
 `;
     const input: MID.Program = ["program", [
@@ -351,10 +351,10 @@ describe.skip("MIR: use-after-free", () => {
       ["locals", ["Int"], ["Borrowed", ["Int"]], ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["borrow", ["let", 1], ["read", 0]],
-        ["copy", ["let", 2], ["move", 0]],
-        ["load", ["let", 3], ["read", 1]],
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 1, ["borrow", ["read", 0]]],
+        ["let", 2, ["copy", ["move", 0]]],
+        ["let", 3, ["load", ["read", 1]]],
         ["return", ["read", 3]],
       ]],
     ]];
@@ -374,9 +374,9 @@ describe.skip("MIR: ownership violations", () => {
     (locals Int (Owned Int) Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
-        (own (let 1) (read 0))
-        (copy (let 2) (read 0))
+        (let 0 (constant (literal 11)))
+        (let 1 (own (read 0)))
+        (let 2 (copy (read 0)))
         (return (read 2))))))
 `;
     const input: MID.Program = ["program", [
@@ -386,9 +386,9 @@ describe.skip("MIR: ownership violations", () => {
       ["locals", ["Int"], ["Owned", ["Int"]], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["own", ["let", 1], ["read", 0]],
-        ["copy", ["let", 2], ["read", 0]],
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 1, ["own", ["read", 0]]],
+        ["let", 2, ["copy", ["read", 0]]],
         ["return", ["read", 2]],
       ]],
     ]];

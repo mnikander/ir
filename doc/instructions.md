@@ -48,5 +48,20 @@
 - `Value` is either `Int` or a pointer type such as `(Owned Int)` or `(Borrowed Int)`.
 - Arguments can be literal values, of used/moved variables.
 
+## MIR Definition Syntax
+
+MIR represents every value-producing line as a tagged `let` tuple containing a
+tagged value operation. The destination precedes the operation in both the
+symbolic-expression and JSON forms:
+
+```text
+(let 2 (add (read 0) (read 1)))
+["let", 2, ["add", ["read", 0], ["read", 1]]]
+```
+
+`phi`, `call`, memory operations other than `drop`, arithmetic operations, and
+comparisons are values nested inside `let`. `drop`, `return`, `jump`, and
+`branch` do not produce values and remain directly tagged block lines.
+
 ---
 **Copyright (c) 2026 Marco Nikander**

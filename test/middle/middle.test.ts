@@ -34,8 +34,8 @@ describe("MIR: constants and exit", () => {
     (locals Int (Borrowed Int))
     (blocks
       (block
-        (constant (let 0) (literal 11))
-        (borrow (let 1) (read 0))
+        (let 0 (constant (literal 11)))
+        (let 1 (borrow (read 0)))
         (return (read 1))))))
 `;
     const input: MID.Program = ["program", [
@@ -45,8 +45,8 @@ describe("MIR: constants and exit", () => {
       ["locals", ["Int"], ["Borrowed", ["Int"]]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["borrow", ["let", 1], ["read", 0]],
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 1, ["borrow", ["read", 0]]],
         ["return", ["read", 1]],
       ]],
     ]];
@@ -64,7 +64,7 @@ describe("MIR: constants and exit", () => {
     (locals Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
+        (let 0 (constant (literal 11)))
         (return (read 0))))))
 `;
     const input: MID.Program = ["program", [
@@ -74,7 +74,7 @@ describe("MIR: constants and exit", () => {
       ["locals", ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
+        ["let", 0, ["constant", ["literal", 11]]],
         ["return", ["read", 0]],
       ]],
     ]];
@@ -94,8 +94,8 @@ describe("MIR: copying of registers", () => {
     (locals Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
-        (copy (let 1) (read 0))
+        (let 0 (constant (literal 11)))
+        (let 1 (copy (read 0)))
         (return (read 1))))))
 `;
     const input: MID.Program = ["program", [
@@ -105,8 +105,8 @@ describe("MIR: copying of registers", () => {
       ["locals", ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["copy", ["let", 1], ["read", 0]],
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 1, ["copy", ["read", 0]]],
         ["return", ["read", 1]],
       ]],
     ]];
@@ -126,9 +126,9 @@ describe("MIR: arithmetic operations", () => {
     (locals Int Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
-        (constant (let 1) (literal 13))
-        (add (let 2) (read 0) (read 1))
+        (let 0 (constant (literal 11)))
+        (let 1 (constant (literal 13)))
+        (let 2 (add (read 0) (read 1)))
         (return (read 2))))))
 `;
     const input: MID.Program = ["program", [
@@ -138,9 +138,9 @@ describe("MIR: arithmetic operations", () => {
       ["locals", ["Int"], ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["constant", ["let", 1], ["literal", 13]],
-        ["add", ["let", 2], ["read", 0], ["read", 1]],
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 1, ["constant", ["literal", 13]]],
+        ["let", 2, ["add", ["read", 0], ["read", 1]]],
         ["return", ["read", 2]],
       ]],
     ]];
@@ -162,10 +162,10 @@ describe("MIR: block_ids, jump, and branch", () => {
       (block
         (jump (block_id 2)))
       (block
-        (constant (let 0) (literal 11))
+        (let 0 (constant (literal 11)))
         (return (read 0)))
       (block
-        (constant (let 1) (literal 13))
+        (let 1 (constant (literal 13)))
         (return (read 1))))))
 `;
     const input: MID.Program = ["program", [
@@ -178,11 +178,11 @@ describe("MIR: block_ids, jump, and branch", () => {
         ["jump", ["block_id", 2]],
       ], [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
+        ["let", 0, ["constant", ["literal", 11]]],
         ["return", ["read", 0]],
       ], [
         "block",
-        ["constant", ["let", 1], ["literal", 13]],
+        ["let", 1, ["constant", ["literal", 13]]],
         ["return", ["read", 1]],
       ]],
     ]];
@@ -200,15 +200,15 @@ describe("MIR: block_ids, jump, and branch", () => {
     (locals Int Int Int Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
-        (constant (let 1) (literal 13))
-        (constant (let 2) (literal 281))
+        (let 0 (constant (literal 11)))
+        (let 1 (constant (literal 13)))
+        (let 2 (constant (literal 281)))
         (branch (literal 1) (block_id 1) (block_id 2)))
       (block
-        (add (let 3) (read 0) (read 1))
+        (let 3 (add (read 0) (read 1)))
         (jump (block_id 3)))
       (block
-        (add (let 4) (read 1) (read 2))
+        (let 4 (add (read 1) (read 2)))
         (jump (block_id 3)))
       (block
         (return (read 3))))))
@@ -220,17 +220,17 @@ describe("MIR: block_ids, jump, and branch", () => {
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["constant", ["let", 1], ["literal", 13]],
-        ["constant", ["let", 2], ["literal", 281]],
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 1, ["constant", ["literal", 13]]],
+        ["let", 2, ["constant", ["literal", 281]]],
         ["branch", ["literal", 1], ["block_id", 1], ["block_id", 2]],
       ], [
         "block",
-        ["add", ["let", 3], ["read", 0], ["read", 1]],
+        ["let", 3, ["add", ["read", 0], ["read", 1]]],
         ["jump", ["block_id", 3]],
       ], [
         "block",
-        ["add", ["let", 4], ["read", 1], ["read", 2]],
+        ["let", 4, ["add", ["read", 1], ["read", 2]]],
         ["jump", ["block_id", 3]],
       ], [
         "block",
@@ -251,15 +251,15 @@ describe("MIR: block_ids, jump, and branch", () => {
     (locals Int Int Int Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
-        (constant (let 1) (literal 13))
-        (constant (let 2) (literal 281))
+        (let 0 (constant (literal 11)))
+        (let 1 (constant (literal 13)))
+        (let 2 (constant (literal 281)))
         (branch (literal 0) (block_id 1) (block_id 2)))
       (block
-        (add (let 3) (read 0) (read 1))
+        (let 3 (add (read 0) (read 1)))
         (jump (block_id 3)))
       (block
-        (add (let 4) (read 1) (read 2))
+        (let 4 (add (read 1) (read 2)))
         (jump (block_id 3)))
       (block
         (return (read 4))))))
@@ -271,17 +271,17 @@ describe("MIR: block_ids, jump, and branch", () => {
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["constant", ["let", 1], ["literal", 13]],
-        ["constant", ["let", 2], ["literal", 281]],
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 1, ["constant", ["literal", 13]]],
+        ["let", 2, ["constant", ["literal", 281]]],
         ["branch", ["literal", 0], ["block_id", 1], ["block_id", 2]],
       ], [
         "block",
-        ["add", ["let", 3], ["read", 0], ["read", 1]],
+        ["let", 3, ["add", ["read", 0], ["read", 1]]],
         ["jump", ["block_id", 3]],
       ], [
         "block",
-        ["add", ["let", 4], ["read", 1], ["read", 2]],
+        ["let", 4, ["add", ["read", 1], ["read", 2]]],
         ["jump", ["block_id", 3]],
       ], [
         "block",
@@ -304,9 +304,9 @@ describe("MIR: function call", () => {
     (locals Int Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
-        (constant (let 1) (literal 13))
-        (call (let 2) (function_id 1) (arguments (read 1)))
+        (let 0 (constant (literal 11)))
+        (let 1 (constant (literal 13)))
+        (let 2 (call (function_id 1) (arguments (read 1))))
         (return (read 2)))))
   (function
     (parameters Int)
@@ -323,9 +323,9 @@ describe("MIR: function call", () => {
       ["locals", ["Int"], ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["constant", ["let", 1], ["literal", 13]],
-        ["call", ["let", 2], ["function_id", 1], ["arguments", ["read", 1]]],
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 1, ["constant", ["literal", 13]]],
+        ["let", 2, ["call", ["function_id", 1], ["arguments", ["read", 1]]]],
         ["return", ["read", 2]],
       ]],
     ], [
@@ -352,9 +352,9 @@ describe("MIR: function call", () => {
     (locals Int Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
-        (constant (let 1) (literal 13))
-        (call (let 2) (function_id 1) (arguments (read 0) (read 1)))
+        (let 0 (constant (literal 11)))
+        (let 1 (constant (literal 13)))
+        (let 2 (call (function_id 1) (arguments (read 0) (read 1))))
         (return (read 2)))))
   (function
     (parameters Int Int)
@@ -371,12 +371,12 @@ describe("MIR: function call", () => {
       ["locals", ["Int"], ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["constant", ["let", 1], ["literal", 13]],
-        ["call", ["let", 2], ["function_id", 1], ["arguments", ["read", 0], [
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 1, ["constant", ["literal", 13]]],
+        ["let", 2, ["call", ["function_id", 1], ["arguments", ["read", 0], [
           "read",
           1,
-        ]]],
+        ]]]],
         ["return", ["read", 2]],
       ]],
     ], [
@@ -409,9 +409,9 @@ describe("MIR: function call", () => {
     (locals Int Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 5))
-        (constant (let 1) (literal 1))
-        (call (let 2) (function_id 1) (arguments (read 0) (read 1)))
+        (let 0 (constant (literal 5)))
+        (let 1 (constant (literal 1)))
+        (let 2 (call (function_id 1) (arguments (read 0) (read 1))))
         (return (read 2)))))
   (function
     (parameters Int Int)
@@ -419,15 +419,15 @@ describe("MIR: function call", () => {
     (locals Int Int Int Int Int Int)
     (blocks
       (block
-        (equal (let 3) (read 0) (literal 1))
+        (let 3 (equal (read 0) (literal 1)))
         (branch (read 3) (block_id 1) (block_id 2)))
       (block
-        (subtract (let 4) (read 0) (literal 1))
-        (multiply (let 5) (read 0) (read 1))
-        (call (let 6) (function_id 1) (arguments (read 4) (read 5)))
+        (let 4 (subtract (read 0) (literal 1)))
+        (let 5 (multiply (read 0) (read 1)))
+        (let 6 (call (function_id 1) (arguments (read 4) (read 5))))
         (jump (block_id 2)))
       (block
-        (phi (let 7) (sources (from (block_id 1) (read 6)) (from (block_id 0) (read 1))))
+        (let 7 (phi (sources (from (block_id 1) (read 6)) (from (block_id 0) (read 1)))))
         (return (read 7))))))
 `;
     const input: MID.Program = ["program", [
@@ -437,12 +437,12 @@ describe("MIR: function call", () => {
       ["locals", ["Int"], ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 5]],
-        ["constant", ["let", 1], ["literal", 1]],
-        ["call", ["let", 2], ["function_id", 1], ["arguments", ["read", 0], [
+        ["let", 0, ["constant", ["literal", 5]]],
+        ["let", 1, ["constant", ["literal", 1]]],
+        ["let", 2, ["call", ["function_id", 1], ["arguments", ["read", 0], [
           "read",
           1,
-        ]]],
+        ]]]],
         ["return", ["read", 2]],
       ]],
     ], [
@@ -452,24 +452,24 @@ describe("MIR: function call", () => {
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["equal", ["let", 3], ["read", 0], ["literal", 1]],
+        ["let", 3, ["equal", ["read", 0], ["literal", 1]]],
         ["branch", ["read", 3], ["block_id", 1], ["block_id", 2]],
       ], [
         "block",
-        ["subtract", ["let", 4], ["read", 0], ["literal", 1]],
-        ["multiply", ["let", 5], ["read", 0], ["read", 1]],
-        ["call", ["let", 6], ["function_id", 1], ["arguments", ["read", 4], [
+        ["let", 4, ["subtract", ["read", 0], ["literal", 1]]],
+        ["let", 5, ["multiply", ["read", 0], ["read", 1]]],
+        ["let", 6, ["call", ["function_id", 1], ["arguments", ["read", 4], [
           "read",
           5,
-        ]]],
+        ]]]],
         ["jump", ["block_id", 2]],
       ], [
         "block",
-        ["phi", ["let", 7], [
+        ["let", 7, ["phi", [
           "sources",
           ["from", ["block_id", 1], ["read", 6]],
           ["from", ["block_id", 0], ["read", 1]],
-        ]],
+        ]]],
         ["return", ["read", 7]],
       ]],
     ]];
@@ -489,8 +489,8 @@ describe("MIR: static single assignment", () => {
     (locals Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 11))
-        (constant (let 0) (literal 13))
+        (let 0 (constant (literal 11)))
+        (let 0 (constant (literal 13)))
         (return (read 1))))))
 `;
     const input: MID.Program = ["program", [
@@ -500,8 +500,8 @@ describe("MIR: static single assignment", () => {
       ["locals", ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["constant", ["let", 0], ["literal", 13]],
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 0, ["constant", ["literal", 13]]],
         ["return", ["read", 1]],
       ]],
     ]];
@@ -521,13 +521,13 @@ describe("MIR: static single assignment", () => {
       (block
         (jump (block_id 2)))
       (block
-        (constant (let 0) (literal 11))
+        (let 0 (constant (literal 11)))
         (jump (block_id 3)))
       (block
-        (constant (let 1) (literal 13))
+        (let 1 (constant (literal 13)))
         (jump (block_id 3)))
       (block
-        (phi (let 2) (sources (from (block_id 1) (read 0)) (from (block_id 2) (read 1))))
+        (let 2 (phi (sources (from (block_id 1) (read 0)) (from (block_id 2) (read 1)))))
         (return (read 2))))))
 `;
     const input: MID.Program = ["program", [
@@ -540,19 +540,19 @@ describe("MIR: static single assignment", () => {
         ["jump", ["block_id", 2]],
       ], [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
+        ["let", 0, ["constant", ["literal", 11]]],
         ["jump", ["block_id", 3]],
       ], [
         "block",
-        ["constant", ["let", 1], ["literal", 13]],
+        ["let", 1, ["constant", ["literal", 13]]],
         ["jump", ["block_id", 3]],
       ], [
         "block",
-        ["phi", ["let", 2], [
+        ["let", 2, ["phi", [
           "sources",
           ["from", ["block_id", 1], ["read", 0]],
           ["from", ["block_id", 2], ["read", 1]],
-        ]],
+        ]]],
         ["return", ["read", 2]],
       ]],
     ]];
@@ -581,14 +581,14 @@ describe("MIR: static single assignment", () => {
     (locals Int Int Int Int Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 0))
-        (constant (let 1) (literal 1))
-        (constant (let 2) (literal 3))
+        (let 0 (constant (literal 0)))
+        (let 1 (constant (literal 1)))
+        (let 2 (constant (literal 3)))
         (jump (block_id 1)))
       (block
-        (phi (let 3) (sources (from (block_id 0) (read 0)) (from (block_id 1) (read 4))))
-        (add (let 4) (read 1) (read 3))
-        (unequal (let 5) (read 3) (read 2))
+        (let 3 (phi (sources (from (block_id 0) (read 0)) (from (block_id 1) (read 4)))))
+        (let 4 (add (read 1) (read 3)))
+        (let 5 (unequal (read 3) (read 2)))
         (branch (read 5) (block_id 1) (block_id 2)))
       (block
         (return (read 3))))))
@@ -600,19 +600,19 @@ describe("MIR: static single assignment", () => {
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 0]],
-        ["constant", ["let", 1], ["literal", 1]],
-        ["constant", ["let", 2], ["literal", 3]],
+        ["let", 0, ["constant", ["literal", 0]]],
+        ["let", 1, ["constant", ["literal", 1]]],
+        ["let", 2, ["constant", ["literal", 3]]],
         ["jump", ["block_id", 1]],
       ], [
         "block",
-        ["phi", ["let", 3], [
+        ["let", 3, ["phi", [
           "sources",
           ["from", ["block_id", 0], ["read", 0]],
           ["from", ["block_id", 1], ["read", 4]],
-        ]],
-        ["add", ["let", 4], ["read", 1], ["read", 3]],
-        ["unequal", ["let", 5], ["read", 3], ["read", 2]],
+        ]]],
+        ["let", 4, ["add", ["read", 1], ["read", 3]]],
+        ["let", 5, ["unequal", ["read", 3], ["read", 2]]],
         ["branch", ["read", 5], ["block_id", 1], ["block_id", 2]],
       ], [
         "block",
@@ -644,21 +644,21 @@ describe("MIR: static single assignment", () => {
     (locals Int Int Int Int Int Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 0))
+        (let 0 (constant (literal 0)))
         (branch (read 0) (block_id 1) (block_id 2)))
       (block
-        (constant (let 1) (literal 11))
+        (let 1 (constant (literal 11)))
         (jump (block_id 4)))
       (block
-        (constant (let 2) (literal 13))
+        (let 2 (constant (literal 13)))
         (jump (block_id 3)))
       (block
-        (constant (let 3) (literal 281))
+        (let 3 (constant (literal 281)))
         (jump (block_id 4)))
       (block
-        (phi (let 4) (sources (from (block_id 1) (read 1)) (from (block_id 3) (read 2))))
-        (phi (let 5) (sources (from (block_id 1) (read 1)) (from (block_id 3) (read 3))))
-        (add (let 6) (read 4) (read 5))
+        (let 4 (phi (sources (from (block_id 1) (read 1)) (from (block_id 3) (read 2)))))
+        (let 5 (phi (sources (from (block_id 1) (read 1)) (from (block_id 3) (read 3)))))
+        (let 6 (add (read 4) (read 5)))
         (return (read 6))))))
 `;
 
@@ -669,33 +669,33 @@ describe("MIR: static single assignment", () => {
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 0]],
+        ["let", 0, ["constant", ["literal", 0]]],
         ["branch", ["read", 0], ["block_id", 1], ["block_id", 2]],
       ], [
         "block",
-        ["constant", ["let", 1], ["literal", 11]],
+        ["let", 1, ["constant", ["literal", 11]]],
         ["jump", ["block_id", 4]],
       ], [
         "block",
-        ["constant", ["let", 2], ["literal", 13]],
+        ["let", 2, ["constant", ["literal", 13]]],
         ["jump", ["block_id", 3]],
       ], [
         "block",
-        ["constant", ["let", 3], ["literal", 281]],
+        ["let", 3, ["constant", ["literal", 281]]],
         ["jump", ["block_id", 4]],
       ], [
         "block",
-        ["phi", ["let", 4], [
+        ["let", 4, ["phi", [
           "sources",
           ["from", ["block_id", 1], ["read", 1]],
           ["from", ["block_id", 3], ["read", 2]],
-        ]],
-        ["phi", ["let", 5], [
+        ]]],
+        ["let", 5, ["phi", [
           "sources",
           ["from", ["block_id", 1], ["read", 1]],
           ["from", ["block_id", 3], ["read", 3]],
-        ]],
-        ["add", ["let", 6], ["read", 4], ["read", 5]],
+        ]]],
+        ["let", 6, ["add", ["read", 4], ["read", 5]]],
         ["return", ["read", 6]],
       ]],
     ]];
@@ -725,14 +725,14 @@ describe("MIR: static single assignment", () => {
       (block
         (jump (block_id 1)))
       (block
-        (constant (let 0) (literal 11))
-        (constant (let 1) (literal 1))
+        (let 0 (constant (literal 11)))
+        (let 1 (constant (literal 1)))
         (branch (read 1) (block_id 2) (block_id 3)))
       (block
-        (constant (let 2) (literal 13))
+        (let 2 (constant (literal 13)))
         (jump (block_id 3)))
       (block
-        (phi (let 3) (sources (from (block_id 1) (read 0)) (from (block_id 2) (read 2))))
+        (let 3 (phi (sources (from (block_id 1) (read 0)) (from (block_id 2) (read 2)))))
         (return (read 3))))))
 `;
     const input: MID.Program = ["program", [
@@ -745,20 +745,20 @@ describe("MIR: static single assignment", () => {
         ["jump", ["block_id", 1]],
       ], [
         "block",
-        ["constant", ["let", 0], ["literal", 11]],
-        ["constant", ["let", 1], ["literal", 1]],
+        ["let", 0, ["constant", ["literal", 11]]],
+        ["let", 1, ["constant", ["literal", 1]]],
         ["branch", ["read", 1], ["block_id", 2], ["block_id", 3]],
       ], [
         "block",
-        ["constant", ["let", 2], ["literal", 13]],
+        ["let", 2, ["constant", ["literal", 13]]],
         ["jump", ["block_id", 3]],
       ], [
         "block",
-        ["phi", ["let", 3], [
+        ["let", 3, ["phi", [
           "sources",
           ["from", ["block_id", 1], ["read", 0]],
           ["from", ["block_id", 2], ["read", 2]],
-        ]],
+        ]]],
         ["return", ["read", 3]],
       ]],
     ]];
@@ -786,16 +786,16 @@ describe("MIR: static single assignment", () => {
     (locals Int Int Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 0))
+        (let 0 (constant (literal 0)))
         (branch (read 0) (block_id 1) (block_id 3)))
       (block
-        (constant (let 1) (literal 1))
+        (let 1 (constant (literal 1)))
         (branch (read 1) (block_id 2) (block_id 3)))
       (block
-        (constant (let 2) (literal 1))
+        (let 2 (constant (literal 1)))
         (jump (block_id 3)))
       (block
-        (phi (let 3) (sources (from (block_id 0) (read 0)) (from (block_id 1) (read 1)) (from (block_id 2) (read 2))))
+        (let 3 (phi (sources (from (block_id 0) (read 0)) (from (block_id 1) (read 1)) (from (block_id 2) (read 2)))))
         (return (read 3))))))
 `;
     const input: MID.Program = ["program", [
@@ -805,24 +805,24 @@ describe("MIR: static single assignment", () => {
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 0]],
+        ["let", 0, ["constant", ["literal", 0]]],
         ["branch", ["read", 0], ["block_id", 1], ["block_id", 3]],
       ], [
         "block",
-        ["constant", ["let", 1], ["literal", 1]],
+        ["let", 1, ["constant", ["literal", 1]]],
         ["branch", ["read", 1], ["block_id", 2], ["block_id", 3]],
       ], [
         "block",
-        ["constant", ["let", 2], ["literal", 1]],
+        ["let", 2, ["constant", ["literal", 1]]],
         ["jump", ["block_id", 3]],
       ], [
         "block",
-        ["phi", ["let", 3], [
+        ["let", 3, ["phi", [
           "sources",
           ["from", ["block_id", 0], ["read", 0]],
           ["from", ["block_id", 1], ["read", 1]],
           ["from", ["block_id", 2], ["read", 2]],
-        ]],
+        ]]],
         ["return", ["read", 3]],
       ]],
     ]];
@@ -850,16 +850,16 @@ describe("MIR: static single assignment", () => {
     (locals Int Int Int Int)
     (blocks
       (block
-        (constant (let 0) (literal 0))
+        (let 0 (constant (literal 0)))
         (branch (read 0) (block_id 1) (block_id 3)))
       (block
-        (constant (let 1) (literal 1))
+        (let 1 (constant (literal 1)))
         (branch (read 1) (block_id 2) (block_id 3)))
       (block
-        (constant (let 2) (literal 1))
+        (let 2 (constant (literal 1)))
         (jump (block_id 3)))
       (block
-        (phi (let 3) (sources (from (block_id 1) (read 1)) (from (block_id 2) (read 2))))
+        (let 3 (phi (sources (from (block_id 1) (read 1)) (from (block_id 2) (read 2)))))
         (return (read 3))))))
 `;
     const input: MID.Program = ["program", [
@@ -869,23 +869,23 @@ describe("MIR: static single assignment", () => {
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["constant", ["let", 0], ["literal", 0]],
+        ["let", 0, ["constant", ["literal", 0]]],
         ["branch", ["read", 0], ["block_id", 1], ["block_id", 3]],
       ], [
         "block",
-        ["constant", ["let", 1], ["literal", 1]],
+        ["let", 1, ["constant", ["literal", 1]]],
         ["branch", ["read", 1], ["block_id", 2], ["block_id", 3]],
       ], [
         "block",
-        ["constant", ["let", 2], ["literal", 1]],
+        ["let", 2, ["constant", ["literal", 1]]],
         ["jump", ["block_id", 3]],
       ], [
         "block",
-        ["phi", ["let", 3], [
+        ["let", 3, ["phi", [
           "sources",
           ["from", ["block_id", 1], ["read", 1]],
           ["from", ["block_id", 2], ["read", 2]],
-        ]],
+        ]]],
         ["return", ["read", 3]],
       ]],
     ]];
