@@ -15,14 +15,14 @@ export type Blocks       = [ tag: "blocks", ...Block[]];
 export type Block        = [ tag: "block", ...Line[]];
 
 export type Line         = Let | Drop | Terminator;
-export type Value        = Phi | Call | Memory | Copy | Arithmetic | Comparison;
+export type Operation    = Phi | Call | Memory | Copy | Arithmetic | Comparison;
 export type Memory       = Own | Borrow | Dereference;
 export type Arithmetic   = Add | Subtract | Multiply | Divide | Remainder | Minimum | Maximum | Negative;
 export type Comparison   = Equal | Unequal | Less | LessEqual | Greater | GreaterEqual;
 export type Terminator   = Return | Jump | Branch;
 export type Operand      = Access | Consume | Literal;
 
-export type Let          = [ tag: "let",           resource: number, value: Value ]; // define a Resource
+export type Let          = [ tag: "let",           resource: number, value: Operation ]; // define a Resource
 export type Drop         = [ tag: "drop",          resource: number ];
 export type Return       = [ tag: "return",        Operand ];
 export type Jump         = [ tag: "jump",          targetBlock: BlockId ];

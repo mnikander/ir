@@ -71,7 +71,7 @@ function print_line(line: MIR.Line): string {
   }
 }
 
-function print_value(value: MIR.Value): string {
+function print_value(value: MIR.Operation): string {
   switch (value[0]) {
     case "phi":
       return print_list("phi", [print_sources(value[1])]);
