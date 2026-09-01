@@ -23,7 +23,7 @@ export type Terminator   = Return | Jump | Branch;
 export type Operand      = Access | Consume | Literal;
 
 export type Let          = [ tag: "let",           resource: number, value: Value ]; // define a Resource
-export type Drop         = [ tag: 'drop',          Consume ];
+export type Drop         = [ tag: 'drop',          resource: number ];
 export type Return       = [ tag: 'return',        Operand ];
 export type Jump         = [ tag: 'jump',          targetBlock: BlockId ];
 export type Branch       = [ tag: 'branch',        condition: Operand, thenBlock: BlockId, elseBlock: BlockId ];

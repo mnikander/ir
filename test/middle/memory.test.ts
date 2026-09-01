@@ -179,7 +179,7 @@ describe.skip("MIR: use-after-free", () => {
     (blocks
       (block
         (let 0 (copy (literal 0)))
-        (drop (consume 0))
+        (z)
         (return (access 0))))))
 `;
     const input: MIR.Program = ["program", [
@@ -190,7 +190,7 @@ describe.skip("MIR: use-after-free", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 0]]],
-        ["drop", ["consume", 0]],
+        ["drop", 0],
         ["return", ["access", 0]],
       ]],
     ]];
@@ -209,7 +209,7 @@ describe.skip("MIR: use-after-free", () => {
     (blocks
       (block
         (let 0 (copy (literal 0)))
-        (drop (consume 0))
+        (drop 0)
         (let 1 (negate (access 0)))
         (return (access 1))))))
 `;
@@ -221,7 +221,7 @@ describe.skip("MIR: use-after-free", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 0]]],
-        ["drop", ["consume", 0]],
+        ["drop", 0],
         ["let", 1, ["negate", ["access", 0]]],
         ["return", ["access", 1]],
       ]],
@@ -241,8 +241,8 @@ describe.skip("MIR: use-after-free", () => {
     (blocks
       (block
         (let 0 (copy (literal 11)))
-        (drop (consume 0))
-        (drop (consume 0))
+        (drop 0)
+        (drop 0)
         (let 1 (copy (literal 11)))
         (return (access 1))))))
 `;
@@ -254,8 +254,8 @@ describe.skip("MIR: use-after-free", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
-        ["drop", ["consume", 0]],
-        ["drop", ["consume", 0]],
+        ["drop", 0],
+        ["drop", 0],
         ["let", 1, ["copy", ["literal", 11]]],
         ["return", ["access", 1]],
       ]],
@@ -306,7 +306,7 @@ describe.skip("MIR: use-after-free", () => {
       (block
         (let 0 (copy (literal 11)))
         (let 1 (borrow (access 0)))
-        (drop (consume 0))
+        (drop 0)
         (let 2 (dereference (access 1)))
         (return (access 2))))))
 `;
@@ -319,7 +319,7 @@ describe.skip("MIR: use-after-free", () => {
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
         ["let", 1, ["borrow", ["access", 0]]],
-        ["drop", ["consume", 0]],
+        ["drop", 0],
         ["let", 2, ["dereference", ["access", 1]]],
         ["return", ["access", 2]],
       ]],

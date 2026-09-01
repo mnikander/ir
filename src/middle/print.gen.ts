@@ -55,7 +55,7 @@ function print_line(line: MIR.Line): string {
     case "let":
       return print_let(line);
     case "drop":
-      return print_list("drop", [print_consume(line[1])]);
+      return print_list("drop", [String(line[1])]);
     case "return":
       return print_list("return", [print_input(line[1])]);
     case "branch":
