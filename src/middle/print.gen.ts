@@ -55,7 +55,7 @@ function print_line(line: MIR.Line): string {
     case "let":
       return print_let(line);
     case "drop":
-      return print_list("drop", [print_move(line[1])]);
+      return print_list("drop", [print_consume(line[1])]);
     case "return":
       return print_list("return", [print_input(line[1])]);
     case "branch":
@@ -121,12 +121,12 @@ function print_source([, block, register]: MIR.From): string {
   return print_list("from", [print_block_id(block), print_input(register)]);
 }
 
-function print_input(input: MIR.Read | MIR.Move | MIR.Literal): string {
+function print_input(input: MIR.Access | MIR.Consume | MIR.Literal): string {
   switch (input[0]) {
-    case "read":
-      return print_read(input);
-    case "move":
-      return print_move(input);
+    case "access":
+      return print_access(input);
+    case "consume":
+      return print_consume(input);
     case "literal":
       return print_literal(input);
     default:
@@ -138,12 +138,12 @@ function print_let([, resource, value]: MIR.Let): string {
   return print_list("let", [String(resource), print_value(value)]);
 }
 
-function print_read([, resource]: MIR.Read): string {
-  return `(read ${resource})`;
+function print_access([, resource]: MIR.Access): string {
+  return `(access ${resource})`;
 }
 
-function print_move([, resource]: MIR.Move): string {
-  return `(move ${resource})`;
+function print_consume([, resource]: MIR.Consume): string {
+  return `(consume ${resource})`;
 }
 
 function print_literal([, value]: MIR.Literal): string {

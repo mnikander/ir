@@ -14,9 +14,9 @@ describe.skip("MIR: memory and ownership", () => {
     (blocks
       (block
         (let 0 (copy (literal 11)))
-        (let 1 (borrow (read 0)))
-        (let 2 (dereference (read 1)))
-        (return (read 2))))))
+        (let 1 (borrow (access 0)))
+        (let 2 (dereference (access 1)))
+        (return (access 2))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -26,9 +26,9 @@ describe.skip("MIR: memory and ownership", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 1, ["borrow", ["read", 0]]],
-        ["let", 2, ["dereference", ["read", 1]]],
-        ["return", ["read", 2]],
+        ["let", 1, ["borrow", ["access", 0]]],
+        ["let", 2, ["dereference", ["access", 1]]],
+        ["return", ["access", 2]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -47,9 +47,9 @@ describe.skip("MIR: memory and ownership", () => {
     (blocks
       (block
         (let 0 (copy (literal 11)))
-        (let 1 (own (read 0)))
-        (let 2 (dereference (read 1)))
-        (return (read 2))))))
+        (let 1 (own (access 0)))
+        (let 2 (dereference (access 1)))
+        (return (access 2))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -59,9 +59,9 @@ describe.skip("MIR: memory and ownership", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 1, ["own", ["read", 0]]],
-        ["let", 2, ["dereference", ["read", 1]]],
-        ["return", ["read", 2]],
+        ["let", 1, ["own", ["access", 0]]],
+        ["let", 2, ["dereference", ["access", 1]]],
+        ["return", ["access", 2]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -83,8 +83,8 @@ describe.skip("MIR: memory and ownership", () => {
     (blocks
       (block
         (let 0 (copy (literal 11)))
-        (let 1 (copy (move 0)))
-        (return (read 1))))))
+        (let 1 (copy (consume 0)))
+        (return (access 1))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -94,8 +94,8 @@ describe.skip("MIR: memory and ownership", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 1, ["copy", ["move", 0]]],
-        ["return", ["read", 1]],
+        ["let", 1, ["copy", ["consume", 0]]],
+        ["return", ["access", 1]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -114,8 +114,8 @@ describe.skip("MIR: memory and ownership", () => {
       (block
         (let 0 (copy (literal 11)))
         (let 1 (copy (literal 13)))
-        (let 2 (add (move 0) (read 1)))
-        (return (read 2))))))
+        (let 2 (add (consume 0) (access 1)))
+        (return (access 2))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -126,8 +126,8 @@ describe.skip("MIR: memory and ownership", () => {
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
         ["let", 1, ["copy", ["literal", 13]]],
-        ["let", 2, ["add", ["move", 0], ["read", 1]]],
-        ["return", ["read", 2]],
+        ["let", 2, ["add", ["consume", 0], ["access", 1]]],
+        ["return", ["access", 2]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -145,7 +145,7 @@ describe.skip("MIR: memory and ownership", () => {
     (blocks
       (block
         (let 0 (copy (literal 11)))
-        (return (move 0))))))
+        (return (consume 0))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -155,7 +155,7 @@ describe.skip("MIR: memory and ownership", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
-        ["return", ["move", 0]],
+        ["return", ["consume", 0]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -179,8 +179,8 @@ describe.skip("MIR: use-after-free", () => {
     (blocks
       (block
         (let 0 (copy (literal 0)))
-        (drop (move 0))
-        (return (read 0))))))
+        (drop (consume 0))
+        (return (access 0))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -190,8 +190,8 @@ describe.skip("MIR: use-after-free", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 0]]],
-        ["drop", ["move", 0]],
-        ["return", ["read", 0]],
+        ["drop", ["consume", 0]],
+        ["return", ["access", 0]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -209,9 +209,9 @@ describe.skip("MIR: use-after-free", () => {
     (blocks
       (block
         (let 0 (copy (literal 0)))
-        (drop (move 0))
-        (let 1 (negate (read 0)))
-        (return (read 1))))))
+        (drop (consume 0))
+        (let 1 (negate (access 0)))
+        (return (access 1))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -221,9 +221,9 @@ describe.skip("MIR: use-after-free", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 0]]],
-        ["drop", ["move", 0]],
-        ["let", 1, ["negate", ["read", 0]]],
-        ["return", ["read", 1]],
+        ["drop", ["consume", 0]],
+        ["let", 1, ["negate", ["access", 0]]],
+        ["return", ["access", 1]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -241,10 +241,10 @@ describe.skip("MIR: use-after-free", () => {
     (blocks
       (block
         (let 0 (copy (literal 11)))
-        (drop (move 0))
-        (drop (move 0))
+        (drop (consume 0))
+        (drop (consume 0))
         (let 1 (copy (literal 11)))
-        (return (read 1))))))
+        (return (access 1))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -254,10 +254,10 @@ describe.skip("MIR: use-after-free", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
-        ["drop", ["move", 0]],
-        ["drop", ["move", 0]],
+        ["drop", ["consume", 0]],
+        ["drop", ["consume", 0]],
         ["let", 1, ["copy", ["literal", 11]]],
-        ["return", ["read", 1]],
+        ["return", ["access", 1]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -265,7 +265,7 @@ describe.skip("MIR: use-after-free", () => {
     // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
-  it("must detect a use-after-move", () => {
+  it("must detect a use-after-consume", () => {
     const text: string = `
 (program
   (function
@@ -275,8 +275,8 @@ describe.skip("MIR: use-after-free", () => {
     (blocks
       (block
         (let 0 (copy (literal 11)))
-        (let 1 (copy (move 0)))
-        (return (read 0))))))
+        (let 1 (copy (consume 0)))
+        (return (access 0))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -286,8 +286,8 @@ describe.skip("MIR: use-after-free", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 1, ["copy", ["move", 0]]],
-        ["return", ["read", 0]],
+        ["let", 1, ["copy", ["consume", 0]]],
+        ["return", ["access", 0]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -305,10 +305,10 @@ describe.skip("MIR: use-after-free", () => {
     (blocks
       (block
         (let 0 (copy (literal 11)))
-        (let 1 (borrow (read 0)))
-        (drop (move 0))
-        (let 2 (dereference (read 1)))
-        (return (read 2))))))
+        (let 1 (borrow (access 0)))
+        (drop (consume 0))
+        (let 2 (dereference (access 1)))
+        (return (access 2))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -318,10 +318,10 @@ describe.skip("MIR: use-after-free", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 1, ["borrow", ["read", 0]]],
-        ["drop", ["move", 0]],
-        ["let", 2, ["dereference", ["read", 1]]],
-        ["return", ["read", 2]],
+        ["let", 1, ["borrow", ["access", 0]]],
+        ["drop", ["consume", 0]],
+        ["let", 2, ["dereference", ["access", 1]]],
+        ["return", ["access", 2]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -329,7 +329,7 @@ describe.skip("MIR: use-after-free", () => {
     // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
-  it("must detect a dangling pointer when the source register is moved", () => {
+  it("must detect a dangling pointer when the source register is consumed", () => {
     const text: string = `
 (program
   (function
@@ -339,10 +339,10 @@ describe.skip("MIR: use-after-free", () => {
     (blocks
       (block
         (let 0 (copy (literal 11)))
-        (let 1 (borrow (read 0)))
-        (let 2 (copy (move 0)))
-        (let 3 (dereference (read 1)))
-        (return (read 3))))))
+        (let 1 (borrow (access 0)))
+        (let 2 (copy (consume 0)))
+        (let 3 (dereference (access 1)))
+        (return (access 3))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -352,10 +352,10 @@ describe.skip("MIR: use-after-free", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 1, ["borrow", ["read", 0]]],
-        ["let", 2, ["copy", ["move", 0]]],
-        ["let", 3, ["dereference", ["read", 1]]],
-        ["return", ["read", 3]],
+        ["let", 1, ["borrow", ["access", 0]]],
+        ["let", 2, ["copy", ["consume", 0]]],
+        ["let", 3, ["dereference", ["access", 1]]],
+        ["return", ["access", 3]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -375,9 +375,9 @@ describe.skip("MIR: ownership violations", () => {
     (blocks
       (block
         (let 0 (copy (literal 11)))
-        (let 1 (own (read 0)))
-        (let 2 (copy (read 0)))
-        (return (read 2))))))
+        (let 1 (own (access 0)))
+        (let 2 (copy (access 0)))
+        (return (access 2))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -387,9 +387,9 @@ describe.skip("MIR: ownership violations", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 1, ["own", ["read", 0]]],
-        ["let", 2, ["copy", ["read", 0]]],
-        ["return", ["read", 2]],
+        ["let", 1, ["own", ["access", 0]]],
+        ["let", 2, ["copy", ["access", 0]]],
+        ["return", ["access", 2]],
       ]],
     ]];
     expect(input).toBeDefined();

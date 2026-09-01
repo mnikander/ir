@@ -35,8 +35,8 @@ describe("MIR: constants and exit", () => {
     (blocks
       (block
         (let 0 (copy (literal 11)))
-        (let 1 (borrow (read 0)))
-        (return (read 1))))))
+        (let 1 (borrow (access 0)))
+        (return (access 1))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -46,8 +46,8 @@ describe("MIR: constants and exit", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 1, ["borrow", ["read", 0]]],
-        ["return", ["read", 1]],
+        ["let", 1, ["borrow", ["access", 0]]],
+        ["return", ["access", 1]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -65,7 +65,7 @@ describe("MIR: constants and exit", () => {
     (blocks
       (block
         (let 0 (copy (literal 11)))
-        (return (read 0))))))
+        (return (access 0))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -75,7 +75,7 @@ describe("MIR: constants and exit", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
-        ["return", ["read", 0]],
+        ["return", ["access", 0]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -95,8 +95,8 @@ describe("MIR: copying of registers", () => {
     (blocks
       (block
         (let 0 (copy (literal 11)))
-        (let 1 (copy (read 0)))
-        (return (read 1))))))
+        (let 1 (copy (access 0)))
+        (return (access 1))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -106,8 +106,8 @@ describe("MIR: copying of registers", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 1, ["copy", ["read", 0]]],
-        ["return", ["read", 1]],
+        ["let", 1, ["copy", ["access", 0]]],
+        ["return", ["access", 1]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -128,8 +128,8 @@ describe("MIR: arithmetic operations", () => {
       (block
         (let 0 (copy (literal 11)))
         (let 1 (copy (literal 13)))
-        (let 2 (add (read 0) (read 1)))
-        (return (read 2))))))
+        (let 2 (add (access 0) (access 1)))
+        (return (access 2))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -140,8 +140,8 @@ describe("MIR: arithmetic operations", () => {
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
         ["let", 1, ["copy", ["literal", 13]]],
-        ["let", 2, ["add", ["read", 0], ["read", 1]]],
-        ["return", ["read", 2]],
+        ["let", 2, ["add", ["access", 0], ["access", 1]]],
+        ["return", ["access", 2]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -163,10 +163,10 @@ describe("MIR: block_ids, jump, and branch", () => {
         (jump (block_id 2)))
       (block
         (let 0 (copy (literal 11)))
-        (return (read 0)))
+        (return (access 0)))
       (block
         (let 1 (copy (literal 13)))
-        (return (read 1))))))
+        (return (access 1))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -179,11 +179,11 @@ describe("MIR: block_ids, jump, and branch", () => {
       ], [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
-        ["return", ["read", 0]],
+        ["return", ["access", 0]],
       ], [
         "block",
         ["let", 1, ["copy", ["literal", 13]]],
-        ["return", ["read", 1]],
+        ["return", ["access", 1]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -205,13 +205,13 @@ describe("MIR: block_ids, jump, and branch", () => {
         (let 2 (copy (literal 281)))
         (branch (literal 1) (block_id 1) (block_id 2)))
       (block
-        (let 3 (add (read 0) (read 1)))
+        (let 3 (add (access 0) (access 1)))
         (jump (block_id 3)))
       (block
-        (let 4 (add (read 1) (read 2)))
+        (let 4 (add (access 1) (access 2)))
         (jump (block_id 3)))
       (block
-        (return (read 3))))))
+        (return (access 3))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -226,15 +226,15 @@ describe("MIR: block_ids, jump, and branch", () => {
         ["branch", ["literal", 1], ["block_id", 1], ["block_id", 2]],
       ], [
         "block",
-        ["let", 3, ["add", ["read", 0], ["read", 1]]],
+        ["let", 3, ["add", ["access", 0], ["access", 1]]],
         ["jump", ["block_id", 3]],
       ], [
         "block",
-        ["let", 4, ["add", ["read", 1], ["read", 2]]],
+        ["let", 4, ["add", ["access", 1], ["access", 2]]],
         ["jump", ["block_id", 3]],
       ], [
         "block",
-        ["return", ["read", 3]],
+        ["return", ["access", 3]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -256,13 +256,13 @@ describe("MIR: block_ids, jump, and branch", () => {
         (let 2 (copy (literal 281)))
         (branch (literal 0) (block_id 1) (block_id 2)))
       (block
-        (let 3 (add (read 0) (read 1)))
+        (let 3 (add (access 0) (access 1)))
         (jump (block_id 3)))
       (block
-        (let 4 (add (read 1) (read 2)))
+        (let 4 (add (access 1) (access 2)))
         (jump (block_id 3)))
       (block
-        (return (read 4))))))
+        (return (access 4))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -277,15 +277,15 @@ describe("MIR: block_ids, jump, and branch", () => {
         ["branch", ["literal", 0], ["block_id", 1], ["block_id", 2]],
       ], [
         "block",
-        ["let", 3, ["add", ["read", 0], ["read", 1]]],
+        ["let", 3, ["add", ["access", 0], ["access", 1]]],
         ["jump", ["block_id", 3]],
       ], [
         "block",
-        ["let", 4, ["add", ["read", 1], ["read", 2]]],
+        ["let", 4, ["add", ["access", 1], ["access", 2]]],
         ["jump", ["block_id", 3]],
       ], [
         "block",
-        ["return", ["read", 4]],
+        ["return", ["access", 4]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -306,15 +306,15 @@ describe("MIR: function call", () => {
       (block
         (let 0 (copy (literal 11)))
         (let 1 (copy (literal 13)))
-        (let 2 (call (function_id 1) (arguments (read 1))))
-        (return (read 2)))))
+        (let 2 (call (function_id 1) (arguments (access 1))))
+        (return (access 2)))))
   (function
     (parameters Int)
     (result Int)
     (locals)
     (blocks
       (block
-        (return (read 0))))))
+        (return (access 0))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -325,8 +325,8 @@ describe("MIR: function call", () => {
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
         ["let", 1, ["copy", ["literal", 13]]],
-        ["let", 2, ["call", ["function_id", 1], ["arguments", ["read", 1]]]],
-        ["return", ["read", 2]],
+        ["let", 2, ["call", ["function_id", 1], ["arguments", ["access", 1]]]],
+        ["return", ["access", 2]],
       ]],
     ], [
       "function",
@@ -335,7 +335,7 @@ describe("MIR: function call", () => {
       ["locals"],
       ["blocks", [
         "block",
-        ["return", ["read", 0]],
+        ["return", ["access", 0]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -354,15 +354,15 @@ describe("MIR: function call", () => {
       (block
         (let 0 (copy (literal 11)))
         (let 1 (copy (literal 13)))
-        (let 2 (call (function_id 1) (arguments (read 0) (read 1))))
-        (return (read 2)))))
+        (let 2 (call (function_id 1) (arguments (access 0) (access 1))))
+        (return (access 2)))))
   (function
     (parameters Int Int)
     (result Int)
     (locals)
     (blocks
       (block
-        (return (read 0))))))
+        (return (access 0))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -373,11 +373,11 @@ describe("MIR: function call", () => {
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
         ["let", 1, ["copy", ["literal", 13]]],
-        ["let", 2, ["call", ["function_id", 1], ["arguments", ["read", 0], [
-          "read",
+        ["let", 2, ["call", ["function_id", 1], ["arguments", ["access", 0], [
+          "access",
           1,
         ]]]],
-        ["return", ["read", 2]],
+        ["return", ["access", 2]],
       ]],
     ], [
       "function",
@@ -386,7 +386,7 @@ describe("MIR: function call", () => {
       ["locals"],
       ["blocks", [
         "block",
-        ["return", ["read", 0]],
+        ["return", ["access", 0]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -411,24 +411,24 @@ describe("MIR: function call", () => {
       (block
         (let 0 (copy (literal 5)))
         (let 1 (copy (literal 1)))
-        (let 2 (call (function_id 1) (arguments (read 0) (read 1))))
-        (return (read 2)))))
+        (let 2 (call (function_id 1) (arguments (access 0) (access 1))))
+        (return (access 2)))))
   (function
     (parameters Int Int)
     (result Int)
     (locals Int Int Int Int Int Int)
     (blocks
       (block
-        (let 3 (equal (read 0) (literal 1)))
-        (branch (read 3) (block_id 1) (block_id 2)))
+        (let 3 (equal (access 0) (literal 1)))
+        (branch (access 3) (block_id 1) (block_id 2)))
       (block
-        (let 4 (subtract (read 0) (literal 1)))
-        (let 5 (multiply (read 0) (read 1)))
-        (let 6 (call (function_id 1) (arguments (read 4) (read 5))))
+        (let 4 (subtract (access 0) (literal 1)))
+        (let 5 (multiply (access 0) (access 1)))
+        (let 6 (call (function_id 1) (arguments (access 4) (access 5))))
         (jump (block_id 2)))
       (block
-        (let 7 (phi (sources (from (block_id 1) (read 6)) (from (block_id 0) (read 1)))))
-        (return (read 7))))))
+        (let 7 (phi (sources (from (block_id 1) (access 6)) (from (block_id 0) (access 1)))))
+        (return (access 7))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -439,11 +439,11 @@ describe("MIR: function call", () => {
         "block",
         ["let", 0, ["copy", ["literal", 5]]],
         ["let", 1, ["copy", ["literal", 1]]],
-        ["let", 2, ["call", ["function_id", 1], ["arguments", ["read", 0], [
-          "read",
+        ["let", 2, ["call", ["function_id", 1], ["arguments", ["access", 0], [
+          "access",
           1,
         ]]]],
-        ["return", ["read", 2]],
+        ["return", ["access", 2]],
       ]],
     ], [
       "function",
@@ -452,14 +452,14 @@ describe("MIR: function call", () => {
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
       ["blocks", [
         "block",
-        ["let", 3, ["equal", ["read", 0], ["literal", 1]]],
-        ["branch", ["read", 3], ["block_id", 1], ["block_id", 2]],
+        ["let", 3, ["equal", ["access", 0], ["literal", 1]]],
+        ["branch", ["access", 3], ["block_id", 1], ["block_id", 2]],
       ], [
         "block",
-        ["let", 4, ["subtract", ["read", 0], ["literal", 1]]],
-        ["let", 5, ["multiply", ["read", 0], ["read", 1]]],
-        ["let", 6, ["call", ["function_id", 1], ["arguments", ["read", 4], [
-          "read",
+        ["let", 4, ["subtract", ["access", 0], ["literal", 1]]],
+        ["let", 5, ["multiply", ["access", 0], ["access", 1]]],
+        ["let", 6, ["call", ["function_id", 1], ["arguments", ["access", 4], [
+          "access",
           5,
         ]]]],
         ["jump", ["block_id", 2]],
@@ -467,10 +467,10 @@ describe("MIR: function call", () => {
         "block",
         ["let", 7, ["phi", [
           "sources",
-          ["from", ["block_id", 1], ["read", 6]],
-          ["from", ["block_id", 0], ["read", 1]],
+          ["from", ["block_id", 1], ["access", 6]],
+          ["from", ["block_id", 0], ["access", 1]],
         ]]],
-        ["return", ["read", 7]],
+        ["return", ["access", 7]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -491,7 +491,7 @@ describe("MIR: static single assignment", () => {
       (block
         (let 0 (copy (literal 11)))
         (let 0 (copy (literal 13)))
-        (return (read 1))))))
+        (return (access 1))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -502,7 +502,7 @@ describe("MIR: static single assignment", () => {
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
         ["let", 0, ["copy", ["literal", 13]]],
-        ["return", ["read", 1]],
+        ["return", ["access", 1]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -527,8 +527,8 @@ describe("MIR: static single assignment", () => {
         (let 1 (copy (literal 13)))
         (jump (block_id 3)))
       (block
-        (let 2 (phi (sources (from (block_id 1) (read 0)) (from (block_id 2) (read 1)))))
-        (return (read 2))))))
+        (let 2 (phi (sources (from (block_id 1) (access 0)) (from (block_id 2) (access 1)))))
+        (return (access 2))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -550,10 +550,10 @@ describe("MIR: static single assignment", () => {
         "block",
         ["let", 2, ["phi", [
           "sources",
-          ["from", ["block_id", 1], ["read", 0]],
-          ["from", ["block_id", 2], ["read", 1]],
+          ["from", ["block_id", 1], ["access", 0]],
+          ["from", ["block_id", 2], ["access", 1]],
         ]]],
-        ["return", ["read", 2]],
+        ["return", ["access", 2]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -586,12 +586,12 @@ describe("MIR: static single assignment", () => {
         (let 2 (copy (literal 3)))
         (jump (block_id 1)))
       (block
-        (let 3 (phi (sources (from (block_id 0) (read 0)) (from (block_id 1) (read 4)))))
-        (let 4 (add (read 1) (read 3)))
-        (let 5 (unequal (read 3) (read 2)))
-        (branch (read 5) (block_id 1) (block_id 2)))
+        (let 3 (phi (sources (from (block_id 0) (access 0)) (from (block_id 1) (access 4)))))
+        (let 4 (add (access 1) (access 3)))
+        (let 5 (unequal (access 3) (access 2)))
+        (branch (access 5) (block_id 1) (block_id 2)))
       (block
-        (return (read 3))))))
+        (return (access 3))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -608,15 +608,15 @@ describe("MIR: static single assignment", () => {
         "block",
         ["let", 3, ["phi", [
           "sources",
-          ["from", ["block_id", 0], ["read", 0]],
-          ["from", ["block_id", 1], ["read", 4]],
+          ["from", ["block_id", 0], ["access", 0]],
+          ["from", ["block_id", 1], ["access", 4]],
         ]]],
-        ["let", 4, ["add", ["read", 1], ["read", 3]]],
-        ["let", 5, ["unequal", ["read", 3], ["read", 2]]],
-        ["branch", ["read", 5], ["block_id", 1], ["block_id", 2]],
+        ["let", 4, ["add", ["access", 1], ["access", 3]]],
+        ["let", 5, ["unequal", ["access", 3], ["access", 2]]],
+        ["branch", ["access", 5], ["block_id", 1], ["block_id", 2]],
       ], [
         "block",
-        ["return", ["read", 3]],
+        ["return", ["access", 3]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -645,7 +645,7 @@ describe("MIR: static single assignment", () => {
     (blocks
       (block
         (let 0 (copy (literal 0)))
-        (branch (read 0) (block_id 1) (block_id 2)))
+        (branch (access 0) (block_id 1) (block_id 2)))
       (block
         (let 1 (copy (literal 11)))
         (jump (block_id 4)))
@@ -656,10 +656,10 @@ describe("MIR: static single assignment", () => {
         (let 3 (copy (literal 281)))
         (jump (block_id 4)))
       (block
-        (let 4 (phi (sources (from (block_id 1) (read 1)) (from (block_id 3) (read 2)))))
-        (let 5 (phi (sources (from (block_id 1) (read 1)) (from (block_id 3) (read 3)))))
-        (let 6 (add (read 4) (read 5)))
-        (return (read 6))))))
+        (let 4 (phi (sources (from (block_id 1) (access 1)) (from (block_id 3) (access 2)))))
+        (let 5 (phi (sources (from (block_id 1) (access 1)) (from (block_id 3) (access 3)))))
+        (let 6 (add (access 4) (access 5)))
+        (return (access 6))))))
 `;
 
     const input: MIR.Program = ["program", [
@@ -670,7 +670,7 @@ describe("MIR: static single assignment", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 0]]],
-        ["branch", ["read", 0], ["block_id", 1], ["block_id", 2]],
+        ["branch", ["access", 0], ["block_id", 1], ["block_id", 2]],
       ], [
         "block",
         ["let", 1, ["copy", ["literal", 11]]],
@@ -687,16 +687,16 @@ describe("MIR: static single assignment", () => {
         "block",
         ["let", 4, ["phi", [
           "sources",
-          ["from", ["block_id", 1], ["read", 1]],
-          ["from", ["block_id", 3], ["read", 2]],
+          ["from", ["block_id", 1], ["access", 1]],
+          ["from", ["block_id", 3], ["access", 2]],
         ]]],
         ["let", 5, ["phi", [
           "sources",
-          ["from", ["block_id", 1], ["read", 1]],
-          ["from", ["block_id", 3], ["read", 3]],
+          ["from", ["block_id", 1], ["access", 1]],
+          ["from", ["block_id", 3], ["access", 3]],
         ]]],
-        ["let", 6, ["add", ["read", 4], ["read", 5]]],
-        ["return", ["read", 6]],
+        ["let", 6, ["add", ["access", 4], ["access", 5]]],
+        ["return", ["access", 6]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -727,13 +727,13 @@ describe("MIR: static single assignment", () => {
       (block
         (let 0 (copy (literal 11)))
         (let 1 (copy (literal 1)))
-        (branch (read 1) (block_id 2) (block_id 3)))
+        (branch (access 1) (block_id 2) (block_id 3)))
       (block
         (let 2 (copy (literal 13)))
         (jump (block_id 3)))
       (block
-        (let 3 (phi (sources (from (block_id 1) (read 0)) (from (block_id 2) (read 2)))))
-        (return (read 3))))))
+        (let 3 (phi (sources (from (block_id 1) (access 0)) (from (block_id 2) (access 2)))))
+        (return (access 3))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -747,7 +747,7 @@ describe("MIR: static single assignment", () => {
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
         ["let", 1, ["copy", ["literal", 1]]],
-        ["branch", ["read", 1], ["block_id", 2], ["block_id", 3]],
+        ["branch", ["access", 1], ["block_id", 2], ["block_id", 3]],
       ], [
         "block",
         ["let", 2, ["copy", ["literal", 13]]],
@@ -756,10 +756,10 @@ describe("MIR: static single assignment", () => {
         "block",
         ["let", 3, ["phi", [
           "sources",
-          ["from", ["block_id", 1], ["read", 0]],
-          ["from", ["block_id", 2], ["read", 2]],
+          ["from", ["block_id", 1], ["access", 0]],
+          ["from", ["block_id", 2], ["access", 2]],
         ]]],
-        ["return", ["read", 3]],
+        ["return", ["access", 3]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -787,16 +787,16 @@ describe("MIR: static single assignment", () => {
     (blocks
       (block
         (let 0 (copy (literal 0)))
-        (branch (read 0) (block_id 1) (block_id 3)))
+        (branch (access 0) (block_id 1) (block_id 3)))
       (block
         (let 1 (copy (literal 1)))
-        (branch (read 1) (block_id 2) (block_id 3)))
+        (branch (access 1) (block_id 2) (block_id 3)))
       (block
         (let 2 (copy (literal 1)))
         (jump (block_id 3)))
       (block
-        (let 3 (phi (sources (from (block_id 0) (read 0)) (from (block_id 1) (read 1)) (from (block_id 2) (read 2)))))
-        (return (read 3))))))
+        (let 3 (phi (sources (from (block_id 0) (access 0)) (from (block_id 1) (access 1)) (from (block_id 2) (access 2)))))
+        (return (access 3))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -806,11 +806,11 @@ describe("MIR: static single assignment", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 0]]],
-        ["branch", ["read", 0], ["block_id", 1], ["block_id", 3]],
+        ["branch", ["access", 0], ["block_id", 1], ["block_id", 3]],
       ], [
         "block",
         ["let", 1, ["copy", ["literal", 1]]],
-        ["branch", ["read", 1], ["block_id", 2], ["block_id", 3]],
+        ["branch", ["access", 1], ["block_id", 2], ["block_id", 3]],
       ], [
         "block",
         ["let", 2, ["copy", ["literal", 1]]],
@@ -819,11 +819,11 @@ describe("MIR: static single assignment", () => {
         "block",
         ["let", 3, ["phi", [
           "sources",
-          ["from", ["block_id", 0], ["read", 0]],
-          ["from", ["block_id", 1], ["read", 1]],
-          ["from", ["block_id", 2], ["read", 2]],
+          ["from", ["block_id", 0], ["access", 0]],
+          ["from", ["block_id", 1], ["access", 1]],
+          ["from", ["block_id", 2], ["access", 2]],
         ]]],
-        ["return", ["read", 3]],
+        ["return", ["access", 3]],
       ]],
     ]];
     expect(input).toBeDefined();
@@ -851,16 +851,16 @@ describe("MIR: static single assignment", () => {
     (blocks
       (block
         (let 0 (copy (literal 0)))
-        (branch (read 0) (block_id 1) (block_id 3)))
+        (branch (access 0) (block_id 1) (block_id 3)))
       (block
         (let 1 (copy (literal 1)))
-        (branch (read 1) (block_id 2) (block_id 3)))
+        (branch (access 1) (block_id 2) (block_id 3)))
       (block
         (let 2 (copy (literal 1)))
         (jump (block_id 3)))
       (block
-        (let 3 (phi (sources (from (block_id 1) (read 1)) (from (block_id 2) (read 2)))))
-        (return (read 3))))))
+        (let 3 (phi (sources (from (block_id 1) (access 1)) (from (block_id 2) (access 2)))))
+        (return (access 3))))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -870,11 +870,11 @@ describe("MIR: static single assignment", () => {
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 0]]],
-        ["branch", ["read", 0], ["block_id", 1], ["block_id", 3]],
+        ["branch", ["access", 0], ["block_id", 1], ["block_id", 3]],
       ], [
         "block",
         ["let", 1, ["copy", ["literal", 1]]],
-        ["branch", ["read", 1], ["block_id", 2], ["block_id", 3]],
+        ["branch", ["access", 1], ["block_id", 2], ["block_id", 3]],
       ], [
         "block",
         ["let", 2, ["copy", ["literal", 1]]],
@@ -883,10 +883,10 @@ describe("MIR: static single assignment", () => {
         "block",
         ["let", 3, ["phi", [
           "sources",
-          ["from", ["block_id", 1], ["read", 1]],
-          ["from", ["block_id", 2], ["read", 2]],
+          ["from", ["block_id", 1], ["access", 1]],
+          ["from", ["block_id", 2], ["access", 2]],
         ]]],
-        ["return", ["read", 3]],
+        ["return", ["access", 3]],
       ]],
     ]];
     expect(input).toBeDefined();
