@@ -80,8 +80,6 @@ function print_value(value: MIR.Value): string {
         print_function_id(value[1]),
         print_arguments(value[2]),
       ]);
-    case "constant":
-      return print_list("constant", [print_literal(value[1])]);
     case "copy":
     case "own":
     case "borrow":

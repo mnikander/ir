@@ -71,7 +71,7 @@ to a resource number. The syntax is:
 ```
 
 For example:
-- `(let 0 (constant (literal 42)))` - load constant 42 into resource 0
+- `(let 0 (copy (literal 42)))` - load constant 42 into resource 0
 - `(let 1 (add (read 0) (read 2)))` - add resources 0 and 2, store in resource 1
 - `(let 3 (phi (sources (from (block_id 1) (read 2)) (from (block_id 2) (move 3)))))` - phi node
 

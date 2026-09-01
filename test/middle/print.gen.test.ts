@@ -71,7 +71,7 @@ describe("MIR printer", () => {
               ["move", 2],
             ]]],
             ["let", 2, ["call", ["function_id", 1], ["arguments"]]],
-            ["let", 3, ["constant", ["literal", 42]]],
+            ["let", 3, ["copy", ["literal", 42]]],
             ["let", 4, ["copy", ["read", 3]]],
             ["let", 5, ["own", ["move", 4]]],
             ["let", 6, ["borrow", ["read", 5]]],
@@ -102,7 +102,7 @@ describe("MIR printer", () => {
         "        (let 0 (phi (sources (from (block_id 1) (read 2)) (from (block_id 2) (move 3)))))\n" +
         "        (let 1 (call (function_id 0) (arguments (read 0) (move 2))))\n" +
         "        (let 2 (call (function_id 1) (arguments)))\n" +
-        "        (let 3 (constant (literal 42)))\n" +
+        "        (let 3 (copy (literal 42)))\n" +
         "        (let 4 (copy (read 3)))\n" +
         "        (let 5 (own (move 4)))\n" +
         "        (let 6 (borrow (read 5)))\n" +
