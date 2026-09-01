@@ -3,7 +3,7 @@ import { expect } from "@std/expect";
 import * as MIR from "../../src/middle/middle_grammar.ts";
 import { print } from "../../src/middle/print.gen.ts";
 
-describe("MIR: constants and exit", () => {
+describe("MIR: literals and exit", () => {
   it("must throw error on empty input", () => {
     const text: string = `
 (program
@@ -85,7 +85,7 @@ describe("MIR: constants and exit", () => {
 });
 
 describe("MIR: copying of registers", () => {
-  it("must copy a copy", () => {
+  it("must copy a literal", () => {
     const text: string = `
 (program
   (function
@@ -142,6 +142,36 @@ describe("MIR: arithmetic operations", () => {
         ["let", 1, ["copy", ["literal", 13]]],
         ["let", 2, ["add", ["access", 0], ["access", 1]]],
         ["return", ["access", 2]],
+      ]],
+    ]];
+    expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
+    // expect(evaluate(lower(input))).toBe(11 + 13);
+  });
+
+  it("must evaluate integer addition with a literal", () => {
+    const text: string = `
+(program
+  (function
+    (parameters)
+    (result Int)
+    (locals Int Int)
+    (blocks
+      (block
+        (let 0 (copy (literal 11)))
+        (let 1 (add (access 0) (literal 13)))
+        (return (access 1))))))
+`;
+    const input: MIR.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"], ["Int"]],
+      ["blocks", [
+        "block",
+        ["let", 0, ["copy", ["literal", 11]]],
+        ["let", 1, ["add", ["access", 0], ["literal", 13]]],
+        ["return", ["access", 1]],
       ]],
     ]];
     expect(input).toBeDefined();
