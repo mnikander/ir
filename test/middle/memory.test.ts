@@ -2,6 +2,8 @@ import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 import * as MIR from "../../src/middle/middle_grammar.ts";
 import { print } from "../../src/middle/print.gen.ts";
+import { lower } from "../../src/mir_to_lir/lower.gen.ts";
+import { evaluate } from "../../src/runtime/machine.ts";
 
 describe("MIR: memory and ownership", () => {
   it("must create and dereference a pointer", () => {

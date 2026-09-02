@@ -5,20 +5,18 @@ three-address code (3AC aka TAC) and static single-assignment (SSA) form. Like
 all IRs, it sits between high-level languages such as C or TypeScript on one
 end, and Assembly on the other end.
 
-This project actually contains two IRs, a high intermediate representation
-([HIR](src/high/high_grammar.ts)) and a low intermediate representation
-([LIR](src/low/low_grammar.ts)). The focus of the project is the HIR, which is
-in SSA form and is designed for memory safety. HIR has type annotations for
-analysis; LIR does not.
+This project contains high ([HIR](src/high/high_grammar.ts)), middle
+([MIR](src/middle/middle_grammar.ts)), and low ([LIR](src/low/low_grammar.ts))
+intermediate representations. HIR and MIR are in SSA form and retain information
+needed for analysis; LIR is flat and executable.
 
 There is no parser for the HIR. The input is in JSON form, not in text form. The
 JSON input is verified by the TypeScript type-checker. There is a pretty-printer
 which can convert an HIR into text, for better readablity.
 
 The LIR is closer to assembly and is used for execution on a virtual
-[machine](src/runtime/machine.ts). The lowering passes from HIR to LIR are an
-LLM-generated blackbox, using a micro-pass architecture inspired by the Chez
-Scheme compiler.
+[machine](src/runtime/machine.ts). Independent HIR-to-LIR and MIR-to-LIR
+pipelines use a micro-pass architecture inspired by the Chez Scheme compiler.
 
 ## More Information
 

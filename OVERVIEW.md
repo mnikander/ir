@@ -1,12 +1,13 @@
 # Repository Overview
 
 This repository contains a TypeScript/Deno interpreter for a small intermediate representation.
-The active architecture is HIR -> lowering passes -> LIR -> runtime.
+The active architecture provides independent HIR -> LIR and MIR -> LIR
+lowering pipelines feeding the same runtime.
 The input is in JSON form, which is verified by the typescript type-checker.
 There is no parser.
 Files which are completely AI-generated have `*.gen.ts` or `*.gen.test.ts` file extensions.
-An MIR has been defined, but is not yet used.
-The codebase will be gradually refactored to replace the HIR with MIR.
+MIR is executable through its own lowering pipeline while the HIR pipeline
+remains available independently.
 
 ## Important Files
 
@@ -116,6 +117,12 @@ wrapped in explicit variadic `(sources ...)` and `(arguments ...)` nodes:
 ```
 
 ### Lowering Pipeline
+
+There are two independent micro-pass pipelines. `src/hir_to_lir/` contains the
+existing named-register HIR pipeline described below. `src/mir_to_lir/`
+validates and indexes MIR, splits and lowers phi edges, fuses bindings with
+operations, materializes literals and consumes, emits flat LIR, and resolves
+numeric function and block targets.
 
 The pipeline entry point is [lower.gen.ts](/home/marco/Documents/ir/src/passes/lower.gen.ts). It runs these passes in order:
 

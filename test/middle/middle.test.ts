@@ -2,6 +2,8 @@ import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 import * as MIR from "../../src/middle/middle_grammar.ts";
 import { print } from "../../src/middle/print.gen.ts";
+import { lower } from "../../src/mir_to_lir/lower.gen.ts";
+import { evaluate } from "../../src/runtime/machine.ts";
 
 describe("MIR: literals and exit", () => {
   it("must throw error on empty input", () => {
@@ -450,7 +452,7 @@ describe("MIR: function call", () => {
     (blocks
       (block
         (let 3 (equal (access 0) (literal 1)))
-        (branch (access 3) (block_id 1) (block_id 2)))
+        (branch (access 3) (block_id 2) (block_id 1)))
       (block
         (let 4 (subtract (access 0) (literal 1)))
         (let 5 (multiply (access 0) (access 1)))
@@ -483,7 +485,7 @@ describe("MIR: function call", () => {
       ["blocks", [
         "block",
         ["let", 3, ["equal", ["access", 0], ["literal", 1]]],
-        ["branch", ["access", 3], ["block_id", 1], ["block_id", 2]],
+        ["branch", ["access", 3], ["block_id", 2], ["block_id", 1]],
       ], [
         "block",
         ["let", 4, ["subtract", ["access", 0], ["literal", 1]]],
@@ -537,7 +539,9 @@ describe("MIR: static single assignment", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    expect(() => {evaluate(lower(input))}).toThrow();
+    expect(() => {
+      evaluate(lower(input));
+    }).toThrow();
   });
 
   it("phi node must assign from the correct register after an unconditional jump", () => {
