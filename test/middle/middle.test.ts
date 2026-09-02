@@ -22,7 +22,7 @@ describe("MIR: literals and exit", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(() => evaluate(lower(input))).toThrow();
+    expect(() => evaluate(lower(input))).toThrow();
   });
 
   it("must throw an error when exiting with a pointer instead of a Value", () => {
@@ -52,7 +52,7 @@ describe("MIR: literals and exit", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(() => evaluate(lower(input))).toThrow();
+    expect(() => evaluate(lower(input))).toThrow();
   });
 
   it("must evaluate a copy", () => {
@@ -80,7 +80,7 @@ describe("MIR: literals and exit", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(11);
+    expect(evaluate(lower(input))).toBe(11);
   });
 });
 
@@ -112,7 +112,7 @@ describe("MIR: copying of registers", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(11);
+    expect(evaluate(lower(input))).toBe(11);
   });
 });
 
@@ -146,7 +146,7 @@ describe("MIR: arithmetic operations", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(11 + 13);
+    expect(evaluate(lower(input))).toBe(11 + 13);
   });
 
   it("must evaluate integer addition with a literal", () => {
@@ -176,7 +176,7 @@ describe("MIR: arithmetic operations", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(11 + 13);
+    expect(evaluate(lower(input))).toBe(11 + 13);
   });
 });
 
@@ -218,7 +218,7 @@ describe("MIR: block_ids, jump, and branch", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(13);
+    expect(evaluate(lower(input))).toBe(13);
   });
 
   it("must execute first branch if the condition is true", () => {
@@ -269,7 +269,7 @@ describe("MIR: block_ids, jump, and branch", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(11 + 13);
+    expect(evaluate(lower(input))).toBe(11 + 13);
   });
 
   it("must execute the second branch when condition is false", () => {
@@ -320,7 +320,7 @@ describe("MIR: block_ids, jump, and branch", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(13 + 281);
+    expect(evaluate(lower(input))).toBe(13 + 281);
   });
 });
 
@@ -370,7 +370,7 @@ describe("MIR: function call", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(13);
+    expect(evaluate(lower(input))).toBe(13);
   });
 
   it("must support calling a binary function", () => {
@@ -421,7 +421,7 @@ describe("MIR: function call", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(11);
+    expect(evaluate(lower(input))).toBe(11);
   });
 
   it("must evaluate tail-recursive functions", () => {
@@ -505,7 +505,7 @@ describe("MIR: function call", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(120);
+    expect(evaluate(lower(input))).toBe(120);
   });
 });
 
@@ -537,7 +537,7 @@ describe("MIR: static single assignment", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(() => {evaluate(lower(input))}).toThrow();
+    expect(() => {evaluate(lower(input))}).toThrow();
   });
 
   it("phi node must assign from the correct register after an unconditional jump", () => {
@@ -588,7 +588,7 @@ describe("MIR: static single assignment", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(13);
+    expect(evaluate(lower(input))).toBe(13);
   });
 
   it("phi node must assign from the correct register when executing a loop", () => {
@@ -651,7 +651,7 @@ describe("MIR: static single assignment", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(3);
+    expect(evaluate(lower(input))).toBe(3);
   });
 
   it("phi node must allow assignment from dominator blocks which are not the immediate dominator", () => {
@@ -731,7 +731,7 @@ describe("MIR: static single assignment", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(13 + 281);
+    expect(evaluate(lower(input))).toBe(13 + 281);
   });
 
   it("phi node must allow assignment when both inputs are available", () => {
@@ -794,7 +794,7 @@ describe("MIR: static single assignment", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(13);
+    expect(evaluate(lower(input))).toBe(13);
   });
 
   it("must allow assignment when three inputs are available", () => {
@@ -858,7 +858,7 @@ describe("MIR: static single assignment", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(0);
+    expect(evaluate(lower(input))).toBe(0);
   });
 
   it("must throw an error when a phi node is non-exhaustive", () => {
@@ -921,6 +921,6 @@ describe("MIR: static single assignment", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 });

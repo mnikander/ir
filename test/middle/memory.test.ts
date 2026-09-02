@@ -3,7 +3,7 @@ import { expect } from "@std/expect";
 import * as MIR from "../../src/middle/middle_grammar.ts";
 import { print } from "../../src/middle/print.gen.ts";
 
-describe.skip("MIR: memory and ownership", () => {
+describe("MIR: memory and ownership", () => {
   it("must create and dereference a pointer", () => {
     const text: string = `
 (program
@@ -33,11 +33,10 @@ describe.skip("MIR: memory and ownership", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(validate(input)).toBe(true);
-    // expect(evaluate(lower(input))).toBe(11);
+    expect(evaluate(lower(input))).toBe(11);
   });
 
-  it("must allow a register to be owned by a pointer", () => {
+  it.skip("must allow a register to be owned by a pointer", () => {
     const text: string = `
 (program
   (function
@@ -66,7 +65,7 @@ describe.skip("MIR: memory and ownership", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(11);
+    expect(evaluate(lower(input))).toBe(11);
   });
 
   it.skip("must support pointers as phi operands", () => {
@@ -100,7 +99,7 @@ describe.skip("MIR: memory and ownership", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(11);
+    expect(evaluate(lower(input))).toBe(11);
   });
 
   it("must allow consuming an Add operand", () => {
@@ -132,7 +131,7 @@ describe.skip("MIR: memory and ownership", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(11 + 13);
+    expect(evaluate(lower(input))).toBe(11 + 13);
   });
 
   it("must allow consuming the return operand", () => {
@@ -160,7 +159,7 @@ describe.skip("MIR: memory and ownership", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(evaluate(lower(input))).toBe(11);
+    expect(evaluate(lower(input))).toBe(11);
   });
 
   it.skip("must allow consuming a phi operand", () => {
@@ -196,7 +195,7 @@ describe.skip("MIR: use-after-free", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
   it("must detect a use-after-free in an arithmetic expression", () => {
@@ -228,7 +227,7 @@ describe.skip("MIR: use-after-free", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
   it("must detect a double-free", () => {
@@ -262,7 +261,7 @@ describe.skip("MIR: use-after-free", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
   it("must detect a use-after-consume", () => {
@@ -292,7 +291,7 @@ describe.skip("MIR: use-after-free", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
   it("must detect a dangling pointer when the source register is dropped", () => {
@@ -326,7 +325,7 @@ describe.skip("MIR: use-after-free", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
   it("must detect a dangling pointer when the source register is consumed", () => {
@@ -360,7 +359,7 @@ describe.skip("MIR: use-after-free", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 });
 
@@ -394,6 +393,6 @@ describe.skip("MIR: ownership violations", () => {
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    // expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
+    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 });
