@@ -1,52 +1,78 @@
-# Table of Instructions and Type Signatures
+# MIR Instructions and Type Signatures
 
-| name              | symbols        | example                             | input type             |output type| comments |
-| :---              | :---           | :---                                | :---                   | :---      | :--- |
-|                   |                |                                     |                        |           | |
-| **Special Forms** |                |                                     |                        |           | |
-| Function          | `function`     | `function @identity [%1rg : Int] -> Int` |                   | Int       | function definition |
-| Block             | `block`        | `block @entry`                      |                        |           | basic block definition |
-| Phi               | `phi`          | `%0 = phi [@1, %1] [@2, %2]`        | [Label, Value]...      | Int       | SSA-style join |
-| Call              | `call`         | `%0 = call @f [%1, (consume %2)]`   | Label, Value...        | Int       | function call |
-|                   |                |                                     |                        |           | |
-| **Memory**        |                |                                     |                        |           | |
-| Constant          | `constant`     | `%0 = constant Int 42`              | Literal                | Int       | load a constant value |
-| Copy              | `copy`         | `%0 = copy Int (consume %1)`        | Value                  | Int       | copy another register |
-| Own               | `own`          | `%0 = own (Owned Int) %1`           | Value                  | Owned Int | create a pointer which takes exclusive ownership of a register |
-| Borrow            | `borrow`       | `%0 = borrow  %1`                   | Value                  | Borrowed Int | create a pointer which is non-owning, i.e. read-only|
-| Load              | `load`         | `%0 = load %1`                      | Pointer                | Int       | load a value via a pointer |
-| Drop              | `drop`         | `%0 = drop`                         | Unit                   |           | destroy a register |
-|                   |                |                                     |                        |           | |
-| **Arithmetic**    |                |                                     |                        |           | |
-| Add               | `add`          | `%0 = add %1 %2`                    | Int, Int               | Int       | |
-| Subtract          | `subtract`     | `%0 = subtract %1 %2`               | Int, Int               | Int       | |
-| Multiply          | `multiply`     | `%0 = multiply %1 %2`               | Int, Int               | Int       | |
-| Divide            | `divide`       | `%0 = divide %1 %2`                 | Int, Int               | Int       | |
-| Remainder         | `remainder`    | `%0 = remainder %1 %2`              | Int, Int               | Int       | |
-| Minimum           | `minimum`      | `%0 = minimum %1 %2`                | Int, Int               | Int       | |
-| Maximum           | `maximum`      | `%0 = maximum %1 %2`                | Int, Int               | Int       | |
-| Negate            | `negate`       | `%0 = negate %1`                    | Int                    | Int       | |
-|                   |                |                                     |                        |           | |
-| **Comparison**    |                |                                     |                        |           | |
-| Equal             | `equal`        | `%0 = equal %1 %2`                  | Int, Int               | Int       | |
-| Unequal           | `unequal`      | `%0 = unequal %1 %2`                | Int, Int               | Int       | |
-| Less              | `less`         | `%0 = less %1 %2`                   | Int, Int               | Int       | |
-| LessEqual         | `less_equal`   | `%0 = less_equal %1 %2`             | Int, Int               | Int       | |
-| Greater           | `greater`      | `%0 = greater %1 %2`                | Int, Int               | Int       | |
-| GreaterEqual      | `greater_equal`| `%0 = greater_equal %1 %2`          | Int, Int               | Int       | |
-|                   |                |                                     |                        |           | |
-| **Terminator**    |                |                                     |                        |           | |
-| Jump              | `jump`         | `jump @1`                           | Label                  |           | unconditional branch |
-| Branch            | `branch`       | `branch (consume %3) @1 @2`         | Boolean, Label, Label  |           | conditional branch |
-| Return            | `return`       | `return (consume %0)`               | Value                  |           | |
-|                   |                |                                     |                        |           | |
+MIR uses tagged symbolic expressions.
+Resources (i.e. variable) are identified by their zero indexed position in their respective function.
+Functions and blocks are identified by their zero-based positions in their containing `program` and `blocks` nodes.
+A complete function has the following structure:
+
+```text
+(function
+  (parameters Int)
+  (result Int)
+  (locals Int (Owned Int))
+  (blocks
+    (block
+      (let 0 (copy (literal 42)))
+      (return (access 0)))))
+```
+
+## Instructions
+
+| Name   | Symbol   | Example                                         | Parameters                  | Comment                                                                        |
+| :----- | :------- | :---------------------------------------------- | :-------------------------- | :----------------------------------------------------------------------------- |
+| Let    | `let`    | `(let 0 (literal 42))`                          | `Resource, Operation`       | Define resource #0 with the value 42                                           |
+| Drop   | `drop`   | `(drop 0)`                                      | `Resource`                  | Destroy resource #0                                                            |
+| Jump   | `jump`   | `(jump (block_id 1))`                           | `BlockId`                   | Unconditional branch to block #1                                               |
+| Branch | `branch` | `(branch (access 0) (block_id 1) (block_id 2))` | `Boolean, BlockId, BlockId` | Branch to block #1 when the condition is true, else branch to block #2         |
+| Return | `return` | `(return (consume 0))`                          | `T`                         | Return the value of resource #0 from the function                              |
+
+## Value-Producing Operations
+
+Every value-producing operation is bound to a resource with:
+`(let RESOURCE (OPERATION OPERANDS...))`
+
+| Name          | Symbol          | Example                                                                                  | Input                   | Output        | Comment                                |
+| :------------ | :-------------- | :--------------------------------------------------------------------------------------- | :---------------------- | :------------ | :------------------------------------- |
+| Phi           | `phi`           | `(let 0 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))` | `T...`                  | `T`           | SSA-style join                         |
+| Call          | `call`          | `(let 0 (call (function_id 1) (arguments (access 1) (consume 2))))`                      | `T...`                  | `U`           | Function call                          |
+| Own           | `own`           | `(let 0 (own (consume 1)))`                                                              | `T`                     | `Owned T`     | Create an exclusively owning pointer   |
+| Borrow        | `borrow`        | `(let 0 (borrow (access 1)))`                                                            | `T`                     | `Borrowed T`  | Create a read-only, non-owning pointer |
+| Dereference   | `dereference`   | `(let 0 (dereference (access 1)))`                                                       | `Owned T \| Borrowed T` | `T`           | Load the value referenced by a pointer |
+| Copy          | `copy`          | `(let 0 (copy (literal 42)))`                                                            | `T`                     | `T`           | Copy an operand into a resource        |
+| Add           | `add`           | `(let 0 (add (access 1) (literal 2)))`                                                   | `Int, Int`              | `Int`         |                                        |
+| Subtract      | `subtract`      | `(let 0 (subtract (access 1) (consume 2)))`                                              | `Int, Int`              | `Int`         |                                        |
+| Multiply      | `multiply`      | `(let 0 (multiply (access 1) (literal 2)))`                                              | `Int, Int`              | `Int`         |                                        |
+| Divide        | `divide`        | `(let 0 (divide (access 1) (consume 2)))`                                                | `Int, Int`              | `Int`         |                                        |
+| Remainder     | `remainder`     | `(let 0 (remainder (access 1) (literal 2)))`                                             | `Int, Int`              | `Int`         |                                        |
+| Minimum       | `minimum`       | `(let 0 (minimum (access 1) (consume 2)))`                                               | `Int, Int`              | `Int`         |                                        |
+| Maximum       | `maximum`       | `(let 0 (maximum (access 1) (literal 2)))`                                               | `Int, Int`              | `Int`         |                                        |
+| Negate        | `negate`        | `(let 0 (negate (access 1)))`                                                            | `Int`                   | `Int`         |                                        |
+| Equal         | `equal`         | `(let 0 (equal (access 1) (literal 2)))`                                                 | `Int, Int`              | `Boolean`     |                                        |
+| Unequal       | `unequal`       | `(let 0 (unequal (access 1) (consume 2)))`                                               | `Int, Int`              | `Boolean`     |                                        |
+| Less          | `less`          | `(let 0 (less (access 1) (literal 2)))`                                                  | `Int, Int`              | `Boolean`     |                                        |
+| Less Equal    | `less_equal`    | `(let 0 (less_equal (access 1) (consume 2)))`                                            | `Int, Int`              | `Boolean`     |                                        |
+| Greater       | `greater`       | `(let 0 (greater (access 1) (literal 2)))`                                               | `Int, Int`              | `Boolean`     |                                        |
+| Greater Equal | `greater_equal` | `(let 0 (greater_equal (access 1) (consume 2)))`                                         | `Int, Int`              | `Boolean`     |                                        |
+
+## Operands and References
+
+The resource's type is supplied by the function's `parameters` and `locals` lists.
+Operands can access or consume a Resource, or they can be a literal (immediate) value.
+
+| Name        | Symbol        | Example           | Meaning                                  |
+| :---------- | :------------ | :---------------- | :--------------------------------------- |
+| Access      | `access`      | `(access 0)`      | Read resource 0 without consuming it     |
+| Consume     | `consume`     | `(consume 0)`     | Destructively move resource 0            |
+| Literal     | `literal`     | `(literal 42)`    | Immediate integer value                  |
+| Function ID | `function_id` | `(function_id 1)` | Function at index 1 in the program       |
+| Block ID    | `block_id`    | `(block_id 1)`    | Block at index 1 in the current function |
 
 ## Notes
-- `Boolean` is currently represented as `Int` with the value 0 or 1.
-- HIR and MIR carry type annotations, but there is no type-checker yet.
-- LIR does not carry type annotations.
-- `Value` is either `Int` or a pointer type such as `(Owned Int)` or `(Borrowed Int)`.
-- Arguments can be literal values, of used/moved variables.
+
+- Boolean results and branch conditions are represented as `Int`, using 0 for
+  false and 1 for true.
+- MIR carries type annotations in `parameters`, `result`, and `locals`, but no
+  MIR type checker is currently implemented.
 
 ---
 **Copyright (c) 2026 Marco Nikander**
