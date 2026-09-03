@@ -65,10 +65,10 @@ function lower_line(line: MIR.Line, function_id: number, next: number): Result {
       next_temporary: prepared.next,
     };
   }
-  return lower_let(line, function_id, next);
+  return lower_let(line, next);
 }
 
-function lower_let(line: MIR.Let, function_id: number, next: number): Result {
+function lower_let(line: MIR.Let, next: number): Result {
   const destination = line[1];
   const op = line[2];
   if (op[0] === "phi") throw Error("Phi operation reached operation lowering");
