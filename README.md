@@ -82,8 +82,8 @@ are wrapped in explicit `(sources ...)` and `(arguments ...)` nodes:
 (program
   (function
     (parameters Int)
-    (result Int)
     (locals (Owned Int))
+    (result Int)
     (blocks
       (block
         (let 0 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))

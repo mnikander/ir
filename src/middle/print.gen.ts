@@ -15,13 +15,13 @@ function print_program([, ...functions]: MIR.Program): string {
 }
 
 function print_function(
-  [, parameters, result, locals, blocks]: MIR.Function,
+  [, parameters, locals, result, blocks]: MIR.Function,
 ): string {
   return [
     "(function",
     indent(print_parameters(parameters)),
-    indent(print_result(result)),
     indent(print_locals(locals)),
+    indent(print_result(result)),
     indent(print_blocks(blocks)),
   ].join("\n") + ")";
 }

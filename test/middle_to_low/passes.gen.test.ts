@@ -9,10 +9,16 @@ import {
 } from "../../src/middle_to_low/mod.gen.ts";
 
 function program(lines: MIR.Line[], locals = 1): MIR.Program {
-  return ["program", ["function", ["parameters"], ["result", ["Int"]], [
-    "locals",
-    ...Array.from({ length: locals }, () => ["Int"] as MIR.Type),
-  ], ["blocks", ["block", ...lines]]]];
+  return ["program", [
+    "function",
+    ["parameters"],
+    [
+      "locals",
+      ...Array.from({ length: locals }, () => ["Int"] as MIR.Type),
+    ],
+    ["result", ["Int"]],
+    ["blocks", ["block", ...lines]],
+  ]];
 }
 
 describe("MIR to LIR micro-passes", () => {
@@ -62,8 +68,8 @@ describe("MIR to LIR micro-passes", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", ["block", ["let", 0, ["copy", ["literal", 1]]], ["jump", [
         "block_id",
         1,
@@ -86,8 +92,8 @@ describe("MIR to LIR micro-passes", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"]],
+      ["result", ["Int"]],
       [
         "blocks",
         ["block", ["branch", ["literal", 1], ["block_id", 1], ["block_id", 2]]],

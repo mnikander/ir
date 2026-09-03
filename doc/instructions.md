@@ -8,8 +8,8 @@ A complete function has the following structure:
 ```text
 (function
   (parameters Int)
-  (result Int)
   (locals Int (Owned Int))
+  (result Int)
   (blocks
     (block
       (let 0 (copy (literal 42)))

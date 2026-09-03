@@ -11,8 +11,8 @@ describe("MIR: literals and exit", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -21,8 +21,8 @@ describe("MIR: literals and exit", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -39,15 +39,15 @@ describe("MIR: literals and exit", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals)
+    (result Int)
     (blocks)))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals"],
+      ["result", ["Int"]],
       ["blocks"],
     ]];
     expect(input).toBeDefined();
@@ -60,8 +60,8 @@ describe("MIR: literals and exit", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int (Borrowed Int))
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -71,8 +71,8 @@ describe("MIR: literals and exit", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Borrowed", ["Int"]]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -92,8 +92,8 @@ describe("MIR: copying of registers", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -103,8 +103,8 @@ describe("MIR: copying of registers", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -124,8 +124,8 @@ describe("MIR: arithmetic operations", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -136,8 +136,8 @@ describe("MIR: arithmetic operations", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -156,8 +156,8 @@ describe("MIR: arithmetic operations", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -167,8 +167,8 @@ describe("MIR: arithmetic operations", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -188,8 +188,8 @@ describe("MIR: block_ids, jump, and branch", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int)
+    (result Int)
     (blocks
       (block
         (jump (block_id 2)))
@@ -203,8 +203,8 @@ describe("MIR: block_ids, jump, and branch", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["jump", ["block_id", 2]],
@@ -228,8 +228,8 @@ describe("MIR: block_ids, jump, and branch", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int Int Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -248,8 +248,8 @@ describe("MIR: block_ids, jump, and branch", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -279,8 +279,8 @@ describe("MIR: block_ids, jump, and branch", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int Int Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -299,8 +299,8 @@ describe("MIR: block_ids, jump, and branch", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -332,8 +332,8 @@ describe("MIR: function call", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -342,8 +342,8 @@ describe("MIR: function call", () => {
         (return 2))))
   (function
     (parameters Int)
-    (result Int)
     (locals)
+    (result Int)
     (blocks
       (block
         (return 0)))))
@@ -351,8 +351,8 @@ describe("MIR: function call", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -363,8 +363,8 @@ describe("MIR: function call", () => {
     ], [
       "function",
       ["parameters", ["Int"]],
-      ["result", ["Int"]],
       ["locals"],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["return", 0],
@@ -380,8 +380,8 @@ describe("MIR: function call", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -390,8 +390,8 @@ describe("MIR: function call", () => {
         (return 2))))
   (function
     (parameters Int Int)
-    (result Int)
     (locals)
+    (result Int)
     (blocks
       (block
         (return 0)))))
@@ -399,8 +399,8 @@ describe("MIR: function call", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -414,8 +414,8 @@ describe("MIR: function call", () => {
     ], [
       "function",
       ["parameters", ["Int"], ["Int"]],
-      ["result", ["Int"]],
       ["locals"],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["return", 0],
@@ -437,8 +437,8 @@ describe("MIR: function call", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 5)))
@@ -447,8 +447,8 @@ describe("MIR: function call", () => {
         (return 2))))
   (function
     (parameters Int Int)
-    (result Int)
     (locals Int Int Int Int Int Int)
+    (result Int)
     (blocks
       (block
         (let 3 (equal (access 0) (literal 1)))
@@ -465,8 +465,8 @@ describe("MIR: function call", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 5]]],
@@ -480,8 +480,8 @@ describe("MIR: function call", () => {
     ], [
       "function",
       ["parameters", ["Int"], ["Int"]],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 3, ["equal", ["access", 0], ["literal", 1]]],
@@ -517,8 +517,8 @@ describe("MIR: static single assignment", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -528,8 +528,8 @@ describe("MIR: static single assignment", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -549,8 +549,8 @@ describe("MIR: static single assignment", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int Int)
+    (result Int)
     (blocks
       (block
         (jump (block_id 2)))
@@ -567,8 +567,8 @@ describe("MIR: static single assignment", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["jump", ["block_id", 2]],
@@ -611,8 +611,8 @@ describe("MIR: static single assignment", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int Int Int Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 0)))
@@ -630,8 +630,8 @@ describe("MIR: static single assignment", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 0]]],
@@ -674,8 +674,8 @@ describe("MIR: static single assignment", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int Int Int Int Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 0)))
@@ -699,8 +699,8 @@ describe("MIR: static single assignment", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 0]]],
@@ -753,8 +753,8 @@ describe("MIR: static single assignment", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int Int Int)
+    (result Int)
     (blocks
       (block
         (jump (block_id 1)))
@@ -772,8 +772,8 @@ describe("MIR: static single assignment", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["jump", ["block_id", 1]],
@@ -816,8 +816,8 @@ describe("MIR: static single assignment", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 0)))
@@ -835,8 +835,8 @@ describe("MIR: static single assignment", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 0]]],
@@ -880,8 +880,8 @@ describe("MIR: static single assignment", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 0)))
@@ -899,8 +899,8 @@ describe("MIR: static single assignment", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 0]]],

@@ -13,8 +13,8 @@ describe("MIR printer", () => {
       [
         "function",
         ["parameters", ["Int"], ["Borrowed", ["Owned", ["Int"]]]],
-        ["result", ["Owned", ["Int"]]],
         ["locals"],
+        ["result", ["Owned", ["Int"]]],
         ["blocks"],
       ],
     ];
@@ -23,8 +23,8 @@ describe("MIR printer", () => {
       "\n(program\n" +
         "  (function\n" +
         "    (parameters Int (Borrowed (Owned Int)))\n" +
-        "    (result (Owned Int))\n" +
         "    (locals)\n" +
+        "    (result (Owned Int))\n" +
         "    (blocks)))\n",
     );
 
@@ -33,8 +33,8 @@ describe("MIR printer", () => {
       [
         "function",
         ["parameters"],
-        ["result", ["Int"]],
         ["locals"],
+        ["result", ["Int"]],
         ["blocks", ["block"]],
       ],
     ];
@@ -42,8 +42,8 @@ describe("MIR printer", () => {
       "\n(program\n" +
         "  (function\n" +
         "    (parameters)\n" +
-        "    (result Int)\n" +
         "    (locals)\n" +
+        "    (result Int)\n" +
         "    (blocks\n" +
         "      (block))))\n",
     );
@@ -55,8 +55,8 @@ describe("MIR printer", () => {
       [
         "function",
         ["parameters", ["Int"]],
-        ["result", ["Int"]],
         ["locals", ["Int"], ["Owned", ["Int"]]],
+        ["result", ["Int"]],
         [
           "blocks",
           [
@@ -85,8 +85,8 @@ describe("MIR printer", () => {
       [
         "function",
         ["parameters"],
-        ["result", ["Int"]],
         ["locals"],
+        ["result", ["Int"]],
         ["blocks", ["block", ["return", 0]]],
       ],
     ];
@@ -95,8 +95,8 @@ describe("MIR printer", () => {
       "\n(program\n" +
         "  (function\n" +
         "    (parameters Int)\n" +
-        "    (result Int)\n" +
         "    (locals Int (Owned Int))\n" +
+        "    (result Int)\n" +
         "    (blocks\n" +
         "      (block\n" +
         "        (let 0 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))\n" +
@@ -112,8 +112,8 @@ describe("MIR printer", () => {
         "      (block)))\n" +
         "  (function\n" +
         "    (parameters)\n" +
-        "    (result Int)\n" +
         "    (locals)\n" +
+        "    (result Int)\n" +
         "    (blocks\n" +
         "      (block\n" +
         "        (return 0)))))\n",
@@ -147,7 +147,7 @@ describe("MIR printer", () => {
     );
     const input: MIR.Program = [
       "program",
-      ["function", ["parameters"], ["result", ["Int"]], ["locals"], [
+      ["function", ["parameters"], ["locals"], ["result", ["Int"]], [
         "blocks",
         ["block", ...lines],
       ]],
@@ -160,8 +160,8 @@ describe("MIR printer", () => {
       "\n(program\n" +
         "  (function\n" +
         "    (parameters)\n" +
-        "    (result Int)\n" +
         "    (locals)\n" +
+        "    (result Int)\n" +
         "    (blocks\n" +
         "      (block\n" +
         expected_lines.join("\n") + "\n" +
@@ -177,8 +177,8 @@ describe("MIR printer", () => {
       [
         "function",
         ["parameters"],
-        ["result", ["Int"]],
         ["locals"],
+        ["result", ["Int"]],
         ["blocks", ["block", ["jump", ["block_id", 42]]]],
       ],
     ];
@@ -187,8 +187,8 @@ describe("MIR printer", () => {
       "\n(program\n" +
         "  (function\n" +
         "    (parameters)\n" +
-        "    (result Int)\n" +
         "    (locals)\n" +
+        "    (result Int)\n" +
         "    (blocks\n" +
         "      (block\n" +
         "        (jump (block_id 42))))))\n",

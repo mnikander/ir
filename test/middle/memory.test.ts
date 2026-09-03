@@ -11,8 +11,8 @@ describe("MIR: memory and ownership", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int (Borrowed Int) Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -23,8 +23,8 @@ describe("MIR: memory and ownership", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Borrowed", ["Int"]], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -43,8 +43,8 @@ describe("MIR: memory and ownership", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int (Owned Int) Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -55,8 +55,8 @@ describe("MIR: memory and ownership", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Owned", ["Int"]], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -79,8 +79,8 @@ describe("MIR: memory and ownership", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -90,8 +90,8 @@ describe("MIR: memory and ownership", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -109,8 +109,8 @@ describe("MIR: memory and ownership", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -121,8 +121,8 @@ describe("MIR: memory and ownership", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -147,8 +147,8 @@ describe.skip("MIR: use-after-free", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 0)))
@@ -158,8 +158,8 @@ describe.skip("MIR: use-after-free", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 0]]],
@@ -177,8 +177,8 @@ describe.skip("MIR: use-after-free", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 0)))
@@ -189,8 +189,8 @@ describe.skip("MIR: use-after-free", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 0]]],
@@ -209,8 +209,8 @@ describe.skip("MIR: use-after-free", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -222,8 +222,8 @@ describe.skip("MIR: use-after-free", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -243,8 +243,8 @@ describe.skip("MIR: use-after-free", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -254,8 +254,8 @@ describe.skip("MIR: use-after-free", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -273,8 +273,8 @@ describe.skip("MIR: use-after-free", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int (Borrowed Int) Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -286,8 +286,8 @@ describe.skip("MIR: use-after-free", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Borrowed", ["Int"]], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -307,8 +307,8 @@ describe.skip("MIR: use-after-free", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int (Borrowed Int) Int Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -320,8 +320,8 @@ describe.skip("MIR: use-after-free", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Borrowed", ["Int"]], ["Int"], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
@@ -343,8 +343,8 @@ describe.skip("MIR: ownership violations", () => {
 (program
   (function
     (parameters)
-    (result Int)
     (locals Int (Owned Int) Int)
+    (result Int)
     (blocks
       (block
         (let 0 (copy (literal 11)))
@@ -355,8 +355,8 @@ describe.skip("MIR: ownership violations", () => {
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["result", ["Int"]],
       ["locals", ["Int"], ["Owned", ["Int"]], ["Int"]],
+      ["result", ["Int"]],
       ["blocks", [
         "block",
         ["let", 0, ["copy", ["literal", 11]]],

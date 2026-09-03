@@ -22,7 +22,7 @@ function validate_function(
   function_count: number,
 ): IndexedFunction {
   const parameter_count = func[1].length - 1;
-  const resource_count = parameter_count + func[3].length - 1;
+  const resource_count = parameter_count + func[2].length - 1;
   const source_blocks = func[4].slice(1) as MIR.Block[];
   if (source_blocks.length === 0) {
     throw Error(`Function ${id} has no entry block`);
