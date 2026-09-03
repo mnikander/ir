@@ -6,7 +6,7 @@ import {
   lower_phi_moves,
   split_phi_edges,
   validate_and_index,
-} from "../../src/mir_to_lir/mod.gen.ts";
+} from "../../src/middle_to_low/mod.gen.ts";
 
 function program(lines: MIR.Line[], locals = 1): MIR.Program {
   return ["program", ["function", ["parameters"], ["result", ["Int"]], [

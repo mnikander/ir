@@ -2,7 +2,7 @@ import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
 import * as MIR from "../../src/middle/middle_grammar.ts";
 import { print } from "../../src/middle/print.gen.ts";
-import { lower } from "../../src/mir_to_lir/lower.gen.ts";
+import { lower } from "../../src/middle_to_low/lower.gen.ts";
 import { evaluate } from "../../src/low/machine.ts";
 
 describe("MIR: literals and exit", () => {

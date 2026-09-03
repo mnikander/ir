@@ -13,8 +13,9 @@
 - For MIR syntax or semantics, start with
   [middle_grammar.ts](src/middle/middle_grammar.ts), then consult the MIR tests
   in `tests/middle/` and `doc/`.
-- For lowering behavior, start with [lower.gen.ts](src/mir_to_lir/lower.gen.ts),
-  then inspect the micro-passes described in the readme.
+- For lowering behavior, start with
+  [lower.gen.ts](src/middle_to_low/lower.gen.ts), then inspect the micro-passes
+  described in the readme.
 - For execution behavior, start with [low_grammar.ts](src/low/low_grammar.ts),
   [stack.ts](src/low/stack.ts), and [machine.ts](src/low/machine.ts).
 
@@ -22,7 +23,7 @@
 
 - Run all tests: `deno test`
 - Run MIR end-to-end tests: `deno test test/middle`
-- Run MIR-to-LIR pass tests: `deno test test/mir_to_lir`
+- Run MIR-to-LIR pass tests: `deno test test/middle_to_low`
 - Run direct runtime tests: `deno test test/runtime.test.ts`
 - Run linter: `deno lint`
 - Run formatter: `deno fmt`

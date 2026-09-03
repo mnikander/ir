@@ -104,22 +104,22 @@ are wrapped in explicit `(sources ...)` and `(arguments ...)` nodes:
 
 ### MIR-to-LIR Lowering
 
-The pipeline entry point is [lower.gen.ts](src/mir_to_lir/lower.gen.ts). It runs
-these micro-passes in order:
+The pipeline entry point is [lower.gen.ts](src/middle_to_low/lower.gen.ts). It
+runs these micro-passes in order:
 
-1. [validate_and_index.gen.ts](src/mir_to_lir/validate_and_index.gen.ts)
+1. [validate_and_index.gen.ts](src/middle_to_low/validate_and_index.gen.ts)
    validates references and indexes MIR functions and blocks.
-2. [split_phi_edges.gen.ts](src/mir_to_lir/split_phi_edges.gen.ts) inserts edge
-   blocks so every phi input has its own predecessor edge.
-3. [lower_phi_moves.gen.ts](src/mir_to_lir/lower_phi_moves.gen.ts) replaces phi
-   nodes with explicit transfers in the edge blocks.
-4. [lower_operations.gen.ts](src/mir_to_lir/lower_operations.gen.ts) lowers MIR
-   operations and operands into flat LIR instructions with symbolic targets.
-5. [resolve_targets.gen.ts](src/mir_to_lir/resolve_targets.gen.ts) resolves
+2. [split_phi_edges.gen.ts](src/middle_to_low/split_phi_edges.gen.ts) inserts
+   edge blocks so every phi input has its own predecessor edge.
+3. [lower_phi_moves.gen.ts](src/middle_to_low/lower_phi_moves.gen.ts) replaces
+   phi nodes with explicit transfers in the edge blocks.
+4. [lower_operations.gen.ts](src/middle_to_low/lower_operations.gen.ts) lowers
+   MIR operations and operands into flat LIR instructions with symbolic targets.
+5. [resolve_targets.gen.ts](src/middle_to_low/resolve_targets.gen.ts) resolves
    function and block targets to concrete instruction addresses.
 
-[mod.gen.ts](src/mir_to_lir/mod.gen.ts) exports the individual passes, and
-[types.gen.ts](src/mir_to_lir/types.gen.ts) defines their intermediate forms.
+[mod.gen.ts](src/middle_to_low/mod.gen.ts) exports the individual passes, and
+[types.gen.ts](src/middle_to_low/types.gen.ts) defines their intermediate forms.
 
 ### Low-Level IR and Runtime
 
@@ -139,8 +139,8 @@ these micro-passes in order:
   ownership tests.
 - [print.gen.test.ts](test/middle/print.gen.test.ts) MIR pretty-printer
   coverage.
-- [passes.gen.test.ts](test/mir_to_lir/passes.gen.test.ts) MIR-to-LIR micro-pass
-  tests.
+- [passes.gen.test.ts](test/middle_to_low/passes.gen.test.ts) MIR-to-LIR
+  micro-pass tests.
 - [runtime.test.ts](test/runtime.test.ts) Direct LIR runtime tests.
 
 ### Other Repository Areas
