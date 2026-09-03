@@ -8,7 +8,7 @@
       "*/*grammar.ts",
       "*/*/*grammar.ts",
       "src/evaluate.ts",
-      "src/runtime/machine.ts",
+      "src/low/machine.ts",
       "doc/*.md"
     ]
   }

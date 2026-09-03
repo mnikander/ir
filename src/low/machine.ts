@@ -14,8 +14,8 @@ import {
   Stack,
   top,
   Value,
-} from "./stack.ts";
-import * as LOW from "../low/low_grammar.ts";
+} from "../low/stack.ts";
+import * as LOW from "./low_grammar.ts";
 import assert from "node:assert";
 
 export function evaluate(program: LOW.Program): number {

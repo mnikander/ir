@@ -1,7 +1,7 @@
 import { describe, it } from "@std/testing/bdd";
 import { expect } from "@std/expect";
-import * as LOW from "../src/low/low_grammar.ts";
-import { evaluate } from "../src/runtime/machine.ts";
+import * as LOW from "../../src/low/low_grammar.ts";
+import { evaluate } from "../../src/low/machine.ts";
 
 // choose prime numbers for tests, to reduce chances of false-positive results for arithmetic ops
 const small: number = 11;

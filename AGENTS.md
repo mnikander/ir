@@ -16,7 +16,7 @@
 - For lowering behavior, start with [lower.gen.ts](src/mir_to_lir/lower.gen.ts),
   then inspect the micro-passes described in the readme.
 - For execution behavior, start with [low_grammar.ts](src/low/low_grammar.ts),
-  [stack.ts](src/runtime/stack.ts), and [machine.ts](src/runtime/machine.ts).
+  [stack.ts](src/low/stack.ts), and [machine.ts](src/low/machine.ts).
 
 ## Commands
 

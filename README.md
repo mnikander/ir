@@ -9,7 +9,7 @@ This project contains middle ([MIR](src/middle/middle_grammar.ts)) and low
 ([LIR](src/low/low_grammar.ts)) intermediate representations. MIR is based on
 symbolic expressions and has type information needed for analysis. LIR is close
 to assembly and is used for execution on a virtual
-[machine](src/runtime/machine.ts).
+[machine](src/low/machine.ts).
 
 Programs are constructed directly as TypeScript values in a tagged JSON-like
 form and checked by the TypeScript type checker. There is no parser. MIR has a
@@ -125,10 +125,10 @@ these micro-passes in order:
 
 - [low_grammar.ts](src/low/low_grammar.ts) Defines flat LIR programs and
   instructions, numeric stack offsets, and concrete control-flow targets.
-- [machine.ts](src/runtime/machine.ts) Executes LIR programs and returns a plain
+- [machine.ts](src/low/machine.ts) Executes LIR programs and returns a plain
   `number`.
-- [stack.ts](src/runtime/stack.ts) Implements runtime values, pointers, dead
-  slots, and pointer generations.
+- [stack.ts](src/low/stack.ts) Implements runtime values, pointers, dead slots,
+  and pointer generations.
 - [utility.ts](src/utility.ts) Provides shared helpers such as `valid()`.
 
 ### Tests
