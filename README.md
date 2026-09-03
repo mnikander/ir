@@ -5,18 +5,18 @@ three-address code (3AC aka TAC) and static single-assignment (SSA) form. Like
 all IRs, it sits between high-level languages such as C or TypeScript on one
 end, and Assembly on the other end.
 
-This project contains high ([HIR](src/high/high_grammar.ts)), middle
-([MIR](src/middle/middle_grammar.ts)), and low ([LIR](src/low/low_grammar.ts))
-intermediate representations. HIR and MIR are in SSA form and retain information
-needed for analysis; LIR is flat and executable.
+This project contains middle ([MIR](src/middle/middle_grammar.ts)) and low
+([LIR](src/low/low_grammar.ts)) intermediate representations. MIR is based on
+symbolic expressions and has type information needed for analysis. LIR is flat
+and executable.
 
-There is no parser for the HIR. The input is in JSON form, not in text form. The
-JSON input is verified by the TypeScript type-checker. There is a pretty-printer
-which can convert an HIR into text, for better readablity.
+There is no parser for LIR or MIR. The input is in JSON form, not in text form.
+The JSON input is verified by the TypeScript type-checker. There is a
+pretty-printer which can convert an MIR into text, for better readablity.
 
-The LIR is closer to assembly and is used for execution on a virtual
-[machine](src/runtime/machine.ts). Independent HIR-to-LIR and MIR-to-LIR
-pipelines use a micro-pass architecture inspired by the Chez Scheme compiler.
+The LIR is closer to assembly than MIR and is used for execution on a virtual
+[machine](src/runtime/machine.ts). The MIR-to-LIR complilation pipeline uses a
+micro-pass architecture inspired by the Chez Scheme compiler.
 
 ## More Information
 
