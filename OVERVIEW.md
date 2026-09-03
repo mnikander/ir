@@ -1,105 +1,74 @@
 # Repository Overview
 
-This repository contains a TypeScript/Deno interpreter for a small intermediate representation.
-The active architecture provides independent HIR -> LIR and MIR -> LIR
-lowering pipelines feeding the same runtime.
-The input is in JSON form, which is verified by the typescript type-checker.
-There is no parser.
-Files which are completely AI-generated have `*.gen.ts` or `*.gen.test.ts` file extensions.
-MIR is executable through its own lowering pipeline while the HIR pipeline
-remains available independently.
+This repository contains a TypeScript/Deno interpreter for a small intermediate
+representation. MIR is the structured input representation used for analysis
+and lowering. It is lowered through a micro-pass pipeline to flat, executable
+LIR, which is interpreted by the runtime.
+
+Programs are constructed directly as TypeScript values in a tagged JSON-like
+form and checked by the TypeScript type checker; there is no parser. MIR also
+has a pretty-printer for readable test fixtures and debugging. Files that are
+completely AI-generated use the `*.gen.ts` or `*.gen.test.ts` suffix.
 
 ## Important Files
 
-- [README.md](/home/marco/Documents/ir/README.md)
-  Short project intro and common Deno commands.
-
-- [design.md](/home/marco/Documents/ir/doc/design.md)
+- [README.md](README.md)
+  Short project introduction and common Deno commands.
+- [design.md](doc/design.md)
   High-level design goals for the IR.
-
-- [decisions.md](/home/marco/Documents/ir/doc/decisions.md)
+- [decisions.md](doc/decisions.md)
   Decision log for architectural changes.
-
-- [instructions.md](/home/marco/Documents/ir/doc/instructions.md)
+- [instructions.md](doc/instructions.md)
   Human-readable instruction reference.
-
-- [invariants.md](/home/marco/Documents/ir/doc/invariants.md)
+- [invariants.md](doc/invariants.md)
   Intended invariants for valid programs.
 
 ## Source Layout
 
-### High-Level IR
-
-- [high_grammar.ts](/home/marco/Documents/ir/src/high/high_grammar.ts)
-  Defines structured HIR:
-  - programs, functions, and blocks
-  - HIR-only type annotations
-  - named registers and labels
-  - SSA-style phi nodes
-  - consumed inputs
-  - call instructions
-  - memory instructions
-  - arithmetic and comparison instructions
-  - control-flow terminators
-
-- [print.gen.ts](/home/marco/Documents/ir/src/high/print.gen.ts)
-  Pretty-prints HIR programs for tests and debugging.
-
 ### Middle-Level IR
-- Not yet used, but the codebase will be refactored to use the MIR instead of the HIR
-- [middle_grammar.ts](/home/marco/Documents/ir/src/middle/middle_grammar.ts)
-  Defines MIR based on tagged symbolic-expressions
-- [print.gen.ts](/home/marco/Documents/ir/src/middle/print.gen.ts)
-  Pretty-prints MIR programs as canonical, indented symbolic expressions
 
+- [middle_grammar.ts](src/middle/middle_grammar.ts)
+  Defines MIR programs, functions, blocks, instructions, operands, and tagged
+  structural nodes.
+- [types.ts](src/middle/types.ts)
+  Defines MIR value and ownership types.
+- [print.gen.ts](src/middle/print.gen.ts)
+  Pretty-prints MIR programs as canonical, indented symbolic expressions.
 
 #### MIR Syntax
 
-MIR represents every value-producing line as a tagged `let` tuple containing a
-tagged value operation. The destination precedes the operation in both the
-symbolic-expression and JSON forms:
+MIR represents every value-producing line as a tagged `let` tuple. The
+destination resource precedes the operation in both symbolic-expression and
+TypeScript forms:
 
 ```text
-(let 2 (add (read 0) (read 1)))
-["let", 2, ["add", ["read", 0], ["read", 1]]]
+(let 2 (add (access 0) (access 1)))
+["let", 2, ["add", ["access", 0], ["access", 1]]]
 ```
 
-Value-producing instructions are wrapped in `let` nodes to bind their result 
-to a resource number. The syntax is:
+The general form is `(let RESOURCE OPERATION)`. For example:
 
-```
-(let resource value-op)
-```
+- `(let 0 (copy (literal 42)))` loads the integer `42` into resource 0.
+- `(let 1 (add (access 0) (consume 2)))` adds two operands and binds the
+  result to resource 1.
+- `(let 3 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))`
+  selects a value based on the predecessor block.
 
-For example:
-- `(let 0 (copy (literal 42)))` - load constant 42 into resource 0
-- `(let 1 (add (read 0) (read 2)))` - add resources 0 and 2, store in resource 1
-- `(let 3 (phi (sources (from (block_id 1) (read 2)) (from (block_id 2) (move 3)))))` - phi node
+Operands are `(access N)` for a non-consuming read, `(consume N)` for a
+destructive move, and `(literal N)` for an immediate integer. Block and
+function references use `(block_id N)` and `(function_id N)`.
 
-Operands can be:
-- `(read n)` - read from resource n
-- `(move n)` - move from resource n (consuming it)
-- `(literal n)` - literal value n
-- `(block_id n)` - block identifier n
-- `(function_id n)` - function identifier n
+`drop` and terminator instructions are direct block lines rather than `let`
+bindings:
 
-Terminator instructions (drop, return, jump, branch) are not wrapped in `let`:
-- `(drop (move 0))` - drop resource 0
-- `(return (read 0))` - return resource 0
-- `(jump (block_id 1))` - unconditionally jump to block 1
-- `(branch (read 0) (block_id 1) (block_id 2))` - conditional branch
+- `(drop 0)` drops resource 0.
+- `(return (access 0))` returns a value.
+- `(jump (block_id 1))` jumps unconditionally.
+- `(branch (access 0) (block_id 1) (block_id 2))` branches conditionally.
 
-MIR is printed as tagged symbolic expressions. Structural nodes are expanded
-over indented lines, with each `(blocks ...)` node containing explicit
-`(block ...)` nodes, while instructions and operands remain inline. A
-value-producing line is a `(let RESOURCE VALUE)` node, so its destination is
-visible before the nested operation. In the JSON representation the same node
-is `["let", RESOURCE, VALUE]`; both the definition and its value retain a tag at
-index zero. Non-producing `drop` and terminator nodes remain direct block lines.
-
-Resource uses and block IDs retain their tags, for example `(read 0)`,
-`(move 0)`, `(literal 0)`, and `(block_id 1)`. Phi inputs and call operands are
-wrapped in explicit variadic `(sources ...)` and `(arguments ...)` nodes:
+Structural nodes are expanded over indented lines by the printer, while
+instructions and operands remain inline. Variadic phi inputs and call operands
+are wrapped in explicit `(sources ...)` and `(arguments ...)` nodes:
 
 ```text
 (program
@@ -109,127 +78,82 @@ wrapped in explicit variadic `(sources ...)` and `(arguments ...)` nodes:
     (locals (Owned Int))
     (blocks
       (block
-        (let 0 (phi (sources (from (block_id 1) (read 2)) (from (block_id 2) (move 3)))))
-        (let 1 (call (function_id 0) (arguments (read 0) (move 2))))
+        (let 0 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))
+        (let 1 (call (function_id 0) (arguments (access 0) (consume 2))))
         (branch (literal 0) (block_id 1) (block_id 2)))
       (block
-        (return (read 1))))))
+        (return (access 1))))))
 ```
 
-### Lowering Pipeline
+### MIR-to-LIR Lowering
 
-There are two independent micro-pass pipelines. `src/hir_to_lir/` contains the
-existing named-register HIR pipeline described below. `src/mir_to_lir/`
-validates and indexes MIR, splits and lowers phi edges, fuses bindings with
-operations, materializes literals and consumes, emits flat LIR, and resolves
-numeric function and block targets.
+The pipeline entry point is [lower.gen.ts](src/mir_to_lir/lower.gen.ts). It
+runs these micro-passes in order:
 
-The pipeline entry point is [lower.gen.ts](/home/marco/Documents/ir/src/passes/lower.gen.ts). It runs these passes in order:
+1. [validate_and_index.gen.ts](src/mir_to_lir/validate_and_index.gen.ts)
+   validates references and indexes MIR functions and blocks.
+2. [split_phi_edges.gen.ts](src/mir_to_lir/split_phi_edges.gen.ts)
+   inserts edge blocks so every phi input has its own predecessor edge.
+3. [lower_phi_moves.gen.ts](src/mir_to_lir/lower_phi_moves.gen.ts)
+   replaces phi nodes with explicit transfers in the edge blocks.
+4. [lower_operations.gen.ts](src/mir_to_lir/lower_operations.gen.ts)
+   lowers MIR operations and operands into flat LIR instructions with symbolic
+   targets.
+5. [resolve_targets.gen.ts](src/mir_to_lir/resolve_targets.gen.ts)
+   resolves function and block targets to concrete instruction addresses.
 
-1. [split_phi_edges.gen.ts](/home/marco/Documents/ir/src/passes/split_phi_edges.gen.ts)
-   Inserts edge blocks so each phi input arrives through its own predecessor edge.
-2. [lower_phi_moves.gen.ts](/home/marco/Documents/ir/src/passes/lower_phi_moves.gen.ts)
-   Replaces phi nodes with explicit `Copy` reads and writes in edge blocks.
-3. [number_slots.gen.ts](/home/marco/Documents/ir/src/passes/number_slots.gen.ts)
-   Assigns stable numeric stack slots to HIR registers.
-4. [rewrite_named_to_numbered.gen.ts](/home/marco/Documents/ir/src/passes/rewrite_named_to_numbered.gen.ts)
-   Rewrites named HIR instructions into numbered form while preserving `consume`.
-5. [reserve_temporaries.gen.ts](/home/marco/Documents/ir/src/passes/reserve_temporaries.gen.ts)
-   Records the first free temporary stack offset for each function.
-6. [expand_consumes.gen.ts](/home/marco/Documents/ir/src/passes/expand_consumes.gen.ts)
-   Lowers consumed inputs into explicit `Copy` and `Drop` instructions.
-7. [emit_linear_lir.gen.ts](/home/marco/Documents/ir/src/passes/emit_linear_lir.gen.ts)
-   Emits flat LIR with symbolic block and function targets.
-8. [resolve_labels.gen.ts](/home/marco/Documents/ir/src/passes/resolve_labels.gen.ts)
-   Resolves symbolic control-flow targets to concrete line numbers.
-
-Other pass files:
-
-- [mod.gen.ts](/home/marco/Documents/ir/src/passes/mod.gen.ts)
-  Re-exports the lowering micro-passes.
-
-- [types.gen.ts](/home/marco/Documents/ir/src/passes/types.gen.ts)
-  Intermediate forms used between passes. Numbered and lower forms erase HIR type annotations.
-
-### Analysis and Transformations
-
-- [validate.ts](/home/marco/Documents/ir/src/analysis/validate.ts)
-  Current validation entry point; delegates to [unique_variables.ts](/home/marco/Documents/ir/src/analysis/unique_variables.ts).
-
-- [enumerate_blocks.ts](/home/marco/Documents/ir/src/transformations/enumerate_blocks.ts)
-  Renames HIR block labels to numeric labels and rewrites terminator successors.
+[mod.gen.ts](src/mir_to_lir/mod.gen.ts) exports the individual passes, and
+[types.gen.ts](src/mir_to_lir/types.gen.ts) defines their intermediate forms.
 
 ### Low-Level IR and Runtime
 
-- [low_grammar.ts](/home/marco/Documents/ir/src/low/low_grammar.ts)
-  Defines flat LIR:
-  - programs and instructions
-  - numeric stack offsets
-  - concrete line-number control flow
-  - metadata `noop` instructions
-  - memory instructions
-  - arithmetic and comparison instructions
-  - control-flow instructions
-
-- [machine.ts](/home/marco/Documents/ir/src/runtime/machine.ts)
+- [low_grammar.ts](src/low/low_grammar.ts)
+  Defines flat LIR programs and instructions, numeric stack offsets, and
+  concrete control-flow targets.
+- [machine.ts](src/runtime/machine.ts)
   Executes LIR programs and returns a plain `number`.
-
-- [stack.ts](/home/marco/Documents/ir/src/runtime/stack.ts)
-  Runtime data model for:
-  - values
-  - pointers
-  - dead slots
-  - pointer generations
-
-- [utility.ts](/home/marco/Documents/ir/src/utility.ts)
-  Shared helpers such as `valid()`.
+- [stack.ts](src/runtime/stack.ts)
+  Implements runtime values, pointers, dead slots, and pointer generations.
+- [utility.ts](src/utility.ts)
+  Provides shared helpers such as `valid()`.
 
 ## Tests
 
-- [high.test.ts](/home/marco/Documents/ir/test/high.test.ts)
-  End-to-end HIR examples that lower and execute through the runtime.
-
-- [print.gen.test.ts](/home/marco/Documents/ir/test/high/print.gen.test.ts)
-  HIR pretty-printer coverage.
-
-- [runtime.test.ts](/home/marco/Documents/ir/test/runtime.test.ts)
+- [middle.test.ts](test/middle/middle.test.ts)
+  End-to-end MIR lowering and execution tests for core instructions, control
+  flow, calls, and SSA behavior.
+- [memory.test.ts](test/middle/memory.test.ts)
+  End-to-end MIR memory and ownership tests.
+- [print.gen.test.ts](test/middle/print.gen.test.ts)
+  MIR pretty-printer coverage.
+- [passes.gen.test.ts](test/mir_to_lir/passes.gen.test.ts)
+  MIR-to-LIR micro-pass tests.
+- [runtime.test.ts](test/runtime.test.ts)
   Direct LIR runtime tests.
 
-- `test/passes/`
-  Full-pipeline and micro-pass tests.
-
-- [enumerate_blocks.test.ts](/home/marco/Documents/ir/test/transformations/enumerate_blocks.test.ts)
-  Transformation tests.
-
-## Other Repo Areas
+## Other Repository Areas
 
 - `doc/`
-  Design docs, invariants, grammar notes, and table of instructions.
-
+  Design documents, invariants, the instruction reference, and architectural
+  decisions.
 - `id/`
-  Generation of unique IDs for design decisions and invariants.
+  Utilities and state for generating unique design-decision and invariant IDs.
 
 ## Suggested Workflow
 
-- HIR design or semantics:
-  - start with [high_grammar.ts](/home/marco/Documents/ir/src/high/high_grammar.ts)
-  - check [high.test.ts](/home/marco/Documents/ir/test/high.test.ts)
-  - use `doc/` for design context
-
-- Lowering:
-  - start with [lower.gen.ts](/home/marco/Documents/ir/src/passes/lower.gen.ts)
-  - inspect the ordered pass list above
-
-- Runtime behavior:
-  - start with [low_grammar.ts](/home/marco/Documents/ir/src/low/low_grammar.ts)
-  - inspect [stack.ts](/home/marco/Documents/ir/src/runtime/stack.ts)
-  - adjust [machine.ts](/home/marco/Documents/ir/src/runtime/machine.ts)
+- For MIR syntax or semantics, start with
+  [middle_grammar.ts](src/middle/middle_grammar.ts), then consult the MIR tests
+  and `doc/`.
+- For lowering behavior, start with
+  [lower.gen.ts](src/mir_to_lir/lower.gen.ts), then inspect the ordered
+  micro-passes above.
+- For execution behavior, start with
+  [low_grammar.ts](src/low/low_grammar.ts), [stack.ts](src/runtime/stack.ts), and
+  [machine.ts](src/runtime/machine.ts).
 
 ## Commands
 
 - Run all tests: `deno test`
-- Run HIR examples: `deno test test/high.test.ts`
-- Run HIR printer tests: `deno test test/high/print.gen.test.ts`
-- Run runtime tests: `deno test test/runtime.test.ts`
-- Run all pass tests: `deno test test/passes`
-- Run transformation tests: `deno test test/transformations`
+- Run MIR end-to-end tests: `deno test test/middle`
+- Run MIR-to-LIR pass tests: `deno test test/mir_to_lir`
+- Run direct runtime tests: `deno test test/runtime.test.ts`
