@@ -9,8 +9,7 @@
       "*/*/*grammar.ts",
       "src/evaluate.ts",
       "src/runtime/machine.ts",
-      "doc/*.md",
-      "OVERVIEW.*md"
+      "doc/*.md"
     ]
   }
 }
