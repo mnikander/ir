@@ -6,6 +6,34 @@ import { lower } from "../../src/middle_to_low/lower.gen.ts";
 import { evaluate } from "../../src/low/machine.ts";
 
 describe("MIR: literals and exit", () => {
+  it("must evaluate copy and return of a literal", () => {
+    const text: string = `
+(program
+  (function
+    (parameters)
+    (result Int)
+    (locals Int)
+    (blocks
+      (block
+        (let 0 (copy (literal 11)))
+        (return 0)))))
+`;
+    const input: MIR.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["result", ["Int"]],
+      ["locals", ["Int"]],
+      ["blocks", [
+        "block",
+        ["let", 0, ["copy", ["literal", 11]]],
+        ["return", 0],
+      ]],
+    ]];
+    expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
+    expect(evaluate(lower(input))).toBe(11);
+  });
+
   it("must throw error on empty input", () => {
     const text: string = `
 (program
@@ -55,34 +83,6 @@ describe("MIR: literals and exit", () => {
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(() => evaluate(lower(input))).toThrow();
-  });
-
-  it("must evaluate copy and return of a literal", () => {
-    const text: string = `
-(program
-  (function
-    (parameters)
-    (result Int)
-    (locals Int)
-    (blocks
-      (block
-        (let 0 (copy (literal 11)))
-        (return 0)))))
-`;
-    const input: MIR.Program = ["program", [
-      "function",
-      ["parameters"],
-      ["result", ["Int"]],
-      ["locals", ["Int"]],
-      ["blocks", [
-        "block",
-        ["let", 0, ["copy", ["literal", 11]]],
-        ["return", 0],
-      ]],
-    ]];
-    expect(input).toBeDefined();
-    expect(print(input)).toEqual(text);
-    expect(evaluate(lower(input))).toBe(11);
   });
 });
 
