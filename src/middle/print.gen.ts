@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Marco Nikander
 
 import * as MIR from "./middle_grammar.ts";
-import type { Type } from "../high/types.ts";
+import type { Type } from "./types.ts";
 
 export function print(program: MIR.Program): string {
   return `\n${print_program(program)}\n`;

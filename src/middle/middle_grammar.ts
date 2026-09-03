@@ -2,8 +2,8 @@
 
 // A middle intermediate representation (MIR) designed for easy analysis.
 
-import { Type } from "../high/types.ts";
-export type { Type } from "../high/types.ts";
+import { Type } from "./types.ts";
+export type { Type } from "./types.ts";
 
 export type Program      = [ tag: "program", ...Function[] ];
 export type Function     = [ tag: "function", Parameters, Result, Locals, Blocks ];

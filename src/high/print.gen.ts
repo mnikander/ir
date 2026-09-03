@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Marco Nikander
 
 import * as HIGH from "./high_grammar.ts";
-import type { Type } from "./types.ts";
+import type { Type } from "../middle/types.ts";
 
 export function print(program: HIGH.Program): string {
   return "\n" + program.map(print_function).join("\n\n") + "\n";
