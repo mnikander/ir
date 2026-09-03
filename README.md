@@ -7,8 +7,8 @@ end, and Assembly on the other end.
 
 This project contains middle ([MIR](src/middle/middle_grammar.ts)) and low
 ([LIR](src/low/low_grammar.ts)) intermediate representations. MIR is based on
-symbolic expressions and has type information needed for analysis. LIR is flat
-and executable.
+symbolic expressions and has type information needed for analysis. LIR is close
+to assembly and executable.
 
 There is no parser for LIR or MIR. The input is in JSON form, not in text form.
 The JSON input is verified by the TypeScript type-checker. There is a
@@ -20,10 +20,10 @@ micro-pass architecture inspired by the Chez Scheme compiler.
 
 ## More Information
 
-- [IR design](./doc/design.md)
-- [Table of Instructions](./doc/instructions.md)
-- [Log of design decisions for the interpreter and IR](./doc/decisions.md)
-- [Overview](./OVERVIEW.md) which outlines the architecture and files
+- [design.md](./doc/design.md) High-level design goals for the IR.
+- [instructions.md](./doc/instructions.md) Human-readable instruction reference.
+- [decisions.md](./doc/decisions.md) Decision log for architectural changes.
+- [invariants.md](doc/invariants.md) Intended invariants for valid programs.
 
 ## Getting Started
 
@@ -31,14 +31,14 @@ This project is implemented in TypeScript, using [Deno](https://deno.com/).
 After setting up deno, navigate into the directory of this repository and
 install the required dependencies using:
 
-```
+```bash
 cd ir/
 deno install
 ```
 
 Build and run the tests with:
 
-```
+```bash
 deno test
 ```
 
