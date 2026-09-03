@@ -103,7 +103,7 @@ function validate_terminator(
     validate_operand(line[1], resources);
     check_block(line[2][1], blocks);
     check_block(line[3][1], blocks);
-  } else validate_operand(line[1], resources);
+  } else check_resource(line[1], resources, "return");
 }
 
 function validate_operand(operand: MIR.Operand, resources: number): void {

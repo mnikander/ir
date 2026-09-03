@@ -13,7 +13,7 @@ A complete function has the following structure:
   (blocks
     (block
       (let 0 (copy (literal 42)))
-      (return (access 0)))))
+      (return 0))))
 ```
 
 ## Instructions
@@ -24,7 +24,7 @@ A complete function has the following structure:
 | Drop   | `drop`   | `(drop 0)`                                      | `Resource`                  | Destroy resource #0                                                            |
 | Jump   | `jump`   | `(jump (block_id 1))`                           | `BlockId`                   | Unconditional branch to block #1                                               |
 | Branch | `branch` | `(branch (access 0) (block_id 1) (block_id 2))` | `Boolean, BlockId, BlockId` | Branch to block #1 when the condition is true, else branch to block #2         |
-| Return | `return` | `(return (consume 0))`                          | `T`                         | Return the value of resource #0 from the function                              |
+| Return | `return` | `(return 0)`                                    | `T`                         | Return the value of resource #0 from the function                              |
 
 ## Value-Producing Operations
 

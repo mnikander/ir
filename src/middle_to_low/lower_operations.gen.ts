@@ -55,14 +55,9 @@ function lower_line(line: MIR.Line, function_id: number, next: number): Result {
     };
   }
   if (line[0] === "return") {
-    const prepared = prepare_operands([line[1]], next, true);
     return {
-      instructions: [...prepared.before, ...prepared.after, [
-        null,
-        "return",
-        prepared.offsets[0],
-      ]],
-      next_temporary: prepared.next,
+      instructions: [[null, "return", line[1]]],
+      next_temporary: next,
     };
   }
   return lower_let(line, next);

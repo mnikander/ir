@@ -24,7 +24,7 @@ export type Operand      = Access | Consume | Literal;
 
 export type Let          = [ tag: "let",           resource: number, value: Operation ]; // define a Resource
 export type Drop         = [ tag: "drop",          resource: number ];
-export type Return       = [ tag: "return",        Operand ];
+export type Return       = [ tag: "return",        resource: number ];
 export type Jump         = [ tag: "jump",          targetBlock: BlockId ];
 export type Branch       = [ tag: "branch",        condition: Operand, thenBlock: BlockId, elseBlock: BlockId ];
 export type Phi          = [ tag: "phi",           inputs: Sources];

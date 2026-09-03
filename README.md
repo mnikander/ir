@@ -70,7 +70,7 @@ references use `(block_id N)` and `(function_id N)`.
 bindings:
 
 - `(drop 0)` drops resource 0.
-- `(return (access 0))` returns a value.
+- `(return 0)` returns a value.
 - `(jump (block_id 1))` jumps unconditionally.
 - `(branch (access 0) (block_id 1) (block_id 2))` branches conditionally.
 
@@ -90,7 +90,7 @@ are wrapped in explicit `(sources ...)` and `(arguments ...)` nodes:
         (let 1 (call (function_id 0) (arguments (access 0) (consume 2))))
         (branch (literal 0) (block_id 1) (block_id 2)))
       (block
-        (return (access 1))))))
+        (return 1)))))
 ```
 
 ## Source Layout

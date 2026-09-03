@@ -18,10 +18,7 @@ function program(lines: MIR.Line[], locals = 1): MIR.Program {
 describe("MIR to LIR micro-passes", () => {
   it("indexes resources and rejects duplicate definitions", () => {
     const indexed = validate_and_index(
-      program([["let", 0, ["copy", ["literal", 1]]], ["return", [
-        "access",
-        0,
-      ]]]),
+      program([["let", 0, ["copy", ["literal", 1]]], ["return", 0]]),
     );
     expect(indexed[0].resource_count).toBe(1);
     expect(() =>
@@ -29,7 +26,7 @@ describe("MIR to LIR micro-passes", () => {
         program([["let", 0, ["copy", ["literal", 1]]], ["let", 0, ["copy", [
           "literal",
           2,
-        ]]], ["return", ["access", 0]]]),
+        ]]], ["return", 0]]),
       )
     ).toThrow();
   });
@@ -39,7 +36,7 @@ describe("MIR to LIR micro-passes", () => {
       validate_and_index(
         program([["let", 0, ["add", ["literal", 2], ["literal", 3]]], [
           "return",
-          ["access", 0],
+          0,
         ]]),
       ),
     );
@@ -54,7 +51,7 @@ describe("MIR to LIR micro-passes", () => {
         program([["let", 0, ["copy", ["literal", 7]]], ["let", 1, ["add", [
           "consume",
           0,
-        ], ["literal", 1]]], ["return", ["access", 1]]], 2),
+        ], ["literal", 1]]], ["return", 1]], 2),
       ),
     );
     expect(output).toContainEqual([0, "drop"]);
@@ -73,7 +70,7 @@ describe("MIR to LIR micro-passes", () => {
       ]]], ["block", ["let", 1, ["phi", ["sources", ["from", ["block_id", 0], [
         "access",
         0,
-      ]]]]], ["return", ["access", 1]]]],
+      ]]]]], ["return", 1]]],
     ]];
     const split = split_phi_edges(validate_and_index(input));
     expect(split[0].blocks.length).toBe(3);
@@ -98,7 +95,7 @@ describe("MIR to LIR micro-passes", () => {
         ["block", ["let", 1, ["phi", ["sources", ["from", ["block_id", 1], [
           "access",
           0,
-        ]]]]], ["return", ["access", 1]]],
+        ]]]]], ["return", 1]],
       ],
     ]];
     expect(() => validate_and_index(input)).toThrow();
