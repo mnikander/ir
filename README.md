@@ -15,8 +15,9 @@ Programs are constructed directly as TypeScript values in a tagged JSON-like
 form and checked by the TypeScript type checker. There is no parser. MIR has a
 pretty-printer for readable test fixtures and debugging.
 
-The MIR-to-LIR complilation pipeline uses a micro-pass architecture inspired by
-the Chez Scheme compiler.
+The MIR-to-LIR complilation pipeline is completely AI-generated, from
+human-defined interfaces and human-defined end-to-end tests. It uses a
+micro-pass architecture inspired by the Chez Scheme compiler.
 
 ## More Information
 
