@@ -1,6 +1,7 @@
 // Copyright (c) 2026 Marco Nikander
 
 import {
+  assert_boolean,
   assert_not_dead,
   assert_pointer,
   assert_value,
@@ -217,7 +218,7 @@ function branch(stack: Stack, op: LOW.Branch): Stack {
   const condition: number = base + op[LOW.Get.Left];
   const left: LOW.LineNumber = op[LOW.Get.Right][0];
   const right: LOW.LineNumber = op[LOW.Get.Right][1];
-  const c: Value = assert_value(stack.data[condition]);
+  const c: Value = assert_boolean(stack.data[condition]);
   top(stack).pc = (c.value !== 0) ? left.line : right.line;
   return stack;
 }

@@ -41,6 +41,20 @@ export function assert_value(item: Data): Value {
   }
 }
 
+export function assert_boolean(item: Data): Value {
+  if (item.tag !== "Value") {
+    throw Error(`Expected a Boolean Value, got a '${item.tag}' instead`);
+  } else {
+    if (item.value === 0 || item.value === 1) {
+      return item;
+    } else {
+      throw Error(
+        `Expected a Boolean Value, got a '${item.tag}' with '${item.value}' instead`,
+      );
+    }
+  }
+}
+
 export function assert_pointer(item: Data): Pointer {
   if (item.tag === "Pointer") {
     return item;

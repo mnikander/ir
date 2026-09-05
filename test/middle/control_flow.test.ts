@@ -45,7 +45,7 @@ describe("MIR: jump", () => {
     expect(print(input)).toEqual(text);
     expect(evaluate(lower(input))).toBe(13);
   });
-  });
+});
 
 describe("MIR: branch", () => {
   it("must execute first branch if the condition is true", () => {
@@ -88,7 +88,7 @@ describe("MIR: branch", () => {
     expect(evaluate(lower(input))).toBe(11);
   });
 
-it("must execute second branch if the condition is false", () => {
+  it("must execute second branch if the condition is false", () => {
     const text: string = `
 (program
   (function
@@ -177,6 +177,46 @@ it("must execute second branch if the condition is false", () => {
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(evaluate(lower(input))).toBe(13 + 281);
+  });
+
+  it("must throw an error when condition is not a boolean", () => {
+    const text: string = `
+(program
+  (function
+    (parameters)
+    (locals Int Int)
+    (result Int)
+    (blocks
+      (block
+        (branch (literal 2) (block_id 1) (block_id 2)))
+      (block
+        (let 0 (copy (literal 11)))
+        (return 0))
+      (block
+        (let 1 (copy (literal 13)))
+        (return 1)))))
+`;
+    const input: MIR.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["locals", ["Int"], ["Int"]],
+      ["result", ["Int"]],
+      ["blocks", [
+        "block",
+        ["branch", ["literal", 2], ["block_id", 1], ["block_id", 2]], // error: 2 is not a boolean
+      ], [
+        "block",
+        ["let", 0, ["copy", ["literal", 11]]],
+        ["return", 0],
+      ], [
+        "block",
+        ["let", 1, ["copy", ["literal", 13]]],
+        ["return", 1],
+      ]],
+    ]];
+    expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
+    expect(() => evaluate(lower(input))).toThrow();
   });
 });
 
