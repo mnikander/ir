@@ -53,53 +53,82 @@ describe("MIR: branch", () => {
 (program
   (function
     (parameters)
-    (locals Int Int Int Int Int)
+    (locals Int Int)
     (result Int)
     (blocks
       (block
-        (let 0 (copy (literal 11)))
-        (let 1 (copy (literal 13)))
-        (let 2 (copy (literal 281)))
         (branch (literal 1) (block_id 1) (block_id 2)))
       (block
-        (let 3 (add (access 0) (access 1)))
-        (jump (block_id 3)))
+        (let 0 (copy (literal 11)))
+        (return 0))
       (block
-        (let 4 (add (access 1) (access 2)))
-        (jump (block_id 3)))
-      (block
-        (return 3)))))
+        (let 1 (copy (literal 13)))
+        (return 1)))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
-      ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
+      ["locals", ["Int"], ["Int"]],
       ["result", ["Int"]],
       ["blocks", [
         "block",
-        ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 1, ["copy", ["literal", 13]]],
-        ["let", 2, ["copy", ["literal", 281]]],
         ["branch", ["literal", 1], ["block_id", 1], ["block_id", 2]],
       ], [
         "block",
-        ["let", 3, ["add", ["access", 0], ["access", 1]]],
-        ["jump", ["block_id", 3]],
+        ["let", 0, ["copy", ["literal", 11]]],
+        ["return", 0],
       ], [
         "block",
-        ["let", 4, ["add", ["access", 1], ["access", 2]]],
-        ["jump", ["block_id", 3]],
-      ], [
-        "block",
-        ["return", 3],
+        ["let", 1, ["copy", ["literal", 13]]],
+        ["return", 1],
       ]],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
-    expect(evaluate(lower(input))).toBe(11 + 13);
+    expect(evaluate(lower(input))).toBe(11);
   });
 
-  it("must execute the second branch when condition is false", () => {
+it("must execute second branch if the condition is false", () => {
+    const text: string = `
+(program
+  (function
+    (parameters)
+    (locals Int Int)
+    (result Int)
+    (blocks
+      (block
+        (branch (literal 0) (block_id 1) (block_id 2)))
+      (block
+        (let 0 (copy (literal 11)))
+        (return 0))
+      (block
+        (let 1 (copy (literal 13)))
+        (return 1)))))
+`;
+    const input: MIR.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["locals", ["Int"], ["Int"]],
+      ["result", ["Int"]],
+      ["blocks", [
+        "block",
+        ["branch", ["literal", 0], ["block_id", 1], ["block_id", 2]],
+      ], [
+        "block",
+        ["let", 0, ["copy", ["literal", 11]]],
+        ["return", 0],
+      ], [
+        "block",
+        ["let", 1, ["copy", ["literal", 13]]],
+        ["return", 1],
+      ]],
+    ]];
+    expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
+    expect(evaluate(lower(input))).toBe(13);
+  });
+
+  it("must perform computations inside of branches", () => {
     const text: string = `
 (program
   (function
@@ -148,46 +177,6 @@ describe("MIR: branch", () => {
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(evaluate(lower(input))).toBe(13 + 281);
-  });
-
-  it("must allow multiple returns", () => {
-    const text: string = `
-(program
-  (function
-    (parameters)
-    (locals Int Int)
-    (result Int)
-    (blocks
-      (block
-        (branch (literal 1) (block_id 1) (block_id 2)))
-      (block
-        (let 0 (copy (literal 11)))
-        (return 0))
-      (block
-        (let 1 (copy (literal 13)))
-        (return 1)))))
-`;
-    const input: MIR.Program = ["program", [
-      "function",
-      ["parameters"],
-      ["locals", ["Int"], ["Int"]],
-      ["result", ["Int"]],
-      ["blocks", [
-        "block",
-        ["branch", ["literal", 1], ["block_id", 1], ["block_id", 2]],
-      ], [
-        "block",
-        ["let", 0, ["copy", ["literal", 11]]],
-        ["return", 0],
-      ], [
-        "block",
-        ["let", 1, ["copy", ["literal", 13]]],
-        ["return", 1],
-      ]],
-    ]];
-    expect(input).toBeDefined();
-    expect(print(input)).toEqual(text);
-    expect(evaluate(lower(input))).toBe(11);
   });
 });
 
