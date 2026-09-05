@@ -149,6 +149,46 @@ describe("MIR: branch", () => {
     expect(print(input)).toEqual(text);
     expect(evaluate(lower(input))).toBe(13 + 281);
   });
+
+  it("must allow multiple returns", () => {
+    const text: string = `
+(program
+  (function
+    (parameters)
+    (locals Int Int)
+    (result Int)
+    (blocks
+      (block
+        (branch (literal 1) (block_id 1) (block_id 2)))
+      (block
+        (let 0 (copy (literal 11)))
+        (return 0))
+      (block
+        (let 1 (copy (literal 13)))
+        (return 1)))))
+`;
+    const input: MIR.Program = ["program", [
+      "function",
+      ["parameters"],
+      ["locals", ["Int"], ["Int"]],
+      ["result", ["Int"]],
+      ["blocks", [
+        "block",
+        ["branch", ["literal", 1], ["block_id", 1], ["block_id", 2]],
+      ], [
+        "block",
+        ["let", 0, ["copy", ["literal", 11]]],
+        ["return", 0],
+      ], [
+        "block",
+        ["let", 1, ["copy", ["literal", 13]]],
+        ["return", 1],
+      ]],
+    ]];
+    expect(input).toBeDefined();
+    expect(print(input)).toEqual(text);
+    expect(evaluate(lower(input))).toBe(11);
+  });
 });
 
 describe("MIR: phi (control flow join)", () => {
