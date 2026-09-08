@@ -157,11 +157,13 @@ every tuple is tagged. Example of canonical formatting:
 
 | File / Directory | Description |
 | --- | --- |
-| [middle.test.ts](test/middle/middle.test.ts) | End-to-end MIR lowering and execution tests for core instructions, control flow, calls, and SSA behavior. |
-| [memory.test.ts](test/middle/memory.test.ts) | End-to-end MIR memory and ownership tests. |
+| [middle.test.ts](test/middle/middle.test.ts) | End-to-end MIR tests for literals, exit, register copying, and arithmetic. |
+| [control_flow.test.ts](test/middle/control_flow.test.ts) | End-to-end MIR tests for jumps, branches, and phi joins. |
+| [functions.test.ts](test/middle/functions.test.ts) | End-to-end MIR tests for function calls. |
+| [memory.test.ts](test/middle/memory.test.ts) | End-to-end MIR tests for memory and ownership. |
 | [print.gen.test.ts](test/middle/print.gen.test.ts) | MIR pretty-printer coverage. |
 | [passes.gen.test.ts](test/middle_to_low/passes.gen.test.ts) | MIR-to-LIR micro-pass tests. |
-| [runtime.test.ts](test/runtime.test.ts) | Direct LIR runtime tests. |
+| [runtime.test.ts](test/low/runtime.test.ts) | Direct LIR runtime tests. |
 
 ### Other Repository Areas
 
