@@ -31,7 +31,8 @@ micro-pass architecture inspired by the Chez Scheme compiler.
 ## Getting Started
 
 This project is implemented in TypeScript, using [Deno](https://deno.com/).
-After setting up deno install the required dependencies and run the tests with:
+After setting up deno, install the required dependencies, and run the tests
+with:
 
 ```bash
 cd ir/
