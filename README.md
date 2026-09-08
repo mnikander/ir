@@ -125,52 +125,52 @@ every tuple is tagged. Example of canonical formatting:
 
 ### Middle Intermediate Representation (MIR)
 
-| File / Directory | Description |
-| --- | --- |
+| File / Directory                                  | Description                                                                                   |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | [middle_grammar.ts](src/middle/middle_grammar.ts) | Defines MIR programs, functions, blocks, instructions, operands, and tagged structural nodes. |
-| [types.ts](src/middle/types.ts) | Defines MIR value and ownership types. |
-| [print.gen.ts](src/middle/print.gen.ts) | Pretty-prints MIR programs as canonical, indented symbolic expressions. |
+| [types.ts](src/middle/types.ts)                   | Defines MIR value and ownership types.                                                        |
+| [print.gen.ts](src/middle/print.gen.ts)           | Pretty-prints MIR programs as canonical, indented symbolic expressions.                       |
 
 ### MIR-to-LIR Lowering
 
-| File / Directory | Description |
-| --- | --- |
-| [lower.gen.ts](src/middle_to_low/lower.gen.ts) | The pipeline entry point. Runs micro-passes in order. |
-| [validate_and_index.gen.ts](src/middle_to_low/validate_and_index.gen.ts) | 1. Validates references and indexes MIR functions and blocks. |
-| [split_phi_edges.gen.ts](src/middle_to_low/split_phi_edges.gen.ts) | 2. Inserts edge blocks so every phi input has its own predecessor edge. |
-| [lower_phi_moves.gen.ts](src/middle_to_low/lower_phi_moves.gen.ts) | 3. Replaces phi nodes with explicit transfers in the edge blocks. |
-| [lower_operations.gen.ts](src/middle_to_low/lower_operations.gen.ts) | 4. Lowers MIR operations and operands into flat LIR instructions with symbolic targets. |
-| [resolve_targets.gen.ts](src/middle_to_low/resolve_targets.gen.ts) | 5. Resolves function and block targets to concrete instruction addresses. |
-| [mod.gen.ts](src/middle_to_low/mod.gen.ts) | Exports the individual passes. |
-| [types.gen.ts](src/middle_to_low/types.gen.ts) | Defines intermediate forms for passes. |
+| File / Directory                                                         | Description                                                                             |
+| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| [lower.gen.ts](src/middle_to_low/lower.gen.ts)                           | The pipeline entry point. Runs micro-passes in order.                                   |
+| [validate_and_index.gen.ts](src/middle_to_low/validate_and_index.gen.ts) | 1. Validates references and indexes MIR functions and blocks.                           |
+| [split_phi_edges.gen.ts](src/middle_to_low/split_phi_edges.gen.ts)       | 2. Inserts edge blocks so every phi input has its own predecessor edge.                 |
+| [lower_phi_moves.gen.ts](src/middle_to_low/lower_phi_moves.gen.ts)       | 3. Replaces phi nodes with explicit transfers in the edge blocks.                       |
+| [lower_operations.gen.ts](src/middle_to_low/lower_operations.gen.ts)     | 4. Lowers MIR operations and operands into flat LIR instructions with symbolic targets. |
+| [resolve_targets.gen.ts](src/middle_to_low/resolve_targets.gen.ts)       | 5. Resolves function and block targets to concrete instruction addresses.               |
+| [mod.gen.ts](src/middle_to_low/mod.gen.ts)                               | Exports the individual passes.                                                          |
+| [types.gen.ts](src/middle_to_low/types.gen.ts)                           | Defines intermediate forms for passes.                                                  |
 
 ### Low-Level IR and Runtime
 
-| File / Directory | Description |
-| --- | --- |
+| File / Directory                         | Description                                                                                           |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | [low_grammar.ts](src/low/low_grammar.ts) | Defines flat LIR programs and instructions, numeric stack offsets, and concrete control-flow targets. |
-| [machine.ts](src/low/machine.ts) | Executes LIR programs and returns a plain `number`. |
-| [stack.ts](src/low/stack.ts) | Implements runtime values, pointers, dead slots, and pointer generations. |
-| [utility.ts](src/utility.ts) | Provides shared helpers such as `valid()`. |
+| [machine.ts](src/low/machine.ts)         | Executes LIR programs and returns a plain `number`.                                                   |
+| [stack.ts](src/low/stack.ts)             | Implements runtime values, pointers, dead slots, and pointer generations.                             |
+| [utility.ts](src/utility.ts)             | Provides shared helpers such as `valid()`.                                                            |
 
 ### Tests
 
-| File / Directory | Description |
-| --- | --- |
-| [middle.test.ts](test/middle/middle.test.ts) | End-to-end MIR tests for literals, exit, register copying, and arithmetic. |
-| [control_flow.test.ts](test/middle/control_flow.test.ts) | End-to-end MIR tests for jumps, branches, and phi joins. |
-| [functions.test.ts](test/middle/functions.test.ts) | End-to-end MIR tests for function calls. |
-| [memory.test.ts](test/middle/memory.test.ts) | End-to-end MIR tests for memory and ownership. |
-| [print.gen.test.ts](test/middle/print.gen.test.ts) | MIR pretty-printer coverage. |
-| [passes.gen.test.ts](test/middle_to_low/passes.gen.test.ts) | MIR-to-LIR micro-pass tests. |
-| [runtime.test.ts](test/low/runtime.test.ts) | Direct LIR runtime tests. |
+| File / Directory                                            | Description                                                                |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------- |
+| [middle.test.ts](test/middle/middle.test.ts)                | End-to-end MIR tests for literals, exit, register copying, and arithmetic. |
+| [control_flow.test.ts](test/middle/control_flow.test.ts)    | End-to-end MIR tests for jumps, branches, and phi joins.                   |
+| [functions.test.ts](test/middle/functions.test.ts)          | End-to-end MIR tests for function calls.                                   |
+| [memory.test.ts](test/middle/memory.test.ts)                | End-to-end MIR tests for memory and ownership.                             |
+| [print.gen.test.ts](test/middle/print.gen.test.ts)          | MIR pretty-printer coverage.                                               |
+| [passes.gen.test.ts](test/middle_to_low/passes.gen.test.ts) | MIR-to-LIR micro-pass tests.                                               |
+| [runtime.test.ts](test/low/runtime.test.ts)                 | Direct LIR runtime tests.                                                  |
 
 ### Other Repository Areas
 
-| File / Directory | Description |
-| --- | --- |
-| [doc/](doc/) | Design documents, invariants, the instruction reference, and architectural decisions. |
-| [id/](id/) | Utilities and state for generating unique design-decision and invariant IDs. |
+| File / Directory | Description                                                                           |
+| ---------------- | ------------------------------------------------------------------------------------- |
+| [doc/](doc/)     | Design documents, invariants, the instruction reference, and architectural decisions. |
+| [id/](id/)       | Utilities and state for generating unique design-decision and invariant IDs.          |
 
 ## Commit Message Hook
 
