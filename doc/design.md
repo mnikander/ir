@@ -1,11 +1,12 @@
 # Design of the Intermediate Representation
 
-This is a static single-assignment (SSA) intermediate representation (IR).
-This IR is intended as a compilation target, on which borrow-checking can be performed, before further lowering.
-It combines ideas from LLVM IR and Rust MIR.
-The interpreter serves as a prototype to validate the language semantics.
+This IR is intended as a compilation target, on which borrow-checking can be performed.
+Like all IRs, it sits between high-level languages such as C or TypeScript on one end, and Assembly on the other end.
+It is based on [three-address code](https://en.wikipedia.org/wiki/Three-address_code) (3AC aka TAC).
+The notation uses symbolic expressions, heavily inspired by WebAssembly.
+The instructions themselves are inspired by LLVM IR and Rust MIR.
 
-The [instruction set](instructions.md) is deliberately kept small and close to LLVM IR, so that lowering is easy.
+The [instruction set](instructions.md) is deliberately kept small, so that analysis and lowering is easy.
 The ownership and borrowing model is greatly simplified compared to that of Rust MIR.
 Certain language features are omitted entirely, to simplify the semantics and reduce the need for annotations.
 
@@ -29,18 +30,18 @@ Several important features are:
 
 | Feature                             | Why? |
 | :--                                 | :--  |
-| static single-assignment (SSA) form | variables are easy to reason about and optimize |
+| immutable data                      | resources are easy to reason about and optimize |
 | call-by-value                       | keeps the language implementation relatively simple |
-| storage is on the stack by default  | good runtime performance, lifetimes tied to lexical scope are easy to reason about |
+| storage is on the stack, by default  | good runtime performance, lifetimes tied to lexical scope are easy to reason about |
 | heap storage is opt-in              | clear semantics, heap storage must be expicitly freed at the end of its lifetime |
 
-## Life-Cycle of a Variable
+## Life-Cycle of a Resource
 
-At a given source-location, a variable can be in one of several valid states:
+At a given source-location, a resource can be in one of several valid states:
 
-1. undefined
-2. live
-3. dead (dropped, moved, or updated)
+1. Undefined
+2. Defined
+3. Destroyed (dropped, moved, or updated)
 
 It could also be in one of the following error states:
 
@@ -50,7 +51,18 @@ It could also be in one of the following error states:
 - use-after-free
 - double-free
 
-The diagram below illustrates the life-cycle of a variable, with the valid and error states:
+Control flow in the program can also result in the state of a resource becoming:
+
+4. Ambiguous
+
+This means that the resource may be in one of several states.
+It is _not_ an error for a resource to _be_ in an ambiguous state, but almost all operations on such a resource will result in an error.
+Phi-nodes can disambiguate whether or not the resource is actually live, and assign it to a new resource. 
+The `return` of some other resource will free all storage for local resources, including those which are in an ambiguous state.
+All other operations are forbidden on resources which are in an ambiguous state.
+
+
+The diagram below illustrates the life-cycle of a resource, with the valid and error states:
 
 ```mermaid
 %%{ init: { 'flowchart': {'defaultRenderer': 'elk' } } }%%
@@ -65,9 +77,9 @@ flowchart LR;
     CU[Use after free];
     CF[Double free];
     Z --> A;
-    A -->|destroy| AF;
-    B -->|destroy| C;
-    C -->|destroy| CF;
+    A -->|drop| AF;
+    B -->|drop| C;
+    C -->|drop| CF;
     A -->|define| B;
     B -->|define| BD;
     C -->|define| BD;
@@ -76,11 +88,9 @@ flowchart LR;
     C -->|access| CU;
 ```
 
-Stack-allocated variables are automatically freed on return, i.e. when the stack-frame is popped.
-This means there is no need to explicitly free a stack-allocated variable.
-A heap-allocated variable *must* be freed explicitly.
-Thus, heap variable are not allowed to be in the 'Defined' state when the enclosing function returns.
-That would be a memory leak.
+Stack-allocated resources are automatically freed on return, i.e. when the stack-frame is popped.
+This means there is no need to explicitly free a stack-allocated resource.
+A heap-allocated, i.e. owned, resource *must* be freed explicitly, via `drop`. 
 
 ---
 **Copyright (c) 2026 Marco Nikander**
