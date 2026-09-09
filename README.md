@@ -21,10 +21,10 @@ micro-pass architecture inspired by the Chez Scheme compiler.
 
 ## More Information
 
-| File / Directory                         | Description                             |
-| ---------------------------------------- | --------------------------------------- |
-| [instructions.md](./doc/instructions.md) | Human-readable instruction reference.   |
-| [decisions.md](./doc/decisions.md)       | Log of design decisions.                |
+| File / Directory                         | Description                           |
+| ---------------------------------------- | ------------------------------------- |
+| [instructions.md](./doc/instructions.md) | Human-readable instruction reference. |
+| [decisions.md](./doc/decisions.md)       | Log of design decisions.              |
 
 ## Getting Started
 
@@ -180,10 +180,10 @@ every tuple is tagged. Example of canonical formatting:
 
 ### Other Repository Areas
 
-| File / Directory | Description                                                                           |
-| ---------------- | ------------------------------------------------------------------------------------- |
-| [doc/](doc/)     | Design documents, invariants, the instruction reference, and architectural decisions. |
-| [id/](id/)       | Utilities and state for generating unique design-decision and invariant IDs.          |
+| File / Directory | Description                                                                  |
+| ---------------- | ---------------------------------------------------------------------------- |
+| [doc/](doc/)     | Instruction reference and design decisions.                                  |
+| [id/](id/)       | Utilities and state for generating unique design-decision and invariant IDs. |
 
 ## Commit Message Hook
 
