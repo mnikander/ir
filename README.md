@@ -44,29 +44,41 @@ Currently, there is no command-line interface, only tests.
 
 ## MIR Syntax
 
-An MIR program is an array of functions, where the function with index 0 serves
-as the entry point or 'main' function.
+Overall, an MIR program is an array of functions, where the function with index
+0 serves as the entry point or 'main' function.
 
-A simple example of an MIR program is given by:
+In MIR, all functions, code blocks, and resources (i.e. variables) are
+identified by a numeric id, instead of a name. Although this decreases human
+readability, it simplifies the analysis and processing for which MIR is
+intended. The resources in a function are essentially slots in the stack frame.
+The parameters come first, starting at index 0, followed by the local variables.
+For example, a function which takes 2 parameters and has 3 local variables, has:
+
+- parameters with ids 0 and 1
+- local variables with ids 2, 3, and 4
+
+A very simple example of an MIR program is given by:
 
 ```
 (program
   (function
     (parameters)
-    (locals Int)
+    (locals Int Int)
     (result Int)
     (blocks
       (block
-        (let 0 (copy (literal 42)))
-        (return 0)))))
+        (let 0 (copy (literal 13)))
+        (let 1 (copy (literal 42)))
+        (return 1)))))
 ```
 
 This defines an MIR program with a single function. That function takes no
-parameters, has one local resource of type `Int` and returns a result of type
+parameters, has two local resources of type `Int` and returns a result of type
 `Int`. The function consists of a single block of code. That block of code
-defines resource #0 to have the constant value 42, and returns that resource.
+defines resource #0 to have the constant value 13, defines resource #1 to have
+value 42, and returns resource #1.
 
-Overall, there exist five fundamental syntactic forms in the body of an MIR
+Overall, there are five fundamental syntactic forms in the body of an MIR
 function. They are illustrated by these examples:
 
 - `(let 0 (copy (literal 42)))` defines resource #0 with the value 42.
