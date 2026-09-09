@@ -25,7 +25,6 @@ micro-pass architecture inspired by the Chez Scheme compiler.
 | ---------------------------------------- | --------------------------------------- |
 | [instructions.md](./doc/instructions.md) | Human-readable instruction reference.   |
 | [decisions.md](./doc/decisions.md)       | Log of design decisions.                |
-| [invariants.md](doc/invariants.md)       | Intended invariants for valid programs. |
 
 ## Getting Started
 
