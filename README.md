@@ -1,9 +1,9 @@
 # Intermediate Representation
 
-An interpreter for an intermediate representation (IR). This IR is based on
-three-address code (3AC aka TAC) and inspired by WebAssembly, LLVM IR, and Rust
-MIR. Like all IRs, it sits between high-level languages such as C or TypeScript
-on one end, and Assembly on the other end.
+An interpreter for an intermediate representation (IR). This IR inspired by
+WebAssembly, LLVM IR, and Rust MIR. Ii is based on 3-address code (3AC aka TAC).
+Like all IRs, it sits between high-level languages such as C or TypeScript on
+one end, and Assembly on the other end.
 
 This project contains middle ([MIR](src/middle/middle_grammar.ts)) and low
 ([LIR](src/low/low_grammar.ts)) intermediate representations. MIR is based on
@@ -15,21 +15,21 @@ Programs are constructed directly as tagged tuples in TypeScript and checked by
 the type checker. There is no parser. MIR has a pretty-printer for readable test
 fixtures and debugging.
 
-The MIR-to-LIR complilation pipeline is completely AI-generated, via
+The MIR-to-LIR compilation pipeline is completely AI-generated, from
 human-defined interfaces and human-defined end-to-end tests. It uses a
 micro-pass architecture inspired by the Chez Scheme compiler.
 
 ## More Information
 
-| File / Directory                         | Description                           |
-| ---------------------------------------- | ------------------------------------- |
-| [instructions.md](./doc/instructions.md) | Human-readable instruction reference. |
-| [decisions.md](./doc/decisions.md)       | Log of design decisions.              |
+| File / Directory                         | Description                          |
+| ---------------------------------------- | ------------------------------------ |
+| [instructions.md](./doc/instructions.md) | Table of instructions and operations |
+| [decisions.md](./doc/decisions.md)       | Log of design decisions              |
 
 ## Getting Started
 
 This project is implemented in TypeScript, using [Deno](https://deno.com/).
-After setting up deno, install the required dependencies, and run the tests
+After setting up Deno, install the required dependencies, and run the tests
 with:
 
 ```bash
@@ -81,8 +81,8 @@ function. They are illustrated by these examples:
 
 - `(let 0 (copy (literal 42)))` defines resource #0 with the value 42.
 - `(drop 0)` drops resource #0.
-- `(return 0)` returns a value from a function.
-- `(jump (block_id 1))` jumps unconditionally.
+- `(return 0)` returns resource #0 from the function.
+- `(jump (block_id 1))` jumps to block #1 unconditionally.
 - `(branch (access 0) (block_id 1) (block_id 2))` branches conditionally.
 
 Every value-producing line takes the form of a let-binding. The general form is
@@ -144,7 +144,7 @@ every tuple is tagged. Example of canonical formatting:
 | [types.ts](src/middle/types.ts)                   | Defines MIR value and ownership types.                                                        |
 | [print.gen.ts](src/middle/print.gen.ts)           | Pretty-prints MIR programs as canonical, indented symbolic expressions.                       |
 
-### MIR-to-LIR Lowering
+### MIR-to-LIR Lowering (AI-generated)
 
 | File / Directory                                                         | Description                                                                             |
 | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
