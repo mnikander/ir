@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "configurations": [
     {
-      "name": "Deno Test",
+      "name": "Deno Test - current file",
       "type": "pwa-node",
       "request": "launch",
       "program": "${file}",
@@ -13,7 +13,6 @@
       "runtimeArgs": [
         "test",
         "--inspect-brk",
-        "--allow-all",
         "${relativeFile}" // Runs the currently open file
       ],
       "attachSimplePort": 9229,
