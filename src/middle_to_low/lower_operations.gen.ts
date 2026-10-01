@@ -31,11 +31,17 @@ type Result = { instructions: UnresolvedInstruction[]; next_temporary: number };
 
 function lower_line(line: MIR.Line, function_id: number, next: number): Result {
   if (line[0] === "drop") {
-    return { instructions: [[line[1], "drop"]], next_temporary: next };
+    return {
+      instructions: [[MIR.to_index(line[1]), "drop"]],
+      next_temporary: next,
+    };
   }
   if (line[0] === "jump") {
     return {
-      instructions: [[null, "jump", { function_id, block_id: line[1][1] }]],
+      instructions: [[null, "jump", {
+        function_id,
+        block_id: MIR.to_index(line[1]),
+      }]],
       next_temporary: next,
     };
   }
@@ -47,8 +53,8 @@ function lower_line(line: MIR.Line, function_id: number, next: number): Result {
         "branch",
         prepared.offsets[0],
         [
-          { function_id, block_id: line[2][1] },
-          { function_id, block_id: line[3][1] },
+          { function_id, block_id: MIR.to_index(line[2]) },
+          { function_id, block_id: MIR.to_index(line[3]) },
         ],
       ]],
       next_temporary: prepared.next,
@@ -56,7 +62,7 @@ function lower_line(line: MIR.Line, function_id: number, next: number): Result {
   }
   if (line[0] === "return") {
     return {
-      instructions: [[null, "return", line[1]]],
+      instructions: [[null, "return", MIR.to_index(line[1])]],
       next_temporary: next,
     };
   }
@@ -64,7 +70,7 @@ function lower_line(line: MIR.Line, function_id: number, next: number): Result {
 }
 
 function lower_let(line: MIR.Let, next: number): Result {
-  const destination = line[1];
+  const destination = MIR.to_index(line[1]);
   const op = line[2];
   if (op[0] === "phi") throw Error("Phi operation reached operation lowering");
   if (op[0] === "call") {
@@ -73,9 +79,9 @@ function lower_let(line: MIR.Let, next: number): Result {
       instructions: [...prepared.before, [
         destination,
         "call",
-        { function_id: op[1][1] },
+        { function_id: MIR.to_index(op[1]) },
         prepared.offsets,
-        `fun ${op[1][1]}`,
+        `fun ${MIR.to_index(op[1])}`,
       ], ...prepared.after],
       next_temporary: prepared.next,
     };
@@ -143,12 +149,12 @@ function prepare_operands(
     }
     if (operand[0] === "move" && preserve_consumed) {
       const temporary = next++;
-      before.push([temporary, "copy", operand[1]]);
-      after.push([operand[1], "drop"]);
+      before.push([temporary, "copy", MIR.to_index(operand[1])]);
+      after.push([MIR.to_index(operand[1]), "drop"]);
       return temporary;
     }
-    if (operand[0] === "move") after.push([operand[1], "drop"]);
-    return operand[1];
+    if (operand[0] === "move") after.push([MIR.to_index(operand[1]), "drop"]);
+    return MIR.to_index(operand[1]);
   });
   return { before, offsets, after, next };
 }

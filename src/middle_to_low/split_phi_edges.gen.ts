@@ -23,22 +23,24 @@ function split_function(func: IndexedFunction): IndexedFunction {
       line[0] === "let" && line[2][0] === "phi"
     );
     if (phis.length === 0) continue;
-    const predecessors = new Set<number>();
+    const predecessors = new Set<MIR.BlockId>();
     for (const phi of phis) {
       for (const from of (phi[2] as MIR.Phi)[1].slice(1) as MIR.From[]) {
-        predecessors.add(from[1][1]);
+        predecessors.add(from[1]);
       }
     }
     for (const predecessor of predecessors) {
       const edge_id = next_id++;
-      const source = blocks.find((block) => block.id === predecessor)!;
+      const source = blocks.find((block) =>
+        block.id === MIR.to_index(predecessor)
+      )!;
       source.lines = source.lines.map((line) =>
-        redirect(line, target.id, edge_id)
+        redirect(line, MIR.block_id(target.id), MIR.block_id(edge_id))
       );
       blocks.push({
         id: edge_id,
-        lines: [["jump", ["block_id", target.id]]],
-        edge: { target: target.id, predecessor },
+        lines: [["jump", MIR.block_id(target.id)]],
+        edge: { target: target.id, predecessor: MIR.to_index(predecessor) },
       });
     }
   }
@@ -47,17 +49,19 @@ function split_function(func: IndexedFunction): IndexedFunction {
 
 function redirect(
   line: MIR.Line,
-  target: number,
-  replacement: number,
+  target: MIR.BlockId,
+  replacement: MIR.BlockId,
 ): MIR.Line {
-  if (line[0] === "jump" && line[1][1] === target) {
-    return ["jump", ["block_id", replacement]];
+  if (line[0] === "jump" && line[1] === target) {
+    return ["jump", replacement];
   }
   if (line[0] === "branch") {
-    return ["branch", line[1], [
-      "block_id",
-      line[2][1] === target ? replacement : line[2][1],
-    ], ["block_id", line[3][1] === target ? replacement : line[3][1]]];
+    return [
+      "branch",
+      line[1],
+      line[2] === target ? replacement : line[2],
+      line[3] === target ? replacement : line[3],
+    ];
   }
   return line;
 }

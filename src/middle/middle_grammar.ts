@@ -51,9 +51,9 @@ export type Constant     = [ tag: "constant",       value: number ];
 export type Arguments    = [ tag: "arguments",     ...Operand[]];
 export type Sources      = [ tag: "sources",       ...From[] ];
 export type From         = [ tag: "from",          block: BlockId, resource: Operand ];
-export type ResourceId   = number;
-export type FunctionId   = [ tag: "function_id",   index: number ];
-export type BlockId      = [ tag: "block_id",      index: number ];
+export type ResourceId   = `%${number}`;
+export type FunctionId   = `@${number}`;
+export type BlockId      = `^${number}`;
 
 export enum Get {
     Tag       = 0,
@@ -67,4 +67,20 @@ export function is_let(line: Line): line is Let {
 
 export function is_borrow(op: Operation): op is Borrow {
     return op[Get.Tag] == "borrow";
+}
+
+export function resource_id(index: number): ResourceId {
+    return `%${index}`;
+}
+
+export function block_id(index: number): BlockId {
+    return `^${index}`;
+}
+
+export function function_id(index: number): FunctionId {
+    return `@${index}`;
+}
+
+export function to_index(id: ResourceId | FunctionId | BlockId): number {
+    return Number(id.slice(1));
 }

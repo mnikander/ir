@@ -30,8 +30,8 @@ function lower_function(func: IndexedFunction): IndexedFunction {
     const reads: MIR.Let[] = phis.map((phi) => {
       const from = ((phi[2] as MIR.Phi)[1].slice(1) as MIR.From[]).find((
         item,
-      ) => item[1][1] === block.edge!.predecessor)!;
-      return ["let", next_resource++, ["identity", from[2]]];
+      ) => item[1] === MIR.block_id(block.edge!.predecessor))!;
+      return ["let", MIR.resource_id(next_resource++), ["identity", from[2]]];
     });
     const writes: MIR.Let[] = phis.map((
       phi,

@@ -56,23 +56,24 @@ describe("MIR printer", () => {
         ["result", ["Int"]],
         [
           "block",
-          ["let", 0, ["phi", ["sources", ["from", ["block_id", 1], [
-            "read",
-            2,
-          ]], ["from", ["block_id", 2], ["move", 3]]]]],
-          ["let", 1, ["call", ["function_id", 0], [
+          ["let", "%0", ["phi", ["sources", ["from", "^1", ["read", "%2"]], [
+            "from",
+            "^2",
+            ["move", "%3"],
+          ]]]],
+          ["let", "%1", ["call", "@0", [
             "arguments",
-            ["read", 0],
-            ["move", 2],
+            ["read", "%0"],
+            ["move", "%2"],
           ]]],
-          ["let", 2, ["call", ["function_id", 1], ["arguments"]]],
-          ["let", 3, ["identity", ["constant", 42]]],
-          ["let", 4, ["identity", ["read", 3]]],
-          ["let", 5, ["borrow", ["read", 4]]],
-          ["let", 6, ["borrow", ["read", 5]]],
-          ["let", 7, ["load", ["move", 6]]],
-          ["drop", 5],
-          ["return", 7],
+          ["let", "%2", ["call", "@1", ["arguments"]]],
+          ["let", "%3", ["identity", ["constant", 42]]],
+          ["let", "%4", ["identity", ["read", "%3"]]],
+          ["let", "%5", ["borrow", ["read", "%4"]]],
+          ["let", "%6", ["borrow", ["read", "%5"]]],
+          ["let", "%7", ["load", ["move", "%6"]]],
+          ["drop", "%5"],
+          ["return", "%7"],
         ],
         ["block"],
       ],
@@ -81,7 +82,7 @@ describe("MIR printer", () => {
         ["parameters"],
         ["locals"],
         ["result", ["Int"]],
-        ["block", ["return", 0]],
+        ["block", ["return", "%0"]],
       ],
     ];
 
@@ -92,23 +93,23 @@ describe("MIR printer", () => {
         "    (locals Int (Borrowed Int))\n" +
         "    (result Int)\n" +
         "    (block\n" +
-        "      (let 0 (phi (sources (from (block_id 1) (read 2)) (from (block_id 2) (move 3)))))\n" +
-        "      (let 1 (call (function_id 0) (arguments (read 0) (move 2))))\n" +
-        "      (let 2 (call (function_id 1) (arguments)))\n" +
-        "      (let 3 (identity (constant 42)))\n" +
-        "      (let 4 (identity (read 3)))\n" +
-        "      (let 5 (borrow (read 4)))\n" +
-        "      (let 6 (borrow (read 5)))\n" +
-        "      (let 7 (load (move 6)))\n" +
-        "      (drop 5)\n" +
-        "      (return 7))\n" +
+        "      (let %0 (phi (sources (from ^1 (read %2)) (from ^2 (move %3)))))\n" +
+        "      (let %1 (call @0 (arguments (read %0) (move %2))))\n" +
+        "      (let %2 (call @1 (arguments)))\n" +
+        "      (let %3 (identity (constant 42)))\n" +
+        "      (let %4 (identity (read %3)))\n" +
+        "      (let %5 (borrow (read %4)))\n" +
+        "      (let %6 (borrow (read %5)))\n" +
+        "      (let %7 (load (move %6)))\n" +
+        "      (drop %5)\n" +
+        "      (return %7))\n" +
         "    (block))\n" +
         "  (function\n" +
         "    (parameters)\n" +
         "    (locals)\n" +
         "    (result Int)\n" +
         "    (block\n" +
-        "      (return 0))))\n",
+        "      (return %0))))\n",
     );
   });
 
@@ -131,11 +132,14 @@ describe("MIR printer", () => {
     const lines: MIR.Line[] = binary_tags.map((
       tag,
       index,
-    ) => ["let", index, [tag, ["read", 0], ["move", 1]]]);
+    ) => ["let", MIR.resource_id(index), [tag, ["read", "%0"], [
+      "move",
+      "%1",
+    ]]]);
     lines.push(
-      ["let", 13, ["negate", ["read", 2]]],
-      ["branch", ["constant", 0], ["block_id", 1], ["block_id", 2]],
-      ["return", 13],
+      ["let", "%13", ["negate", ["read", "%2"]]],
+      ["branch", ["constant", 0], "^1", "^2"],
+      ["return", "%13"],
     );
     const input: MIR.Program = [
       "program",
@@ -146,7 +150,7 @@ describe("MIR printer", () => {
     ];
 
     const expected_lines = binary_tags.map((tag, index) =>
-      `      (let ${index} (${tag} (read 0) (move 1)))`
+      `      (let %${index} (${tag} (read %0) (move %1)))`
     );
     expect(print(input)).toBe(
       "\n(program\n" +
@@ -156,9 +160,9 @@ describe("MIR printer", () => {
         "    (result Int)\n" +
         "    (block\n" +
         expected_lines.join("\n") + "\n" +
-        "      (let 13 (negate (read 2)))\n" +
-        "      (branch (constant 0) (block_id 1) (block_id 2))\n" +
-        "      (return 13))))\n",
+        "      (let %13 (negate (read %2)))\n" +
+        "      (branch (constant 0) ^1 ^2)\n" +
+        "      (return %13))))\n",
     );
   });
 
@@ -170,7 +174,7 @@ describe("MIR printer", () => {
         ["parameters"],
         ["locals"],
         ["result", ["Int"]],
-        ["block", ["jump", ["block_id", 42]]],
+        ["block", ["jump", "^42"]],
       ],
     ];
 
@@ -181,7 +185,7 @@ describe("MIR printer", () => {
         "    (locals)\n" +
         "    (result Int)\n" +
         "    (block\n" +
-        "      (jump (block_id 42)))))\n",
+        "      (jump ^42))))\n",
     );
   });
 });

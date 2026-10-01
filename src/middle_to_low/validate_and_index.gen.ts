@@ -28,12 +28,12 @@ function validate_function(
     throw Error(`Function ${id} has no entry block`);
   }
 
-  const defined = new Set<number>();
+  const defined = new Set<MIR.ResourceId>();
   for (let resource = 0; resource < parameter_count; resource++) {
-    defined.add(resource);
+    defined.add(MIR.resource_id(resource));
   }
-  const blocks: IndexedBlock[] = source_blocks.map((block, block_id) => ({
-    id: block_id,
+  const blocks: IndexedBlock[] = source_blocks.map((block, id) => ({
+    id,
     lines: block.slice(1) as MIR.Line[],
   }));
 
@@ -76,13 +76,11 @@ function validate_operation(
 ): void {
   if (op[0] === "phi") {
     for (const from of op[1].slice(1) as MIR.From[]) {
-      check_block(from[1][1], blocks);
+      check_block(from[1], blocks);
       validate_operand(from[2], resources);
     }
   } else if (op[0] === "call") {
-    if (op[1][1] < 0 || op[1][1] >= functions) {
-      throw Error(`Invalid function id ${op[1][1]}`);
-    }
+    check_function(op[1], functions);
     for (const operand of op[2].slice(1) as MIR.Operand[]) {
       validate_operand(operand, resources);
     }
@@ -98,11 +96,11 @@ function validate_terminator(
   resources: number,
   blocks: number,
 ): void {
-  if (line[0] === "jump") check_block(line[1][1], blocks);
+  if (line[0] === "jump") check_block(line[1], blocks);
   else if (line[0] === "branch") {
     validate_operand(line[1], resources);
-    check_block(line[2][1], blocks);
-    check_block(line[3][1], blocks);
+    check_block(line[2], blocks);
+    check_block(line[3], blocks);
   } else check_resource(line[1], resources, "return");
 }
 
@@ -113,41 +111,47 @@ function validate_operand(operand: MIR.Operand, resources: number): void {
 }
 
 function check_resource(
-  resource: number,
+  resource: MIR.ResourceId,
   count: number,
   context: string,
 ): void {
-  if (!Number.isInteger(resource) || resource < 0 || resource >= count) {
+  const index = MIR.to_index(resource);
+  if (!Number.isInteger(index) || index < 0 || index >= count) {
     throw Error(`Invalid resource ${resource} in ${context}`);
   }
 }
-function check_block(block: number, count: number): void {
-  if (!Number.isInteger(block) || block < 0 || block >= count) {
+function check_block(block: MIR.BlockId, count: number): void {
+  const index = MIR.to_index(block);
+  if (!Number.isInteger(index) || index < 0 || index >= count) {
     throw Error(`Invalid block id ${block}`);
+  }
+}
+function check_function(function_: MIR.FunctionId, count: number): void {
+  const index = MIR.to_index(function_);
+  if (!Number.isInteger(index) || index < 0 || index >= count) {
+    throw Error(`Invalid function id ${function_}`);
   }
 }
 
 function validate_phis(blocks: IndexedBlock[]): void {
-  const predecessors = new Map<number, Set<number>>(
-    blocks.map((block) => [block.id, new Set()]),
+  const predecessors = new Map<MIR.BlockId, Set<MIR.BlockId>>(
+    blocks.map((block) => [MIR.block_id(block.id), new Set()]),
   );
   for (const block of blocks) {
     const terminator = block.lines.at(-1);
     if (terminator?.[0] === "jump") {
-      predecessors.get(terminator[1][1])!.add(block.id);
+      predecessors.get(terminator[1])!.add(MIR.block_id(block.id));
     }
     if (terminator?.[0] === "branch") {
-      predecessors.get(terminator[2][1])!.add(block.id);
-      predecessors.get(terminator[3][1])!.add(block.id);
+      predecessors.get(terminator[2])!.add(MIR.block_id(block.id));
+      predecessors.get(terminator[3])!.add(MIR.block_id(block.id));
     }
   }
   for (const block of blocks) {
     for (const line of block.lines) {
       if (line[0] !== "let" || line[2][0] !== "phi") continue;
-      const actual = (line[2][1].slice(1) as MIR.From[]).map((from) =>
-        from[1][1]
-      );
-      const expected = predecessors.get(block.id)!;
+      const actual = (line[2][1].slice(1) as MIR.From[]).map((from) => from[1]);
+      const expected = predecessors.get(MIR.block_id(block.id))!;
       if (
         actual.length !== new Set(actual).size ||
         actual.length !== expected.size || actual.some((id) =>

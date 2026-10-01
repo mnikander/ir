@@ -46,11 +46,13 @@ Overall, an MIR program is an array of functions, where the function with index
 0 serves as the entry point or 'main' function.
 
 In MIR, all functions, code blocks, and resources (i.e. variables) are
-identified by a numeric id, instead of a name. Although this decreases human
-readability, it simplifies the analysis and processing for which MIR is
-intended. The resources in a function are essentially slots in the stack frame.
-The parameters come first, starting at index 0, followed by the local variables.
-For example, a function which takes 2 parameters and has 3 local variables, has:
+identified by a sigil prefix and numeric id, instead of a name. The sigil `%` is
+for resources, `@` for functions, and `^` for blocks. Although the numeric ids
+decrease human readability, they simplify the analysis and processing for which
+MIR is intended. The resources in a function are essentially slots in the stack
+frame. The parameters come first, starting at index 0, followed by the local
+variables. For example, a function which takes 2 parameters and has 3 local
+variables, has:
 
 - parameters with ids 0 and 1
 - local variables with ids 2, 3, and 4
@@ -64,9 +66,9 @@ A very simple example of an MIR program is given by:
     (locals Int Int)
     (result Int)
     (block
-      (let 0 (identity (constant 13)))
-      (let 1 (identity (constant 42)))
-      (return 1))))
+      (let %0 (identity (constant 13)))
+      (let %1 (identity (constant 42)))
+      (return %1))))
 ```
 
 This defines an MIR program with a single function. That function takes no
@@ -79,26 +81,26 @@ always an operation. The `identity` function simply takes a value as it is.
 Overall, there are five fundamental syntactic forms in the body of an MIR
 function. They are illustrated by these examples:
 
-- `(let 0 (identity (constant 42)))` defines resource #0 with the value 42.
-- `(drop 0)` drops resource #0.
-- `(return 0)` returns resource #0 from the function.
-- `(jump (block_id 1))` jumps to block #1 unconditionally.
-- `(branch (read 0) (block_id 1) (block_id 2))` branches conditionally.
+- `(let %0 (identity (constant 42)))` defines resource #0 with the value 42.
+- `(drop %0)` drops resource #0.
+- `(return %0)` returns resource #0 from the function.
+- `(jump ^1)` jumps to block #1 unconditionally.
+- `(branch (read %0) ^1 ^2)` branches conditionally.
 
 Every value-producing line takes the form of a let-binding. The general form is
 `(let RESOURCE OPERATION)`. For example:
 
-- `(let 0 (identity (constant 42)))` loads the integer `42` into resource 0.
-- `(let 1 (add (read 0) (move 2)))` adds two operands and binds the result to
+- `(let %0 (identity (constant 42)))` loads the integer `42` into resource 0.
+- `(let %1 (add (read %0) (move %2)))` adds two operands and binds the result to
   resource 1.
-- `(let 2 (phi (sources (from (block_id 1) (read 2)) (from (block_id 2) (move 3)))))`
-  selects a value based on the predecessor block.
-- `(let 3 (call (function_id 1) (arguments (read 0))))` calls function #1, pass
-  resource #0 as an argument, and bind the result to resource #3.
+- `(let %2 (phi (sources (from ^1 (read %2)) (from ^2 (move %3)))))` selects a
+  value based on the predecessor block.
+- `(let %3 (call @1 (arguments (read %0))))` calls function #1, pass resource #0
+  as an argument, and bind the result to resource #3.
 
-Operands are `(read N)` for a non-consuming read, `(move N)` for a destructive
+Operands are `(read %N)` for a non-consuming read, `(move %N)` for a destructive
 move, and `(constant N)` for an immediate integer. Block and function references
-use `(block_id N)` and `(function_id N)`.
+are written as `^N` and `@N`.
 
 ### Symbolic expressions vs. JSON
 
@@ -108,8 +110,8 @@ straight-forward translation step makes it easier to reason about and write
 test-cases in either form.
 
 ```text
-(let 2 (add (read 0) (read 1)))
-["let", 2, ["add", ["read", 0], ["read", 1]]]
+(let %2 (add (read %0) (read %1)))
+["let", "%2", ["add", ["read", "%0"], ["read", "%1"]]]
 ```
 
 ### Formatting
@@ -126,11 +128,11 @@ every tuple is tagged. Example of canonical formatting:
     (locals (Borrowed Int))
     (result Int)
     (block
-      (let 0 (phi (sources (from (block_id 1) (read 2)) (from (block_id 2) (move 3)))))
-      (let 1 (call (function_id 0) (arguments (read 0) (move 2))))
-      (branch (constant 0) (block_id 1) (block_id 2)))
+      (let %0 (phi (sources (from ^1 (read %2)) (from ^2 (move %3)))))
+      (let %1 (call @0 (arguments (read %0) (move %2))))
+      (branch (constant 0) ^1 ^2))
     (block
-      (return 1))))
+      (return %1))))
 ```
 
 ## Source Layout

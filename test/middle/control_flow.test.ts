@@ -14,13 +14,13 @@ describe("MIR: jump", () => {
     (locals Int Int)
     (result Int)
     (block
-      (jump (block_id 2)))
+      (jump ^2))
     (block
-      (let 0 (identity (constant 11)))
-      (return 0))
+      (let %0 (identity (constant 11)))
+      (return %0))
     (block
-      (let 1 (identity (constant 13)))
-      (return 1))))
+      (let %1 (identity (constant 13)))
+      (return %1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -29,17 +29,17 @@ describe("MIR: jump", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["jump", ["block_id", 2]],
+        ["jump", "^2"],
       ],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 11]]],
-        ["return", 0],
+        ["let", "%0", ["identity", ["constant", 11]]],
+        ["return", "%0"],
       ],
       [
         "block",
-        ["let", 1, ["identity", ["constant", 13]]],
-        ["return", 1],
+        ["let", "%1", ["identity", ["constant", 13]]],
+        ["return", "%1"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -57,13 +57,13 @@ describe("MIR: branch", () => {
     (locals Int Int)
     (result Int)
     (block
-      (branch (constant 1) (block_id 1) (block_id 2)))
+      (branch (constant 1) ^1 ^2))
     (block
-      (let 0 (identity (constant 11)))
-      (return 0))
+      (let %0 (identity (constant 11)))
+      (return %0))
     (block
-      (let 1 (identity (constant 13)))
-      (return 1))))
+      (let %1 (identity (constant 13)))
+      (return %1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -72,17 +72,17 @@ describe("MIR: branch", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["branch", ["constant", 1], ["block_id", 1], ["block_id", 2]],
+        ["branch", ["constant", 1], "^1", "^2"],
       ],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 11]]],
-        ["return", 0],
+        ["let", "%0", ["identity", ["constant", 11]]],
+        ["return", "%0"],
       ],
       [
         "block",
-        ["let", 1, ["identity", ["constant", 13]]],
-        ["return", 1],
+        ["let", "%1", ["identity", ["constant", 13]]],
+        ["return", "%1"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -98,13 +98,13 @@ describe("MIR: branch", () => {
     (locals Int Int)
     (result Int)
     (block
-      (branch (constant 0) (block_id 1) (block_id 2)))
+      (branch (constant 0) ^1 ^2))
     (block
-      (let 0 (identity (constant 11)))
-      (return 0))
+      (let %0 (identity (constant 11)))
+      (return %0))
     (block
-      (let 1 (identity (constant 13)))
-      (return 1))))
+      (let %1 (identity (constant 13)))
+      (return %1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -113,17 +113,17 @@ describe("MIR: branch", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["branch", ["constant", 0], ["block_id", 1], ["block_id", 2]],
+        ["branch", ["constant", 0], "^1", "^2"],
       ],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 11]]],
-        ["return", 0],
+        ["let", "%0", ["identity", ["constant", 11]]],
+        ["return", "%0"],
       ],
       [
         "block",
-        ["let", 1, ["identity", ["constant", 13]]],
-        ["return", 1],
+        ["let", "%1", ["identity", ["constant", 13]]],
+        ["return", "%1"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -139,18 +139,18 @@ describe("MIR: branch", () => {
     (locals Int Int Int Int Int)
     (result Int)
     (block
-      (let 0 (identity (constant 11)))
-      (let 1 (identity (constant 13)))
-      (let 2 (identity (constant 281)))
-      (branch (constant 0) (block_id 1) (block_id 2)))
+      (let %0 (identity (constant 11)))
+      (let %1 (identity (constant 13)))
+      (let %2 (identity (constant 281)))
+      (branch (constant 0) ^1 ^2))
     (block
-      (let 3 (add (read 0) (read 1)))
-      (jump (block_id 3)))
+      (let %3 (add (read %0) (read %1)))
+      (jump ^3))
     (block
-      (let 4 (add (read 1) (read 2)))
-      (jump (block_id 3)))
+      (let %4 (add (read %1) (read %2)))
+      (jump ^3))
     (block
-      (return 4))))
+      (return %4))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -159,24 +159,24 @@ describe("MIR: branch", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 11]]],
-        ["let", 1, ["identity", ["constant", 13]]],
-        ["let", 2, ["identity", ["constant", 281]]],
-        ["branch", ["constant", 0], ["block_id", 1], ["block_id", 2]],
+        ["let", "%0", ["identity", ["constant", 11]]],
+        ["let", "%1", ["identity", ["constant", 13]]],
+        ["let", "%2", ["identity", ["constant", 281]]],
+        ["branch", ["constant", 0], "^1", "^2"],
       ],
       [
         "block",
-        ["let", 3, ["add", ["read", 0], ["read", 1]]],
-        ["jump", ["block_id", 3]],
+        ["let", "%3", ["add", ["read", "%0"], ["read", "%1"]]],
+        ["jump", "^3"],
       ],
       [
         "block",
-        ["let", 4, ["add", ["read", 1], ["read", 2]]],
-        ["jump", ["block_id", 3]],
+        ["let", "%4", ["add", ["read", "%1"], ["read", "%2"]]],
+        ["jump", "^3"],
       ],
       [
         "block",
-        ["return", 4],
+        ["return", "%4"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -192,13 +192,13 @@ describe("MIR: branch", () => {
     (locals Int Int)
     (result Int)
     (block
-      (branch (constant 2) (block_id 1) (block_id 2)))
+      (branch (constant 2) ^1 ^2))
     (block
-      (let 0 (identity (constant 11)))
-      (return 0))
+      (let %0 (identity (constant 11)))
+      (return %0))
     (block
-      (let 1 (identity (constant 13)))
-      (return 1))))
+      (let %1 (identity (constant 13)))
+      (return %1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -207,17 +207,17 @@ describe("MIR: branch", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["branch", ["constant", 2], ["block_id", 1], ["block_id", 2]], // error: 2 is not a boolean
+        ["branch", ["constant", 2], "^1", "^2"], // error: 2 is not a boolean
       ],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 11]]],
-        ["return", 0],
+        ["let", "%0", ["identity", ["constant", 11]]],
+        ["return", "%0"],
       ],
       [
         "block",
-        ["let", 1, ["identity", ["constant", 13]]],
-        ["return", 1],
+        ["let", "%1", ["identity", ["constant", 13]]],
+        ["return", "%1"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -235,16 +235,16 @@ describe("MIR: phi (control flow join)", () => {
     (locals Int Int Int)
     (result Int)
     (block
-      (jump (block_id 2)))
+      (jump ^2))
     (block
-      (let 0 (identity (constant 11)))
-      (jump (block_id 3)))
+      (let %0 (identity (constant 11)))
+      (jump ^3))
     (block
-      (let 1 (identity (constant 13)))
-      (jump (block_id 3)))
+      (let %1 (identity (constant 13)))
+      (jump ^3))
     (block
-      (let 2 (phi (sources (from (block_id 1) (read 0)) (from (block_id 2) (read 1)))))
-      (return 2))))
+      (let %2 (phi (sources (from ^1 (read %0)) (from ^2 (read %1)))))
+      (return %2))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -253,26 +253,26 @@ describe("MIR: phi (control flow join)", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["jump", ["block_id", 2]],
+        ["jump", "^2"],
       ],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 11]]],
-        ["jump", ["block_id", 3]],
+        ["let", "%0", ["identity", ["constant", 11]]],
+        ["jump", "^3"],
       ],
       [
         "block",
-        ["let", 1, ["identity", ["constant", 13]]],
-        ["jump", ["block_id", 3]],
+        ["let", "%1", ["identity", ["constant", 13]]],
+        ["jump", "^3"],
       ],
       [
         "block",
-        ["let", 2, ["phi", [
+        ["let", "%2", ["phi", [
           "sources",
-          ["from", ["block_id", 1], ["read", 0]],
-          ["from", ["block_id", 2], ["read", 1]],
+          ["from", "^1", ["read", "%0"]],
+          ["from", "^2", ["read", "%1"]],
         ]]],
-        ["return", 2],
+        ["return", "%2"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -299,17 +299,17 @@ describe("MIR: phi (control flow join)", () => {
     (locals Int Int Int Int Int Int)
     (result Int)
     (block
-      (let 0 (identity (constant 0)))
-      (let 1 (identity (constant 1)))
-      (let 2 (identity (constant 3)))
-      (jump (block_id 1)))
+      (let %0 (identity (constant 0)))
+      (let %1 (identity (constant 1)))
+      (let %2 (identity (constant 3)))
+      (jump ^1))
     (block
-      (let 3 (phi (sources (from (block_id 0) (read 0)) (from (block_id 1) (read 4)))))
-      (let 4 (add (read 1) (read 3)))
-      (let 5 (unequal (read 3) (read 2)))
-      (branch (read 5) (block_id 1) (block_id 2)))
+      (let %3 (phi (sources (from ^0 (read %0)) (from ^1 (read %4)))))
+      (let %4 (add (read %1) (read %3)))
+      (let %5 (unequal (read %3) (read %2)))
+      (branch (read %5) ^1 ^2))
     (block
-      (return 3))))
+      (return %3))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -318,25 +318,25 @@ describe("MIR: phi (control flow join)", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 0]]],
-        ["let", 1, ["identity", ["constant", 1]]],
-        ["let", 2, ["identity", ["constant", 3]]],
-        ["jump", ["block_id", 1]],
+        ["let", "%0", ["identity", ["constant", 0]]],
+        ["let", "%1", ["identity", ["constant", 1]]],
+        ["let", "%2", ["identity", ["constant", 3]]],
+        ["jump", "^1"],
       ],
       [
         "block",
-        ["let", 3, ["phi", [
+        ["let", "%3", ["phi", [
           "sources",
-          ["from", ["block_id", 0], ["read", 0]],
-          ["from", ["block_id", 1], ["read", 4]],
+          ["from", "^0", ["read", "%0"]],
+          ["from", "^1", ["read", "%4"]],
         ]]],
-        ["let", 4, ["add", ["read", 1], ["read", 3]]],
-        ["let", 5, ["unequal", ["read", 3], ["read", 2]]],
-        ["branch", ["read", 5], ["block_id", 1], ["block_id", 2]],
+        ["let", "%4", ["add", ["read", "%1"], ["read", "%3"]]],
+        ["let", "%5", ["unequal", ["read", "%3"], ["read", "%2"]]],
+        ["branch", ["read", "%5"], "^1", "^2"],
       ],
       [
         "block",
-        ["return", 3],
+        ["return", "%3"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -363,22 +363,22 @@ describe("MIR: phi (control flow join)", () => {
     (locals Int Int Int Int Int Int Int)
     (result Int)
     (block
-      (let 0 (identity (constant 0)))
-      (branch (read 0) (block_id 1) (block_id 2)))
+      (let %0 (identity (constant 0)))
+      (branch (read %0) ^1 ^2))
     (block
-      (let 1 (identity (constant 11)))
-      (jump (block_id 4)))
+      (let %1 (identity (constant 11)))
+      (jump ^4))
     (block
-      (let 2 (identity (constant 13)))
-      (jump (block_id 3)))
+      (let %2 (identity (constant 13)))
+      (jump ^3))
     (block
-      (let 3 (identity (constant 281)))
-      (jump (block_id 4)))
+      (let %3 (identity (constant 281)))
+      (jump ^4))
     (block
-      (let 4 (phi (sources (from (block_id 1) (read 1)) (from (block_id 3) (read 2)))))
-      (let 5 (phi (sources (from (block_id 1) (read 1)) (from (block_id 3) (read 3)))))
-      (let 6 (add (read 4) (read 5)))
-      (return 6))))
+      (let %4 (phi (sources (from ^1 (read %1)) (from ^3 (read %2)))))
+      (let %5 (phi (sources (from ^1 (read %1)) (from ^3 (read %3)))))
+      (let %6 (add (read %4) (read %5)))
+      (return %6))))
 `;
 
     const input: MIR.Program = ["program", [
@@ -388,38 +388,38 @@ describe("MIR: phi (control flow join)", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 0]]],
-        ["branch", ["read", 0], ["block_id", 1], ["block_id", 2]],
+        ["let", "%0", ["identity", ["constant", 0]]],
+        ["branch", ["read", "%0"], "^1", "^2"],
       ],
       [
         "block",
-        ["let", 1, ["identity", ["constant", 11]]],
-        ["jump", ["block_id", 4]],
+        ["let", "%1", ["identity", ["constant", 11]]],
+        ["jump", "^4"],
       ],
       [
         "block",
-        ["let", 2, ["identity", ["constant", 13]]],
-        ["jump", ["block_id", 3]],
+        ["let", "%2", ["identity", ["constant", 13]]],
+        ["jump", "^3"],
       ],
       [
         "block",
-        ["let", 3, ["identity", ["constant", 281]]],
-        ["jump", ["block_id", 4]],
+        ["let", "%3", ["identity", ["constant", 281]]],
+        ["jump", "^4"],
       ],
       [
         "block",
-        ["let", 4, ["phi", [
+        ["let", "%4", ["phi", [
           "sources",
-          ["from", ["block_id", 1], ["read", 1]],
-          ["from", ["block_id", 3], ["read", 2]],
+          ["from", "^1", ["read", "%1"]],
+          ["from", "^3", ["read", "%2"]],
         ]]],
-        ["let", 5, ["phi", [
+        ["let", "%5", ["phi", [
           "sources",
-          ["from", ["block_id", 1], ["read", 1]],
-          ["from", ["block_id", 3], ["read", 3]],
+          ["from", "^1", ["read", "%1"]],
+          ["from", "^3", ["read", "%3"]],
         ]]],
-        ["let", 6, ["add", ["read", 4], ["read", 5]]],
-        ["return", 6],
+        ["let", "%6", ["add", ["read", "%4"], ["read", "%5"]]],
+        ["return", "%6"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -445,17 +445,17 @@ describe("MIR: phi (control flow join)", () => {
     (locals Int Int Int Int)
     (result Int)
     (block
-      (jump (block_id 1)))
+      (jump ^1))
     (block
-      (let 0 (identity (constant 11)))
-      (let 1 (identity (constant 1)))
-      (branch (read 1) (block_id 2) (block_id 3)))
+      (let %0 (identity (constant 11)))
+      (let %1 (identity (constant 1)))
+      (branch (read %1) ^2 ^3))
     (block
-      (let 2 (identity (constant 13)))
-      (jump (block_id 3)))
+      (let %2 (identity (constant 13)))
+      (jump ^3))
     (block
-      (let 3 (phi (sources (from (block_id 1) (read 0)) (from (block_id 2) (read 2)))))
-      (return 3))))
+      (let %3 (phi (sources (from ^1 (read %0)) (from ^2 (read %2)))))
+      (return %3))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -464,27 +464,27 @@ describe("MIR: phi (control flow join)", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["jump", ["block_id", 1]],
+        ["jump", "^1"],
       ],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 11]]],
-        ["let", 1, ["identity", ["constant", 1]]],
-        ["branch", ["read", 1], ["block_id", 2], ["block_id", 3]],
+        ["let", "%0", ["identity", ["constant", 11]]],
+        ["let", "%1", ["identity", ["constant", 1]]],
+        ["branch", ["read", "%1"], "^2", "^3"],
       ],
       [
         "block",
-        ["let", 2, ["identity", ["constant", 13]]],
-        ["jump", ["block_id", 3]],
+        ["let", "%2", ["identity", ["constant", 13]]],
+        ["jump", "^3"],
       ],
       [
         "block",
-        ["let", 3, ["phi", [
+        ["let", "%3", ["phi", [
           "sources",
-          ["from", ["block_id", 1], ["read", 0]],
-          ["from", ["block_id", 2], ["read", 2]],
+          ["from", "^1", ["read", "%0"]],
+          ["from", "^2", ["read", "%2"]],
         ]]],
-        ["return", 3],
+        ["return", "%3"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -510,17 +510,17 @@ describe("MIR: phi (control flow join)", () => {
     (locals Int Int Int Int)
     (result Int)
     (block
-      (let 0 (identity (constant 0)))
-      (branch (read 0) (block_id 1) (block_id 3)))
+      (let %0 (identity (constant 0)))
+      (branch (read %0) ^1 ^3))
     (block
-      (let 1 (identity (constant 1)))
-      (branch (read 1) (block_id 2) (block_id 3)))
+      (let %1 (identity (constant 1)))
+      (branch (read %1) ^2 ^3))
     (block
-      (let 2 (identity (constant 1)))
-      (jump (block_id 3)))
+      (let %2 (identity (constant 1)))
+      (jump ^3))
     (block
-      (let 3 (phi (sources (from (block_id 0) (read 0)) (from (block_id 1) (read 1)) (from (block_id 2) (read 2)))))
-      (return 3))))
+      (let %3 (phi (sources (from ^0 (read %0)) (from ^1 (read %1)) (from ^2 (read %2)))))
+      (return %3))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -529,28 +529,28 @@ describe("MIR: phi (control flow join)", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 0]]],
-        ["branch", ["read", 0], ["block_id", 1], ["block_id", 3]],
+        ["let", "%0", ["identity", ["constant", 0]]],
+        ["branch", ["read", "%0"], "^1", "^3"],
       ],
       [
         "block",
-        ["let", 1, ["identity", ["constant", 1]]],
-        ["branch", ["read", 1], ["block_id", 2], ["block_id", 3]],
+        ["let", "%1", ["identity", ["constant", 1]]],
+        ["branch", ["read", "%1"], "^2", "^3"],
       ],
       [
         "block",
-        ["let", 2, ["identity", ["constant", 1]]],
-        ["jump", ["block_id", 3]],
+        ["let", "%2", ["identity", ["constant", 1]]],
+        ["jump", "^3"],
       ],
       [
         "block",
-        ["let", 3, ["phi", [
+        ["let", "%3", ["phi", [
           "sources",
-          ["from", ["block_id", 0], ["read", 0]],
-          ["from", ["block_id", 1], ["read", 1]],
-          ["from", ["block_id", 2], ["read", 2]],
+          ["from", "^0", ["read", "%0"]],
+          ["from", "^1", ["read", "%1"]],
+          ["from", "^2", ["read", "%2"]],
         ]]],
-        ["return", 3],
+        ["return", "%3"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -576,17 +576,17 @@ describe("MIR: phi (control flow join)", () => {
     (locals Int Int Int Int)
     (result Int)
     (block
-      (let 0 (identity (constant 0)))
-      (branch (read 0) (block_id 1) (block_id 3)))
+      (let %0 (identity (constant 0)))
+      (branch (read %0) ^1 ^3))
     (block
-      (let 1 (identity (constant 1)))
-      (branch (read 1) (block_id 2) (block_id 3)))
+      (let %1 (identity (constant 1)))
+      (branch (read %1) ^2 ^3))
     (block
-      (let 2 (identity (constant 1)))
-      (jump (block_id 3)))
+      (let %2 (identity (constant 1)))
+      (jump ^3))
     (block
-      (let 3 (phi (sources (from (block_id 1) (read 1)) (from (block_id 2) (read 2)))))
-      (return 3))))
+      (let %3 (phi (sources (from ^1 (read %1)) (from ^2 (read %2)))))
+      (return %3))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -595,27 +595,27 @@ describe("MIR: phi (control flow join)", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 0]]],
-        ["branch", ["read", 0], ["block_id", 1], ["block_id", 3]],
+        ["let", "%0", ["identity", ["constant", 0]]],
+        ["branch", ["read", "%0"], "^1", "^3"],
       ],
       [
         "block",
-        ["let", 1, ["identity", ["constant", 1]]],
-        ["branch", ["read", 1], ["block_id", 2], ["block_id", 3]],
+        ["let", "%1", ["identity", ["constant", 1]]],
+        ["branch", ["read", "%1"], "^2", "^3"],
       ],
       [
         "block",
-        ["let", 2, ["identity", ["constant", 1]]],
-        ["jump", ["block_id", 3]],
+        ["let", "%2", ["identity", ["constant", 1]]],
+        ["jump", "^3"],
       ],
       [
         "block",
-        ["let", 3, ["phi", [
+        ["let", "%3", ["phi", [
           "sources",
-          ["from", ["block_id", 1], ["read", 1]],
-          ["from", ["block_id", 2], ["read", 2]],
+          ["from", "^1", ["read", "%1"]],
+          ["from", "^2", ["read", "%2"]],
         ]]],
-        ["return", 3],
+        ["return", "%3"],
       ],
     ]];
     expect(input).toBeDefined();

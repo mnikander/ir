@@ -1,8 +1,11 @@
 # MIR Instructions and Type Signatures
 
 MIR uses tagged symbolic expressions.
-Resources (i.e. variable) are identified by their zero indexed position in their respective function.
-Functions and blocks are identified by their zero-based positions in their containing `program` and `function` nodes.
+Resources (i.e. variables) are identified by `%` followed by their zero-based
+position in their respective function.
+Functions are identified by `@` followed by their zero-based position in the
+program, and blocks by `^` followed by their zero-based position in their
+containing `function` node.
 A complete function has the following structure:
 
 ```text
@@ -11,59 +14,63 @@ A complete function has the following structure:
   (locals Int (Borrowed Int))
   (result Int)
   (block
-    (let 0 (identity (constant 42)))
-    (return 0)))
+    (let %0 (identity (constant 42)))
+    (return %0)))
 ```
 
 ## Instructions
 
-| Symbol   | Example                                         | Parameters                  | Comment                                                                        |
-| :------- | :---------------------------------------------- | :-------------------------- | :----------------------------------------------------------------------------- |
-| `let`    | `(let 0 (constant 42))`                         | `Resource, Operation`       | Define resource #0 with the value 42                                           |
-| `drop`   | `(drop 0)`                                      | `Resource`                  | Destroy resource #0                                                            |
-| `jump`   | `(jump (block_id 1))`                           | `BlockId`                   | Unconditional branch to block #1                                               |
-| `branch` | `(branch (read 0) (block_id 1) (block_id 2))`   | `Boolean, BlockId, BlockId` | Branch to block #1 when the condition is true, else branch to block #2         |
-| `return` | `(return 0)`                                    | `T`                         | Return the value of resource #0 from the function                              |
+| Symbol   | Example                             | Parameters                  | Comment                                                                |
+| :------- | :---------------------------------- | :-------------------------- | :--------------------------------------------------------------------- |
+| `let`    | `(let %0 (identity (constant 42)))` | `Resource, Operation`       | Define resource %0 with the value 42                                   |
+| `drop`   | `(drop %0)`                         | `Resource`                  | Destroy resource %0                                                    |
+| `jump`   | `(jump ^1)`                         | `BlockId`                   | Unconditional branch to block #1                                       |
+| `branch` | `(branch (read %0) ^1 ^2)`          | `Boolean, BlockId, BlockId` | Branch to block #1 when the condition is true, else branch to block #2 |
+| `return` | `(return %0)`                       | `T`                         | Return the value of resource %0 from the function                      |
 
 ## Value-Producing Operations
 
 Every value-producing operation is bound to a resource with:
 `(let RESOURCE (OPERATION OPERANDS...))`
+The right-hand side of a let-binding is always an operation.
+The `identity` operation allows duplicating / copying a Value.
 
-| Symbol          | Example                                                                             | Input                   | Output        | Comment                                |
-| :-------------- | :---------------------------------------------------------------------------------- | :---------------------- | :------------ | :------------------------------------- |
-| `phi`           | `(let 0 (phi (sources (from (block_id 1) (read 2)) (from (block_id 2) (move 3)))))` | `T...`                  | `T`           | SSA-style join                         |
-| `call`          | `(let 0 (call (function_id 1) (arguments (read 1) (move 2))))`                      | `T...`                  | `U`           | Function call                          |
-| `borrow`        | `(let 0 (borrow (read 1)))`                                                         | `T`                     | `Borrowed T`  | Create a read-only, non-owning pointer |
-| `load`          | `(let 0 (load (read 1)))`                                                           | `Borrowed T`            | `T`           | Load the value referenced by a pointer |
-| `identity`      | `(let 0 (identity (constant 42)))`                                                  | `T`                     | `T`           | Copy an operand into a resource        |
-| `add`           | `(let 0 (add (read 1) (constant 2)))`                                               | `Int, Int`              | `Int`         |                                        |
-| `subtract`      | `(let 0 (subtract (read 1) (move 2)))`                                              | `Int, Int`              | `Int`         |                                        |
-| `multiply`      | `(let 0 (multiply (read 1) (constant 2)))`                                          | `Int, Int`              | `Int`         |                                        |
-| `divide`        | `(let 0 (divide (read 1) (move 2)))`                                                | `Int, Int`              | `Int`         |                                        |
-| `remainder`     | `(let 0 (remainder (read 1) (constant 2)))`                                         | `Int, Int`              | `Int`         |                                        |
-| `minimum`       | `(let 0 (minimum (read 1) (move 2)))`                                               | `Int, Int`              | `Int`         |                                        |
-| `maximum`       | `(let 0 (maximum (read 1) (constant 2)))`                                           | `Int, Int`              | `Int`         |                                        |
-| `negate`        | `(let 0 (negate (read 1)))`                                                         | `Int`                   | `Int`         |                                        |
-| `equal`         | `(let 0 (equal (read 1) (constant 2)))`                                             | `Int, Int`              | `Boolean`     |                                        |
-| `unequal`       | `(let 0 (unequal (read 1) (move 2)))`                                               | `Int, Int`              | `Boolean`     |                                        |
-| `less`          | `(let 0 (less (read 1) (constant 2)))`                                              | `Int, Int`              | `Boolean`     |                                        |
-| `less_equal`    | `(let 0 (less_equal (read 1) (move 2)))`                                            | `Int, Int`              | `Boolean`     |                                        |
-| `greater`       | `(let 0 (greater (read 1) (constant 2)))`                                           | `Int, Int`              | `Boolean`     |                                        |
-| `greater_equal` | `(let 0 (greater_equal (read 1) (move 2)))`                                         | `Int, Int`              | `Boolean`     |                                        |
+| Symbol          | Example                                                            | Input              | Output        | Comment                                |
+| :-------------- | :----------------------------------------------------------------- | :----------------- | :------------ | :------------------------------------- |
+| `phi`           | `(let %0 (phi (sources (from ^1 (read %2)) (from ^2 (move %3)))))` | `T...`             | `T`           | SSA-style join                         |
+| `call`          | `(let %0 (call @1 (arguments (read %1) (move %2))))`               | `T...`             | `U`           | Function call                          |
+| `borrow`        | `(let %0 (borrow (read %1)))`                                      | `T`                | `Borrowed T`  | Create a read-only, non-owning pointer |
+| `load`          | `(let %0 (load (read %1)))`                                        | `Borrowed T`       | `T`           | Load the value referenced by a pointer |
+| `identity`      | `(let %0 (identity (constant 42)))`                                | `T`                | `T`           | Copy an operand into a resource        |
+| `add`           | `(let %0 (add (read %1) (constant 2)))`                            | `Int, Int`         | `Int`         |                                        |
+| `subtract`      | `(let %0 (subtract (read %1) (move %2)))`                          | `Int, Int`         | `Int`         |                                        |
+| `multiply`      | `(let %0 (multiply (read %1) (constant 2)))`                       | `Int, Int`         | `Int`         |                                        |
+| `divide`        | `(let %0 (divide (read %1) (move %2)))`                            | `Int, Int`         | `Int`         |                                        |
+| `remainder`     | `(let %0 (remainder (read %1) (constant 2)))`                      | `Int, Int`         | `Int`         |                                        |
+| `minimum`       | `(let %0 (minimum (read %1) (move %2)))`                           | `Int, Int`         | `Int`         |                                        |
+| `maximum`       | `(let %0 (maximum (read %1) (constant 2)))`                        | `Int, Int`         | `Int`         |                                        |
+| `negate`        | `(let %0 (negate (read %1)))`                                      | `Int`              | `Int`         |                                        |
+| `equal`         | `(let %0 (equal (read %1) (constant 2)))`                          | `Int, Int`         | `Boolean`     |                                        |
+| `unequal`       | `(let %0 (unequal (read %1) (move %2)))`                           | `Int, Int`         | `Boolean`     |                                        |
+| `less`          | `(let %0 (less (read %1) (constant 2)))`                           | `Int, Int`         | `Boolean`     |                                        |
+| `less_equal`    | `(let %0 (less_equal (read %1) (move %2)))`                        | `Int, Int`         | `Boolean`     |                                        |
+| `greater`       | `(let %0 (greater (read %1) (constant 2)))`                        | `Int, Int`         | `Boolean`     |                                        |
+| `greater_equal` | `(let %0 (greater_equal (read %1) (move %2)))`                     | `Int, Int`         | `Boolean`     |                                        |
 
 ## Operands and References
 
 The resource's type is supplied by the function's `parameters` and `locals` lists.
 Operands can read or move a Resource, or they can be a constant (immediate) value.
 
-| Symbol        | Example           | Meaning                                  |
-| :------------ | :---------------- | :--------------------------------------- |
-| `read`        | `(read 0)`        | Read resource 0 without consuming it     |
-| `move`        | `(move 0)`        | Destructively move resource 0            |
-| `constant`    | `(constant 42)`   | Immediate integer value                  |
-| `function_id` | `(function_id 1)` | Function at index 1 in the program       |
-| `block_id`    | `(block_id 1)`    | Block at index 1 in the current function |
+| Symbol     | Example           | Meaning                                  |
+| :--------- | :---------------- | :--------------------------------------- |
+| `read`     | `(read %0)`       | Read resource %0 without consuming it    |
+| `move`     | `(move %0)`       | Destructively move resource %0           |
+| `constant` | `(constant 42)`   | Immediate integer value                  |
+
+Function and block references are written with the `@` and `^` sigils:
+`@1` refers to the function at index 1 in the program, and `^2` refers to the
+block at index 2 in the current function.
 
 ## Notes
 

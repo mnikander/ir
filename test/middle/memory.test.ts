@@ -14,10 +14,10 @@ describe("MIR: memory and ownership", () => {
     (locals Int (Borrowed Int) Int)
     (result Int)
     (block
-      (let 0 (identity (constant 11)))
-      (let 1 (borrow (read 0)))
-      (let 2 (load (read 1)))
-      (return 2))))
+      (let %0 (identity (constant 11)))
+      (let %1 (borrow (read %0)))
+      (let %2 (load (read %1)))
+      (return %2))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -26,10 +26,10 @@ describe("MIR: memory and ownership", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 11]]],
-        ["let", 1, ["borrow", ["read", 0]]],
-        ["let", 2, ["load", ["read", 1]]],
-        ["return", 2],
+        ["let", "%0", ["identity", ["constant", 11]]],
+        ["let", "%1", ["borrow", ["read", "%0"]]],
+        ["let", "%2", ["load", ["read", "%1"]]],
+        ["return", "%2"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -49,9 +49,9 @@ describe("MIR: memory and ownership", () => {
     (locals Int Int)
     (result Int)
     (block
-      (let 0 (identity (constant 11)))
-      (let 1 (identity (move 0)))
-      (return 1))))
+      (let %0 (identity (constant 11)))
+      (let %1 (identity (move %0)))
+      (return %1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -60,9 +60,9 @@ describe("MIR: memory and ownership", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 11]]],
-        ["let", 1, ["identity", ["move", 0]]],
-        ["return", 1],
+        ["let", "%0", ["identity", ["constant", 11]]],
+        ["let", "%1", ["identity", ["move", "%0"]]],
+        ["return", "%1"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -78,10 +78,10 @@ describe("MIR: memory and ownership", () => {
     (locals Int Int Int)
     (result Int)
     (block
-      (let 0 (identity (constant 11)))
-      (let 1 (identity (constant 13)))
-      (let 2 (add (move 0) (read 1)))
-      (return 2))))
+      (let %0 (identity (constant 11)))
+      (let %1 (identity (constant 13)))
+      (let %2 (add (move %0) (read %1)))
+      (return %2))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -90,10 +90,10 @@ describe("MIR: memory and ownership", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 11]]],
-        ["let", 1, ["identity", ["constant", 13]]],
-        ["let", 2, ["add", ["move", 0], ["read", 1]]],
-        ["return", 2],
+        ["let", "%0", ["identity", ["constant", 11]]],
+        ["let", "%1", ["identity", ["constant", 13]]],
+        ["let", "%2", ["add", ["move", "%0"], ["read", "%1"]]],
+        ["return", "%2"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -115,9 +115,9 @@ describe.skip("MIR: use-after-free", () => {
     (locals Int)
     (result Int)
     (block
-      (let 0 (identity (constant 0)))
+      (let %0 (identity (constant 0)))
       (z)
-      (return 0))))
+      (return %0))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -126,9 +126,9 @@ describe.skip("MIR: use-after-free", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 0]]],
-        ["drop", 0],
-        ["return", 0],
+        ["let", "%0", ["identity", ["constant", 0]]],
+        ["drop", "%0"],
+        ["return", "%0"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -144,10 +144,10 @@ describe.skip("MIR: use-after-free", () => {
     (locals Int Int)
     (result Int)
     (block
-      (let 0 (identity (constant 0)))
-      (drop 0)
-      (let 1 (negate (read 0)))
-      (return 1))))
+      (let %0 (identity (constant 0)))
+      (drop %0)
+      (let %1 (negate (read %0)))
+      (return %1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -156,10 +156,10 @@ describe.skip("MIR: use-after-free", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 0]]],
-        ["drop", 0],
-        ["let", 1, ["negate", ["read", 0]]],
-        ["return", 1],
+        ["let", "%0", ["identity", ["constant", 0]]],
+        ["drop", "%0"],
+        ["let", "%1", ["negate", ["read", "%0"]]],
+        ["return", "%1"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -175,11 +175,11 @@ describe.skip("MIR: use-after-free", () => {
     (locals Int Int)
     (result Int)
     (block
-      (let 0 (identity (constant 11)))
-      (drop 0)
-      (drop 0)
-      (let 1 (identity (constant 11)))
-      (return 1))))
+      (let %0 (identity (constant 11)))
+      (drop %0)
+      (drop %0)
+      (let %1 (identity (constant 11)))
+      (return %1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -188,11 +188,11 @@ describe.skip("MIR: use-after-free", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 11]]],
-        ["drop", 0],
-        ["drop", 0],
-        ["let", 1, ["identity", ["constant", 11]]],
-        ["return", 1],
+        ["let", "%0", ["identity", ["constant", 11]]],
+        ["drop", "%0"],
+        ["drop", "%0"],
+        ["let", "%1", ["identity", ["constant", 11]]],
+        ["return", "%1"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -208,9 +208,9 @@ describe.skip("MIR: use-after-free", () => {
     (locals Int Int)
     (result Int)
     (block
-      (let 0 (identity (constant 11)))
-      (let 1 (identity (move 0)))
-      (return 0))))
+      (let %0 (identity (constant 11)))
+      (let %1 (identity (move %0)))
+      (return %0))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -219,9 +219,9 @@ describe.skip("MIR: use-after-free", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 11]]],
-        ["let", 1, ["identity", ["move", 0]]],
-        ["return", 0],
+        ["let", "%0", ["identity", ["constant", 11]]],
+        ["let", "%1", ["identity", ["move", "%0"]]],
+        ["return", "%0"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -237,11 +237,11 @@ describe.skip("MIR: use-after-free", () => {
     (locals Int (Borrowed Int) Int)
     (result Int)
     (block
-      (let 0 (identity (constant 11)))
-      (let 1 (borrow (read 0)))
-      (drop 0)
-      (let 2 (load (read 1)))
-      (return 2))))
+      (let %0 (identity (constant 11)))
+      (let %1 (borrow (read %0)))
+      (drop %0)
+      (let %2 (load (read %1)))
+      (return %2))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -250,11 +250,11 @@ describe.skip("MIR: use-after-free", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 11]]],
-        ["let", 1, ["borrow", ["read", 0]]],
-        ["drop", 0],
-        ["let", 2, ["load", ["read", 1]]],
-        ["return", 2],
+        ["let", "%0", ["identity", ["constant", 11]]],
+        ["let", "%1", ["borrow", ["read", "%0"]]],
+        ["drop", "%0"],
+        ["let", "%2", ["load", ["read", "%1"]]],
+        ["return", "%2"],
       ],
     ]];
     expect(input).toBeDefined();
@@ -270,11 +270,11 @@ describe.skip("MIR: use-after-free", () => {
     (locals Int (Borrowed Int) Int Int)
     (result Int)
     (block
-      (let 0 (identity (constant 11)))
-      (let 1 (borrow (read 0)))
-      (let 2 (identity (move 0)))
-      (let 3 (load (read 1)))
-      (return 3))))
+      (let %0 (identity (constant 11)))
+      (let %1 (borrow (read %0)))
+      (let %2 (identity (move %0)))
+      (let %3 (load (read %1)))
+      (return %3))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -283,11 +283,11 @@ describe.skip("MIR: use-after-free", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 11]]],
-        ["let", 1, ["borrow", ["read", 0]]],
-        ["let", 2, ["identity", ["move", 0]]],
-        ["let", 3, ["load", ["read", 1]]],
-        ["return", 3],
+        ["let", "%0", ["identity", ["constant", 11]]],
+        ["let", "%1", ["borrow", ["read", "%0"]]],
+        ["let", "%2", ["identity", ["move", "%0"]]],
+        ["let", "%3", ["load", ["read", "%1"]]],
+        ["return", "%3"],
       ],
     ]];
     expect(input).toBeDefined();

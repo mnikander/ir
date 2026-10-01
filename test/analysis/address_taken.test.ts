@@ -13,9 +13,9 @@ describe("analysis: address taken", () => {
     (locals Int Int)
     (result Int)
     (block
-      (let 0 (identity (constant 0)))
-      (let 1 (identity (constant 1)))
-      (return 1))))
+      (let %0 (identity (constant 0)))
+      (let %1 (identity (constant 1)))
+      (return %1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -24,13 +24,13 @@ describe("analysis: address taken", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 0]]],
-        ["let", 1, ["identity", ["constant", 1]]],
-        ["return", 1],
+        ["let", "%0", ["identity", ["constant", 0]]],
+        ["let", "%1", ["identity", ["constant", 1]]],
+        ["return", "%1"],
       ],
     ]];
 
-    const borrows: number[] = address_taken(input[1]);
+    const borrows: MIR.ResourceId[] = address_taken(input[1]);
 
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -45,10 +45,10 @@ describe("analysis: address taken", () => {
     (locals Int Int (Borrowed Int))
     (result Int)
     (block
-      (let 0 (identity (constant 0)))
-      (let 1 (identity (constant 1)))
-      (let 2 (borrow (read 1)))
-      (return 1))))
+      (let %0 (identity (constant 0)))
+      (let %1 (identity (constant 1)))
+      (let %2 (borrow (read %1)))
+      (return %1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -57,19 +57,19 @@ describe("analysis: address taken", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 0]]],
-        ["let", 1, ["identity", ["constant", 1]]],
-        ["let", 2, ["borrow", ["read", 1]]],
-        ["return", 1],
+        ["let", "%0", ["identity", ["constant", 0]]],
+        ["let", "%1", ["identity", ["constant", 1]]],
+        ["let", "%2", ["borrow", ["read", "%1"]]],
+        ["return", "%1"],
       ],
     ]];
 
-    const borrows: number[] = address_taken(input[1]);
+    const borrows: MIR.ResourceId[] = address_taken(input[1]);
 
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(borrows.length).toBe(1);
-    expect(borrows[0]).toBe(1);
+    expect(borrows[0]).toBe("%1");
   });
 
   it("must identify which resources are borrowed in multiple blocks", () => {
@@ -80,15 +80,15 @@ describe("analysis: address taken", () => {
     (locals Int Int (Borrowed Int) Int Int (Borrowed Int))
     (result Int)
     (block
-      (let 0 (identity (constant 0)))
-      (let 1 (identity (constant 1)))
-      (let 2 (borrow (read 0)))
-      (jump (block_id 1)))
+      (let %0 (identity (constant 0)))
+      (let %1 (identity (constant 1)))
+      (let %2 (borrow (read %0)))
+      (jump ^1))
     (block
-      (let 3 (identity (constant 3)))
-      (let 4 (identity (constant 4)))
-      (let 5 (borrow (read 4)))
-      (return 1))))
+      (let %3 (identity (constant 3)))
+      (let %4 (identity (constant 4)))
+      (let %5 (borrow (read %4)))
+      (return %1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
@@ -105,26 +105,26 @@ describe("analysis: address taken", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["identity", ["constant", 0]]],
-        ["let", 1, ["identity", ["constant", 1]]],
-        ["let", 2, ["borrow", ["read", 0]]],
-        ["jump", ["block_id", 1]],
+        ["let", "%0", ["identity", ["constant", 0]]],
+        ["let", "%1", ["identity", ["constant", 1]]],
+        ["let", "%2", ["borrow", ["read", "%0"]]],
+        ["jump", "^1"],
       ],
       [
         "block",
-        ["let", 3, ["identity", ["constant", 3]]],
-        ["let", 4, ["identity", ["constant", 4]]],
-        ["let", 5, ["borrow", ["read", 4]]],
-        ["return", 1],
+        ["let", "%3", ["identity", ["constant", 3]]],
+        ["let", "%4", ["identity", ["constant", 4]]],
+        ["let", "%5", ["borrow", ["read", "%4"]]],
+        ["return", "%1"],
       ],
     ]];
 
-    const borrows: number[] = address_taken(input[1]);
+    const borrows: MIR.ResourceId[] = address_taken(input[1]);
 
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
     expect(borrows.length).toBe(2);
-    expect(borrows[0]).toBe(0);
-    expect(borrows[1]).toBe(4);
+    expect(borrows[0]).toBe("%0");
+    expect(borrows[1]).toBe("%4");
   });
 });

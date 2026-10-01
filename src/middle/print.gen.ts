@@ -48,17 +48,17 @@ function print_line(line: MIR.Line): string {
     case "let":
       return print_let(line);
     case "drop":
-      return print_list("drop", [String(line[1])]);
+      return print_list("drop", [line[1]]);
     case "return":
-      return print_list("return", [String(line[1])]);
+      return print_list("return", [line[1]]);
     case "branch":
       return print_list("branch", [
         print_input(line[1]),
-        print_block_id(line[2]),
-        print_block_id(line[3]),
+        line[2],
+        line[3],
       ]);
     case "jump":
-      return print_list("jump", [print_block_id(line[1])]);
+      return print_list("jump", [line[1]]);
     default:
       return assert_never(line);
   }
@@ -70,7 +70,7 @@ function print_value(value: MIR.Operation): string {
       return print_list("phi", [print_sources(value[1])]);
     case "call":
       return print_list("call", [
-        print_function_id(value[1]),
+        value[1],
         print_arguments(value[2]),
       ]);
     case "identity":
@@ -110,7 +110,7 @@ function print_sources([, ...sources]: MIR.Sources): string {
 }
 
 function print_source([, block, register]: MIR.From): string {
-  return print_list("from", [print_block_id(block), print_input(register)]);
+  return print_list("from", [block, print_input(register)]);
 }
 
 function print_input(input: MIR.Read | MIR.Move | MIR.Constant): string {
@@ -127,7 +127,7 @@ function print_input(input: MIR.Read | MIR.Move | MIR.Constant): string {
 }
 
 function print_let([, resource, value]: MIR.Let): string {
-  return print_list("let", [String(resource), print_value(value)]);
+  return print_list("let", [resource, print_value(value)]);
 }
 
 function print_access([, resource]: MIR.Read): string {
@@ -140,14 +140,6 @@ function print_consume([, resource]: MIR.Move): string {
 
 function print_literal([, value]: MIR.Constant): string {
   return `(constant ${value})`;
-}
-
-function print_function_id([, id]: MIR.FunctionId): string {
-  return `(function_id ${id})`;
-}
-
-function print_block_id([, id]: MIR.BlockId): string {
-  return `(block_id ${id})`;
 }
 
 function print_type(type: Type): string {
