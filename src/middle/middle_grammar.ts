@@ -60,3 +60,11 @@ export enum Get {
     First     = 1, // alias to first value argument
     Second    = 2, // alias to second value argument
 }
+
+export function is_let(line: Line): line is Let {
+    return line[Get.Tag] == "let";
+}
+
+export function is_borrow(op: Operation): op is Borrow {
+    return op[Get.Tag] == "borrow";
+}

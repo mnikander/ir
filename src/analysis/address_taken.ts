@@ -1,0 +1,20 @@
+// Copyright (c) 2026 Marco Nikander
+
+import * as MIR from "../middle/middle_grammar.ts";
+
+export function address_taken(fun: MIR.Function): number[] {
+  const blocks: MIR.Block[] = fun[4].slice(1) as MIR.Block[];
+  const intermediate_results: number[][] = blocks.map(address_taken_in_block);
+  return intermediate_results.flat(1);
+}
+
+function address_taken_in_block(block: MIR.Block): number[] {
+  const lines: MIR.Line[] = block.slice(1) as MIR.Line[];
+  const lets: MIR.Let[] = lines.filter(MIR.is_let);
+  const borrowers: MIR.Let[] = lets.filter((l: MIR.Let) => {
+    return MIR.is_borrow(l[2]);
+  });
+  const borrows: MIR.Borrow[] = borrowers.map((b) => b[2] as MIR.Borrow);
+  const borrowed_resource_ids: number[] = borrows.map((b) => b[1][1]);
+  return borrowed_resource_ids;
+}
