@@ -21,9 +21,9 @@ export type Comparison   = Equal | Unequal | Less | LessEqual | Greater | Greate
 export type Terminator   = Return | Jump | Branch;
 export type Operand      = Access | Consume | Literal;
 
-export type Let          = [ tag: "let",           resource: number, value: Operation ]; // define a Resource
-export type Drop         = [ tag: "drop",          resource: number ];
-export type Return       = [ tag: "return",        resource: number ];
+export type Let          = [ tag: "let",           ResourceId, value: Operation ]; // define a Resource
+export type Drop         = [ tag: "drop",          ResourceId ];
+export type Return       = [ tag: "return",        ResourceId ];
 export type Jump         = [ tag: "jump",          targetBlock: BlockId ];
 export type Branch       = [ tag: "branch",        condition: Operand, thenBlock: BlockId, elseBlock: BlockId ];
 export type Phi          = [ tag: "phi",           inputs: Sources];
@@ -46,12 +46,13 @@ export type LessEqual    = [ tag: "less_equal",    Operand, Operand ];
 export type Greater      = [ tag: "greater",       Operand, Operand ];
 export type GreaterEqual = [ tag: "greater_equal", Operand, Operand ];
 
-export type Access       = [ tag: "access",        resource: number ]; // read the value of a Resource
-export type Consume      = [ tag: "consume",       resource: number ]; // destructively move a Resource
+export type Access       = [ tag: "access",        ResourceId ]; // read the value of a Resource
+export type Consume      = [ tag: "consume",       ResourceId ]; // destructively move a Resource
 export type Literal      = [ tag: "literal",       value: number ];
 export type Arguments    = [ tag: "arguments",     ...Operand[]];
 export type Sources      = [ tag: "sources",       ...From[] ];
 export type From         = [ tag: "from",          block: BlockId, resource: Operand ];
+export type ResourceId   = number;
 export type FunctionId   = [ tag: "function_id",   index: number ];
 export type BlockId      = [ tag: "block_id",      index: number ];
 
