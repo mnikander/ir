@@ -15,8 +15,7 @@ export type Blocks       = [ tag: "blocks", ...Block[]];
 export type Block        = [ tag: "block", ...Line[]];
 
 export type Line         = Let | Drop | Terminator;
-export type Operation    = Phi | Call | Memory | Copy | Arithmetic | Comparison;
-export type Memory       = Borrow | Dereference;
+export type Operation    = Phi | Call | Borrow | Dereference | Copy | Arithmetic | Comparison;
 export type Arithmetic   = Add | Subtract | Multiply | Divide | Remainder | Minimum | Maximum | Negative;
 export type Comparison   = Equal | Unequal | Less | LessEqual | Greater | GreaterEqual;
 export type Terminator   = Return | Jump | Branch;
