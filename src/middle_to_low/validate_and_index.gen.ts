@@ -107,7 +107,7 @@ function validate_terminator(
 }
 
 function validate_operand(operand: MIR.Operand, resources: number): void {
-  if (operand[0] !== "literal") {
+  if (operand[0] !== "constant") {
     check_resource(operand[1], resources, "operand");
   }
 }

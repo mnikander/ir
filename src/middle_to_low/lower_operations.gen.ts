@@ -136,7 +136,7 @@ function prepare_operands(
   const before: UnresolvedInstruction[] = [];
   const after: UnresolvedInstruction[] = [];
   const offsets = operands.map((operand) => {
-    if (operand[0] === "literal") {
+    if (operand[0] === "constant") {
       const temporary = next++;
       before.push([temporary, "constant", { value: operand[1] }]);
       return temporary;

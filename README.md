@@ -65,8 +65,8 @@ A very simple example of an MIR program is given by:
     (result Int)
     (blocks
       (block
-        (let 0 (copy (literal 13)))
-        (let 1 (copy (literal 42)))
+        (let 0 (copy (constant 13)))
+        (let 1 (copy (constant 42)))
         (return 1)))))
 ```
 
@@ -79,7 +79,7 @@ value 42, and returns resource #1.
 Overall, there are five fundamental syntactic forms in the body of an MIR
 function. They are illustrated by these examples:
 
-- `(let 0 (copy (literal 42)))` defines resource #0 with the value 42.
+- `(let 0 (copy (constant 42)))` defines resource #0 with the value 42.
 - `(drop 0)` drops resource #0.
 - `(return 0)` returns resource #0 from the function.
 - `(jump (block_id 1))` jumps to block #1 unconditionally.
@@ -88,7 +88,7 @@ function. They are illustrated by these examples:
 Every value-producing line takes the form of a let-binding. The general form is
 `(let RESOURCE OPERATION)`. For example:
 
-- `(let 0 (copy (literal 42)))` loads the integer `42` into resource 0.
+- `(let 0 (copy (constant 42)))` loads the integer `42` into resource 0.
 - `(let 1 (add (access 0) (consume 2)))` adds two operands and binds the result
   to resource 1.
 - `(let 2 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))`
@@ -97,8 +97,8 @@ Every value-producing line takes the form of a let-binding. The general form is
   pass resource #0 as an argument, and bind the result to resource #3.
 
 Operands are `(access N)` for a non-consuming read, `(consume N)` for a
-destructive move, and `(literal N)` for an immediate integer. Block and function
-references use `(block_id N)` and `(function_id N)`.
+destructive move, and `(constant N)` for an immediate integer. Block and
+function references use `(block_id N)` and `(function_id N)`.
 
 ### Symbolic expressions vs. JSON
 
@@ -129,7 +129,7 @@ every tuple is tagged. Example of canonical formatting:
       (block
         (let 0 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))
         (let 1 (call (function_id 0) (arguments (access 0) (consume 2))))
-        (branch (literal 0) (block_id 1) (block_id 2)))
+        (branch (constant 0) (block_id 1) (block_id 2)))
       (block
         (return 1)))))
 ```

@@ -19,7 +19,7 @@ export type Operation    = Phi | Call | Borrow | Load | Copy | Arithmetic | Comp
 export type Arithmetic   = Add | Subtract | Multiply | Divide | Remainder | Minimum | Maximum | Negative;
 export type Comparison   = Equal | Unequal | Less | LessEqual | Greater | GreaterEqual;
 export type Terminator   = Return | Jump | Branch;
-export type Operand      = Access | Consume | Literal;
+export type Operand      = Access | Consume | Constant;
 
 export type Let          = [ tag: "let",           ResourceId, value: Operation ]; // define a Resource
 export type Drop         = [ tag: "drop",          ResourceId ];
@@ -48,7 +48,7 @@ export type GreaterEqual = [ tag: "greater_equal", Operand, Operand ];
 
 export type Access       = [ tag: "access",        ResourceId ]; // read the value of a Resource
 export type Consume      = [ tag: "consume",       ResourceId ]; // destructively move a Resource
-export type Literal      = [ tag: "literal",       value: number ];
+export type Constant     = [ tag: "constant",       value: number ];
 export type Arguments    = [ tag: "arguments",     ...Operand[]];
 export type Sources      = [ tag: "sources",       ...From[] ];
 export type From         = [ tag: "from",          block: BlockId, resource: Operand ];

@@ -15,8 +15,8 @@ describe("MIR: function call", () => {
     (result Int)
     (blocks
       (block
-        (let 0 (copy (literal 11)))
-        (let 1 (copy (literal 13)))
+        (let 0 (copy (constant 11)))
+        (let 1 (copy (constant 13)))
         (let 2 (call (function_id 1) (arguments (access 1))))
         (return 2))))
   (function
@@ -34,8 +34,8 @@ describe("MIR: function call", () => {
       ["result", ["Int"]],
       ["blocks", [
         "block",
-        ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 1, ["copy", ["literal", 13]]],
+        ["let", 0, ["copy", ["constant", 11]]],
+        ["let", 1, ["copy", ["constant", 13]]],
         ["let", 2, ["call", ["function_id", 1], ["arguments", ["access", 1]]]],
         ["return", 2],
       ]],
@@ -63,8 +63,8 @@ describe("MIR: function call", () => {
     (result Int)
     (blocks
       (block
-        (let 0 (copy (literal 11)))
-        (let 1 (copy (literal 13)))
+        (let 0 (copy (constant 11)))
+        (let 1 (copy (constant 13)))
         (let 2 (call (function_id 1) (arguments (access 0) (access 1))))
         (return 2))))
   (function
@@ -82,8 +82,8 @@ describe("MIR: function call", () => {
       ["result", ["Int"]],
       ["blocks", [
         "block",
-        ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 1, ["copy", ["literal", 13]]],
+        ["let", 0, ["copy", ["constant", 11]]],
+        ["let", 1, ["copy", ["constant", 13]]],
         ["let", 2, ["call", ["function_id", 1], ["arguments", ["access", 0], [
           "access",
           1,
@@ -120,8 +120,8 @@ describe("MIR: function call", () => {
     (result Int)
     (blocks
       (block
-        (let 0 (copy (literal 5)))
-        (let 1 (copy (literal 1)))
+        (let 0 (copy (constant 5)))
+        (let 1 (copy (constant 1)))
         (let 2 (call (function_id 1) (arguments (access 0) (access 1))))
         (return 2))))
   (function
@@ -130,10 +130,10 @@ describe("MIR: function call", () => {
     (result Int)
     (blocks
       (block
-        (let 3 (equal (access 0) (literal 1)))
+        (let 3 (equal (access 0) (constant 1)))
         (branch (access 3) (block_id 2) (block_id 1)))
       (block
-        (let 4 (subtract (access 0) (literal 1)))
+        (let 4 (subtract (access 0) (constant 1)))
         (let 5 (multiply (access 0) (access 1)))
         (let 6 (call (function_id 1) (arguments (access 4) (access 5))))
         (jump (block_id 2)))
@@ -148,8 +148,8 @@ describe("MIR: function call", () => {
       ["result", ["Int"]],
       ["blocks", [
         "block",
-        ["let", 0, ["copy", ["literal", 5]]],
-        ["let", 1, ["copy", ["literal", 1]]],
+        ["let", 0, ["copy", ["constant", 5]]],
+        ["let", 1, ["copy", ["constant", 1]]],
         ["let", 2, ["call", ["function_id", 1], ["arguments", ["access", 0], [
           "access",
           1,
@@ -163,11 +163,11 @@ describe("MIR: function call", () => {
       ["result", ["Int"]],
       ["blocks", [
         "block",
-        ["let", 3, ["equal", ["access", 0], ["literal", 1]]],
+        ["let", 3, ["equal", ["access", 0], ["constant", 1]]],
         ["branch", ["access", 3], ["block_id", 2], ["block_id", 1]],
       ], [
         "block",
-        ["let", 4, ["subtract", ["access", 0], ["literal", 1]]],
+        ["let", 4, ["subtract", ["access", 0], ["constant", 1]]],
         ["let", 5, ["multiply", ["access", 0], ["access", 1]]],
         ["let", 6, ["call", ["function_id", 1], ["arguments", ["access", 4], [
           "access",

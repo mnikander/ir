@@ -71,7 +71,7 @@ describe("MIR printer", () => {
               ["consume", 2],
             ]]],
             ["let", 2, ["call", ["function_id", 1], ["arguments"]]],
-            ["let", 3, ["copy", ["literal", 42]]],
+            ["let", 3, ["copy", ["constant", 42]]],
             ["let", 4, ["copy", ["access", 3]]],
             ["let", 5, ["borrow", ["access", 4]]],
             ["let", 6, ["borrow", ["access", 5]]],
@@ -102,7 +102,7 @@ describe("MIR printer", () => {
         "        (let 0 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))\n" +
         "        (let 1 (call (function_id 0) (arguments (access 0) (consume 2))))\n" +
         "        (let 2 (call (function_id 1) (arguments)))\n" +
-        "        (let 3 (copy (literal 42)))\n" +
+        "        (let 3 (copy (constant 42)))\n" +
         "        (let 4 (copy (access 3)))\n" +
         "        (let 5 (borrow (access 4)))\n" +
         "        (let 6 (borrow (access 5)))\n" +
@@ -142,7 +142,7 @@ describe("MIR printer", () => {
     ) => ["let", index, [tag, ["access", 0], ["consume", 1]]]);
     lines.push(
       ["let", 13, ["negate", ["access", 2]]],
-      ["branch", ["literal", 0], ["block_id", 1], ["block_id", 2]],
+      ["branch", ["constant", 0], ["block_id", 1], ["block_id", 2]],
       ["return", 13],
     );
     const input: MIR.Program = [
@@ -166,7 +166,7 @@ describe("MIR printer", () => {
         "      (block\n" +
         expected_lines.join("\n") + "\n" +
         "        (let 13 (negate (access 2)))\n" +
-        "        (branch (literal 0) (block_id 1) (block_id 2))\n" +
+        "        (branch (constant 0) (block_id 1) (block_id 2))\n" +
         "        (return 13)))))\n",
     );
   });

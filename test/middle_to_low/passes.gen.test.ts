@@ -24,13 +24,13 @@ function program(lines: MIR.Line[], locals = 1): MIR.Program {
 describe("MIR to LIR micro-passes", () => {
   it("indexes resources and rejects duplicate definitions", () => {
     const indexed = validate_and_index(
-      program([["let", 0, ["copy", ["literal", 1]]], ["return", 0]]),
+      program([["let", 0, ["copy", ["constant", 1]]], ["return", 0]]),
     );
     expect(indexed[0].resource_count).toBe(1);
     expect(() =>
       validate_and_index(
-        program([["let", 0, ["copy", ["literal", 1]]], ["let", 0, ["copy", [
-          "literal",
+        program([["let", 0, ["copy", ["constant", 1]]], ["let", 0, ["copy", [
+          "constant",
           2,
         ]]], ["return", 0]]),
       )
@@ -40,7 +40,7 @@ describe("MIR to LIR micro-passes", () => {
   it("materializes literals above declared resources", () => {
     const output = lower_operations(
       validate_and_index(
-        program([["let", 0, ["add", ["literal", 2], ["literal", 3]]], [
+        program([["let", 0, ["add", ["constant", 2], ["constant", 3]]], [
           "return",
           0,
         ]]),
@@ -54,10 +54,10 @@ describe("MIR to LIR micro-passes", () => {
   it("drops consumed operands but preserves accessed operands", () => {
     const output = lower_operations(
       validate_and_index(
-        program([["let", 0, ["copy", ["literal", 7]]], ["let", 1, ["add", [
+        program([["let", 0, ["copy", ["constant", 7]]], ["let", 1, ["add", [
           "consume",
           0,
-        ], ["literal", 1]]], ["return", 1]], 2),
+        ], ["constant", 1]]], ["return", 1]], 2),
       ),
     );
     expect(output).toContainEqual([0, "drop"]);
@@ -70,7 +70,7 @@ describe("MIR to LIR micro-passes", () => {
       ["parameters"],
       ["locals", ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", ["block", ["let", 0, ["copy", ["literal", 1]]], ["jump", [
+      ["blocks", ["block", ["let", 0, ["copy", ["constant", 1]]], ["jump", [
         "block_id",
         1,
       ]]], ["block", ["let", 1, ["phi", ["sources", ["from", ["block_id", 0], [
@@ -96,7 +96,10 @@ describe("MIR to LIR micro-passes", () => {
       ["result", ["Int"]],
       [
         "blocks",
-        ["block", ["branch", ["literal", 1], ["block_id", 1], ["block_id", 2]]],
+        ["block", ["branch", ["constant", 1], ["block_id", 1], [
+          "block_id",
+          2,
+        ]]],
         ["block", ["jump", ["block_id", 2]]],
         ["block", ["let", 1, ["phi", ["sources", ["from", ["block_id", 1], [
           "access",

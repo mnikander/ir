@@ -120,13 +120,13 @@ function print_source([, block, register]: MIR.From): string {
   return print_list("from", [print_block_id(block), print_input(register)]);
 }
 
-function print_input(input: MIR.Access | MIR.Consume | MIR.Literal): string {
+function print_input(input: MIR.Access | MIR.Consume | MIR.Constant): string {
   switch (input[0]) {
     case "access":
       return print_access(input);
     case "consume":
       return print_consume(input);
-    case "literal":
+    case "constant":
       return print_literal(input);
     default:
       return assert_never(input);
@@ -145,8 +145,8 @@ function print_consume([, resource]: MIR.Consume): string {
   return `(consume ${resource})`;
 }
 
-function print_literal([, value]: MIR.Literal): string {
-  return `(literal ${value})`;
+function print_literal([, value]: MIR.Constant): string {
+  return `(constant ${value})`;
 }
 
 function print_function_id([, id]: MIR.FunctionId): string {

@@ -6,7 +6,7 @@ import { lower } from "../../src/middle_to_low/lower.gen.ts";
 import { evaluate } from "../../src/low/machine.ts";
 
 describe("MIR: literals and exit", () => {
-  it("must evaluate copy and return of a literal", () => {
+  it("must evaluate copy and return of a constant", () => {
     const text: string = `
 (program
   (function
@@ -15,7 +15,7 @@ describe("MIR: literals and exit", () => {
     (result Int)
     (blocks
       (block
-        (let 0 (copy (literal 11)))
+        (let 0 (copy (constant 11)))
         (return 0)))))
 `;
     const input: MIR.Program = ["program", [
@@ -25,7 +25,7 @@ describe("MIR: literals and exit", () => {
       ["result", ["Int"]],
       ["blocks", [
         "block",
-        ["let", 0, ["copy", ["literal", 11]]],
+        ["let", 0, ["copy", ["constant", 11]]],
         ["return", 0],
       ]],
     ]];
@@ -43,8 +43,8 @@ describe("MIR: literals and exit", () => {
     (result Int)
     (blocks
       (block
-        (let 0 (copy (literal 11)))
-        (let 0 (copy (literal 13)))
+        (let 0 (copy (constant 11)))
+        (let 0 (copy (constant 13)))
         (return 1)))))
 `;
     const input: MIR.Program = ["program", [
@@ -54,8 +54,8 @@ describe("MIR: literals and exit", () => {
       ["result", ["Int"]],
       ["blocks", [
         "block",
-        ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 0, ["copy", ["literal", 13]]],
+        ["let", 0, ["copy", ["constant", 11]]],
+        ["let", 0, ["copy", ["constant", 13]]],
         ["return", 1],
       ]],
     ]];
@@ -96,7 +96,7 @@ describe("MIR: literals and exit", () => {
     (result Int)
     (blocks
       (block
-        (let 0 (copy (literal 11)))
+        (let 0 (copy (constant 11)))
         (let 1 (borrow (access 0)))
         (return 1)))))
 `;
@@ -107,7 +107,7 @@ describe("MIR: literals and exit", () => {
       ["result", ["Int"]],
       ["blocks", [
         "block",
-        ["let", 0, ["copy", ["literal", 11]]],
+        ["let", 0, ["copy", ["constant", 11]]],
         ["let", 1, ["borrow", ["access", 0]]],
         ["return", 1],
       ]],
@@ -119,7 +119,7 @@ describe("MIR: literals and exit", () => {
 });
 
 describe("MIR: copying of registers", () => {
-  it("must copy a literal", () => {
+  it("must copy a constant", () => {
     const text: string = `
 (program
   (function
@@ -128,7 +128,7 @@ describe("MIR: copying of registers", () => {
     (result Int)
     (blocks
       (block
-        (let 0 (copy (literal 11)))
+        (let 0 (copy (constant 11)))
         (let 1 (copy (access 0)))
         (return 1)))))
 `;
@@ -139,7 +139,7 @@ describe("MIR: copying of registers", () => {
       ["result", ["Int"]],
       ["blocks", [
         "block",
-        ["let", 0, ["copy", ["literal", 11]]],
+        ["let", 0, ["copy", ["constant", 11]]],
         ["let", 1, ["copy", ["access", 0]]],
         ["return", 1],
       ]],
@@ -160,8 +160,8 @@ describe("MIR: arithmetic operations", () => {
     (result Int)
     (blocks
       (block
-        (let 0 (copy (literal 11)))
-        (let 1 (copy (literal 13)))
+        (let 0 (copy (constant 11)))
+        (let 1 (copy (constant 13)))
         (let 2 (add (access 0) (access 1)))
         (return 2)))))
 `;
@@ -172,8 +172,8 @@ describe("MIR: arithmetic operations", () => {
       ["result", ["Int"]],
       ["blocks", [
         "block",
-        ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 1, ["copy", ["literal", 13]]],
+        ["let", 0, ["copy", ["constant", 11]]],
+        ["let", 1, ["copy", ["constant", 13]]],
         ["let", 2, ["add", ["access", 0], ["access", 1]]],
         ["return", 2],
       ]],
@@ -183,7 +183,7 @@ describe("MIR: arithmetic operations", () => {
     expect(evaluate(lower(input))).toBe(11 + 13);
   });
 
-  it("must evaluate integer addition with a literal", () => {
+  it("must evaluate integer addition with a constant", () => {
     const text: string = `
 (program
   (function
@@ -192,8 +192,8 @@ describe("MIR: arithmetic operations", () => {
     (result Int)
     (blocks
       (block
-        (let 0 (copy (literal 11)))
-        (let 1 (add (access 0) (literal 13)))
+        (let 0 (copy (constant 11)))
+        (let 1 (add (access 0) (constant 13)))
         (return 1)))))
 `;
     const input: MIR.Program = ["program", [
@@ -203,8 +203,8 @@ describe("MIR: arithmetic operations", () => {
       ["result", ["Int"]],
       ["blocks", [
         "block",
-        ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 1, ["add", ["access", 0], ["literal", 13]]],
+        ["let", 0, ["copy", ["constant", 11]]],
+        ["let", 1, ["add", ["access", 0], ["constant", 13]]],
         ["return", 1],
       ]],
     ]];
