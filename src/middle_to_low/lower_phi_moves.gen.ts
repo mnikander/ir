@@ -36,7 +36,7 @@ function lower_function(func: IndexedFunction): IndexedFunction {
     const writes: MIR.Let[] = phis.map((
       phi,
       index,
-    ) => ["let", phi[1], ["identity", ["read", reads[index][1]]]]);
+    ) => ["let", phi[1], ["identity", ["peek", reads[index][1]]]]);
     return {
       ...block,
       edge: undefined,

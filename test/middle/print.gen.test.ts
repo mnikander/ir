@@ -56,21 +56,21 @@ describe("MIR printer", () => {
         ["result", ["Int"]],
         [
           "block",
-          ["let", "%0", ["phi", ["sources", ["from", "^1", ["read", "%2"]], [
+          ["let", "%0", ["phi", ["sources", ["from", "^1", ["peek", "%2"]], [
             "from",
             "^2",
             ["move", "%3"],
           ]]]],
           ["let", "%1", ["call", "@0", [
             "arguments",
-            ["read", "%0"],
+            ["peek", "%0"],
             ["move", "%2"],
           ]]],
           ["let", "%2", ["call", "@1", ["arguments"]]],
           ["let", "%3", ["identity", ["constant", 42]]],
-          ["let", "%4", ["identity", ["read", "%3"]]],
-          ["let", "%5", ["borrow", ["read", "%4"]]],
-          ["let", "%6", ["borrow", ["read", "%5"]]],
+          ["let", "%4", ["identity", ["peek", "%3"]]],
+          ["let", "%5", ["borrow", ["peek", "%4"]]],
+          ["let", "%6", ["borrow", ["peek", "%5"]]],
           ["let", "%7", ["load", ["move", "%6"]]],
           ["drop", "%5"],
           ["return", "%7"],
@@ -93,13 +93,13 @@ describe("MIR printer", () => {
         "    (locals Int (Borrowed Int))\n" +
         "    (result Int)\n" +
         "    (block\n" +
-        "      (let %0 (phi (sources (from ^1 (read %2)) (from ^2 (move %3)))))\n" +
-        "      (let %1 (call @0 (arguments (read %0) (move %2))))\n" +
+        "      (let %0 (phi (sources (from ^1 (peek %2)) (from ^2 (move %3)))))\n" +
+        "      (let %1 (call @0 (arguments (peek %0) (move %2))))\n" +
         "      (let %2 (call @1 (arguments)))\n" +
         "      (let %3 (identity (constant 42)))\n" +
-        "      (let %4 (identity (read %3)))\n" +
-        "      (let %5 (borrow (read %4)))\n" +
-        "      (let %6 (borrow (read %5)))\n" +
+        "      (let %4 (identity (peek %3)))\n" +
+        "      (let %5 (borrow (peek %4)))\n" +
+        "      (let %6 (borrow (peek %5)))\n" +
         "      (let %7 (load (move %6)))\n" +
         "      (drop %5)\n" +
         "      (return %7))\n" +
@@ -132,12 +132,12 @@ describe("MIR printer", () => {
     const lines: MIR.Line[] = binary_tags.map((
       tag,
       index,
-    ) => ["let", MIR.resource_id(index), [tag, ["read", "%0"], [
+    ) => ["let", MIR.resource_id(index), [tag, ["peek", "%0"], [
       "move",
       "%1",
     ]]]);
     lines.push(
-      ["let", "%13", ["negate", ["read", "%2"]]],
+      ["let", "%13", ["negate", ["peek", "%2"]]],
       ["branch", ["constant", 0], "^1", "^2"],
       ["return", "%13"],
     );
@@ -150,7 +150,7 @@ describe("MIR printer", () => {
     ];
 
     const expected_lines = binary_tags.map((tag, index) =>
-      `      (let %${index} (${tag} (read %0) (move %1)))`
+      `      (let %${index} (${tag} (peek %0) (move %1)))`
     );
     expect(print(input)).toBe(
       "\n(program\n" +
@@ -160,7 +160,7 @@ describe("MIR printer", () => {
         "    (result Int)\n" +
         "    (block\n" +
         expected_lines.join("\n") + "\n" +
-        "      (let %13 (negate (read %2)))\n" +
+        "      (let %13 (negate (peek %2)))\n" +
         "      (branch (constant 0) ^1 ^2)\n" +
         "      (return %13))))\n",
     );

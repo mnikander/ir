@@ -76,7 +76,7 @@ describe("MIR to LIR micro-passes", () => {
       ["result", ["Int"]],
       ["block", ["let", "%0", ["identity", ["constant", 1]]], ["jump", "^1"]],
       ["block", ["let", "%1", ["phi", ["sources", ["from", "^0", [
-        "read",
+        "peek",
         "%0",
       ]]]]], ["return", "%1"]],
     ]];
@@ -99,7 +99,7 @@ describe("MIR to LIR micro-passes", () => {
       ["block", ["branch", ["constant", 1], "^1", "^2"]],
       ["block", ["jump", "^2"]],
       ["block", ["let", "%1", ["phi", ["sources", ["from", "^1", [
-        "read",
+        "peek",
         "%0",
       ]]]]], ["return", "%1"]],
     ]];

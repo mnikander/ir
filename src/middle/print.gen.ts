@@ -113,9 +113,9 @@ function print_source([, block, register]: MIR.From): string {
   return print_list("from", [block, print_input(register)]);
 }
 
-function print_input(input: MIR.Read | MIR.Move | MIR.Constant): string {
+function print_input(input: MIR.Peek | MIR.Move | MIR.Constant): string {
   switch (input[0]) {
-    case "read":
+    case "peek":
       return print_access(input);
     case "move":
       return print_consume(input);
@@ -130,8 +130,8 @@ function print_let([, resource, value]: MIR.Let): string {
   return print_list("let", [resource, print_value(value)]);
 }
 
-function print_access([, resource]: MIR.Read): string {
-  return `(read ${resource})`;
+function print_access([, resource]: MIR.Peek): string {
+  return `(peek ${resource})`;
 }
 
 function print_consume([, resource]: MIR.Move): string {

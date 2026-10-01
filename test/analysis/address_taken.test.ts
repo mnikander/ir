@@ -47,7 +47,7 @@ describe("analysis: address taken", () => {
     (block
       (let %0 (identity (constant 0)))
       (let %1 (identity (constant 1)))
-      (let %2 (borrow (read %1)))
+      (let %2 (borrow (peek %1)))
       (return %1))))
 `;
     const input: MIR.Program = ["program", [
@@ -59,7 +59,7 @@ describe("analysis: address taken", () => {
         "block",
         ["let", "%0", ["identity", ["constant", 0]]],
         ["let", "%1", ["identity", ["constant", 1]]],
-        ["let", "%2", ["borrow", ["read", "%1"]]],
+        ["let", "%2", ["borrow", ["peek", "%1"]]],
         ["return", "%1"],
       ],
     ]];
@@ -82,12 +82,12 @@ describe("analysis: address taken", () => {
     (block
       (let %0 (identity (constant 0)))
       (let %1 (identity (constant 1)))
-      (let %2 (borrow (read %0)))
+      (let %2 (borrow (peek %0)))
       (jump ^1))
     (block
       (let %3 (identity (constant 3)))
       (let %4 (identity (constant 4)))
-      (let %5 (borrow (read %4)))
+      (let %5 (borrow (peek %4)))
       (return %1))))
 `;
     const input: MIR.Program = ["program", [
@@ -107,14 +107,14 @@ describe("analysis: address taken", () => {
         "block",
         ["let", "%0", ["identity", ["constant", 0]]],
         ["let", "%1", ["identity", ["constant", 1]]],
-        ["let", "%2", ["borrow", ["read", "%0"]]],
+        ["let", "%2", ["borrow", ["peek", "%0"]]],
         ["jump", "^1"],
       ],
       [
         "block",
         ["let", "%3", ["identity", ["constant", 3]]],
         ["let", "%4", ["identity", ["constant", 4]]],
-        ["let", "%5", ["borrow", ["read", "%4"]]],
+        ["let", "%5", ["borrow", ["peek", "%4"]]],
         ["return", "%1"],
       ],
     ]];

@@ -85,20 +85,20 @@ function. They are illustrated by these examples:
 - `(drop %0)` drops resource #0.
 - `(return %0)` returns resource #0 from the function.
 - `(jump ^1)` jumps to block #1 unconditionally.
-- `(branch (read %0) ^1 ^2)` branches conditionally.
+- `(branch (peek %0) ^1 ^2)` branches conditionally.
 
 Every value-producing line takes the form of a let-binding. The general form is
 `(let RESOURCE OPERATION)`. For example:
 
 - `(let %0 (identity (constant 42)))` loads the integer `42` into resource 0.
-- `(let %1 (add (read %0) (move %2)))` adds two operands and binds the result to
+- `(let %1 (add (peek %0) (move %2)))` adds two operands and binds the result to
   resource 1.
-- `(let %2 (phi (sources (from ^1 (read %2)) (from ^2 (move %3)))))` selects a
+- `(let %2 (phi (sources (from ^1 (peek %2)) (from ^2 (move %3)))))` selects a
   value based on the predecessor block.
-- `(let %3 (call @1 (arguments (read %0))))` calls function #1, pass resource #0
+- `(let %3 (call @1 (arguments (peek %0))))` calls function #1, pass resource #0
   as an argument, and bind the result to resource #3.
 
-Operands are `(read %N)` for a non-consuming read, `(move %N)` for a destructive
+Operands are `(peek %N)` for non-consuming access, `(move %N)` for a destructive
 move, and `(constant N)` for an immediate integer. Block and function references
 are written as `^N` and `@N`.
 
@@ -110,8 +110,8 @@ straight-forward translation step makes it easier to reason about and write
 test-cases in either form.
 
 ```text
-(let %2 (add (read %0) (read %1)))
-["let", "%2", ["add", ["read", "%0"], ["read", "%1"]]]
+(let %2 (add (peek %0) (peek %1)))
+["let", "%2", ["add", ["peek", "%0"], ["peek", "%1"]]]
 ```
 
 ### Formatting
@@ -128,8 +128,8 @@ every tuple is tagged. Example of canonical formatting:
     (locals (Borrowed Int))
     (result Int)
     (block
-      (let %0 (phi (sources (from ^1 (read %2)) (from ^2 (move %3)))))
-      (let %1 (call @0 (arguments (read %0) (move %2))))
+      (let %0 (phi (sources (from ^1 (peek %2)) (from ^2 (move %3)))))
+      (let %1 (call @0 (arguments (peek %0) (move %2))))
       (branch (constant 0) ^1 ^2))
     (block
       (return %1))))

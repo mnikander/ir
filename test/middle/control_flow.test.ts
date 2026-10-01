@@ -144,10 +144,10 @@ describe("MIR: branch", () => {
       (let %2 (identity (constant 281)))
       (branch (constant 0) ^1 ^2))
     (block
-      (let %3 (add (read %0) (read %1)))
+      (let %3 (add (peek %0) (peek %1)))
       (jump ^3))
     (block
-      (let %4 (add (read %1) (read %2)))
+      (let %4 (add (peek %1) (peek %2)))
       (jump ^3))
     (block
       (return %4))))
@@ -166,12 +166,12 @@ describe("MIR: branch", () => {
       ],
       [
         "block",
-        ["let", "%3", ["add", ["read", "%0"], ["read", "%1"]]],
+        ["let", "%3", ["add", ["peek", "%0"], ["peek", "%1"]]],
         ["jump", "^3"],
       ],
       [
         "block",
-        ["let", "%4", ["add", ["read", "%1"], ["read", "%2"]]],
+        ["let", "%4", ["add", ["peek", "%1"], ["peek", "%2"]]],
         ["jump", "^3"],
       ],
       [
@@ -243,7 +243,7 @@ describe("MIR: phi (control flow join)", () => {
       (let %1 (identity (constant 13)))
       (jump ^3))
     (block
-      (let %2 (phi (sources (from ^1 (read %0)) (from ^2 (read %1)))))
+      (let %2 (phi (sources (from ^1 (peek %0)) (from ^2 (peek %1)))))
       (return %2))))
 `;
     const input: MIR.Program = ["program", [
@@ -269,8 +269,8 @@ describe("MIR: phi (control flow join)", () => {
         "block",
         ["let", "%2", ["phi", [
           "sources",
-          ["from", "^1", ["read", "%0"]],
-          ["from", "^2", ["read", "%1"]],
+          ["from", "^1", ["peek", "%0"]],
+          ["from", "^2", ["peek", "%1"]],
         ]]],
         ["return", "%2"],
       ],
@@ -304,10 +304,10 @@ describe("MIR: phi (control flow join)", () => {
       (let %2 (identity (constant 3)))
       (jump ^1))
     (block
-      (let %3 (phi (sources (from ^0 (read %0)) (from ^1 (read %4)))))
-      (let %4 (add (read %1) (read %3)))
-      (let %5 (unequal (read %3) (read %2)))
-      (branch (read %5) ^1 ^2))
+      (let %3 (phi (sources (from ^0 (peek %0)) (from ^1 (peek %4)))))
+      (let %4 (add (peek %1) (peek %3)))
+      (let %5 (unequal (peek %3) (peek %2)))
+      (branch (peek %5) ^1 ^2))
     (block
       (return %3))))
 `;
@@ -327,12 +327,12 @@ describe("MIR: phi (control flow join)", () => {
         "block",
         ["let", "%3", ["phi", [
           "sources",
-          ["from", "^0", ["read", "%0"]],
-          ["from", "^1", ["read", "%4"]],
+          ["from", "^0", ["peek", "%0"]],
+          ["from", "^1", ["peek", "%4"]],
         ]]],
-        ["let", "%4", ["add", ["read", "%1"], ["read", "%3"]]],
-        ["let", "%5", ["unequal", ["read", "%3"], ["read", "%2"]]],
-        ["branch", ["read", "%5"], "^1", "^2"],
+        ["let", "%4", ["add", ["peek", "%1"], ["peek", "%3"]]],
+        ["let", "%5", ["unequal", ["peek", "%3"], ["peek", "%2"]]],
+        ["branch", ["peek", "%5"], "^1", "^2"],
       ],
       [
         "block",
@@ -364,7 +364,7 @@ describe("MIR: phi (control flow join)", () => {
     (result Int)
     (block
       (let %0 (identity (constant 0)))
-      (branch (read %0) ^1 ^2))
+      (branch (peek %0) ^1 ^2))
     (block
       (let %1 (identity (constant 11)))
       (jump ^4))
@@ -375,9 +375,9 @@ describe("MIR: phi (control flow join)", () => {
       (let %3 (identity (constant 281)))
       (jump ^4))
     (block
-      (let %4 (phi (sources (from ^1 (read %1)) (from ^3 (read %2)))))
-      (let %5 (phi (sources (from ^1 (read %1)) (from ^3 (read %3)))))
-      (let %6 (add (read %4) (read %5)))
+      (let %4 (phi (sources (from ^1 (peek %1)) (from ^3 (peek %2)))))
+      (let %5 (phi (sources (from ^1 (peek %1)) (from ^3 (peek %3)))))
+      (let %6 (add (peek %4) (peek %5)))
       (return %6))))
 `;
 
@@ -389,7 +389,7 @@ describe("MIR: phi (control flow join)", () => {
       [
         "block",
         ["let", "%0", ["identity", ["constant", 0]]],
-        ["branch", ["read", "%0"], "^1", "^2"],
+        ["branch", ["peek", "%0"], "^1", "^2"],
       ],
       [
         "block",
@@ -410,15 +410,15 @@ describe("MIR: phi (control flow join)", () => {
         "block",
         ["let", "%4", ["phi", [
           "sources",
-          ["from", "^1", ["read", "%1"]],
-          ["from", "^3", ["read", "%2"]],
+          ["from", "^1", ["peek", "%1"]],
+          ["from", "^3", ["peek", "%2"]],
         ]]],
         ["let", "%5", ["phi", [
           "sources",
-          ["from", "^1", ["read", "%1"]],
-          ["from", "^3", ["read", "%3"]],
+          ["from", "^1", ["peek", "%1"]],
+          ["from", "^3", ["peek", "%3"]],
         ]]],
-        ["let", "%6", ["add", ["read", "%4"], ["read", "%5"]]],
+        ["let", "%6", ["add", ["peek", "%4"], ["peek", "%5"]]],
         ["return", "%6"],
       ],
     ]];
@@ -449,12 +449,12 @@ describe("MIR: phi (control flow join)", () => {
     (block
       (let %0 (identity (constant 11)))
       (let %1 (identity (constant 1)))
-      (branch (read %1) ^2 ^3))
+      (branch (peek %1) ^2 ^3))
     (block
       (let %2 (identity (constant 13)))
       (jump ^3))
     (block
-      (let %3 (phi (sources (from ^1 (read %0)) (from ^2 (read %2)))))
+      (let %3 (phi (sources (from ^1 (peek %0)) (from ^2 (peek %2)))))
       (return %3))))
 `;
     const input: MIR.Program = ["program", [
@@ -470,7 +470,7 @@ describe("MIR: phi (control flow join)", () => {
         "block",
         ["let", "%0", ["identity", ["constant", 11]]],
         ["let", "%1", ["identity", ["constant", 1]]],
-        ["branch", ["read", "%1"], "^2", "^3"],
+        ["branch", ["peek", "%1"], "^2", "^3"],
       ],
       [
         "block",
@@ -481,8 +481,8 @@ describe("MIR: phi (control flow join)", () => {
         "block",
         ["let", "%3", ["phi", [
           "sources",
-          ["from", "^1", ["read", "%0"]],
-          ["from", "^2", ["read", "%2"]],
+          ["from", "^1", ["peek", "%0"]],
+          ["from", "^2", ["peek", "%2"]],
         ]]],
         ["return", "%3"],
       ],
@@ -511,15 +511,15 @@ describe("MIR: phi (control flow join)", () => {
     (result Int)
     (block
       (let %0 (identity (constant 0)))
-      (branch (read %0) ^1 ^3))
+      (branch (peek %0) ^1 ^3))
     (block
       (let %1 (identity (constant 1)))
-      (branch (read %1) ^2 ^3))
+      (branch (peek %1) ^2 ^3))
     (block
       (let %2 (identity (constant 1)))
       (jump ^3))
     (block
-      (let %3 (phi (sources (from ^0 (read %0)) (from ^1 (read %1)) (from ^2 (read %2)))))
+      (let %3 (phi (sources (from ^0 (peek %0)) (from ^1 (peek %1)) (from ^2 (peek %2)))))
       (return %3))))
 `;
     const input: MIR.Program = ["program", [
@@ -530,12 +530,12 @@ describe("MIR: phi (control flow join)", () => {
       [
         "block",
         ["let", "%0", ["identity", ["constant", 0]]],
-        ["branch", ["read", "%0"], "^1", "^3"],
+        ["branch", ["peek", "%0"], "^1", "^3"],
       ],
       [
         "block",
         ["let", "%1", ["identity", ["constant", 1]]],
-        ["branch", ["read", "%1"], "^2", "^3"],
+        ["branch", ["peek", "%1"], "^2", "^3"],
       ],
       [
         "block",
@@ -546,9 +546,9 @@ describe("MIR: phi (control flow join)", () => {
         "block",
         ["let", "%3", ["phi", [
           "sources",
-          ["from", "^0", ["read", "%0"]],
-          ["from", "^1", ["read", "%1"]],
-          ["from", "^2", ["read", "%2"]],
+          ["from", "^0", ["peek", "%0"]],
+          ["from", "^1", ["peek", "%1"]],
+          ["from", "^2", ["peek", "%2"]],
         ]]],
         ["return", "%3"],
       ],
@@ -577,15 +577,15 @@ describe("MIR: phi (control flow join)", () => {
     (result Int)
     (block
       (let %0 (identity (constant 0)))
-      (branch (read %0) ^1 ^3))
+      (branch (peek %0) ^1 ^3))
     (block
       (let %1 (identity (constant 1)))
-      (branch (read %1) ^2 ^3))
+      (branch (peek %1) ^2 ^3))
     (block
       (let %2 (identity (constant 1)))
       (jump ^3))
     (block
-      (let %3 (phi (sources (from ^1 (read %1)) (from ^2 (read %2)))))
+      (let %3 (phi (sources (from ^1 (peek %1)) (from ^2 (peek %2)))))
       (return %3))))
 `;
     const input: MIR.Program = ["program", [
@@ -596,12 +596,12 @@ describe("MIR: phi (control flow join)", () => {
       [
         "block",
         ["let", "%0", ["identity", ["constant", 0]]],
-        ["branch", ["read", "%0"], "^1", "^3"],
+        ["branch", ["peek", "%0"], "^1", "^3"],
       ],
       [
         "block",
         ["let", "%1", ["identity", ["constant", 1]]],
-        ["branch", ["read", "%1"], "^2", "^3"],
+        ["branch", ["peek", "%1"], "^2", "^3"],
       ],
       [
         "block",
@@ -612,8 +612,8 @@ describe("MIR: phi (control flow join)", () => {
         "block",
         ["let", "%3", ["phi", [
           "sources",
-          ["from", "^1", ["read", "%1"]],
-          ["from", "^2", ["read", "%2"]],
+          ["from", "^1", ["peek", "%1"]],
+          ["from", "^2", ["peek", "%2"]],
         ]]],
         ["return", "%3"],
       ],

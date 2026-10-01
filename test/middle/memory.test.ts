@@ -15,8 +15,8 @@ describe("MIR: memory and ownership", () => {
     (result Int)
     (block
       (let %0 (identity (constant 11)))
-      (let %1 (borrow (read %0)))
-      (let %2 (load (read %1)))
+      (let %1 (borrow (peek %0)))
+      (let %2 (load (peek %1)))
       (return %2))))
 `;
     const input: MIR.Program = ["program", [
@@ -27,8 +27,8 @@ describe("MIR: memory and ownership", () => {
       [
         "block",
         ["let", "%0", ["identity", ["constant", 11]]],
-        ["let", "%1", ["borrow", ["read", "%0"]]],
-        ["let", "%2", ["load", ["read", "%1"]]],
+        ["let", "%1", ["borrow", ["peek", "%0"]]],
+        ["let", "%2", ["load", ["peek", "%1"]]],
         ["return", "%2"],
       ],
     ]];
@@ -80,7 +80,7 @@ describe("MIR: memory and ownership", () => {
     (block
       (let %0 (identity (constant 11)))
       (let %1 (identity (constant 13)))
-      (let %2 (add (move %0) (read %1)))
+      (let %2 (add (move %0) (peek %1)))
       (return %2))))
 `;
     const input: MIR.Program = ["program", [
@@ -92,7 +92,7 @@ describe("MIR: memory and ownership", () => {
         "block",
         ["let", "%0", ["identity", ["constant", 11]]],
         ["let", "%1", ["identity", ["constant", 13]]],
-        ["let", "%2", ["add", ["move", "%0"], ["read", "%1"]]],
+        ["let", "%2", ["add", ["move", "%0"], ["peek", "%1"]]],
         ["return", "%2"],
       ],
     ]];
@@ -146,7 +146,7 @@ describe.skip("MIR: use-after-free", () => {
     (block
       (let %0 (identity (constant 0)))
       (drop %0)
-      (let %1 (negate (read %0)))
+      (let %1 (negate (peek %0)))
       (return %1))))
 `;
     const input: MIR.Program = ["program", [
@@ -158,7 +158,7 @@ describe.skip("MIR: use-after-free", () => {
         "block",
         ["let", "%0", ["identity", ["constant", 0]]],
         ["drop", "%0"],
-        ["let", "%1", ["negate", ["read", "%0"]]],
+        ["let", "%1", ["negate", ["peek", "%0"]]],
         ["return", "%1"],
       ],
     ]];
@@ -238,9 +238,9 @@ describe.skip("MIR: use-after-free", () => {
     (result Int)
     (block
       (let %0 (identity (constant 11)))
-      (let %1 (borrow (read %0)))
+      (let %1 (borrow (peek %0)))
       (drop %0)
-      (let %2 (load (read %1)))
+      (let %2 (load (peek %1)))
       (return %2))))
 `;
     const input: MIR.Program = ["program", [
@@ -251,9 +251,9 @@ describe.skip("MIR: use-after-free", () => {
       [
         "block",
         ["let", "%0", ["identity", ["constant", 11]]],
-        ["let", "%1", ["borrow", ["read", "%0"]]],
+        ["let", "%1", ["borrow", ["peek", "%0"]]],
         ["drop", "%0"],
-        ["let", "%2", ["load", ["read", "%1"]]],
+        ["let", "%2", ["load", ["peek", "%1"]]],
         ["return", "%2"],
       ],
     ]];
@@ -271,9 +271,9 @@ describe.skip("MIR: use-after-free", () => {
     (result Int)
     (block
       (let %0 (identity (constant 11)))
-      (let %1 (borrow (read %0)))
+      (let %1 (borrow (peek %0)))
       (let %2 (identity (move %0)))
-      (let %3 (load (read %1)))
+      (let %3 (load (peek %1)))
       (return %3))))
 `;
     const input: MIR.Program = ["program", [
@@ -284,9 +284,9 @@ describe.skip("MIR: use-after-free", () => {
       [
         "block",
         ["let", "%0", ["identity", ["constant", 11]]],
-        ["let", "%1", ["borrow", ["read", "%0"]]],
+        ["let", "%1", ["borrow", ["peek", "%0"]]],
         ["let", "%2", ["identity", ["move", "%0"]]],
-        ["let", "%3", ["load", ["read", "%1"]]],
+        ["let", "%3", ["load", ["peek", "%1"]]],
         ["return", "%3"],
       ],
     ]];

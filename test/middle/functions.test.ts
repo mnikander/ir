@@ -16,7 +16,7 @@ describe("MIR: function call", () => {
     (block
       (let %0 (identity (constant 11)))
       (let %1 (identity (constant 13)))
-      (let %2 (call @1 (arguments (read %1))))
+      (let %2 (call @1 (arguments (peek %1))))
       (return %2)))
   (function
     (parameters Int)
@@ -34,7 +34,7 @@ describe("MIR: function call", () => {
         "block",
         ["let", "%0", ["identity", ["constant", 11]]],
         ["let", "%1", ["identity", ["constant", 13]]],
-        ["let", "%2", ["call", "@1", ["arguments", ["read", "%1"]]]],
+        ["let", "%2", ["call", "@1", ["arguments", ["peek", "%1"]]]],
         ["return", "%2"],
       ],
     ], [
@@ -62,7 +62,7 @@ describe("MIR: function call", () => {
     (block
       (let %0 (identity (constant 11)))
       (let %1 (identity (constant 13)))
-      (let %2 (call @1 (arguments (read %0) (read %1))))
+      (let %2 (call @1 (arguments (peek %0) (peek %1))))
       (return %2)))
   (function
     (parameters Int Int)
@@ -80,8 +80,8 @@ describe("MIR: function call", () => {
         "block",
         ["let", "%0", ["identity", ["constant", 11]]],
         ["let", "%1", ["identity", ["constant", 13]]],
-        ["let", "%2", ["call", "@1", ["arguments", ["read", "%0"], [
-          "read",
+        ["let", "%2", ["call", "@1", ["arguments", ["peek", "%0"], [
+          "peek",
           "%1",
         ]]]],
         ["return", "%2"],
@@ -117,22 +117,22 @@ describe("MIR: function call", () => {
     (block
       (let %0 (identity (constant 5)))
       (let %1 (identity (constant 1)))
-      (let %2 (call @1 (arguments (read %0) (read %1))))
+      (let %2 (call @1 (arguments (peek %0) (peek %1))))
       (return %2)))
   (function
     (parameters Int Int)
     (locals Int Int Int Int Int Int)
     (result Int)
     (block
-      (let %3 (equal (read %0) (constant 1)))
-      (branch (read %3) ^2 ^1))
+      (let %3 (equal (peek %0) (constant 1)))
+      (branch (peek %3) ^2 ^1))
     (block
-      (let %4 (subtract (read %0) (constant 1)))
-      (let %5 (multiply (read %0) (read %1)))
-      (let %6 (call @1 (arguments (read %4) (read %5))))
+      (let %4 (subtract (peek %0) (constant 1)))
+      (let %5 (multiply (peek %0) (peek %1)))
+      (let %6 (call @1 (arguments (peek %4) (peek %5))))
       (jump ^2))
     (block
-      (let %7 (phi (sources (from ^1 (read %6)) (from ^0 (read %1)))))
+      (let %7 (phi (sources (from ^1 (peek %6)) (from ^0 (peek %1)))))
       (return %7))))
 `;
     const input: MIR.Program = ["program", [
@@ -144,8 +144,8 @@ describe("MIR: function call", () => {
         "block",
         ["let", "%0", ["identity", ["constant", 5]]],
         ["let", "%1", ["identity", ["constant", 1]]],
-        ["let", "%2", ["call", "@1", ["arguments", ["read", "%0"], [
-          "read",
+        ["let", "%2", ["call", "@1", ["arguments", ["peek", "%0"], [
+          "peek",
           "%1",
         ]]]],
         ["return", "%2"],
@@ -157,15 +157,15 @@ describe("MIR: function call", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", "%3", ["equal", ["read", "%0"], ["constant", 1]]],
-        ["branch", ["read", "%3"], "^2", "^1"],
+        ["let", "%3", ["equal", ["peek", "%0"], ["constant", 1]]],
+        ["branch", ["peek", "%3"], "^2", "^1"],
       ],
       [
         "block",
-        ["let", "%4", ["subtract", ["read", "%0"], ["constant", 1]]],
-        ["let", "%5", ["multiply", ["read", "%0"], ["read", "%1"]]],
-        ["let", "%6", ["call", "@1", ["arguments", ["read", "%4"], [
-          "read",
+        ["let", "%4", ["subtract", ["peek", "%0"], ["constant", 1]]],
+        ["let", "%5", ["multiply", ["peek", "%0"], ["peek", "%1"]]],
+        ["let", "%6", ["call", "@1", ["arguments", ["peek", "%4"], [
+          "peek",
           "%5",
         ]]]],
         ["jump", "^2"],
@@ -174,8 +174,8 @@ describe("MIR: function call", () => {
         "block",
         ["let", "%7", ["phi", [
           "sources",
-          ["from", "^1", ["read", "%6"]],
-          ["from", "^0", ["read", "%1"]],
+          ["from", "^1", ["peek", "%6"]],
+          ["from", "^0", ["peek", "%1"]],
         ]]],
         ["return", "%7"],
       ],
