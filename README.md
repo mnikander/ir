@@ -123,7 +123,7 @@ every tuple is tagged. Example of canonical formatting:
 (program
   (function
     (parameters Int)
-    (locals (Owned Int))
+    (locals (Borrowed Int))
     (result Int)
     (blocks
       (block

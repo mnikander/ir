@@ -81,7 +81,6 @@ function print_value(value: MIR.Operation): string {
         print_arguments(value[2]),
       ]);
     case "copy":
-    case "own":
     case "borrow":
     case "dereference":
       return print_list(value[0], [print_input(value[1])]);
@@ -162,8 +161,6 @@ function print_type(type: Type): string {
   switch (type[0]) {
     case "Int":
       return "Int";
-    case "Owned":
-      return `(Owned ${print_type(type[1])})`;
     case "Borrowed":
       return `(Borrowed ${print_type(type[1])})`;
     default:

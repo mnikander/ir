@@ -16,7 +16,7 @@ export type Block        = [ tag: "block", ...Line[]];
 
 export type Line         = Let | Drop | Terminator;
 export type Operation    = Phi | Call | Memory | Copy | Arithmetic | Comparison;
-export type Memory       = Own | Borrow | Dereference;
+export type Memory       = Borrow | Dereference;
 export type Arithmetic   = Add | Subtract | Multiply | Divide | Remainder | Minimum | Maximum | Negative;
 export type Comparison   = Equal | Unequal | Less | LessEqual | Greater | GreaterEqual;
 export type Terminator   = Return | Jump | Branch;
@@ -29,7 +29,6 @@ export type Jump         = [ tag: "jump",          targetBlock: BlockId ];
 export type Branch       = [ tag: "branch",        condition: Operand, thenBlock: BlockId, elseBlock: BlockId ];
 export type Phi          = [ tag: "phi",           inputs: Sources];
 export type Call         = [ tag: "call",          function: FunctionId, arguments: Arguments ];
-export type Own          = [ tag: "own",           Operand ]; // cannot be lowered yet, LIR is missing the corresponding functionality
 export type Borrow       = [ tag: "borrow",        Access | Consume ]; // take the address of a resource and create a read-only pointer
 export type Dereference  = [ tag: "dereference",   Access | Consume ]; // dereference pointer and load the value
 export type Copy         = [ tag: "copy",          Operand ];

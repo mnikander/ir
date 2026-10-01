@@ -12,9 +12,9 @@ describe("MIR printer", () => {
       "program",
       [
         "function",
-        ["parameters", ["Int"], ["Borrowed", ["Owned", ["Int"]]]],
+        ["parameters", ["Int"], ["Borrowed", ["Borrowed", ["Int"]]]],
         ["locals"],
-        ["result", ["Owned", ["Int"]]],
+        ["result", ["Borrowed", ["Int"]]],
         ["blocks"],
       ],
     ];
@@ -22,9 +22,9 @@ describe("MIR printer", () => {
     expect(print(input)).toBe(
       "\n(program\n" +
         "  (function\n" +
-        "    (parameters Int (Borrowed (Owned Int)))\n" +
+        "    (parameters Int (Borrowed (Borrowed Int)))\n" +
         "    (locals)\n" +
-        "    (result (Owned Int))\n" +
+        "    (result (Borrowed Int))\n" +
         "    (blocks)))\n",
     );
 
@@ -55,7 +55,7 @@ describe("MIR printer", () => {
       [
         "function",
         ["parameters", ["Int"]],
-        ["locals", ["Int"], ["Owned", ["Int"]]],
+        ["locals", ["Int"], ["Borrowed", ["Int"]]],
         ["result", ["Int"]],
         [
           "blocks",
@@ -73,7 +73,7 @@ describe("MIR printer", () => {
             ["let", 2, ["call", ["function_id", 1], ["arguments"]]],
             ["let", 3, ["copy", ["literal", 42]]],
             ["let", 4, ["copy", ["access", 3]]],
-            ["let", 5, ["own", ["consume", 4]]],
+            ["let", 5, ["borrow", ["access", 4]]],
             ["let", 6, ["borrow", ["access", 5]]],
             ["let", 7, ["dereference", ["consume", 6]]],
             ["drop", 5],
@@ -95,7 +95,7 @@ describe("MIR printer", () => {
       "\n(program\n" +
         "  (function\n" +
         "    (parameters Int)\n" +
-        "    (locals Int (Owned Int))\n" +
+        "    (locals Int (Borrowed Int))\n" +
         "    (result Int)\n" +
         "    (blocks\n" +
         "      (block\n" +
@@ -104,7 +104,7 @@ describe("MIR printer", () => {
         "        (let 2 (call (function_id 1) (arguments)))\n" +
         "        (let 3 (copy (literal 42)))\n" +
         "        (let 4 (copy (access 3)))\n" +
-        "        (let 5 (own (consume 4)))\n" +
+        "        (let 5 (borrow (access 4)))\n" +
         "        (let 6 (borrow (access 5)))\n" +
         "        (let 7 (dereference (consume 6)))\n" +
         "        (drop 5)\n" +

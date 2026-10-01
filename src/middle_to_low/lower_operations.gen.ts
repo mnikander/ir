@@ -67,7 +67,6 @@ function lower_let(line: MIR.Let, next: number): Result {
   const destination = line[1];
   const op = line[2];
   if (op[0] === "phi") throw Error("Phi operation reached operation lowering");
-  if (op[0] === "own") throw Error("MIR 'own' lowering is not implemented");
   if (op[0] === "call") {
     const prepared = prepare_operands(op[2].slice(1) as MIR.Operand[], next);
     return {

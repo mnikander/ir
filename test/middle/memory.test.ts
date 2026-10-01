@@ -38,38 +38,6 @@ describe("MIR: memory and ownership", () => {
     expect(evaluate(lower(input))).toBe(11);
   });
 
-  it.skip("must allow a register to be owned by a pointer", () => {
-    const text: string = `
-(program
-  (function
-    (parameters)
-    (locals Int (Owned Int) Int)
-    (result Int)
-    (blocks
-      (block
-        (let 0 (copy (literal 11)))
-        (let 1 (own (access 0)))
-        (let 2 (dereference (access 1)))
-        (return 2)))))
-`;
-    const input: MIR.Program = ["program", [
-      "function",
-      ["parameters"],
-      ["locals", ["Int"], ["Owned", ["Int"]], ["Int"]],
-      ["result", ["Int"]],
-      ["blocks", [
-        "block",
-        ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 1, ["own", ["access", 0]]],
-        ["let", 2, ["dereference", ["access", 1]]],
-        ["return", 2],
-      ]],
-    ]];
-    expect(input).toBeDefined();
-    expect(print(input)).toEqual(text);
-    expect(evaluate(lower(input))).toBe(11);
-  });
-
   it.skip("must support pointers as phi operands", () => {
     // TODO
   });
@@ -329,40 +297,6 @@ describe.skip("MIR: use-after-free", () => {
         ["let", 2, ["copy", ["consume", 0]]],
         ["let", 3, ["dereference", ["access", 1]]],
         ["return", 3],
-      ]],
-    ]];
-    expect(input).toBeDefined();
-    expect(print(input)).toEqual(text);
-    expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
-  });
-});
-
-describe.skip("MIR: ownership violations", () => {
-  it("must detect invalid use of a register owned by a pointer", () => {
-    const text: string = `
-(program
-  (function
-    (parameters)
-    (locals Int (Owned Int) Int)
-    (result Int)
-    (blocks
-      (block
-        (let 0 (copy (literal 11)))
-        (let 1 (own (access 0)))
-        (let 2 (copy (access 0)))
-        (return 2)))))
-`;
-    const input: MIR.Program = ["program", [
-      "function",
-      ["parameters"],
-      ["locals", ["Int"], ["Owned", ["Int"]], ["Int"]],
-      ["result", ["Int"]],
-      ["blocks", [
-        "block",
-        ["let", 0, ["copy", ["literal", 11]]],
-        ["let", 1, ["own", ["access", 0]]],
-        ["let", 2, ["copy", ["access", 0]]],
-        ["return", 2],
       ]],
     ]];
     expect(input).toBeDefined();
