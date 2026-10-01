@@ -63,11 +63,10 @@ A very simple example of an MIR program is given by:
     (parameters)
     (locals Int Int)
     (result Int)
-    (blocks
-      (block
-        (let 0 (copy (constant 13)))
-        (let 1 (copy (constant 42)))
-        (return 1)))))
+    (block
+      (let 0 (copy (constant 13)))
+      (let 1 (copy (constant 42)))
+      (return 1))))
 ```
 
 This defines an MIR program with a single function. That function takes no
@@ -125,13 +124,12 @@ every tuple is tagged. Example of canonical formatting:
     (parameters Int)
     (locals (Borrowed Int))
     (result Int)
-    (blocks
-      (block
-        (let 0 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))
-        (let 1 (call (function_id 0) (arguments (access 0) (consume 2))))
-        (branch (constant 0) (block_id 1) (block_id 2)))
-      (block
-        (return 1)))))
+    (block
+      (let 0 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))
+      (let 1 (call (function_id 0) (arguments (access 0) (consume 2))))
+      (branch (constant 0) (block_id 1) (block_id 2)))
+    (block
+      (return 1))))
 ```
 
 ## Source Layout

@@ -2,7 +2,7 @@
 
 MIR uses tagged symbolic expressions.
 Resources (i.e. variable) are identified by their zero indexed position in their respective function.
-Functions and blocks are identified by their zero-based positions in their containing `program` and `blocks` nodes.
+Functions and blocks are identified by their zero-based positions in their containing `program` and `function` nodes.
 A complete function has the following structure:
 
 ```text
@@ -10,10 +10,9 @@ A complete function has the following structure:
   (parameters Int)
   (locals Int (Borrowed Int))
   (result Int)
-  (blocks
-    (block
-      (let 0 (copy (constant 42)))
-      (return 0))))
+  (block
+    (let 0 (copy (constant 42)))
+    (return 0)))
 ```
 
 ## Instructions

@@ -3,7 +3,7 @@
 import * as MIR from "../middle/middle_grammar.ts";
 
 export function address_taken(fun: MIR.Function): number[] {
-  const blocks: MIR.Block[] = fun[4].slice(1) as MIR.Block[];
+  const blocks: MIR.Block[] = fun.slice(4) as MIR.Block[];
   const intermediate_results: number[][] = blocks.map(address_taken_in_block);
   return intermediate_results.flat(1);
 }

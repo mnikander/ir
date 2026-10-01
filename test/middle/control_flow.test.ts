@@ -13,33 +13,34 @@ describe("MIR: jump", () => {
     (parameters)
     (locals Int Int)
     (result Int)
-    (blocks
-      (block
-        (jump (block_id 2)))
-      (block
-        (let 0 (copy (constant 11)))
-        (return 0))
-      (block
-        (let 1 (copy (constant 13)))
-        (return 1)))))
+    (block
+      (jump (block_id 2)))
+    (block
+      (let 0 (copy (constant 11)))
+      (return 0))
+    (block
+      (let 1 (copy (constant 13)))
+      (return 1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["jump", ["block_id", 2]],
-      ], [
+      ],
+      [
         "block",
         ["let", 0, ["copy", ["constant", 11]]],
         ["return", 0],
-      ], [
+      ],
+      [
         "block",
         ["let", 1, ["copy", ["constant", 13]]],
         ["return", 1],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -55,33 +56,34 @@ describe("MIR: branch", () => {
     (parameters)
     (locals Int Int)
     (result Int)
-    (blocks
-      (block
-        (branch (constant 1) (block_id 1) (block_id 2)))
-      (block
-        (let 0 (copy (constant 11)))
-        (return 0))
-      (block
-        (let 1 (copy (constant 13)))
-        (return 1)))))
+    (block
+      (branch (constant 1) (block_id 1) (block_id 2)))
+    (block
+      (let 0 (copy (constant 11)))
+      (return 0))
+    (block
+      (let 1 (copy (constant 13)))
+      (return 1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["branch", ["constant", 1], ["block_id", 1], ["block_id", 2]],
-      ], [
+      ],
+      [
         "block",
         ["let", 0, ["copy", ["constant", 11]]],
         ["return", 0],
-      ], [
+      ],
+      [
         "block",
         ["let", 1, ["copy", ["constant", 13]]],
         ["return", 1],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -95,33 +97,34 @@ describe("MIR: branch", () => {
     (parameters)
     (locals Int Int)
     (result Int)
-    (blocks
-      (block
-        (branch (constant 0) (block_id 1) (block_id 2)))
-      (block
-        (let 0 (copy (constant 11)))
-        (return 0))
-      (block
-        (let 1 (copy (constant 13)))
-        (return 1)))))
+    (block
+      (branch (constant 0) (block_id 1) (block_id 2)))
+    (block
+      (let 0 (copy (constant 11)))
+      (return 0))
+    (block
+      (let 1 (copy (constant 13)))
+      (return 1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["branch", ["constant", 0], ["block_id", 1], ["block_id", 2]],
-      ], [
+      ],
+      [
         "block",
         ["let", 0, ["copy", ["constant", 11]]],
         ["return", 0],
-      ], [
+      ],
+      [
         "block",
         ["let", 1, ["copy", ["constant", 13]]],
         ["return", 1],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -135,44 +138,46 @@ describe("MIR: branch", () => {
     (parameters)
     (locals Int Int Int Int Int)
     (result Int)
-    (blocks
-      (block
-        (let 0 (copy (constant 11)))
-        (let 1 (copy (constant 13)))
-        (let 2 (copy (constant 281)))
-        (branch (constant 0) (block_id 1) (block_id 2)))
-      (block
-        (let 3 (add (access 0) (access 1)))
-        (jump (block_id 3)))
-      (block
-        (let 4 (add (access 1) (access 2)))
-        (jump (block_id 3)))
-      (block
-        (return 4)))))
+    (block
+      (let 0 (copy (constant 11)))
+      (let 1 (copy (constant 13)))
+      (let 2 (copy (constant 281)))
+      (branch (constant 0) (block_id 1) (block_id 2)))
+    (block
+      (let 3 (add (access 0) (access 1)))
+      (jump (block_id 3)))
+    (block
+      (let 4 (add (access 1) (access 2)))
+      (jump (block_id 3)))
+    (block
+      (return 4))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["let", 0, ["copy", ["constant", 11]]],
         ["let", 1, ["copy", ["constant", 13]]],
         ["let", 2, ["copy", ["constant", 281]]],
         ["branch", ["constant", 0], ["block_id", 1], ["block_id", 2]],
-      ], [
+      ],
+      [
         "block",
         ["let", 3, ["add", ["access", 0], ["access", 1]]],
         ["jump", ["block_id", 3]],
-      ], [
+      ],
+      [
         "block",
         ["let", 4, ["add", ["access", 1], ["access", 2]]],
         ["jump", ["block_id", 3]],
-      ], [
+      ],
+      [
         "block",
         ["return", 4],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -186,33 +191,34 @@ describe("MIR: branch", () => {
     (parameters)
     (locals Int Int)
     (result Int)
-    (blocks
-      (block
-        (branch (constant 2) (block_id 1) (block_id 2)))
-      (block
-        (let 0 (copy (constant 11)))
-        (return 0))
-      (block
-        (let 1 (copy (constant 13)))
-        (return 1)))))
+    (block
+      (branch (constant 2) (block_id 1) (block_id 2)))
+    (block
+      (let 0 (copy (constant 11)))
+      (return 0))
+    (block
+      (let 1 (copy (constant 13)))
+      (return 1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["branch", ["constant", 2], ["block_id", 1], ["block_id", 2]], // error: 2 is not a boolean
-      ], [
+      ],
+      [
         "block",
         ["let", 0, ["copy", ["constant", 11]]],
         ["return", 0],
-      ], [
+      ],
+      [
         "block",
         ["let", 1, ["copy", ["constant", 13]]],
         ["return", 1],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -228,36 +234,38 @@ describe("MIR: phi (control flow join)", () => {
     (parameters)
     (locals Int Int Int)
     (result Int)
-    (blocks
-      (block
-        (jump (block_id 2)))
-      (block
-        (let 0 (copy (constant 11)))
-        (jump (block_id 3)))
-      (block
-        (let 1 (copy (constant 13)))
-        (jump (block_id 3)))
-      (block
-        (let 2 (phi (sources (from (block_id 1) (access 0)) (from (block_id 2) (access 1)))))
-        (return 2)))))
+    (block
+      (jump (block_id 2)))
+    (block
+      (let 0 (copy (constant 11)))
+      (jump (block_id 3)))
+    (block
+      (let 1 (copy (constant 13)))
+      (jump (block_id 3)))
+    (block
+      (let 2 (phi (sources (from (block_id 1) (access 0)) (from (block_id 2) (access 1)))))
+      (return 2))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["jump", ["block_id", 2]],
-      ], [
+      ],
+      [
         "block",
         ["let", 0, ["copy", ["constant", 11]]],
         ["jump", ["block_id", 3]],
-      ], [
+      ],
+      [
         "block",
         ["let", 1, ["copy", ["constant", 13]]],
         ["jump", ["block_id", 3]],
-      ], [
+      ],
+      [
         "block",
         ["let", 2, ["phi", [
           "sources",
@@ -265,7 +273,7 @@ describe("MIR: phi (control flow join)", () => {
           ["from", ["block_id", 2], ["access", 1]],
         ]]],
         ["return", 2],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -290,32 +298,32 @@ describe("MIR: phi (control flow join)", () => {
     (parameters)
     (locals Int Int Int Int Int Int)
     (result Int)
-    (blocks
-      (block
-        (let 0 (copy (constant 0)))
-        (let 1 (copy (constant 1)))
-        (let 2 (copy (constant 3)))
-        (jump (block_id 1)))
-      (block
-        (let 3 (phi (sources (from (block_id 0) (access 0)) (from (block_id 1) (access 4)))))
-        (let 4 (add (access 1) (access 3)))
-        (let 5 (unequal (access 3) (access 2)))
-        (branch (access 5) (block_id 1) (block_id 2)))
-      (block
-        (return 3)))))
+    (block
+      (let 0 (copy (constant 0)))
+      (let 1 (copy (constant 1)))
+      (let 2 (copy (constant 3)))
+      (jump (block_id 1)))
+    (block
+      (let 3 (phi (sources (from (block_id 0) (access 0)) (from (block_id 1) (access 4)))))
+      (let 4 (add (access 1) (access 3)))
+      (let 5 (unequal (access 3) (access 2)))
+      (branch (access 5) (block_id 1) (block_id 2)))
+    (block
+      (return 3))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["let", 0, ["copy", ["constant", 0]]],
         ["let", 1, ["copy", ["constant", 1]]],
         ["let", 2, ["copy", ["constant", 3]]],
         ["jump", ["block_id", 1]],
-      ], [
+      ],
+      [
         "block",
         ["let", 3, ["phi", [
           "sources",
@@ -325,10 +333,11 @@ describe("MIR: phi (control flow join)", () => {
         ["let", 4, ["add", ["access", 1], ["access", 3]]],
         ["let", 5, ["unequal", ["access", 3], ["access", 2]]],
         ["branch", ["access", 5], ["block_id", 1], ["block_id", 2]],
-      ], [
+      ],
+      [
         "block",
         ["return", 3],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -353,24 +362,23 @@ describe("MIR: phi (control flow join)", () => {
     (parameters)
     (locals Int Int Int Int Int Int Int)
     (result Int)
-    (blocks
-      (block
-        (let 0 (copy (constant 0)))
-        (branch (access 0) (block_id 1) (block_id 2)))
-      (block
-        (let 1 (copy (constant 11)))
-        (jump (block_id 4)))
-      (block
-        (let 2 (copy (constant 13)))
-        (jump (block_id 3)))
-      (block
-        (let 3 (copy (constant 281)))
-        (jump (block_id 4)))
-      (block
-        (let 4 (phi (sources (from (block_id 1) (access 1)) (from (block_id 3) (access 2)))))
-        (let 5 (phi (sources (from (block_id 1) (access 1)) (from (block_id 3) (access 3)))))
-        (let 6 (add (access 4) (access 5)))
-        (return 6)))))
+    (block
+      (let 0 (copy (constant 0)))
+      (branch (access 0) (block_id 1) (block_id 2)))
+    (block
+      (let 1 (copy (constant 11)))
+      (jump (block_id 4)))
+    (block
+      (let 2 (copy (constant 13)))
+      (jump (block_id 3)))
+    (block
+      (let 3 (copy (constant 281)))
+      (jump (block_id 4)))
+    (block
+      (let 4 (phi (sources (from (block_id 1) (access 1)) (from (block_id 3) (access 2)))))
+      (let 5 (phi (sources (from (block_id 1) (access 1)) (from (block_id 3) (access 3)))))
+      (let 6 (add (access 4) (access 5)))
+      (return 6))))
 `;
 
     const input: MIR.Program = ["program", [
@@ -378,23 +386,27 @@ describe("MIR: phi (control flow join)", () => {
       ["parameters"],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["let", 0, ["copy", ["constant", 0]]],
         ["branch", ["access", 0], ["block_id", 1], ["block_id", 2]],
-      ], [
+      ],
+      [
         "block",
         ["let", 1, ["copy", ["constant", 11]]],
         ["jump", ["block_id", 4]],
-      ], [
+      ],
+      [
         "block",
         ["let", 2, ["copy", ["constant", 13]]],
         ["jump", ["block_id", 3]],
-      ], [
+      ],
+      [
         "block",
         ["let", 3, ["copy", ["constant", 281]]],
         ["jump", ["block_id", 4]],
-      ], [
+      ],
+      [
         "block",
         ["let", 4, ["phi", [
           "sources",
@@ -408,7 +420,7 @@ describe("MIR: phi (control flow join)", () => {
         ]]],
         ["let", 6, ["add", ["access", 4], ["access", 5]]],
         ["return", 6],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -432,38 +444,40 @@ describe("MIR: phi (control flow join)", () => {
     (parameters)
     (locals Int Int Int Int)
     (result Int)
-    (blocks
-      (block
-        (jump (block_id 1)))
-      (block
-        (let 0 (copy (constant 11)))
-        (let 1 (copy (constant 1)))
-        (branch (access 1) (block_id 2) (block_id 3)))
-      (block
-        (let 2 (copy (constant 13)))
-        (jump (block_id 3)))
-      (block
-        (let 3 (phi (sources (from (block_id 1) (access 0)) (from (block_id 2) (access 2)))))
-        (return 3)))))
+    (block
+      (jump (block_id 1)))
+    (block
+      (let 0 (copy (constant 11)))
+      (let 1 (copy (constant 1)))
+      (branch (access 1) (block_id 2) (block_id 3)))
+    (block
+      (let 2 (copy (constant 13)))
+      (jump (block_id 3)))
+    (block
+      (let 3 (phi (sources (from (block_id 1) (access 0)) (from (block_id 2) (access 2)))))
+      (return 3))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["jump", ["block_id", 1]],
-      ], [
+      ],
+      [
         "block",
         ["let", 0, ["copy", ["constant", 11]]],
         ["let", 1, ["copy", ["constant", 1]]],
         ["branch", ["access", 1], ["block_id", 2], ["block_id", 3]],
-      ], [
+      ],
+      [
         "block",
         ["let", 2, ["copy", ["constant", 13]]],
         ["jump", ["block_id", 3]],
-      ], [
+      ],
+      [
         "block",
         ["let", 3, ["phi", [
           "sources",
@@ -471,7 +485,7 @@ describe("MIR: phi (control flow join)", () => {
           ["from", ["block_id", 2], ["access", 2]],
         ]]],
         ["return", 3],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -495,38 +509,40 @@ describe("MIR: phi (control flow join)", () => {
     (parameters)
     (locals Int Int Int Int)
     (result Int)
-    (blocks
-      (block
-        (let 0 (copy (constant 0)))
-        (branch (access 0) (block_id 1) (block_id 3)))
-      (block
-        (let 1 (copy (constant 1)))
-        (branch (access 1) (block_id 2) (block_id 3)))
-      (block
-        (let 2 (copy (constant 1)))
-        (jump (block_id 3)))
-      (block
-        (let 3 (phi (sources (from (block_id 0) (access 0)) (from (block_id 1) (access 1)) (from (block_id 2) (access 2)))))
-        (return 3)))))
+    (block
+      (let 0 (copy (constant 0)))
+      (branch (access 0) (block_id 1) (block_id 3)))
+    (block
+      (let 1 (copy (constant 1)))
+      (branch (access 1) (block_id 2) (block_id 3)))
+    (block
+      (let 2 (copy (constant 1)))
+      (jump (block_id 3)))
+    (block
+      (let 3 (phi (sources (from (block_id 0) (access 0)) (from (block_id 1) (access 1)) (from (block_id 2) (access 2)))))
+      (return 3))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["let", 0, ["copy", ["constant", 0]]],
         ["branch", ["access", 0], ["block_id", 1], ["block_id", 3]],
-      ], [
+      ],
+      [
         "block",
         ["let", 1, ["copy", ["constant", 1]]],
         ["branch", ["access", 1], ["block_id", 2], ["block_id", 3]],
-      ], [
+      ],
+      [
         "block",
         ["let", 2, ["copy", ["constant", 1]]],
         ["jump", ["block_id", 3]],
-      ], [
+      ],
+      [
         "block",
         ["let", 3, ["phi", [
           "sources",
@@ -535,7 +551,7 @@ describe("MIR: phi (control flow join)", () => {
           ["from", ["block_id", 2], ["access", 2]],
         ]]],
         ["return", 3],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -559,38 +575,40 @@ describe("MIR: phi (control flow join)", () => {
     (parameters)
     (locals Int Int Int Int)
     (result Int)
-    (blocks
-      (block
-        (let 0 (copy (constant 0)))
-        (branch (access 0) (block_id 1) (block_id 3)))
-      (block
-        (let 1 (copy (constant 1)))
-        (branch (access 1) (block_id 2) (block_id 3)))
-      (block
-        (let 2 (copy (constant 1)))
-        (jump (block_id 3)))
-      (block
-        (let 3 (phi (sources (from (block_id 1) (access 1)) (from (block_id 2) (access 2)))))
-        (return 3)))))
+    (block
+      (let 0 (copy (constant 0)))
+      (branch (access 0) (block_id 1) (block_id 3)))
+    (block
+      (let 1 (copy (constant 1)))
+      (branch (access 1) (block_id 2) (block_id 3)))
+    (block
+      (let 2 (copy (constant 1)))
+      (jump (block_id 3)))
+    (block
+      (let 3 (phi (sources (from (block_id 1) (access 1)) (from (block_id 2) (access 2)))))
+      (return 3))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["let", 0, ["copy", ["constant", 0]]],
         ["branch", ["access", 0], ["block_id", 1], ["block_id", 3]],
-      ], [
+      ],
+      [
         "block",
         ["let", 1, ["copy", ["constant", 1]]],
         ["branch", ["access", 1], ["block_id", 2], ["block_id", 3]],
-      ], [
+      ],
+      [
         "block",
         ["let", 2, ["copy", ["constant", 1]]],
         ["jump", ["block_id", 3]],
-      ], [
+      ],
+      [
         "block",
         ["let", 3, ["phi", [
           "sources",
@@ -598,7 +616,7 @@ describe("MIR: phi (control flow join)", () => {
           ["from", ["block_id", 2], ["access", 2]],
         ]]],
         ["return", 3],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);

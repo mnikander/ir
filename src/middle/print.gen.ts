@@ -15,14 +15,14 @@ function print_program([, ...functions]: MIR.Program): string {
 }
 
 function print_function(
-  [, parameters, locals, result, blocks]: MIR.Function,
+  [, parameters, locals, result, ...blocks]: MIR.Function,
 ): string {
   return [
     "(function",
     indent(print_parameters(parameters)),
     indent(print_locals(locals)),
     indent(print_result(result)),
-    indent(print_blocks(blocks)),
+    ...blocks.map((block) => indent(print_block(block))),
   ].join("\n") + ")";
 }
 
@@ -36,13 +36,6 @@ function print_result([, type]: MIR.Result): string {
 
 function print_locals([, ...types]: MIR.Locals): string {
   return print_list("locals", types.map(print_type));
-}
-
-function print_blocks([, ...blocks]: MIR.Blocks): string {
-  if (blocks.length === 0) return "(blocks)";
-  return `(blocks\n${
-    blocks.map((block) => indent(print_block(block))).join("\n")
-  })`;
 }
 
 function print_block([, ...lines]: MIR.Block): string {

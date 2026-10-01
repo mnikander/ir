@@ -13,41 +13,39 @@ describe("MIR: function call", () => {
     (parameters)
     (locals Int Int Int)
     (result Int)
-    (blocks
-      (block
-        (let 0 (copy (constant 11)))
-        (let 1 (copy (constant 13)))
-        (let 2 (call (function_id 1) (arguments (access 1))))
-        (return 2))))
+    (block
+      (let 0 (copy (constant 11)))
+      (let 1 (copy (constant 13)))
+      (let 2 (call (function_id 1) (arguments (access 1))))
+      (return 2)))
   (function
     (parameters Int)
     (locals)
     (result Int)
-    (blocks
-      (block
-        (return 0)))))
+    (block
+      (return 0))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["let", 0, ["copy", ["constant", 11]]],
         ["let", 1, ["copy", ["constant", 13]]],
         ["let", 2, ["call", ["function_id", 1], ["arguments", ["access", 1]]]],
         ["return", 2],
-      ]],
+      ],
     ], [
       "function",
       ["parameters", ["Int"]],
       ["locals"],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["return", 0],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -61,26 +59,24 @@ describe("MIR: function call", () => {
     (parameters)
     (locals Int Int Int)
     (result Int)
-    (blocks
-      (block
-        (let 0 (copy (constant 11)))
-        (let 1 (copy (constant 13)))
-        (let 2 (call (function_id 1) (arguments (access 0) (access 1))))
-        (return 2))))
+    (block
+      (let 0 (copy (constant 11)))
+      (let 1 (copy (constant 13)))
+      (let 2 (call (function_id 1) (arguments (access 0) (access 1))))
+      (return 2)))
   (function
     (parameters Int Int)
     (locals)
     (result Int)
-    (blocks
-      (block
-        (return 0)))))
+    (block
+      (return 0))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["let", 0, ["copy", ["constant", 11]]],
         ["let", 1, ["copy", ["constant", 13]]],
@@ -89,16 +85,16 @@ describe("MIR: function call", () => {
           1,
         ]]]],
         ["return", 2],
-      ]],
+      ],
     ], [
       "function",
       ["parameters", ["Int"], ["Int"]],
       ["locals"],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["return", 0],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -118,35 +114,33 @@ describe("MIR: function call", () => {
     (parameters)
     (locals Int Int Int)
     (result Int)
-    (blocks
-      (block
-        (let 0 (copy (constant 5)))
-        (let 1 (copy (constant 1)))
-        (let 2 (call (function_id 1) (arguments (access 0) (access 1))))
-        (return 2))))
+    (block
+      (let 0 (copy (constant 5)))
+      (let 1 (copy (constant 1)))
+      (let 2 (call (function_id 1) (arguments (access 0) (access 1))))
+      (return 2)))
   (function
     (parameters Int Int)
     (locals Int Int Int Int Int Int)
     (result Int)
-    (blocks
-      (block
-        (let 3 (equal (access 0) (constant 1)))
-        (branch (access 3) (block_id 2) (block_id 1)))
-      (block
-        (let 4 (subtract (access 0) (constant 1)))
-        (let 5 (multiply (access 0) (access 1)))
-        (let 6 (call (function_id 1) (arguments (access 4) (access 5))))
-        (jump (block_id 2)))
-      (block
-        (let 7 (phi (sources (from (block_id 1) (access 6)) (from (block_id 0) (access 1)))))
-        (return 7)))))
+    (block
+      (let 3 (equal (access 0) (constant 1)))
+      (branch (access 3) (block_id 2) (block_id 1)))
+    (block
+      (let 4 (subtract (access 0) (constant 1)))
+      (let 5 (multiply (access 0) (access 1)))
+      (let 6 (call (function_id 1) (arguments (access 4) (access 5))))
+      (jump (block_id 2)))
+    (block
+      (let 7 (phi (sources (from (block_id 1) (access 6)) (from (block_id 0) (access 1)))))
+      (return 7))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["let", 0, ["copy", ["constant", 5]]],
         ["let", 1, ["copy", ["constant", 1]]],
@@ -155,17 +149,18 @@ describe("MIR: function call", () => {
           1,
         ]]]],
         ["return", 2],
-      ]],
+      ],
     ], [
       "function",
       ["parameters", ["Int"], ["Int"]],
       ["locals", ["Int"], ["Int"], ["Int"], ["Int"], ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["let", 3, ["equal", ["access", 0], ["constant", 1]]],
         ["branch", ["access", 3], ["block_id", 2], ["block_id", 1]],
-      ], [
+      ],
+      [
         "block",
         ["let", 4, ["subtract", ["access", 0], ["constant", 1]]],
         ["let", 5, ["multiply", ["access", 0], ["access", 1]]],
@@ -174,7 +169,8 @@ describe("MIR: function call", () => {
           5,
         ]]]],
         ["jump", ["block_id", 2]],
-      ], [
+      ],
+      [
         "block",
         ["let", 7, ["phi", [
           "sources",
@@ -182,7 +178,7 @@ describe("MIR: function call", () => {
           ["from", ["block_id", 0], ["access", 1]],
         ]]],
         ["return", 7],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);

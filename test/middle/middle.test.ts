@@ -13,21 +13,20 @@ describe("MIR: literals and exit", () => {
     (parameters)
     (locals Int)
     (result Int)
-    (blocks
-      (block
-        (let 0 (copy (constant 11)))
-        (return 0)))))
+    (block
+      (let 0 (copy (constant 11)))
+      (return 0))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["let", 0, ["copy", ["constant", 11]]],
         ["return", 0],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -41,23 +40,22 @@ describe("MIR: literals and exit", () => {
     (parameters)
     (locals Int Int)
     (result Int)
-    (blocks
-      (block
-        (let 0 (copy (constant 11)))
-        (let 0 (copy (constant 13)))
-        (return 1)))))
+    (block
+      (let 0 (copy (constant 11)))
+      (let 0 (copy (constant 13)))
+      (return 1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["let", 0, ["copy", ["constant", 11]]],
         ["let", 0, ["copy", ["constant", 13]]],
         ["return", 1],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -72,15 +70,13 @@ describe("MIR: literals and exit", () => {
   (function
     (parameters)
     (locals)
-    (result Int)
-    (blocks)))
+    (result Int)))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals"],
       ["result", ["Int"]],
-      ["blocks"],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -94,23 +90,22 @@ describe("MIR: literals and exit", () => {
     (parameters)
     (locals Int (Borrowed Int))
     (result Int)
-    (blocks
-      (block
-        (let 0 (copy (constant 11)))
-        (let 1 (borrow (access 0)))
-        (return 1)))))
+    (block
+      (let 0 (copy (constant 11)))
+      (let 1 (borrow (access 0)))
+      (return 1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Borrowed", ["Int"]]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["let", 0, ["copy", ["constant", 11]]],
         ["let", 1, ["borrow", ["access", 0]]],
         ["return", 1],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -126,23 +121,22 @@ describe("MIR: copying of registers", () => {
     (parameters)
     (locals Int Int)
     (result Int)
-    (blocks
-      (block
-        (let 0 (copy (constant 11)))
-        (let 1 (copy (access 0)))
-        (return 1)))))
+    (block
+      (let 0 (copy (constant 11)))
+      (let 1 (copy (access 0)))
+      (return 1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["let", 0, ["copy", ["constant", 11]]],
         ["let", 1, ["copy", ["access", 0]]],
         ["return", 1],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -158,25 +152,24 @@ describe("MIR: arithmetic operations", () => {
     (parameters)
     (locals Int Int Int)
     (result Int)
-    (blocks
-      (block
-        (let 0 (copy (constant 11)))
-        (let 1 (copy (constant 13)))
-        (let 2 (add (access 0) (access 1)))
-        (return 2)))))
+    (block
+      (let 0 (copy (constant 11)))
+      (let 1 (copy (constant 13)))
+      (let 2 (add (access 0) (access 1)))
+      (return 2))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["let", 0, ["copy", ["constant", 11]]],
         ["let", 1, ["copy", ["constant", 13]]],
         ["let", 2, ["add", ["access", 0], ["access", 1]]],
         ["return", 2],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);
@@ -190,23 +183,22 @@ describe("MIR: arithmetic operations", () => {
     (parameters)
     (locals Int Int)
     (result Int)
-    (blocks
-      (block
-        (let 0 (copy (constant 11)))
-        (let 1 (add (access 0) (constant 13)))
-        (return 1)))))
+    (block
+      (let 0 (copy (constant 11)))
+      (let 1 (add (access 0) (constant 13)))
+      (return 1))))
 `;
     const input: MIR.Program = ["program", [
       "function",
       ["parameters"],
       ["locals", ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", [
+      [
         "block",
         ["let", 0, ["copy", ["constant", 11]]],
         ["let", 1, ["add", ["access", 0], ["constant", 13]]],
         ["return", 1],
-      ]],
+      ],
     ]];
     expect(input).toBeDefined();
     expect(print(input)).toEqual(text);

@@ -17,7 +17,7 @@ function program(lines: MIR.Line[], locals = 1): MIR.Program {
       ...Array.from({ length: locals }, () => ["Int"] as MIR.Type),
     ],
     ["result", ["Int"]],
-    ["blocks", ["block", ...lines]],
+    ["block", ...lines],
   ]];
 }
 
@@ -70,13 +70,14 @@ describe("MIR to LIR micro-passes", () => {
       ["parameters"],
       ["locals", ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["blocks", ["block", ["let", 0, ["copy", ["constant", 1]]], ["jump", [
+      ["block", ["let", 0, ["copy", ["constant", 1]]], ["jump", [
         "block_id",
         1,
-      ]]], ["block", ["let", 1, ["phi", ["sources", ["from", ["block_id", 0], [
+      ]]],
+      ["block", ["let", 1, ["phi", ["sources", ["from", ["block_id", 0], [
         "access",
         0,
-      ]]]]], ["return", 1]]],
+      ]]]]], ["return", 1]],
     ]];
     const split = split_phi_edges(validate_and_index(input));
     expect(split[0].blocks.length).toBe(3);
@@ -94,18 +95,15 @@ describe("MIR to LIR micro-passes", () => {
       ["parameters"],
       ["locals", ["Int"], ["Int"]],
       ["result", ["Int"]],
-      [
-        "blocks",
-        ["block", ["branch", ["constant", 1], ["block_id", 1], [
-          "block_id",
-          2,
-        ]]],
-        ["block", ["jump", ["block_id", 2]]],
-        ["block", ["let", 1, ["phi", ["sources", ["from", ["block_id", 1], [
-          "access",
-          0,
-        ]]]]], ["return", 1]],
-      ],
+      ["block", ["branch", ["constant", 1], ["block_id", 1], [
+        "block_id",
+        2,
+      ]]],
+      ["block", ["jump", ["block_id", 2]]],
+      ["block", ["let", 1, ["phi", ["sources", ["from", ["block_id", 1], [
+        "access",
+        0,
+      ]]]]], ["return", 1]],
     ]];
     expect(() => validate_and_index(input)).toThrow();
   });

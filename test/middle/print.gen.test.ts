@@ -15,7 +15,6 @@ describe("MIR printer", () => {
         ["parameters", ["Int"], ["Borrowed", ["Borrowed", ["Int"]]]],
         ["locals"],
         ["result", ["Borrowed", ["Int"]]],
-        ["blocks"],
       ],
     ];
 
@@ -24,8 +23,7 @@ describe("MIR printer", () => {
         "  (function\n" +
         "    (parameters Int (Borrowed (Borrowed Int)))\n" +
         "    (locals)\n" +
-        "    (result (Borrowed Int))\n" +
-        "    (blocks)))\n",
+        "    (result (Borrowed Int))))\n",
     );
 
     const empty_block: MIR.Program = [
@@ -35,7 +33,7 @@ describe("MIR printer", () => {
         ["parameters"],
         ["locals"],
         ["result", ["Int"]],
-        ["blocks", ["block"]],
+        ["block"],
       ],
     ];
     expect(print(empty_block)).toBe(
@@ -44,8 +42,7 @@ describe("MIR printer", () => {
         "    (parameters)\n" +
         "    (locals)\n" +
         "    (result Int)\n" +
-        "    (blocks\n" +
-        "      (block))))\n",
+        "    (block)))\n",
     );
   });
 
@@ -58,36 +55,33 @@ describe("MIR printer", () => {
         ["locals", ["Int"], ["Borrowed", ["Int"]]],
         ["result", ["Int"]],
         [
-          "blocks",
-          [
-            "block",
-            ["let", 0, ["phi", ["sources", ["from", ["block_id", 1], [
-              "access",
-              2,
-            ]], ["from", ["block_id", 2], ["consume", 3]]]]],
-            ["let", 1, ["call", ["function_id", 0], [
-              "arguments",
-              ["access", 0],
-              ["consume", 2],
-            ]]],
-            ["let", 2, ["call", ["function_id", 1], ["arguments"]]],
-            ["let", 3, ["copy", ["constant", 42]]],
-            ["let", 4, ["copy", ["access", 3]]],
-            ["let", 5, ["borrow", ["access", 4]]],
-            ["let", 6, ["borrow", ["access", 5]]],
-            ["let", 7, ["load", ["consume", 6]]],
-            ["drop", 5],
-            ["return", 7],
-          ],
-          ["block"],
+          "block",
+          ["let", 0, ["phi", ["sources", ["from", ["block_id", 1], [
+            "access",
+            2,
+          ]], ["from", ["block_id", 2], ["consume", 3]]]]],
+          ["let", 1, ["call", ["function_id", 0], [
+            "arguments",
+            ["access", 0],
+            ["consume", 2],
+          ]]],
+          ["let", 2, ["call", ["function_id", 1], ["arguments"]]],
+          ["let", 3, ["copy", ["constant", 42]]],
+          ["let", 4, ["copy", ["access", 3]]],
+          ["let", 5, ["borrow", ["access", 4]]],
+          ["let", 6, ["borrow", ["access", 5]]],
+          ["let", 7, ["load", ["consume", 6]]],
+          ["drop", 5],
+          ["return", 7],
         ],
+        ["block"],
       ],
       [
         "function",
         ["parameters"],
         ["locals"],
         ["result", ["Int"]],
-        ["blocks", ["block", ["return", 0]]],
+        ["block", ["return", 0]],
       ],
     ];
 
@@ -97,26 +91,24 @@ describe("MIR printer", () => {
         "    (parameters Int)\n" +
         "    (locals Int (Borrowed Int))\n" +
         "    (result Int)\n" +
-        "    (blocks\n" +
-        "      (block\n" +
-        "        (let 0 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))\n" +
-        "        (let 1 (call (function_id 0) (arguments (access 0) (consume 2))))\n" +
-        "        (let 2 (call (function_id 1) (arguments)))\n" +
-        "        (let 3 (copy (constant 42)))\n" +
-        "        (let 4 (copy (access 3)))\n" +
-        "        (let 5 (borrow (access 4)))\n" +
-        "        (let 6 (borrow (access 5)))\n" +
-        "        (let 7 (load (consume 6)))\n" +
-        "        (drop 5)\n" +
-        "        (return 7))\n" +
-        "      (block)))\n" +
+        "    (block\n" +
+        "      (let 0 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))\n" +
+        "      (let 1 (call (function_id 0) (arguments (access 0) (consume 2))))\n" +
+        "      (let 2 (call (function_id 1) (arguments)))\n" +
+        "      (let 3 (copy (constant 42)))\n" +
+        "      (let 4 (copy (access 3)))\n" +
+        "      (let 5 (borrow (access 4)))\n" +
+        "      (let 6 (borrow (access 5)))\n" +
+        "      (let 7 (load (consume 6)))\n" +
+        "      (drop 5)\n" +
+        "      (return 7))\n" +
+        "    (block))\n" +
         "  (function\n" +
         "    (parameters)\n" +
         "    (locals)\n" +
         "    (result Int)\n" +
-        "    (blocks\n" +
-        "      (block\n" +
-        "        (return 0)))))\n",
+        "    (block\n" +
+        "      (return 0))))\n",
     );
   });
 
@@ -148,13 +140,13 @@ describe("MIR printer", () => {
     const input: MIR.Program = [
       "program",
       ["function", ["parameters"], ["locals"], ["result", ["Int"]], [
-        "blocks",
-        ["block", ...lines],
+        "block",
+        ...lines,
       ]],
     ];
 
     const expected_lines = binary_tags.map((tag, index) =>
-      `        (let ${index} (${tag} (access 0) (consume 1)))`
+      `      (let ${index} (${tag} (access 0) (consume 1)))`
     );
     expect(print(input)).toBe(
       "\n(program\n" +
@@ -162,12 +154,11 @@ describe("MIR printer", () => {
         "    (parameters)\n" +
         "    (locals)\n" +
         "    (result Int)\n" +
-        "    (blocks\n" +
-        "      (block\n" +
+        "    (block\n" +
         expected_lines.join("\n") + "\n" +
-        "        (let 13 (negate (access 2)))\n" +
-        "        (branch (constant 0) (block_id 1) (block_id 2))\n" +
-        "        (return 13)))))\n",
+        "      (let 13 (negate (access 2)))\n" +
+        "      (branch (constant 0) (block_id 1) (block_id 2))\n" +
+        "      (return 13))))\n",
     );
   });
 
@@ -179,7 +170,7 @@ describe("MIR printer", () => {
         ["parameters"],
         ["locals"],
         ["result", ["Int"]],
-        ["blocks", ["block", ["jump", ["block_id", 42]]]],
+        ["block", ["jump", ["block_id", 42]]],
       ],
     ];
 
@@ -189,9 +180,8 @@ describe("MIR printer", () => {
         "    (parameters)\n" +
         "    (locals)\n" +
         "    (result Int)\n" +
-        "    (blocks\n" +
-        "      (block\n" +
-        "        (jump (block_id 42))))))\n",
+        "    (block\n" +
+        "      (jump (block_id 42)))))\n",
     );
   });
 });
