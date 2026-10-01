@@ -90,7 +90,7 @@ function lower_let(line: MIR.Let, next: number): Result {
     case "borrow":
       instruction = [destination, "address_of", prepared.offsets[0]];
       break;
-    case "dereference":
+    case "load":
       instruction = [destination, "load", prepared.offsets[0]];
       break;
     case "negate":

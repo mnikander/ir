@@ -6,7 +6,7 @@ import { lower } from "../../src/middle_to_low/lower.gen.ts";
 import { evaluate } from "../../src/low/machine.ts";
 
 describe("MIR: memory and ownership", () => {
-  it("must create and dereference a pointer", () => {
+  it("must create and load a pointer", () => {
     const text: string = `
 (program
   (function
@@ -17,7 +17,7 @@ describe("MIR: memory and ownership", () => {
       (block
         (let 0 (copy (literal 11)))
         (let 1 (borrow (access 0)))
-        (let 2 (dereference (access 1)))
+        (let 2 (load (access 1)))
         (return 2)))))
 `;
     const input: MIR.Program = ["program", [
@@ -29,7 +29,7 @@ describe("MIR: memory and ownership", () => {
         "block",
         ["let", 0, ["copy", ["literal", 11]]],
         ["let", 1, ["borrow", ["access", 0]]],
-        ["let", 2, ["dereference", ["access", 1]]],
+        ["let", 2, ["load", ["access", 1]]],
         ["return", 2],
       ]],
     ]];
@@ -248,7 +248,7 @@ describe.skip("MIR: use-after-free", () => {
         (let 0 (copy (literal 11)))
         (let 1 (borrow (access 0)))
         (drop 0)
-        (let 2 (dereference (access 1)))
+        (let 2 (load (access 1)))
         (return 2)))))
 `;
     const input: MIR.Program = ["program", [
@@ -261,7 +261,7 @@ describe.skip("MIR: use-after-free", () => {
         ["let", 0, ["copy", ["literal", 11]]],
         ["let", 1, ["borrow", ["access", 0]]],
         ["drop", 0],
-        ["let", 2, ["dereference", ["access", 1]]],
+        ["let", 2, ["load", ["access", 1]]],
         ["return", 2],
       ]],
     ]];
@@ -282,7 +282,7 @@ describe.skip("MIR: use-after-free", () => {
         (let 0 (copy (literal 11)))
         (let 1 (borrow (access 0)))
         (let 2 (copy (consume 0)))
-        (let 3 (dereference (access 1)))
+        (let 3 (load (access 1)))
         (return 3)))))
 `;
     const input: MIR.Program = ["program", [
@@ -295,7 +295,7 @@ describe.skip("MIR: use-after-free", () => {
         ["let", 0, ["copy", ["literal", 11]]],
         ["let", 1, ["borrow", ["access", 0]]],
         ["let", 2, ["copy", ["consume", 0]]],
-        ["let", 3, ["dereference", ["access", 1]]],
+        ["let", 3, ["load", ["access", 1]]],
         ["return", 3],
       ]],
     ]];

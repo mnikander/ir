@@ -75,7 +75,7 @@ describe("MIR printer", () => {
             ["let", 4, ["copy", ["access", 3]]],
             ["let", 5, ["borrow", ["access", 4]]],
             ["let", 6, ["borrow", ["access", 5]]],
-            ["let", 7, ["dereference", ["consume", 6]]],
+            ["let", 7, ["load", ["consume", 6]]],
             ["drop", 5],
             ["return", 7],
           ],
@@ -106,7 +106,7 @@ describe("MIR printer", () => {
         "        (let 4 (copy (access 3)))\n" +
         "        (let 5 (borrow (access 4)))\n" +
         "        (let 6 (borrow (access 5)))\n" +
-        "        (let 7 (dereference (consume 6)))\n" +
+        "        (let 7 (load (consume 6)))\n" +
         "        (drop 5)\n" +
         "        (return 7))\n" +
         "      (block)))\n" +

@@ -36,7 +36,7 @@ Every value-producing operation is bound to a resource with:
 | Phi           | `phi`           | `(let 0 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))` | `T...`                  | `T`           | SSA-style join                         |
 | Call          | `call`          | `(let 0 (call (function_id 1) (arguments (access 1) (consume 2))))`                      | `T...`                  | `U`           | Function call                          |
 | Borrow        | `borrow`        | `(let 0 (borrow (access 1)))`                                                            | `T`                     | `Borrowed T`  | Create a read-only, non-owning pointer |
-| Dereference   | `dereference`   | `(let 0 (dereference (access 1)))`                                                       | `Borrowed T`            | `T`           | Load the value referenced by a pointer |
+| Load          | `load`          | `(let 0 (load (access 1)))`                                                              | `Borrowed T`            | `T`           | Load the value referenced by a pointer |
 | Copy          | `copy`          | `(let 0 (copy (literal 42)))`                                                            | `T`                     | `T`           | Copy an operand into a resource        |
 | Add           | `add`           | `(let 0 (add (access 1) (literal 2)))`                                                   | `Int, Int`              | `Int`         |                                        |
 | Subtract      | `subtract`      | `(let 0 (subtract (access 1) (consume 2)))`                                              | `Int, Int`              | `Int`         |                                        |
