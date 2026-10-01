@@ -141,13 +141,13 @@ function prepare_operands(
       before.push([temporary, "constant", { value: operand[1] }]);
       return temporary;
     }
-    if (operand[0] === "consume" && preserve_consumed) {
+    if (operand[0] === "move" && preserve_consumed) {
       const temporary = next++;
       before.push([temporary, "copy", operand[1]]);
       after.push([operand[1], "drop"]);
       return temporary;
     }
-    if (operand[0] === "consume") after.push([operand[1], "drop"]);
+    if (operand[0] === "move") after.push([operand[1], "drop"]);
     return operand[1];
   });
   return { before, offsets, after, next };

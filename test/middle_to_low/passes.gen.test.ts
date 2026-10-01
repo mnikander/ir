@@ -58,7 +58,7 @@ describe("MIR to LIR micro-passes", () => {
     const output = lower_operations(
       validate_and_index(
         program([["let", 0, ["identity", ["constant", 7]]], ["let", 1, ["add", [
-          "consume",
+          "move",
           0,
         ], ["constant", 1]]], ["return", 1]], 2),
       ),
@@ -78,7 +78,7 @@ describe("MIR to LIR micro-passes", () => {
         1,
       ]]],
       ["block", ["let", 1, ["phi", ["sources", ["from", ["block_id", 0], [
-        "access",
+        "read",
         0,
       ]]]]], ["return", 1]],
     ]];
@@ -104,7 +104,7 @@ describe("MIR to LIR micro-passes", () => {
       ]]],
       ["block", ["jump", ["block_id", 2]]],
       ["block", ["let", 1, ["phi", ["sources", ["from", ["block_id", 1], [
-        "access",
+        "read",
         0,
       ]]]]], ["return", 1]],
     ]];

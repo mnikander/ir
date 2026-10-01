@@ -83,22 +83,22 @@ function. They are illustrated by these examples:
 - `(drop 0)` drops resource #0.
 - `(return 0)` returns resource #0 from the function.
 - `(jump (block_id 1))` jumps to block #1 unconditionally.
-- `(branch (access 0) (block_id 1) (block_id 2))` branches conditionally.
+- `(branch (read 0) (block_id 1) (block_id 2))` branches conditionally.
 
 Every value-producing line takes the form of a let-binding. The general form is
 `(let RESOURCE OPERATION)`. For example:
 
 - `(let 0 (identity (constant 42)))` loads the integer `42` into resource 0.
-- `(let 1 (add (access 0) (consume 2)))` adds two operands and binds the result
-  to resource 1.
-- `(let 2 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))`
+- `(let 1 (add (read 0) (move 2)))` adds two operands and binds the result to
+  resource 1.
+- `(let 2 (phi (sources (from (block_id 1) (read 2)) (from (block_id 2) (move 3)))))`
   selects a value based on the predecessor block.
-- `(let 3 (call (function_id 1) (arguments (access 0))))` calls function #1,
-  pass resource #0 as an argument, and bind the result to resource #3.
+- `(let 3 (call (function_id 1) (arguments (read 0))))` calls function #1, pass
+  resource #0 as an argument, and bind the result to resource #3.
 
-Operands are `(access N)` for a non-consuming read, `(consume N)` for a
-destructive move, and `(constant N)` for an immediate integer. Block and
-function references use `(block_id N)` and `(function_id N)`.
+Operands are `(read N)` for a non-consuming read, `(move N)` for a destructive
+move, and `(constant N)` for an immediate integer. Block and function references
+use `(block_id N)` and `(function_id N)`.
 
 ### Symbolic expressions vs. JSON
 
@@ -108,8 +108,8 @@ straight-forward translation step makes it easier to reason about and write
 test-cases in either form.
 
 ```text
-(let 2 (add (access 0) (access 1)))
-["let", 2, ["add", ["access", 0], ["access", 1]]]
+(let 2 (add (read 0) (read 1)))
+["let", 2, ["add", ["read", 0], ["read", 1]]]
 ```
 
 ### Formatting
@@ -126,8 +126,8 @@ every tuple is tagged. Example of canonical formatting:
     (locals (Borrowed Int))
     (result Int)
     (block
-      (let 0 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))
-      (let 1 (call (function_id 0) (arguments (access 0) (consume 2))))
+      (let 0 (phi (sources (from (block_id 1) (read 2)) (from (block_id 2) (move 3)))))
+      (let 1 (call (function_id 0) (arguments (read 0) (move 2))))
       (branch (constant 0) (block_id 1) (block_id 2)))
     (block
       (return 1))))

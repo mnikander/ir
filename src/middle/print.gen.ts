@@ -113,11 +113,11 @@ function print_source([, block, register]: MIR.From): string {
   return print_list("from", [print_block_id(block), print_input(register)]);
 }
 
-function print_input(input: MIR.Access | MIR.Consume | MIR.Constant): string {
+function print_input(input: MIR.Read | MIR.Move | MIR.Constant): string {
   switch (input[0]) {
-    case "access":
+    case "read":
       return print_access(input);
-    case "consume":
+    case "move":
       return print_consume(input);
     case "constant":
       return print_literal(input);
@@ -130,12 +130,12 @@ function print_let([, resource, value]: MIR.Let): string {
   return print_list("let", [String(resource), print_value(value)]);
 }
 
-function print_access([, resource]: MIR.Access): string {
-  return `(access ${resource})`;
+function print_access([, resource]: MIR.Read): string {
+  return `(read ${resource})`;
 }
 
-function print_consume([, resource]: MIR.Consume): string {
-  return `(consume ${resource})`;
+function print_consume([, resource]: MIR.Move): string {
+  return `(move ${resource})`;
 }
 
 function print_literal([, value]: MIR.Constant): string {

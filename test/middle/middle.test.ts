@@ -92,7 +92,7 @@ describe("MIR: literals and exit", () => {
     (result Int)
     (block
       (let 0 (identity (constant 11)))
-      (let 1 (borrow (access 0)))
+      (let 1 (borrow (read 0)))
       (return 1))))
 `;
     const input: MIR.Program = ["program", [
@@ -103,7 +103,7 @@ describe("MIR: literals and exit", () => {
       [
         "block",
         ["let", 0, ["identity", ["constant", 11]]],
-        ["let", 1, ["borrow", ["access", 0]]],
+        ["let", 1, ["borrow", ["read", 0]]],
         ["return", 1],
       ],
     ]];
@@ -123,7 +123,7 @@ describe("MIR: copying of registers", () => {
     (result Int)
     (block
       (let 0 (identity (constant 11)))
-      (let 1 (identity (access 0)))
+      (let 1 (identity (read 0)))
       (return 1))))
 `;
     const input: MIR.Program = ["program", [
@@ -134,7 +134,7 @@ describe("MIR: copying of registers", () => {
       [
         "block",
         ["let", 0, ["identity", ["constant", 11]]],
-        ["let", 1, ["identity", ["access", 0]]],
+        ["let", 1, ["identity", ["read", 0]]],
         ["return", 1],
       ],
     ]];
@@ -155,7 +155,7 @@ describe("MIR: arithmetic operations", () => {
     (block
       (let 0 (identity (constant 11)))
       (let 1 (identity (constant 13)))
-      (let 2 (add (access 0) (access 1)))
+      (let 2 (add (read 0) (read 1)))
       (return 2))))
 `;
     const input: MIR.Program = ["program", [
@@ -167,7 +167,7 @@ describe("MIR: arithmetic operations", () => {
         "block",
         ["let", 0, ["identity", ["constant", 11]]],
         ["let", 1, ["identity", ["constant", 13]]],
-        ["let", 2, ["add", ["access", 0], ["access", 1]]],
+        ["let", 2, ["add", ["read", 0], ["read", 1]]],
         ["return", 2],
       ],
     ]];
@@ -185,7 +185,7 @@ describe("MIR: arithmetic operations", () => {
     (result Int)
     (block
       (let 0 (identity (constant 11)))
-      (let 1 (add (access 0) (constant 13)))
+      (let 1 (add (read 0) (constant 13)))
       (return 1))))
 `;
     const input: MIR.Program = ["program", [
@@ -196,7 +196,7 @@ describe("MIR: arithmetic operations", () => {
       [
         "block",
         ["let", 0, ["identity", ["constant", 11]]],
-        ["let", 1, ["add", ["access", 0], ["constant", 13]]],
+        ["let", 1, ["add", ["read", 0], ["constant", 13]]],
         ["return", 1],
       ],
     ]];

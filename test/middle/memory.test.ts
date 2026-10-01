@@ -15,8 +15,8 @@ describe("MIR: memory and ownership", () => {
     (result Int)
     (block
       (let 0 (identity (constant 11)))
-      (let 1 (borrow (access 0)))
-      (let 2 (load (access 1)))
+      (let 1 (borrow (read 0)))
+      (let 2 (load (read 1)))
       (return 2))))
 `;
     const input: MIR.Program = ["program", [
@@ -27,8 +27,8 @@ describe("MIR: memory and ownership", () => {
       [
         "block",
         ["let", 0, ["identity", ["constant", 11]]],
-        ["let", 1, ["borrow", ["access", 0]]],
-        ["let", 2, ["load", ["access", 1]]],
+        ["let", 1, ["borrow", ["read", 0]]],
+        ["let", 2, ["load", ["read", 1]]],
         ["return", 2],
       ],
     ]];
@@ -50,7 +50,7 @@ describe("MIR: memory and ownership", () => {
     (result Int)
     (block
       (let 0 (identity (constant 11)))
-      (let 1 (identity (consume 0)))
+      (let 1 (identity (move 0)))
       (return 1))))
 `;
     const input: MIR.Program = ["program", [
@@ -61,7 +61,7 @@ describe("MIR: memory and ownership", () => {
       [
         "block",
         ["let", 0, ["identity", ["constant", 11]]],
-        ["let", 1, ["identity", ["consume", 0]]],
+        ["let", 1, ["identity", ["move", 0]]],
         ["return", 1],
       ],
     ]];
@@ -80,7 +80,7 @@ describe("MIR: memory and ownership", () => {
     (block
       (let 0 (identity (constant 11)))
       (let 1 (identity (constant 13)))
-      (let 2 (add (consume 0) (access 1)))
+      (let 2 (add (move 0) (read 1)))
       (return 2))))
 `;
     const input: MIR.Program = ["program", [
@@ -92,7 +92,7 @@ describe("MIR: memory and ownership", () => {
         "block",
         ["let", 0, ["identity", ["constant", 11]]],
         ["let", 1, ["identity", ["constant", 13]]],
-        ["let", 2, ["add", ["consume", 0], ["access", 1]]],
+        ["let", 2, ["add", ["move", 0], ["read", 1]]],
         ["return", 2],
       ],
     ]];
@@ -146,7 +146,7 @@ describe.skip("MIR: use-after-free", () => {
     (block
       (let 0 (identity (constant 0)))
       (drop 0)
-      (let 1 (negate (access 0)))
+      (let 1 (negate (read 0)))
       (return 1))))
 `;
     const input: MIR.Program = ["program", [
@@ -158,7 +158,7 @@ describe.skip("MIR: use-after-free", () => {
         "block",
         ["let", 0, ["identity", ["constant", 0]]],
         ["drop", 0],
-        ["let", 1, ["negate", ["access", 0]]],
+        ["let", 1, ["negate", ["read", 0]]],
         ["return", 1],
       ],
     ]];
@@ -200,7 +200,7 @@ describe.skip("MIR: use-after-free", () => {
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
-  it("must detect a use-after-consume", () => {
+  it("must detect a use-after-move", () => {
     const text: string = `
 (program
   (function
@@ -209,7 +209,7 @@ describe.skip("MIR: use-after-free", () => {
     (result Int)
     (block
       (let 0 (identity (constant 11)))
-      (let 1 (identity (consume 0)))
+      (let 1 (identity (move 0)))
       (return 0))))
 `;
     const input: MIR.Program = ["program", [
@@ -220,7 +220,7 @@ describe.skip("MIR: use-after-free", () => {
       [
         "block",
         ["let", 0, ["identity", ["constant", 11]]],
-        ["let", 1, ["identity", ["consume", 0]]],
+        ["let", 1, ["identity", ["move", 0]]],
         ["return", 0],
       ],
     ]];
@@ -238,9 +238,9 @@ describe.skip("MIR: use-after-free", () => {
     (result Int)
     (block
       (let 0 (identity (constant 11)))
-      (let 1 (borrow (access 0)))
+      (let 1 (borrow (read 0)))
       (drop 0)
-      (let 2 (load (access 1)))
+      (let 2 (load (read 1)))
       (return 2))))
 `;
     const input: MIR.Program = ["program", [
@@ -251,9 +251,9 @@ describe.skip("MIR: use-after-free", () => {
       [
         "block",
         ["let", 0, ["identity", ["constant", 11]]],
-        ["let", 1, ["borrow", ["access", 0]]],
+        ["let", 1, ["borrow", ["read", 0]]],
         ["drop", 0],
-        ["let", 2, ["load", ["access", 1]]],
+        ["let", 2, ["load", ["read", 1]]],
         ["return", 2],
       ],
     ]];
@@ -262,7 +262,7 @@ describe.skip("MIR: use-after-free", () => {
     expect(() => evaluate(lower(input))).toThrow(); // runtime must flag this as an error
   });
 
-  it("must detect a dangling pointer when the source register is consumed", () => {
+  it("must detect a dangling pointer when the source register is moved", () => {
     const text: string = `
 (program
   (function
@@ -271,9 +271,9 @@ describe.skip("MIR: use-after-free", () => {
     (result Int)
     (block
       (let 0 (identity (constant 11)))
-      (let 1 (borrow (access 0)))
-      (let 2 (identity (consume 0)))
-      (let 3 (load (access 1)))
+      (let 1 (borrow (read 0)))
+      (let 2 (identity (move 0)))
+      (let 3 (load (read 1)))
       (return 3))))
 `;
     const input: MIR.Program = ["program", [
@@ -284,9 +284,9 @@ describe.skip("MIR: use-after-free", () => {
       [
         "block",
         ["let", 0, ["identity", ["constant", 11]]],
-        ["let", 1, ["borrow", ["access", 0]]],
-        ["let", 2, ["identity", ["consume", 0]]],
-        ["let", 3, ["load", ["access", 1]]],
+        ["let", 1, ["borrow", ["read", 0]]],
+        ["let", 2, ["identity", ["move", 0]]],
+        ["let", 3, ["load", ["read", 1]]],
         ["return", 3],
       ],
     ]];

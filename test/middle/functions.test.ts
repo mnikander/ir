@@ -16,7 +16,7 @@ describe("MIR: function call", () => {
     (block
       (let 0 (identity (constant 11)))
       (let 1 (identity (constant 13)))
-      (let 2 (call (function_id 1) (arguments (access 1))))
+      (let 2 (call (function_id 1) (arguments (read 1))))
       (return 2)))
   (function
     (parameters Int)
@@ -34,7 +34,7 @@ describe("MIR: function call", () => {
         "block",
         ["let", 0, ["identity", ["constant", 11]]],
         ["let", 1, ["identity", ["constant", 13]]],
-        ["let", 2, ["call", ["function_id", 1], ["arguments", ["access", 1]]]],
+        ["let", 2, ["call", ["function_id", 1], ["arguments", ["read", 1]]]],
         ["return", 2],
       ],
     ], [
@@ -62,7 +62,7 @@ describe("MIR: function call", () => {
     (block
       (let 0 (identity (constant 11)))
       (let 1 (identity (constant 13)))
-      (let 2 (call (function_id 1) (arguments (access 0) (access 1))))
+      (let 2 (call (function_id 1) (arguments (read 0) (read 1))))
       (return 2)))
   (function
     (parameters Int Int)
@@ -80,8 +80,8 @@ describe("MIR: function call", () => {
         "block",
         ["let", 0, ["identity", ["constant", 11]]],
         ["let", 1, ["identity", ["constant", 13]]],
-        ["let", 2, ["call", ["function_id", 1], ["arguments", ["access", 0], [
-          "access",
+        ["let", 2, ["call", ["function_id", 1], ["arguments", ["read", 0], [
+          "read",
           1,
         ]]]],
         ["return", 2],
@@ -117,22 +117,22 @@ describe("MIR: function call", () => {
     (block
       (let 0 (identity (constant 5)))
       (let 1 (identity (constant 1)))
-      (let 2 (call (function_id 1) (arguments (access 0) (access 1))))
+      (let 2 (call (function_id 1) (arguments (read 0) (read 1))))
       (return 2)))
   (function
     (parameters Int Int)
     (locals Int Int Int Int Int Int)
     (result Int)
     (block
-      (let 3 (equal (access 0) (constant 1)))
-      (branch (access 3) (block_id 2) (block_id 1)))
+      (let 3 (equal (read 0) (constant 1)))
+      (branch (read 3) (block_id 2) (block_id 1)))
     (block
-      (let 4 (subtract (access 0) (constant 1)))
-      (let 5 (multiply (access 0) (access 1)))
-      (let 6 (call (function_id 1) (arguments (access 4) (access 5))))
+      (let 4 (subtract (read 0) (constant 1)))
+      (let 5 (multiply (read 0) (read 1)))
+      (let 6 (call (function_id 1) (arguments (read 4) (read 5))))
       (jump (block_id 2)))
     (block
-      (let 7 (phi (sources (from (block_id 1) (access 6)) (from (block_id 0) (access 1)))))
+      (let 7 (phi (sources (from (block_id 1) (read 6)) (from (block_id 0) (read 1)))))
       (return 7))))
 `;
     const input: MIR.Program = ["program", [
@@ -144,8 +144,8 @@ describe("MIR: function call", () => {
         "block",
         ["let", 0, ["identity", ["constant", 5]]],
         ["let", 1, ["identity", ["constant", 1]]],
-        ["let", 2, ["call", ["function_id", 1], ["arguments", ["access", 0], [
-          "access",
+        ["let", 2, ["call", ["function_id", 1], ["arguments", ["read", 0], [
+          "read",
           1,
         ]]]],
         ["return", 2],
@@ -157,15 +157,15 @@ describe("MIR: function call", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 3, ["equal", ["access", 0], ["constant", 1]]],
-        ["branch", ["access", 3], ["block_id", 2], ["block_id", 1]],
+        ["let", 3, ["equal", ["read", 0], ["constant", 1]]],
+        ["branch", ["read", 3], ["block_id", 2], ["block_id", 1]],
       ],
       [
         "block",
-        ["let", 4, ["subtract", ["access", 0], ["constant", 1]]],
-        ["let", 5, ["multiply", ["access", 0], ["access", 1]]],
-        ["let", 6, ["call", ["function_id", 1], ["arguments", ["access", 4], [
-          "access",
+        ["let", 4, ["subtract", ["read", 0], ["constant", 1]]],
+        ["let", 5, ["multiply", ["read", 0], ["read", 1]]],
+        ["let", 6, ["call", ["function_id", 1], ["arguments", ["read", 4], [
+          "read",
           5,
         ]]]],
         ["jump", ["block_id", 2]],
@@ -174,8 +174,8 @@ describe("MIR: function call", () => {
         "block",
         ["let", 7, ["phi", [
           "sources",
-          ["from", ["block_id", 1], ["access", 6]],
-          ["from", ["block_id", 0], ["access", 1]],
+          ["from", ["block_id", 1], ["read", 6]],
+          ["from", ["block_id", 0], ["read", 1]],
         ]]],
         ["return", 7],
       ],
