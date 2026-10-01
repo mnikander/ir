@@ -11,7 +11,7 @@ A complete function has the following structure:
   (locals Int (Borrowed Int))
   (result Int)
   (block
-    (let 0 (copy (constant 42)))
+    (let 0 (identity (constant 42)))
     (return 0)))
 ```
 
@@ -36,7 +36,7 @@ Every value-producing operation is bound to a resource with:
 | `call`          | `(let 0 (call (function_id 1) (arguments (access 1) (consume 2))))`                      | `T...`                  | `U`           | Function call                          |
 | `borrow`        | `(let 0 (borrow (access 1)))`                                                            | `T`                     | `Borrowed T`  | Create a read-only, non-owning pointer |
 | `load`          | `(let 0 (load (access 1)))`                                                              | `Borrowed T`            | `T`           | Load the value referenced by a pointer |
-| `copy`          | `(let 0 (copy (constant 42)))`                                                           | `T`                     | `T`           | Copy an operand into a resource        |
+| `identity`      | `(let 0 (identity (constant 42)))`                                                       | `T`                     | `T`           | Copy an operand into a resource        |
 | `add`           | `(let 0 (add (access 1) (constant 2)))`                                                  | `Int, Int`              | `Int`         |                                        |
 | `subtract`      | `(let 0 (subtract (access 1) (consume 2)))`                                              | `Int, Int`              | `Int`         |                                        |
 | `multiply`      | `(let 0 (multiply (access 1) (constant 2)))`                                             | `Int, Int`              | `Int`         |                                        |

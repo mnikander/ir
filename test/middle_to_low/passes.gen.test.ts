@@ -24,15 +24,18 @@ function program(lines: MIR.Line[], locals = 1): MIR.Program {
 describe("MIR to LIR micro-passes", () => {
   it("indexes resources and rejects duplicate definitions", () => {
     const indexed = validate_and_index(
-      program([["let", 0, ["copy", ["constant", 1]]], ["return", 0]]),
+      program([["let", 0, ["identity", ["constant", 1]]], ["return", 0]]),
     );
     expect(indexed[0].resource_count).toBe(1);
     expect(() =>
       validate_and_index(
-        program([["let", 0, ["copy", ["constant", 1]]], ["let", 0, ["copy", [
-          "constant",
-          2,
-        ]]], ["return", 0]]),
+        program([["let", 0, ["identity", ["constant", 1]]], ["let", 0, [
+          "identity",
+          [
+            "constant",
+            2,
+          ],
+        ]], ["return", 0]]),
       )
     ).toThrow();
   });
@@ -54,7 +57,7 @@ describe("MIR to LIR micro-passes", () => {
   it("drops consumed operands but preserves accessed operands", () => {
     const output = lower_operations(
       validate_and_index(
-        program([["let", 0, ["copy", ["constant", 7]]], ["let", 1, ["add", [
+        program([["let", 0, ["identity", ["constant", 7]]], ["let", 1, ["add", [
           "consume",
           0,
         ], ["constant", 1]]], ["return", 1]], 2),
@@ -70,7 +73,7 @@ describe("MIR to LIR micro-passes", () => {
       ["parameters"],
       ["locals", ["Int"], ["Int"]],
       ["result", ["Int"]],
-      ["block", ["let", 0, ["copy", ["constant", 1]]], ["jump", [
+      ["block", ["let", 0, ["identity", ["constant", 1]]], ["jump", [
         "block_id",
         1,
       ]]],

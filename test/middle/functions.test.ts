@@ -14,8 +14,8 @@ describe("MIR: function call", () => {
     (locals Int Int Int)
     (result Int)
     (block
-      (let 0 (copy (constant 11)))
-      (let 1 (copy (constant 13)))
+      (let 0 (identity (constant 11)))
+      (let 1 (identity (constant 13)))
       (let 2 (call (function_id 1) (arguments (access 1))))
       (return 2)))
   (function
@@ -32,8 +32,8 @@ describe("MIR: function call", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["copy", ["constant", 11]]],
-        ["let", 1, ["copy", ["constant", 13]]],
+        ["let", 0, ["identity", ["constant", 11]]],
+        ["let", 1, ["identity", ["constant", 13]]],
         ["let", 2, ["call", ["function_id", 1], ["arguments", ["access", 1]]]],
         ["return", 2],
       ],
@@ -60,8 +60,8 @@ describe("MIR: function call", () => {
     (locals Int Int Int)
     (result Int)
     (block
-      (let 0 (copy (constant 11)))
-      (let 1 (copy (constant 13)))
+      (let 0 (identity (constant 11)))
+      (let 1 (identity (constant 13)))
       (let 2 (call (function_id 1) (arguments (access 0) (access 1))))
       (return 2)))
   (function
@@ -78,8 +78,8 @@ describe("MIR: function call", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["copy", ["constant", 11]]],
-        ["let", 1, ["copy", ["constant", 13]]],
+        ["let", 0, ["identity", ["constant", 11]]],
+        ["let", 1, ["identity", ["constant", 13]]],
         ["let", 2, ["call", ["function_id", 1], ["arguments", ["access", 0], [
           "access",
           1,
@@ -115,8 +115,8 @@ describe("MIR: function call", () => {
     (locals Int Int Int)
     (result Int)
     (block
-      (let 0 (copy (constant 5)))
-      (let 1 (copy (constant 1)))
+      (let 0 (identity (constant 5)))
+      (let 1 (identity (constant 1)))
       (let 2 (call (function_id 1) (arguments (access 0) (access 1))))
       (return 2)))
   (function
@@ -142,8 +142,8 @@ describe("MIR: function call", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["copy", ["constant", 5]]],
-        ["let", 1, ["copy", ["constant", 1]]],
+        ["let", 0, ["identity", ["constant", 5]]],
+        ["let", 1, ["identity", ["constant", 1]]],
         ["let", 2, ["call", ["function_id", 1], ["arguments", ["access", 0], [
           "access",
           1,

@@ -13,8 +13,8 @@ describe("analysis: address taken", () => {
     (locals Int Int)
     (result Int)
     (block
-      (let 0 (copy (constant 0)))
-      (let 1 (copy (constant 1)))
+      (let 0 (identity (constant 0)))
+      (let 1 (identity (constant 1)))
       (return 1))))
 `;
     const input: MIR.Program = ["program", [
@@ -24,8 +24,8 @@ describe("analysis: address taken", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["copy", ["constant", 0]]],
-        ["let", 1, ["copy", ["constant", 1]]],
+        ["let", 0, ["identity", ["constant", 0]]],
+        ["let", 1, ["identity", ["constant", 1]]],
         ["return", 1],
       ],
     ]];
@@ -45,8 +45,8 @@ describe("analysis: address taken", () => {
     (locals Int Int (Borrowed Int))
     (result Int)
     (block
-      (let 0 (copy (constant 0)))
-      (let 1 (copy (constant 1)))
+      (let 0 (identity (constant 0)))
+      (let 1 (identity (constant 1)))
       (let 2 (borrow (access 1)))
       (return 1))))
 `;
@@ -57,8 +57,8 @@ describe("analysis: address taken", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["copy", ["constant", 0]]],
-        ["let", 1, ["copy", ["constant", 1]]],
+        ["let", 0, ["identity", ["constant", 0]]],
+        ["let", 1, ["identity", ["constant", 1]]],
         ["let", 2, ["borrow", ["access", 1]]],
         ["return", 1],
       ],
@@ -80,13 +80,13 @@ describe("analysis: address taken", () => {
     (locals Int Int (Borrowed Int) Int Int (Borrowed Int))
     (result Int)
     (block
-      (let 0 (copy (constant 0)))
-      (let 1 (copy (constant 1)))
+      (let 0 (identity (constant 0)))
+      (let 1 (identity (constant 1)))
       (let 2 (borrow (access 0)))
       (jump (block_id 1)))
     (block
-      (let 3 (copy (constant 3)))
-      (let 4 (copy (constant 4)))
+      (let 3 (identity (constant 3)))
+      (let 4 (identity (constant 4)))
       (let 5 (borrow (access 4)))
       (return 1))))
 `;
@@ -105,15 +105,15 @@ describe("analysis: address taken", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["copy", ["constant", 0]]],
-        ["let", 1, ["copy", ["constant", 1]]],
+        ["let", 0, ["identity", ["constant", 0]]],
+        ["let", 1, ["identity", ["constant", 1]]],
         ["let", 2, ["borrow", ["access", 0]]],
         ["jump", ["block_id", 1]],
       ],
       [
         "block",
-        ["let", 3, ["copy", ["constant", 3]]],
-        ["let", 4, ["copy", ["constant", 4]]],
+        ["let", 3, ["identity", ["constant", 3]]],
+        ["let", 4, ["identity", ["constant", 4]]],
         ["let", 5, ["borrow", ["access", 4]]],
         ["return", 1],
       ],

@@ -84,7 +84,7 @@ function lower_let(line: MIR.Let, next: number): Result {
   const prepared = prepare_operands(operands, next);
   let instruction: UnresolvedInstruction;
   switch (op[0]) {
-    case "copy":
+    case "identity":
       instruction = [destination, "copy", prepared.offsets[0]];
       break;
     case "borrow":

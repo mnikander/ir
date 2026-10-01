@@ -66,8 +66,8 @@ describe("MIR printer", () => {
             ["consume", 2],
           ]]],
           ["let", 2, ["call", ["function_id", 1], ["arguments"]]],
-          ["let", 3, ["copy", ["constant", 42]]],
-          ["let", 4, ["copy", ["access", 3]]],
+          ["let", 3, ["identity", ["constant", 42]]],
+          ["let", 4, ["identity", ["access", 3]]],
           ["let", 5, ["borrow", ["access", 4]]],
           ["let", 6, ["borrow", ["access", 5]]],
           ["let", 7, ["load", ["consume", 6]]],
@@ -95,8 +95,8 @@ describe("MIR printer", () => {
         "      (let 0 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))\n" +
         "      (let 1 (call (function_id 0) (arguments (access 0) (consume 2))))\n" +
         "      (let 2 (call (function_id 1) (arguments)))\n" +
-        "      (let 3 (copy (constant 42)))\n" +
-        "      (let 4 (copy (access 3)))\n" +
+        "      (let 3 (identity (constant 42)))\n" +
+        "      (let 4 (identity (access 3)))\n" +
         "      (let 5 (borrow (access 4)))\n" +
         "      (let 6 (borrow (access 5)))\n" +
         "      (let 7 (load (consume 6)))\n" +

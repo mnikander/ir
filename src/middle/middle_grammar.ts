@@ -14,7 +14,7 @@ export type Locals       = [ tag: "locals", ...Type[]];
 export type Block        = [ tag: "block", ...Line[]];
 
 export type Line         = Let | Drop | Terminator;
-export type Operation    = Phi | Call | Borrow | Load | Copy | Arithmetic | Comparison;
+export type Operation    = Phi | Call | Borrow | Load | Identity | Arithmetic | Comparison;
 export type Arithmetic   = Add | Subtract | Multiply | Divide | Remainder | Minimum | Maximum | Negative;
 export type Comparison   = Equal | Unequal | Less | LessEqual | Greater | GreaterEqual;
 export type Terminator   = Return | Jump | Branch;
@@ -29,7 +29,7 @@ export type Phi          = [ tag: "phi",           inputs: Sources];
 export type Call         = [ tag: "call",          function: FunctionId, arguments: Arguments ];
 export type Borrow       = [ tag: "borrow",        Access ]; // take the address of a resource and create a read-only pointer
 export type Load         = [ tag: "load",          Access | Consume ]; // dereference a pointer and load the value
-export type Copy         = [ tag: "copy",          Operand ];
+export type Identity     = [ tag: "identity",      Operand ];
 export type Add          = [ tag: "add",           Operand, Operand ];
 export type Subtract     = [ tag: "subtract",      Operand, Operand ];
 export type Multiply     = [ tag: "multiply",      Operand, Operand ];

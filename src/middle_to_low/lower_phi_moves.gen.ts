@@ -31,12 +31,12 @@ function lower_function(func: IndexedFunction): IndexedFunction {
       const from = ((phi[2] as MIR.Phi)[1].slice(1) as MIR.From[]).find((
         item,
       ) => item[1][1] === block.edge!.predecessor)!;
-      return ["let", next_resource++, ["copy", from[2]]];
+      return ["let", next_resource++, ["identity", from[2]]];
     });
     const writes: MIR.Let[] = phis.map((
       phi,
       index,
-    ) => ["let", phi[1], ["copy", ["access", reads[index][1]]]]);
+    ) => ["let", phi[1], ["identity", ["access", reads[index][1]]]]);
     return {
       ...block,
       edge: undefined,

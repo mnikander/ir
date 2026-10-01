@@ -73,7 +73,7 @@ function print_value(value: MIR.Operation): string {
         print_function_id(value[1]),
         print_arguments(value[2]),
       ]);
-    case "copy":
+    case "identity":
     case "borrow":
     case "load":
       return print_list(value[0], [print_input(value[1])]);

@@ -6,7 +6,7 @@ import { lower } from "../../src/middle_to_low/lower.gen.ts";
 import { evaluate } from "../../src/low/machine.ts";
 
 describe("MIR: literals and exit", () => {
-  it("must evaluate copy and return of a constant", () => {
+  it("must evaluate assignment and return of a constant", () => {
     const text: string = `
 (program
   (function
@@ -14,7 +14,7 @@ describe("MIR: literals and exit", () => {
     (locals Int)
     (result Int)
     (block
-      (let 0 (copy (constant 11)))
+      (let 0 (identity (constant 11)))
       (return 0))))
 `;
     const input: MIR.Program = ["program", [
@@ -24,7 +24,7 @@ describe("MIR: literals and exit", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["copy", ["constant", 11]]],
+        ["let", 0, ["identity", ["constant", 11]]],
         ["return", 0],
       ],
     ]];
@@ -41,8 +41,8 @@ describe("MIR: literals and exit", () => {
     (locals Int Int)
     (result Int)
     (block
-      (let 0 (copy (constant 11)))
-      (let 0 (copy (constant 13)))
+      (let 0 (identity (constant 11)))
+      (let 0 (identity (constant 13)))
       (return 1))))
 `;
     const input: MIR.Program = ["program", [
@@ -52,8 +52,8 @@ describe("MIR: literals and exit", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["copy", ["constant", 11]]],
-        ["let", 0, ["copy", ["constant", 13]]],
+        ["let", 0, ["identity", ["constant", 11]]],
+        ["let", 0, ["identity", ["constant", 13]]],
         ["return", 1],
       ],
     ]];
@@ -91,7 +91,7 @@ describe("MIR: literals and exit", () => {
     (locals Int (Borrowed Int))
     (result Int)
     (block
-      (let 0 (copy (constant 11)))
+      (let 0 (identity (constant 11)))
       (let 1 (borrow (access 0)))
       (return 1))))
 `;
@@ -102,7 +102,7 @@ describe("MIR: literals and exit", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["copy", ["constant", 11]]],
+        ["let", 0, ["identity", ["constant", 11]]],
         ["let", 1, ["borrow", ["access", 0]]],
         ["return", 1],
       ],
@@ -122,8 +122,8 @@ describe("MIR: copying of registers", () => {
     (locals Int Int)
     (result Int)
     (block
-      (let 0 (copy (constant 11)))
-      (let 1 (copy (access 0)))
+      (let 0 (identity (constant 11)))
+      (let 1 (identity (access 0)))
       (return 1))))
 `;
     const input: MIR.Program = ["program", [
@@ -133,8 +133,8 @@ describe("MIR: copying of registers", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["copy", ["constant", 11]]],
-        ["let", 1, ["copy", ["access", 0]]],
+        ["let", 0, ["identity", ["constant", 11]]],
+        ["let", 1, ["identity", ["access", 0]]],
         ["return", 1],
       ],
     ]];
@@ -153,8 +153,8 @@ describe("MIR: arithmetic operations", () => {
     (locals Int Int Int)
     (result Int)
     (block
-      (let 0 (copy (constant 11)))
-      (let 1 (copy (constant 13)))
+      (let 0 (identity (constant 11)))
+      (let 1 (identity (constant 13)))
       (let 2 (add (access 0) (access 1)))
       (return 2))))
 `;
@@ -165,8 +165,8 @@ describe("MIR: arithmetic operations", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["copy", ["constant", 11]]],
-        ["let", 1, ["copy", ["constant", 13]]],
+        ["let", 0, ["identity", ["constant", 11]]],
+        ["let", 1, ["identity", ["constant", 13]]],
         ["let", 2, ["add", ["access", 0], ["access", 1]]],
         ["return", 2],
       ],
@@ -184,7 +184,7 @@ describe("MIR: arithmetic operations", () => {
     (locals Int Int)
     (result Int)
     (block
-      (let 0 (copy (constant 11)))
+      (let 0 (identity (constant 11)))
       (let 1 (add (access 0) (constant 13)))
       (return 1))))
 `;
@@ -195,7 +195,7 @@ describe("MIR: arithmetic operations", () => {
       ["result", ["Int"]],
       [
         "block",
-        ["let", 0, ["copy", ["constant", 11]]],
+        ["let", 0, ["identity", ["constant", 11]]],
         ["let", 1, ["add", ["access", 0], ["constant", 13]]],
         ["return", 1],
       ],

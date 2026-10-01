@@ -64,8 +64,8 @@ A very simple example of an MIR program is given by:
     (locals Int Int)
     (result Int)
     (block
-      (let 0 (copy (constant 13)))
-      (let 1 (copy (constant 42)))
+      (let 0 (identity (constant 13)))
+      (let 1 (identity (constant 42)))
       (return 1))))
 ```
 
@@ -73,12 +73,13 @@ This defines an MIR program with a single function. That function takes no
 parameters, has two local resources of type `Int` and returns a result of type
 `Int`. The function consists of a single block of code. That block of code
 defines resource #0 to have the constant value 13, defines resource #1 to have
-value 42, and returns resource #1.
+value 42, and returns resource #1. The right-hand side of a let-binding is
+always an operation. The `identity` function simply takes a value as it is.
 
 Overall, there are five fundamental syntactic forms in the body of an MIR
 function. They are illustrated by these examples:
 
-- `(let 0 (copy (constant 42)))` defines resource #0 with the value 42.
+- `(let 0 (identity (constant 42)))` defines resource #0 with the value 42.
 - `(drop 0)` drops resource #0.
 - `(return 0)` returns resource #0 from the function.
 - `(jump (block_id 1))` jumps to block #1 unconditionally.
@@ -87,7 +88,7 @@ function. They are illustrated by these examples:
 Every value-producing line takes the form of a let-binding. The general form is
 `(let RESOURCE OPERATION)`. For example:
 
-- `(let 0 (copy (constant 42)))` loads the integer `42` into resource 0.
+- `(let 0 (identity (constant 42)))` loads the integer `42` into resource 0.
 - `(let 1 (add (access 0) (consume 2)))` adds two operands and binds the result
   to resource 1.
 - `(let 2 (phi (sources (from (block_id 1) (access 2)) (from (block_id 2) (consume 3)))))`
