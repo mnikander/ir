@@ -1,4 +1,4 @@
-// Copysecond (c) 2026 Marco Nikander
+// Copyright (c) 2026 Marco Nikander
 
 // A middle intermediate representation (MIR) designed for easy analysis.
 
