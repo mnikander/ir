@@ -300,7 +300,7 @@ In the following example, the points-to set of `ref` can simply be treated as be
 ```go
 func positive_deref(int* ref) int {
     x := *ref
-    result := min(1, x)
+    result := max(1, x)
     return result
 }
 ```
