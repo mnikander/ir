@@ -120,14 +120,13 @@ x = 42
 drop x
 y = x    // error: x has already been dropped
 ```
-To ensure that programs are valid and memory-safe, several kinds of programming errors must be prevented:
+To ensure that programs are valid and memory-safe, two broad groups of programming errors must be prevented.
+It is an error to do something with a variable...
 
-- `drop` before `define`
-- (`peek` | `move`) before `define`
-- (`move` | `drop`) before (`peek` | `move`)
-- `drop` before `drop`
+1. before it has been defined
+2. after it has been destroyed
 
-These kinds of errors are well known under terms such as 'use after free' or 'double free'.
+The second group of errors are well known under terms such as 'use after free' or 'double free'.
 Static analysis of the program can detect these errors.
 To do this, each variable has a state at each point in the program.
 The following diagram illustrates the **lifecycle** which a variable goes through, as the program executes.
@@ -149,7 +148,14 @@ flowchart LR;
     D -->|peek, move, drop| E;
 ```
 
-This diagram contains a subtle point about `define`.
+The two groups of errors are thus:
+
+1. (`peek` | `move` | `drop`) without a prior `define`
+2. (`move` | `drop`) followed by (`peek` | `move` | `drop`)
+
+These transitions must be reported as errors by the static analysis.
+
+This diagram also contains a subtle point about `define`.
 It's worth repeating that the code is in static single-assignment (SSA) form.
 **There can only be one `define` instruction for each variable, in the entire program.**
 Inside a function call, the only way that a variable can encounter a `define` more than once is if there is iteration, for example a for-loop.
