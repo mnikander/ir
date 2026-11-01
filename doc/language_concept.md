@@ -51,11 +51,11 @@ To model ownership, moving, dropping, and also references, a richer set of primi
 ## A Language and a Machine
 
 The workings of single assignment and ownership can be explained using a small integer-only language and a machine which runs it.
-**When our fictional machine is running, it calls functions, computes values, creates and destroys variables, jumps from block to block, and returns from functions.**
-How exactly these variables are stored, on the heap, in the stack frame, in registers, or inlined in the source code, is _not relevant_ for our abstract machine.
-What _is_ relevant for our machine is ownership, references, and the availability of variables.
+**When this fictional machine is running, it calls functions, computes values, creates and destroys variables, jumps from block to block, and returns from functions.**
+How exactly these variables are stored, on the heap, in the stack frame, in registers, or inlined in the source code, is _not relevant_ for the abstract machine.
+What _is_ relevant for the machine is ownership, references, and the availability of variables.
 
-Our language is structured as follows:
+The language is structured as follows:
 - A program is a list of functions.
 - A function is a list of blocks.
 - A block is a list of instructions.
@@ -68,9 +68,9 @@ Our language is structured as follows:
 - The naming convention for functions, blocks, and variables is similar to [Multi-Level Intermediate Representation (MLIR)](https://en.wikipedia.org/wiki/MLIR_(software)) in the LLVM project.
 - Functions can take parameters.
 - Blocks can take parameters. This is equivalent to Phi-nodes from classical SSA. [Block parameters](https://mlir.llvm.org/docs/LangRef/#blocks) are taken from MLIR.
-- The language supports integers and references. Note that a type-checker must forbid the casting of references to integers and must forbid "pointer arithmetic" on references, so that these programs are memory-safe.
-- The language does not support tuples, variants, structs, arrays, or other datatypes.
-- The language does not support side-effects, such as file IO.
+- Integers and references are supported. Note that a type-checker must forbid the casting of references to integers and must forbid "pointer arithmetic" on references, so that these programs are memory-safe.
+- Tuples, variants, structs, arrays, or other datatypes are (currently) not supported.
+- Cide-effects, such as file IO, are (currently) not supported.
 
 <!-- TODO: does this syntax need an end terminal such as ';' or 'end' to mark the end of a term? -->
 The syntax is given by the following context-free grammar:
@@ -214,10 +214,10 @@ This principle can be illustrated by a stepped pyramid or, perhaps more creative
 
 _The town musicians of Bremen, from a fairytale. When the animals are performing a song, each animal stands on the back of the animal below it._
 
-We can imagine the front legs to be the beginning, i.e. the `define`, of a variable/reference.
+The front legs can be seen as the beginning, i.e. the `define`, of a variable/reference.
 The hind legs symbolize the end, i.e. the `drop`, of that variable/reference, at a later point in the source code.
 To ensure the whole tower of references doesn't fall over (no dangling references -- no dangling feet), a reference must `drop` before (or at the same time) as the layer below it.
-This can be ensured by **treating the `drop` of a reference, as a `peek` at every member of its points-to set**.
+This can be ensured by **treating the `drop` of a reference, as a `peek` of every member of its points-to set**.
 Thus, every reference stands its points-to set, and the set's Availability is checked both on the creation and destruction of the reference.
 Informally, this technique could be referred to as the "piggyback trick".
 Since function calls can transfer variables, it's insufficient to check the points-to set at just the `define` and `drop` of the reference.
