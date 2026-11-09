@@ -195,9 +195,20 @@ This IR has several properties which make it well-suited for a variation of borr
 
 References are defined to be **non-owning**.
 They _cannot_ be used to `move` or `drop` the pointed-to variable.
-Dereferencing is a `peek` at the pointed-to variable.
-Semantically, a reference points at a variable, and _not_ at the storage location of that variable.
+Dereferencing is effectively a `peek` at the pointed-to variable.
+In this IR, a reference points at a variable, and _not_ at the storage location of that variable.
 This means that if the variable is moved, the reference becomes invalid.
+Thus, the following snippet of pseudo-code contains an error:
+```
+x = 42
+r = reference x
+y = move x
+z = dereference r    // error: 'r' is an invalid reference
+```
+In the line `y = move x` the variable `x` becomes Dropped.
+This means the reference `r` is no longer valid.
+This is different from how pointers are defined in many languages.
+In this IR, a reference refers to a variable, _not_ to its storage location.
 
 In general, the set of variables which a reference might point to, is known as the "**points-to set**".
 Inside a function, the points-to set of a reference can be computed using well-known algorithms such as [Steensgaard's algorithm](https://en.wikipedia.org/wiki/Steensgaard's_algorithm) or Andersen's algorithm.
@@ -205,8 +216,10 @@ A reference is **valid** when every variable in its points-to set is Available.
 The task of static analysis is to ensure that **every Available reference is valid**.
 (This is more conservative, but simpler, than Rust's guarantee that every [_live_](https://en.wikipedia.org/wiki/Live-variable_analysis) reference is valid).
 
-References are just variables, and have the same lifecycle as all other variables.
-Since references are immutable variables, an important property emerges by construction: _the points-to graph is always a directed acyclic graph (DAG)_.
+References are just variables.
+They have the same lifecycle as all other variables.
+Just like all other variables, references are immutable.
+Immutability ensure an important property by construction: _the points-to graph is always a directed acyclic graph (DAG)_.
 This is a central benefit and limitation of this IR.
 It greatly simplifies 'pointer' analysis, but also means there is no way to express a doubly-linked list using references.
 Dynamic arrays or constructions such as Java's array-list must be used instead.
@@ -222,11 +235,11 @@ _The town musicians of Bremen, from a fairytale. When the animals are performing
 
 The front legs can be seen as the beginning, i.e. the `define`, of a variable/reference.
 The hind legs symbolize the end, i.e. the `drop`, of that variable/reference, at a later point in the source code.
-To ensure the whole tower of references doesn't fall over (no dangling references -- no dangling feet), a reference must `drop` before (or at the same time) as the layer below it.
+To ensure the whole tower of references doesn't fall over (no dangling references; no dangling feet), a reference must `drop` before (or at the same time) as the layer below it.
 This can be ensured by **treating the `drop` of a reference, as a `peek` of every member of its points-to set**.
 Thus, every reference stands its points-to set, and the set's Availability is checked both on the creation and destruction of the reference.
 Informally, this technique could be referred to as the "piggyback trick".
-Since function calls can transfer variables, it's insufficient to check the points-to set at just the `define` and `drop` of the reference.
+Since function calls can transfer variables, it's insufficient to check only the points-to set at the `define` and `drop` of the reference, however.
 Conservatively, every variable in the points-to set of a reference `ref` must be Available when:
 
 1. `ref` is defined
@@ -235,17 +248,16 @@ Conservatively, every variable in the points-to set of a reference `ref` must be
 4. `ref` is dropped
 
 In the lifecycle of variables, moving an Available variable changes its state to Dropped.
-Thus, the following snippet of pseudo-code contains an error:
+Returning to the example from above:
 ```
 x = 42
 r = reference x
 y = move x
-z = dereference r
+z = dereference r    // error: 'r' is an invalid reference
 ```
-In the line `y = move x` the variable `x` becomes Dropped.
-This means the reference `r` is no longer valid.
-Static analysis of the line `z = dereference r` will apply rule #2, and check the points-to set of `r`.
-The points-to set of `r` contains `x`, and `x` is not Available, thus, `r` is dangling reference and an error is reported.
+This is an error, because the reference `r` becomes invalid when `x` is moved.
+Static analysis of the line `z = dereference r` will apply rule #2, and check the availability of the entire points-to set of `r`.
+The points-to set of `r` contains `x`, and `x` is Dropped (not Available), thus, `r` is dangling reference and an error is reported.
 
 This approach to borrow checking is possible due to the _combination_ of:
 - the chosen lifecycle of variables
