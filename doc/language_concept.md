@@ -165,6 +165,7 @@ Therefore `define` is allowed, regardless of whether the variable state is curre
 Control flow, such as an if-else block, introduces another challenge: the state of a variable may become ambiguous.
 That is beyond the scope of this document, but will be discussed in detail in the analysis concept paper.
 More information of control flow joins in SSA, specifically phi-nodes and block parameters can be found in the [primer on static single-assignment form](./intro_to_ssa_form.md).
+<!-- TODO: add a link, once the analysis concept is written. -->
 
 
 ## A Thinly Veiled Reference
@@ -197,7 +198,8 @@ References are defined to be **non-owning**.
 They _cannot_ be used to `move` or `drop` the pointed-to variable.
 Dereferencing is effectively a `peek` at the pointed-to variable.
 In this IR, a reference points at a variable, and _not_ at the storage location of that variable.
-This means that if the variable is moved, the reference becomes invalid.
+This is different from how pointers are defined in many languages.
+This means that if the variable is moved, a reference to that variable becomes invalid.
 Thus, the following snippet of pseudo-code contains an error:
 ```
 x = 42
@@ -206,9 +208,7 @@ y = move x
 z = dereference r    // error: 'r' is an invalid reference
 ```
 In the line `y = move x` the variable `x` becomes Dropped.
-This means the reference `r` is no longer valid.
-This is different from how pointers are defined in many languages.
-In this IR, a reference refers to a variable, _not_ to its storage location.
+This means the reference `r` is no longer valid, because it refers to the variable `x`, _not_ the storage location.
 
 In general, the set of variables which a reference might point to, is known as the "**points-to set**".
 Inside a function, the points-to set of a reference can be computed using well-known algorithms such as [Steensgaard's algorithm](https://en.wikipedia.org/wiki/Steensgaard's_algorithm) or Andersen's algorithm.
@@ -216,7 +216,7 @@ A reference is **valid** when every variable in its points-to set is Available.
 The task of static analysis is to ensure that **every Available reference is valid**.
 (This is more conservative, but simpler, than Rust's guarantee that every [_live_](https://en.wikipedia.org/wiki/Live-variable_analysis) reference is valid).
 
-References are just variables.
+References are themselves just variables.
 They have the same lifecycle as all other variables.
 Just like all other variables, references are immutable.
 Immutability ensure an important property by construction: _the points-to graph is always a directed acyclic graph (DAG)_.
@@ -265,8 +265,9 @@ This approach to borrow checking is possible due to the _combination_ of:
 - single ownership
 - single assignment, i.e. immutability, which results in a points-to graph which is a DAG
 
-These design decisions _also_ open the door to a particularly elegant way of performing the analysis, using the points-to set and a small domain-specific language.
-This will be covered in detail in the analysis concept paper.
+These design decisions also open the door to an elegant way of performing the Availability analysis, using the points-to set and a small domain-specific language (DSL).
+This will be covered in detail in the analysis concept.
+<!-- TODO: add a link, once the analysis concept is written. -->
 
 ## The Function Boundary
 
@@ -374,6 +375,7 @@ This creates a dangling pointer.
 Semantically, returning the result and dropping everything else happens simultaneously.
 The static analysis, described earlier, catches the dangling pointer since the points-to set of `r` contains `x` and `x` is becoming Dropped.
 How the actual implementation ensures the semantics of everything happening simultaneously, will be covered in the analysis concept paper.
+<!-- TODO: add a link, once the analysis concept is written. -->
 
 Simultaneously returning a variable and a reference to that variable is an error.
 Moving the variable makes it Dropped, which invalidates the reference.
